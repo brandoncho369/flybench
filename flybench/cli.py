@@ -53,8 +53,9 @@ def toy(cache):
 @click.option("--label", default="", help="label for the leaderboard")
 @click.option("--cache", default=str(DEFAULT_CACHE), show_default=True)
 @click.option("--simulator", default=None, help="custom simulator as 'module:Class' (see CONTRIBUTING.md)")
+@click.option("--tier", default="all", type=click.Choice(["core", "hard", "all"]), show_default=True)
 @click.option("-v", "--verbose", is_flag=True)
-def run(connectome, config, gain, task_paths, out, label, cache, simulator, verbose):
+def run(connectome, config, gain, task_paths, out, label, cache, simulator, tier, verbose):
     """Run the benchmark suite."""
     c = load_connectome(connectome, cache)
     overrides = yaml.safe_load(Path(config).read_text()) if config else {}
@@ -62,7 +63,7 @@ def run(connectome, config, gain, task_paths, out, label, cache, simulator, verb
         overrides["gain"] = gain
     params = LIFParams.from_dict(overrides or {})
     console.print(f"[bold]{c.name}[/]: {c.n:,} neurons, {c.n_edges:,} edges · gain={params.gain} w_syn={params.w_syn_mv} mV")
-    tasks = load_tasks([Path(p) for p in task_paths]) if task_paths else load_tasks()
+    tasks = load_tasks([Path(p) for p in task_paths]) if task_paths else load_tasks(tier=tier)
     report = run_suite(c, params, tasks, verbose=verbose, simulator=resolve_simulator(simulator))
     report["label"] = label or (Path(config).stem if config else f"gain{params.gain}")
 

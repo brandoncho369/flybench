@@ -103,7 +103,9 @@ class LIFSimulator:
 
     # ---- state -------------------------------------------------------
     def reset(self) -> None:
+        """Fresh state AND a fresh random stream, so every condition in a task sees identical noise."""
         p = self.p
+        self.rng = np.random.default_rng(p.seed)
         self.v = np.full(self.n, p.v_rest_mv, dtype=np.float32)
         self.g = np.zeros(self.n, dtype=np.float32)
         self.ref_until = np.full(self.n, -1.0, dtype=np.float32)

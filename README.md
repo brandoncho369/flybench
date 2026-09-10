@@ -38,19 +38,29 @@ Run against the real connectome (Codex v783, Princeton-filtered connections, ≥
 | 0.70 | yes | yes | yes | 14 % | too much of the brain firing |
 | 1.00 (Shiu 2024) | yes | yes | yes | 19 % | a fifth of the brain at 29 Hz — not a reflex, a seizure |
 
-So on the July-2025 synapse predictions the working window is **gain ≈ 0.40–0.45**, less than half of the 1.0 that Shiu et al. calibrated on the earlier Buhmann predictions. That is the kind of thing this benchmark exists to catch: the connectome got re-predicted, the weights shifted, and a parameter that used to be right silently stopped being right. Full table with per-check values in [`LEADERBOARD.md`](LEADERBOARD.md); reproduce with the commands under *The real connectome*.
+So on the July-2025 synapse predictions the working window is **gain ≈ 0.40–0.45**, less than half of the 1.0 that Shiu et al. calibrated on the earlier Buhmann predictions. That is the kind of thing this benchmark exists to catch: the connectome got re-predicted, the weights shifted, and a parameter that used to be right silently stopped being right.
+
+Inside that window the reference model then fails most of the **hard** tier. The failures are informative, not embarrassing: MN9 ignition is all-or-nothing (0 Hz or ~430 Hz, nothing in between — no dose response); a second sugar pulse gets exactly the response of the first (no adaptation, because the model has no state that outlives 20 ms); driving one olfactory glomerulus fires ~84 % of all projection neurons (no lateral inhibition, the antennal lobe is a broadcast); looming recruits ~30 % of all descending neurons rather than a takeoff ensemble. Each of those is a concrete thing a better model has to add — adaptation currents, per-transmitter weights, gap junctions, neuromodulation — and each one is now a number you can move. Full table in [`LEADERBOARD.md`](LEADERBOARD.md).
 
 ## The tasks
 
-| # | task | what it tests | source |
-|---|------|---------------|--------|
-| 1 | `stability` | no input → (almost) no output. Guards against "everything fires so everything passes" | Shiu et al. 2024 |
-| 2 | `sugar_to_proboscis` | sugar GRNs → MN9 (proboscis motor neuron) fires | Dethier 1976; Shiu et al. 2024 Fig. 2 |
-| 3 | `bitter_suppression` | sugar + bitter → MN9 fires less than sugar alone | Shiu et al. 2024 Fig. 3; Jaeger et al. 2018 |
-| 4 | `looming_to_giant_fiber` | LPLC2 / LC4 → Giant Fiber (escape) fires | von Reyn et al. 2014; Ache et al. 2019 |
-| 5 | `taste_specificity` | bitter alone does **not** drive MN9 (negative control) | Shiu et al. 2024 |
+Two tiers. **Core** is the reflexes the reference LIF model is known to reproduce; a model that fails these is broken. **Hard** is behaviours a real fly shows that a static wiring diagram with five constants is *not* expected to reproduce; these are the research agenda, and the reference model fails most of them on purpose.
 
-Each task is a YAML file in [`tasks/`](tasks/): a readout population, one or more stimulus conditions, and a list of checks. A task passes if every check passes; the suite score is the mean fraction of checks passed. Adding a task is adding a file. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to submit results, tasks, or a different simulator (`--simulator mymodule:MyModel`).
+| tier | task | what it tests | source |
+|---|------|---------------|--------|
+| core | `stability` | no input → (almost) no output. Guards against "everything fires so everything passes" | Shiu et al. 2024 |
+| core | `sugar_to_proboscis` | sugar GRNs → MN9 (proboscis motor neuron) fires | Dethier 1976; Shiu et al. 2024 Fig. 2 |
+| core | `bitter_suppression` | sugar + bitter → MN9 fires less than sugar alone | Shiu et al. 2024 Fig. 3; Jaeger et al. 2018 |
+| core | `looming_to_giant_fiber` | LPLC2 / LC4 → Giant Fiber (escape) fires | von Reyn et al. 2014; Ache et al. 2019 |
+| core | `taste_specificity` | bitter alone does **not** drive MN9 (negative control) | Shiu et al. 2024 |
+| hard | `dose_response` | weak sugar → weaker MN9 than strong sugar, and MN9 is graded, not saturated | Dethier 1976; Dahanukar et al. 2007 |
+| hard | `adaptation` | a second sugar pulse evokes a smaller response than the first | Duerr & Quinn 1982; Paranjpe et al. 2012 |
+| hard | `olfactory_sparse_coding` | one glomerulus's ORNs (DA1) fire their own PNs, not most of the antennal lobe | Olsen & Wilson 2008; Wilson 2013 |
+| hard | `crosstalk` | sugar does not fire the Giant Fiber; looming does not extend the proboscis | von Reyn et al. 2014 |
+| hard | `looming_dn_ensemble` | looming drives DNp02/DNp11 but not most of the ~1300 descending neurons | Ache et al. 2019; Namiki et al. 2018 |
+| hard | `flash_is_not_loom` | a full-field flash on every photoreceptor does not fire the Giant Fiber | von Reyn et al. 2014; Klapoetke et al. 2017 |
+
+`flybench run --tier core` / `--tier hard` / `--tier all`. Each task is a YAML file in [`tasks/`](tasks/): a readout population, one or more stimulus conditions, and a list of checks. A task passes if every check passes; the suite score is the mean fraction of checks passed. Adding a task is adding a file. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to submit results, tasks, or a different simulator (`--simulator mymodule:MyModel`).
 
 ## Install
 

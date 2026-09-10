@@ -21,6 +21,9 @@ A task is one YAML file in `tasks/`. Copy an existing one. It needs:
 * one or more `conditions`, each a list of stimuli (selector + Poisson rate + window)
 * `checks`, each `rate` / `network_rate` / `active_fraction` / `ratio` with an operator and threshold
 * a `citation` for the behaviour you're testing — published fly work, not a hunch
+* a `tier`: `core` if the reference LIF model passes it (it becomes a regression test), `hard` if it doesn't (it becomes a target)
+
+Tasks can have several named `readouts`, and checks can name a `readout` and a `window`; see `tasks/07_adaptation.yaml` and `tasks/10_looming_dn_ensemble.yaml` for the full grammar.
 
 Run `flybench select '<selector>' -c flywire783` to confirm your selectors match the neurons you think they do, and run the task on the toy (`flybench run -t tasks/your_task.yaml`) — if the toy can't be wired to pass it, add the wiring in `flybench/toy.py` so CI covers it. Tasks that include a negative control (X should *not* happen) are especially valuable.
 
@@ -42,4 +45,4 @@ flybench run -c flywire783 --simulator mypkg.mymodel:MySimulator --label "conduc
 
 ## Ground rules
 
-Cite the behaviour. State what you changed. Never tune per-neuron parameters to pass a task — that's fitting the test, and it defeats the point.
+Cite the behaviour. State what you changed. Never tune per-neuron parameters to pass a task — that's fitting the test, and it defeats the point. Scores are self-reported until a maintainer re-runs them; a small set of unpublished hold-out tasks is run on notable submissions to check that a model generalises rather than memorising the public YAML.

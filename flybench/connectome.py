@@ -28,6 +28,7 @@ from __future__ import annotations
 
 import json
 import re
+import warnings
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Iterable
@@ -162,7 +163,9 @@ def _mask(ann: pd.DataFrame, spec: dict) -> np.ndarray:
             if col not in ann.columns:
                 m = np.zeros(n, dtype=bool)
             else:
-                m = ann[col].astype(str).str.contains(val, case=False, regex=True, na=False).to_numpy()
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore", UserWarning)  # pandas warns about regex groups
+                    m = ann[col].astype(str).str.contains(val, case=False, regex=True, na=False).to_numpy()
         else:
             if key not in ann.columns:
                 m = np.zeros(n, dtype=bool)

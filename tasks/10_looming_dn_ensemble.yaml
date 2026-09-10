@@ -1,0 +1,25 @@
+name: looming_dn_ensemble
+title: Looming recruits the takeoff ensemble, not the whole descending tract
+tier: hard
+description: >
+  The Giant Fiber is not alone: looming also drives DNp02, DNp11 and other
+  descending neurons that prepare the takeoff (leg extension, wing raise), and
+  the response is selective — a few dozen of the ~1300 descending neurons, not
+  a general alarm. Checks that the named looming DNs fire and that the
+  descending population as a whole stays mostly silent.
+citation: Ache et al. 2019 (Curr. Biol.); Namiki et al. 2018 (eLife); Dombrovski et al. 2023 (Nature)
+duration_ms: 600
+window: [220, 500]
+readouts:
+  gf:   {select: {any: [{cell_type: GF}, {cell_type: DNp01}, {hemibrain_type: "Giant Fiber"}]}}
+  dnp:  {select: {cell_type: [DNp02, DNp11]}}
+  all_dn: {select: {super_class: descending}}
+conditions:
+  baseline: {stimuli: []}
+  loom:
+    stimuli:
+      - {name: looming_detectors, select: {any: [{cell_type: LPLC2}, {cell_type: LC4}, {hemibrain_type: LPLC2}, {hemibrain_type: LC4}]}, rate_hz: 150, t_start_ms: 200, t_end_ms: 500}
+checks:
+  - {type: rate, cond: loom, readout: gf, op: ">", value: 5}
+  - {type: rate, cond: loom, readout: dnp, op: ">", value: 5}
+  - {type: readout_active_fraction, cond: loom, readout: all_dn, op: "<", value: 0.15}

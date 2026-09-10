@@ -1,0 +1,24 @@
+name: adaptation
+title: Repeated sugar gives a smaller second response
+tier: hard
+description: >
+  Sensory responses adapt: a second identical sugar pulse shortly after the
+  first evokes a weaker proboscis response (short-term adaptation in GRNs and
+  downstream circuits; over longer timescales, PER habituation). A memoryless
+  point-neuron model cannot do this by construction — every pulse looks like
+  the first — so the reference LIF is expected to fail here. That is the
+  point: this task measures something the wiring diagram alone does not give
+  you.
+citation: Duerr & Quinn 1982 (PNAS, PER habituation); Paranjpe et al. 2012 (J. Neurosci.)
+duration_ms: 1400
+window: [250, 600]
+readout:
+  select: {any: [{cell_type: MN9}, {cell_type: CB0701}, {hemibrain_type: MN9}, {all_of: [{labels_regex: "\\bMN9\\b"}, {super_class: motor}]}]}
+conditions:
+  two_pulses:
+    stimuli:
+      - {name: pulse1, select: {any: [{sub_class: "sugar/water"}, {all_of: [{labels_regex: "sugar"}, {super_class: sensory}, {not: {labels_regex: "bitter"}}]}]}, rate_hz: 100, t_start_ms: 200, t_end_ms: 600}
+      - {name: pulse2, select: {any: [{sub_class: "sugar/water"}, {all_of: [{labels_regex: "sugar"}, {super_class: sensory}, {not: {labels_regex: "bitter"}}]}]}, rate_hz: 100, t_start_ms: 900, t_end_ms: 1300}
+checks:
+  - {type: rate, cond: two_pulses, op: ">", value: 5, window: [250, 600]}
+  - {type: ratio, cond: two_pulses, over: two_pulses, op: "<", value: 0.7, window: [950, 1300], over_window: [250, 600]}

@@ -55,7 +55,7 @@ def test_sugar_drives_mn9_and_bitter_suppresses(toy):
 
 
 def test_suite_runs_and_scores(toy):
-    report = run_suite(toy, LIFParams(), load_tasks())
+    report = run_suite(toy, LIFParams(), load_tasks(tier="core"))
     assert report["n_tasks"] == 5
     assert report["score"] == 1.0
     md = leaderboard([{**report, "label": "t"}])
@@ -63,7 +63,7 @@ def test_suite_runs_and_scores(toy):
 
 
 def test_low_gain_fails_reflexes(toy):
-    report = run_suite(toy, LIFParams(gain=0.2), load_tasks())
+    report = run_suite(toy, LIFParams(gain=0.2), load_tasks(tier="core"))
     assert report["score"] < 1.0
 
 

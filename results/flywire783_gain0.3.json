@@ -1,4 +1,8 @@
 {
+  "tier": [
+    "core",
+    "hard"
+  ],
   "connectome": "flywire783",
   "n_neurons": 139255,
   "n_edges": 3732460,
@@ -16,9 +20,9 @@
     "seed": 0
   },
   "simulator": "flybench.sim.LIFSimulator",
-  "score": 0.6666666666666666,
-  "passed": 3,
-  "n_tasks": 5,
+  "score": 0.6439393939393939,
+  "passed": 5,
+  "n_tasks": 11,
   "tasks": [
     {
       "task": "stability",
@@ -42,12 +46,14 @@
           "rate": 0.0,
           "network_rate": 0.0,
           "active_fraction": 0.0,
-          "spikes": 0.0
+          "spikes": 0.0,
+          "rate[default]": 0.0,
+          "readout_active_fraction[default]": 0.0
         }
       },
       "readout_size": 139255,
       "stimulus_sizes": {},
-      "seconds": 1.6399474143981934,
+      "seconds": 1.6423966884613037,
       "notes": []
     },
     {
@@ -57,7 +63,7 @@
       "score": 0.3333333333333333,
       "checks": [
         {
-          "description": "readout rate[sugar] > 5.0 Hz",
+          "description": "rate[sugar] > 5.0 Hz",
           "value": 0.0,
           "passed": false
         },
@@ -77,20 +83,24 @@
           "rate": 0.0,
           "network_rate": 0.0,
           "active_fraction": 0.0,
-          "spikes": 0.0
+          "spikes": 0.0,
+          "rate[default]": 0.0,
+          "readout_active_fraction[default]": 0.0
         },
         "sugar": {
           "rate": 0.0,
           "network_rate": 0.10648875019992753,
           "active_fraction": 0.0014146709274352805,
-          "spikes": 8837.0
+          "spikes": 8837.0,
+          "rate[default]": 0.0,
+          "readout_active_fraction[default]": 0.0
         }
       },
       "readout_size": 2,
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 8.692083835601807,
+      "seconds": 8.46151876449585,
       "notes": []
     },
     {
@@ -100,7 +110,7 @@
       "score": 0.0,
       "checks": [
         {
-          "description": "readout rate[sugar] > 5.0 Hz",
+          "description": "rate[sugar] > 5.0 Hz",
           "value": 0.0,
           "passed": false
         },
@@ -115,13 +125,17 @@
           "rate": 0.0,
           "network_rate": 0.10648875019992753,
           "active_fraction": 0.0014146709274352805,
-          "spikes": 8837.0
+          "spikes": 8837.0,
+          "rate[default]": 0.0,
+          "readout_active_fraction[default]": 0.0
         },
         "sugar_plus_bitter": {
           "rate": 0.0,
-          "network_rate": 0.15078942815828386,
-          "active_fraction": 0.001924526946967793,
-          "spikes": 12499.0
+          "network_rate": 0.15012354705722986,
+          "active_fraction": 0.0019101648055725108,
+          "spikes": 12476.0,
+          "rate[default]": 0.0,
+          "readout_active_fraction[default]": 0.0
         }
       },
       "readout_size": 2,
@@ -129,7 +143,7 @@
         "sugar_grn": 129,
         "bitter_grn": 65
       },
-      "seconds": 11.854399681091309,
+      "seconds": 11.024771690368652,
       "notes": []
     },
     {
@@ -139,7 +153,7 @@
       "score": 1.0,
       "checks": [
         {
-          "description": "readout rate[loom] > 5.0 Hz",
+          "description": "rate[loom] > 5.0 Hz",
           "value": 433.9285714285714,
           "passed": true
         },
@@ -159,20 +173,24 @@
           "rate": 0.0,
           "network_rate": 0.0,
           "active_fraction": 0.0,
-          "spikes": 0.0
+          "spikes": 0.0,
+          "rate[default]": 0.0,
+          "readout_active_fraction[default]": 0.0
         },
         "loom": {
           "rate": 433.9285714285714,
           "network_rate": 0.4881589273532112,
           "active_fraction": 0.004251193853003482,
-          "spikes": 20367.0
+          "spikes": 20367.0,
+          "rate[default]": 433.9285714285714,
+          "readout_active_fraction[default]": 1.0
         }
       },
       "readout_size": 2,
       "stimulus_sizes": {
         "looming_detectors": 314
       },
-      "seconds": 5.112137794494629,
+      "seconds": 4.858266115188599,
       "notes": []
     },
     {
@@ -182,7 +200,7 @@
       "score": 1.0,
       "checks": [
         {
-          "description": "readout rate[bitter] < 2.0 Hz",
+          "description": "rate[bitter] < 2.0 Hz",
           "value": 0.0,
           "passed": true
         },
@@ -197,16 +215,316 @@
           "rate": 0.0,
           "network_rate": 0.04974523519638596,
           "active_fraction": 0.0005816667265089225,
-          "spikes": 4148.0
+          "spikes": 4148.0,
+          "rate[default]": 0.0,
+          "readout_active_fraction[default]": 0.0
         }
       },
       "readout_size": 2,
       "stimulus_sizes": {
         "bitter_grn": 65
       },
-      "seconds": 4.870650768280029,
+      "seconds": 4.457504749298096,
+      "notes": []
+    },
+    {
+      "task": "dose_response",
+      "title": "Proboscis response scales with sugar intensity",
+      "passed": false,
+      "score": 0.25,
+      "checks": [
+        {
+          "description": "rate[weak] > 1.0 Hz",
+          "value": 0.0,
+          "passed": false
+        },
+        {
+          "description": "rate[strong] > 5.0 Hz",
+          "value": 0.0,
+          "passed": false
+        },
+        {
+          "description": "rate[weak] / rate[strong] < 0.6",
+          "value": 1.0,
+          "passed": false
+        },
+        {
+          "description": "rate[strong] < 300.0 Hz",
+          "value": 0.0,
+          "passed": true
+        }
+      ],
+      "measurements": {
+        "weak": {
+          "rate": 0.0,
+          "network_rate": 0.019623907742826272,
+          "active_fraction": 0.0010412552511579476,
+          "spikes": 1621.0,
+          "rate[default]": 0.0,
+          "readout_active_fraction[default]": 0.0
+        },
+        "strong": {
+          "rate": 0.0,
+          "network_rate": 0.10648875019992753,
+          "active_fraction": 0.0014146709274352805,
+          "spikes": 8837.0,
+          "rate[default]": 0.0,
+          "readout_active_fraction[default]": 0.0
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "sugar_grn": 129
+      },
+      "seconds": 9.13037371635437,
+      "notes": []
+    },
+    {
+      "task": "adaptation",
+      "title": "Repeated sugar gives a smaller second response",
+      "passed": false,
+      "score": 0.0,
+      "checks": [
+        {
+          "description": "rate[two_pulses] > 5.0 Hz",
+          "value": 0.0,
+          "passed": false
+        },
+        {
+          "description": "rate[two_pulses, 950-1300ms] / rate[two_pulses] < 0.7",
+          "value": 1.0,
+          "passed": false
+        }
+      ],
+      "measurements": {
+        "two_pulses": {
+          "rate": 0.0,
+          "network_rate": 0.10640295039418948,
+          "active_fraction": 0.0014074898567376396,
+          "spikes": 11652.0,
+          "rate[default]": 0.0,
+          "readout_active_fraction[default]": 0.0
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "pulse1": 129,
+        "pulse2": 129
+      },
+      "seconds": 7.426630735397339,
+      "notes": []
+    },
+    {
+      "task": "olfactory_sparse_coding",
+      "title": "One odour channel stays one channel",
+      "passed": false,
+      "score": 0.75,
+      "checks": [
+        {
+          "description": "rate[cva, da1_pn] > 10.0 Hz",
+          "value": 420.0,
+          "passed": true
+        },
+        {
+          "description": "rate[cva, da1_pn] / rate[baseline] > 5.0",
+          "value": 420000.99999999994,
+          "passed": true
+        },
+        {
+          "description": "readout active fraction[cva, all_pn] < 0.3",
+          "value": 0.8111888111888111,
+          "passed": false
+        },
+        {
+          "description": "active fraction[cva] < 0.05",
+          "value": 0.04059459265376467,
+          "passed": true
+        }
+      ],
+      "measurements": {
+        "baseline": {
+          "rate": 0.0,
+          "network_rate": 0.0,
+          "active_fraction": 0.0,
+          "spikes": 0.0,
+          "rate[da1_pn]": 0.0,
+          "readout_active_fraction[da1_pn]": 0.0,
+          "rate[all_pn]": 0.0,
+          "readout_active_fraction[all_pn]": 0.0
+        },
+        "cva": {
+          "rate": 420.0,
+          "network_rate": 4.522702157113847,
+          "active_fraction": 0.04059459265376467,
+          "spikes": 356587.0,
+          "rate[da1_pn]": 420.0,
+          "readout_active_fraction[da1_pn]": 1.0,
+          "rate[all_pn]": 221.7171717171717,
+          "readout_active_fraction[all_pn]": 0.8111888111888111
+        }
+      },
+      "readout_size": 17,
+      "stimulus_sizes": {
+        "da1_orn": 127
+      },
+      "seconds": 7.649307489395142,
+      "notes": []
+    },
+    {
+      "task": "crosstalk",
+      "title": "Taste does not trigger escape; looming does not trigger feeding",
+      "passed": false,
+      "score": 0.75,
+      "checks": [
+        {
+          "description": "rate[sugar, mn9] > 5.0 Hz",
+          "value": 0.0,
+          "passed": false
+        },
+        {
+          "description": "rate[sugar, gf] < 2.0 Hz",
+          "value": 0.0,
+          "passed": true
+        },
+        {
+          "description": "rate[loom, gf] > 5.0 Hz",
+          "value": 435.45454545454544,
+          "passed": true
+        },
+        {
+          "description": "rate[loom, mn9] < 2.0 Hz",
+          "value": 0.0,
+          "passed": true
+        }
+      ],
+      "measurements": {
+        "sugar": {
+          "rate": 0.0,
+          "network_rate": 0.10648875019992753,
+          "active_fraction": 0.0014146709274352805,
+          "spikes": 8837.0,
+          "rate[mn9]": 0.0,
+          "readout_active_fraction[mn9]": 0.0,
+          "rate[gf]": 0.0,
+          "readout_active_fraction[gf]": 0.0
+        },
+        "loom": {
+          "rate": 0.0,
+          "network_rate": 0.4884042028848319,
+          "active_fraction": 0.00430146134788697,
+          "spikes": 40754.0,
+          "rate[mn9]": 0.0,
+          "readout_active_fraction[mn9]": 0.0,
+          "rate[gf]": 435.45454545454544,
+          "readout_active_fraction[gf]": 1.0
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "sugar_grn": 129,
+        "looming_detectors": 314
+      },
+      "seconds": 10.492278337478638,
+      "notes": []
+    },
+    {
+      "task": "looming_dn_ensemble",
+      "title": "Looming recruits the takeoff ensemble, not the whole descending tract",
+      "passed": true,
+      "score": 1.0,
+      "checks": [
+        {
+          "description": "rate[loom, gf] > 5.0 Hz",
+          "value": 433.9285714285714,
+          "passed": true
+        },
+        {
+          "description": "rate[loom, dnp] > 5.0 Hz",
+          "value": 172.32142857142856,
+          "passed": true
+        },
+        {
+          "description": "readout active fraction[loom, all_dn] < 0.15",
+          "value": 0.02681992337164751,
+          "passed": true
+        }
+      ],
+      "measurements": {
+        "baseline": {
+          "rate": 0.0,
+          "network_rate": 0.0,
+          "active_fraction": 0.0,
+          "spikes": 0.0,
+          "rate[gf]": 0.0,
+          "readout_active_fraction[gf]": 0.0,
+          "rate[dnp]": 0.0,
+          "readout_active_fraction[dnp]": 0.0,
+          "rate[all_dn]": 0.0,
+          "readout_active_fraction[all_dn]": 0.0
+        },
+        "loom": {
+          "rate": 433.9285714285714,
+          "network_rate": 0.4881589273532112,
+          "active_fraction": 0.004251193853003482,
+          "spikes": 20367.0,
+          "rate[gf]": 433.9285714285714,
+          "readout_active_fraction[gf]": 1.0,
+          "rate[dnp]": 172.32142857142856,
+          "readout_active_fraction[dnp]": 1.0,
+          "rate[all_dn]": 5.421455938697317,
+          "readout_active_fraction[all_dn]": 0.02681992337164751
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "looming_detectors": 314
+      },
+      "seconds": 4.909614324569702,
+      "notes": []
+    },
+    {
+      "task": "flash_is_not_loom",
+      "title": "A uniform flash is not a looming object",
+      "passed": true,
+      "score": 1.0,
+      "checks": [
+        {
+          "description": "rate[flash, gf] < 5.0 Hz",
+          "value": 0.0,
+          "passed": true
+        },
+        {
+          "description": "rate[flash, lplc2] < 20.0 Hz",
+          "value": 0.0,
+          "passed": true
+        },
+        {
+          "description": "active fraction[flash] < 0.3",
+          "value": 0.09271480377724318,
+          "passed": true
+        }
+      ],
+      "measurements": {
+        "flash": {
+          "rate": 0.0,
+          "network_rate": 3.7576286052821906,
+          "active_fraction": 0.09271480377724318,
+          "spikes": 208625.0,
+          "rate[gf]": 0.0,
+          "readout_active_fraction[gf]": 0.0,
+          "rate[lplc2]": 0.0,
+          "readout_active_fraction[lplc2]": 0.0
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "photoreceptors": 11153
+      },
+      "seconds": 4.342736721038818,
       "notes": []
     }
   ],
-  "label": "LIF gain 0.3"
+  "label": "LIF gain 0.3",
+  "core_score": 0.6666666666666666,
+  "hard_score": 0.625
 }

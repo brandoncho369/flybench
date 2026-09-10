@@ -1,0 +1,25 @@
+name: flash_is_not_loom
+title: A uniform flash is not a looming object
+tier: hard
+description: >
+  LPLC2/LC4 respond to expanding edges, not to the whole eye lighting up.
+  Driving every photoreceptor at once (a full-field flash) should therefore
+  not fire the Giant Fiber the way looming does. In a pure connectome model
+  motion selectivity has to emerge from the lamina/medulla circuitry and the
+  synaptic delays alone — no dendritic nonlinearities, no adaptation — so this
+  is expected to be hard. Failure here means the model's visual front end is a
+  brightness detector, which is worth knowing before wiring it to a game.
+citation: von Reyn et al. 2014 (Nat. Neurosci.); Card & Dickinson 2008 (Curr. Biol.); Klapoetke et al. 2017 (Nature)
+duration_ms: 700
+window: [250, 600]
+readouts:
+  gf:   {select: {any: [{cell_type: GF}, {cell_type: DNp01}, {hemibrain_type: "Giant Fiber"}]}}
+  lplc2: {select: {any: [{cell_type: LPLC2}, {hemibrain_type: LPLC2}]}}
+conditions:
+  flash:
+    stimuli:
+      - {name: photoreceptors, select: {any: [{sub_class: photo_receptor}, {cell_type_regex: "^R[1-8]"}]}, rate_hz: 50, t_start_ms: 200, t_end_ms: 600}
+checks:
+  - {type: rate, cond: flash, readout: gf, op: "<", value: 5}
+  - {type: rate, cond: flash, readout: lplc2, op: "<", value: 20}
+  - {type: active_fraction, cond: flash, op: "<", value: 0.3}
