@@ -34,6 +34,17 @@ def build(codex_dir, name, min_synapses, cache):
     c = build_from_codex(codex_dir, min_synapses=min_synapses, name=name)
     p = c.save(Path(cache) / name)
     console.print(f"[green]saved[/] {c.n:,} neurons / {c.n_edges:,} edges → {p}")
+    # sanity report: the things that silently break task selectors when a file is missing
+    a = c.annotations
+    import numpy as np
+    def filled(col):
+        return int((a[col].astype(str) != "").sum()) if col in a else 0
+    console.print(f"  positions: {int(np.isfinite(c.positions).all(axis=1).sum()):,} / {c.n:,}   "
+                  f"cell_type: {filled('cell_type'):,}   labels: {filled('labels'):,}   "
+                  f"super_class: {filled('super_class'):,}")
+    for col, note in (("cell_type", "Cell Types file"), ("labels", "Community Labels file")):
+        if filled(col) == 0:
+            console.print(f"  [yellow]warning:[/] no {col} annotations — did you include the {note}? Most tasks will match 0 neurons.")
 
 
 @main.command()
@@ -122,6 +133,24 @@ def select(connectome, spec, cache):
     if idx.size:
         cols = [col for col in ("root_id", "cell_type", "hemibrain_type", "super_class", "nt_type", "labels") if col in c.annotations]
         console.print(c.annotations.iloc[idx[:15]][cols].to_string(index=False))
+
+
+@main.command()
+@click.argument("paths", nargs=-1, type=click.Path(exists=True))
+def lint(paths):
+    """Validate task YAML files (defaults to tasks/)."""
+    from .bench import TASK_DIR
+    from .lint import lint_files
+
+    files = [Path(p) for p in paths] or sorted(TASK_DIR.glob("*.yaml"))
+    problems = lint_files(files)
+    for f in files:
+        errs = problems.get(str(f))
+        console.print(("[red]✗[/] " if errs else "[green]✓[/] ") + f.name)
+        for e in errs or []:
+            console.print(f"    {e}")
+    if problems:
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

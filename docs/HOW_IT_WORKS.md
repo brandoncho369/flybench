@@ -116,7 +116,7 @@ checks:
 
 A task has a readout population, one or more named conditions (each a list of stimuli), and checks. `bench.py:run_task()` builds one `LIFSimulator`, runs every condition from a fresh reset, records readout rate / network rate / active fraction per condition, then evaluates each check. Check types are `rate` (readout Hz in a condition), `network_rate`, `active_fraction`, and `ratio` (readout rate in one condition divided by another, with a small epsilon so 0/0 is defined). A task passes if all checks pass; its `score` is the fraction of checks passed so partial credit is visible. The suite score is the mean over tasks.
 
-The five tasks and the reasoning behind each: `stability` is silence in, silence out, the guard against "everything fires so everything passes". `sugar_to_proboscis` is the headline reflex. `bitter_suppression` checks that sugar+bitter drives MN9 less than half as much as sugar alone, which requires the inhibitory signs to be right. `looming_to_giant_fiber` is the escape pathway, a different circuit entirely. `taste_specificity` is a negative control: bitter alone must not drive MN9. Two positive tests, one interaction, one negative control, one sanity guard is the minimum that makes the score meaningful.
+The five core tasks and the reasoning behind each (six harder tasks were added later as a `hard` tier; see the README): `stability` is silence in, silence out, the guard against "everything fires so everything passes". `sugar_to_proboscis` is the headline reflex. `bitter_suppression` checks that sugar+bitter drives MN9 less than half as much as sugar alone, which requires the inhibitory signs to be right. `looming_to_giant_fiber` is the escape pathway, a different circuit entirely. `taste_specificity` is a negative control: bitter alone must not drive MN9. Two positive tests, one interaction, one negative control, one sanity guard is the minimum that makes the score meaningful.
 
 ### 4.2 What the gain sweep showed
 
@@ -134,7 +134,7 @@ On the toy connectome with the default weight, gain 0.3 fails the taste tasks (M
 
 ### 5.1 Structure
 
-Next.js App Router, TypeScript, Tailwind, three.js via react-three-fiber. Four files matter: `src/lib/types.ts` (the message protocol and the constants), `src/workers/lif.worker.ts` (the simulation), `src/components/Brain.tsx` (rendering), `src/app/page.tsx` (UI and plumbing). `public/data/toy/` is the shipped export; `public/data/flywire783/` is where the real one goes and is git-ignored.
+Next.js App Router, TypeScript, Tailwind, three.js via react-three-fiber. Five files matter: `src/lib/types.ts` (the message protocol and the constants), `src/lib/lif.ts` (the simulation core, pure TypeScript with unit tests), `src/workers/lif.worker.ts` (the Web Worker that loads data and drives the core), `src/components/Brain.tsx` (rendering), `src/app/page.tsx` (UI and plumbing, with a `?` help popover on every control). `public/data/toy/` is the shipped export; `public/data/flywire783/` is where the real one goes and is git-ignored.
 
 ### 5.2 Why a Web Worker
 

@@ -138,8 +138,12 @@ def select(ann: pd.DataFrame, spec: dict | str | list) -> np.ndarray:
     return np.flatnonzero(mask)
 
 
-def _mask(ann: pd.DataFrame, spec: dict) -> np.ndarray:
+def _mask(ann: pd.DataFrame, spec: dict | str | list) -> np.ndarray:
     n = len(ann)
+    if isinstance(spec, str):          # shorthand works at any nesting depth
+        spec = {"cell_type": spec}
+    if isinstance(spec, list):
+        spec = {"any": spec}
     if not spec:
         return np.zeros(n, dtype=bool)
     mask = np.ones(n, dtype=bool)
