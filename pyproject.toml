@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "flybench"
+version = "0.1.0"
+description = "A reflex benchmark for whole-brain fruit fly (Drosophila) connectome simulations."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Brandon Cho" }]
+dependencies = [
+  "numpy>=1.26",
+  "scipy>=1.11",
+  "pandas>=2.0",
+  "pyyaml>=6.0",
+  "click>=8.1",
+  "rich>=13.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+flybench = "flybench.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["flybench*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

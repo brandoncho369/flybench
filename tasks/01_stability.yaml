@@ -1,0 +1,16 @@
+name: stability
+title: Silence in, silence out
+description: >
+  With no sensory drive the network must not spontaneously light up. A model
+  whose gain is too high "passes" every reflex because everything fires; this
+  task is the guard against that. (Real flies do have spontaneous activity —
+  the LIF model has none by construction, so quiet is the correct answer here.)
+citation: Shiu et al. 2024, Nature — model is silent without input by design
+duration_ms: 500
+readout:
+  select: {all: true}
+conditions:
+  baseline: {stimuli: []}
+checks:
+  - {type: network_rate, cond: baseline, op: "<", value: 0.5}
+  - {type: active_fraction, cond: baseline, op: "<", value: 0.01}

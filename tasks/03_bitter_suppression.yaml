@@ -1,0 +1,34 @@
+name: bitter_suppression
+title: Bitter suppresses the sugar response
+description: >
+  Co-activating bitter GRNs with sugar GRNs should reduce MN9 output relative
+  to sugar alone. Flies reject sucrose laced with quinine; the connectome
+  should show why (bitter-driven inhibition onto the sugar pathway).
+citation: Shiu et al. 2024 (Nature) Fig. 3; Jaeger et al. 2018
+duration_ms: 1000
+window: [250, 800]
+readout:
+  select: {any: [{cell_type: MN9}, {hemibrain_type: MN9}]}
+conditions:
+  sugar:
+    stimuli:
+      - name: sugar_grn
+        select: {all_of: [{labels_regex: "sugar"}, {super_class: sensory}, {not: {labels_regex: "bitter"}}]}
+        rate_hz: 100
+        t_start_ms: 200
+        t_end_ms: 800
+  sugar_plus_bitter:
+    stimuli:
+      - name: sugar_grn
+        select: {all_of: [{labels_regex: "sugar"}, {super_class: sensory}, {not: {labels_regex: "bitter"}}]}
+        rate_hz: 100
+        t_start_ms: 200
+        t_end_ms: 800
+      - name: bitter_grn
+        select: {all_of: [{labels_regex: "bitter"}, {super_class: sensory}]}
+        rate_hz: 100
+        t_start_ms: 200
+        t_end_ms: 800
+checks:
+  - {type: rate, cond: sugar, op: ">", value: 5}
+  - {type: ratio, cond: sugar_plus_bitter, over: sugar, op: "<", value: 0.5}

@@ -1,0 +1,11 @@
+# Shiu et al. 2024 (Nature) defaults, as calibrated on FlyWire (female).
+v_rest_mv: -52.0
+v_reset_mv: -52.0
+v_th_mv: -45.0
+tau_m_ms: 20.0
+tau_syn_ms: 5.0
+t_ref_ms: 2.2
+delay_ms: 1.8
+w_syn_mv: 0.275
+gain: 1.0
+dt_ms: 0.1

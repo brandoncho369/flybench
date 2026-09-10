@@ -1,0 +1,22 @@
+name: taste_specificity
+title: Bitter alone does not extend the proboscis
+description: >
+  A negative control. Bitter GRNs alone should not drive MN9; if they do, the
+  model has lost the sign of its inhibitory synapses or the gain is high enough
+  that any input reaches any output.
+citation: Shiu et al. 2024 (Nature)
+duration_ms: 1000
+window: [250, 800]
+readout:
+  select: {any: [{cell_type: MN9}, {hemibrain_type: MN9}]}
+conditions:
+  bitter:
+    stimuli:
+      - name: bitter_grn
+        select: {all_of: [{labels_regex: "bitter"}, {super_class: sensory}]}
+        rate_hz: 100
+        t_start_ms: 200
+        t_end_ms: 800
+checks:
+  - {type: rate, cond: bitter, op: "<", value: 2}
+  - {type: active_fraction, cond: bitter, op: "<", value: 0.1}

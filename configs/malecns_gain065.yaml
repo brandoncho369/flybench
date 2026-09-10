@@ -1,0 +1,5 @@
+# The gain the viral Minecraft demo used for the MaleCNS connectome, which has
+# more synapses per neuron than FlyWire. Run it against FlyWire and see what
+# breaks — that's the point of having a benchmark.
+w_syn_mv: 0.275
+gain: 0.65
