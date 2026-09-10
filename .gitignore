@@ -3,7 +3,9 @@ __pycache__/
 .pytest_cache/
 dist/
 build/
-results/
+results/*
+!results/*.json
+!results/README.md
 *.csv
 *.csv.gz
 data/

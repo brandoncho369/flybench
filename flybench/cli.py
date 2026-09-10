@@ -10,7 +10,7 @@ from rich.markup import escape
 from rich.table import Table
 
 from . import __version__
-from .bench import leaderboard, load_tasks, run_suite, save_report
+from .bench import leaderboard, load_tasks, resolve_simulator, run_suite, save_report
 from .connectome import DEFAULT_CACHE, build_from_codex, load_connectome
 from .sim import LIFParams
 
@@ -52,8 +52,9 @@ def toy(cache):
 @click.option("--out", "-o", default=None, help="write JSON report here")
 @click.option("--label", default="", help="label for the leaderboard")
 @click.option("--cache", default=str(DEFAULT_CACHE), show_default=True)
+@click.option("--simulator", default=None, help="custom simulator as 'module:Class' (see CONTRIBUTING.md)")
 @click.option("-v", "--verbose", is_flag=True)
-def run(connectome, config, gain, task_paths, out, label, cache, verbose):
+def run(connectome, config, gain, task_paths, out, label, cache, simulator, verbose):
     """Run the benchmark suite."""
     c = load_connectome(connectome, cache)
     overrides = yaml.safe_load(Path(config).read_text()) if config else {}
@@ -62,7 +63,7 @@ def run(connectome, config, gain, task_paths, out, label, cache, verbose):
     params = LIFParams.from_dict(overrides or {})
     console.print(f"[bold]{c.name}[/]: {c.n:,} neurons, {c.n_edges:,} edges · gain={params.gain} w_syn={params.w_syn_mv} mV")
     tasks = load_tasks([Path(p) for p in task_paths]) if task_paths else load_tasks()
-    report = run_suite(c, params, tasks, verbose=verbose)
+    report = run_suite(c, params, tasks, verbose=verbose, simulator=resolve_simulator(simulator))
     report["label"] = label or (Path(config).stem if config else f"gain{params.gain}")
 
     table = Table(title=f"flybench · score {report['score']:.2f} · {report['passed']}/{report['n_tasks']} tasks")
@@ -120,3 +121,7 @@ def select(connectome, spec, cache):
     if idx.size:
         cols = [col for col in ("root_id", "cell_type", "hemibrain_type", "super_class", "nt_type", "labels") if col in c.annotations]
         console.print(c.annotations.iloc[idx[:15]][cols].to_string(index=False))
+
+
+if __name__ == "__main__":
+    main()

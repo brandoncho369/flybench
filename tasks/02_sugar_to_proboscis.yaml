@@ -9,17 +9,17 @@ citation: Dethier 1976; Shiu et al. 2024 (Nature) Fig. 2
 duration_ms: 1000
 window: [250, 800]
 readout:
-  select: {any: [{cell_type: MN9}, {hemibrain_type: MN9}]}
+  select: {any: [{cell_type: MN9}, {cell_type: CB0701}, {hemibrain_type: MN9}, {all_of: [{labels_regex: "\\bMN9\\b"}, {super_class: motor}]}]}
 conditions:
   baseline: {stimuli: []}
   sugar:
     stimuli:
       - name: sugar_grn
-        select: {all_of: [{labels_regex: "sugar"}, {super_class: sensory}, {not: {labels_regex: "bitter"}}]}
+        select: {any: [{sub_class: "sugar/water"}, {all_of: [{labels_regex: "sugar"}, {super_class: sensory}, {not: {labels_regex: "bitter"}}]}]}
         rate_hz: 100
         t_start_ms: 200
         t_end_ms: 800
 checks:
   - {type: rate, cond: sugar, op: ">", value: 5}
   - {type: ratio, cond: sugar, over: baseline, op: ">", value: 5}
-  - {type: active_fraction, cond: sugar, op: "<", value: 0.2}
+  - {type: active_fraction, cond: sugar, op: "<", value: 0.1}

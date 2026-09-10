@@ -8,12 +8,12 @@ citation: Shiu et al. 2024 (Nature)
 duration_ms: 1000
 window: [250, 800]
 readout:
-  select: {any: [{cell_type: MN9}, {hemibrain_type: MN9}]}
+  select: {any: [{cell_type: MN9}, {cell_type: CB0701}, {hemibrain_type: MN9}, {all_of: [{labels_regex: "\\bMN9\\b"}, {super_class: motor}]}]}
 conditions:
   bitter:
     stimuli:
       - name: bitter_grn
-        select: {all_of: [{labels_regex: "bitter"}, {super_class: sensory}]}
+        select: {any: [{sub_class: bitter}, {all_of: [{labels_regex: "bitter"}, {super_class: sensory}]}]}
         rate_hz: 100
         t_start_ms: 200
         t_end_ms: 800

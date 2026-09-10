@@ -1,0 +1,212 @@
+{
+  "connectome": "flywire783",
+  "n_neurons": 139255,
+  "n_edges": 3732460,
+  "params": {
+    "v_rest_mv": -52.0,
+    "v_reset_mv": -52.0,
+    "v_th_mv": -45.0,
+    "tau_m_ms": 20.0,
+    "tau_syn_ms": 5.0,
+    "t_ref_ms": 2.2,
+    "delay_ms": 1.8,
+    "w_syn_mv": 0.275,
+    "gain": 1.0,
+    "dt_ms": 0.1,
+    "seed": 0
+  },
+  "simulator": "flybench.sim.LIFSimulator",
+  "score": 0.8666666666666666,
+  "passed": 3,
+  "n_tasks": 5,
+  "tasks": [
+    {
+      "task": "stability",
+      "title": "Silence in, silence out",
+      "passed": true,
+      "score": 1.0,
+      "checks": [
+        {
+          "description": "network rate[baseline] < 0.5 Hz",
+          "value": 0.0,
+          "passed": true
+        },
+        {
+          "description": "active fraction[baseline] < 0.01",
+          "value": 0.0,
+          "passed": true
+        }
+      ],
+      "measurements": {
+        "baseline": {
+          "rate": 0.0,
+          "network_rate": 0.0,
+          "active_fraction": 0.0,
+          "spikes": 0.0
+        }
+      },
+      "readout_size": 139255,
+      "stimulus_sizes": {},
+      "seconds": 1.4336512088775635,
+      "notes": []
+    },
+    {
+      "task": "sugar_to_proboscis",
+      "title": "Sugar \u2192 proboscis extension",
+      "passed": false,
+      "score": 0.6666666666666666,
+      "checks": [
+        {
+          "description": "readout rate[sugar] > 5.0 Hz",
+          "value": 379.99999999999994,
+          "passed": true
+        },
+        {
+          "description": "rate[sugar] / rate[baseline] > 5.0",
+          "value": 380000.9999999999,
+          "passed": true
+        },
+        {
+          "description": "active fraction[sugar] < 0.1",
+          "value": 0.19423360022979427,
+          "passed": false
+        }
+      ],
+      "measurements": {
+        "baseline": {
+          "rate": 0.0,
+          "network_rate": 0.0,
+          "active_fraction": 0.0,
+          "spikes": 0.0
+        },
+        "sugar": {
+          "rate": 379.99999999999994,
+          "network_rate": 28.983388877827135,
+          "active_fraction": 0.19423360022979427,
+          "spikes": 3070570.0
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "sugar_grn": 129
+      },
+      "seconds": 12.943098545074463,
+      "notes": []
+    },
+    {
+      "task": "bitter_suppression",
+      "title": "Bitter suppresses the sugar response",
+      "passed": true,
+      "score": 1.0,
+      "checks": [
+        {
+          "description": "readout rate[sugar] > 5.0 Hz",
+          "value": 379.99999999999994,
+          "passed": true
+        },
+        {
+          "description": "rate[sugar_plus_bitter] / rate[sugar] < 0.5",
+          "value": 0.2368441135681222,
+          "passed": true
+        }
+      ],
+      "measurements": {
+        "sugar": {
+          "rate": 379.99999999999994,
+          "network_rate": 28.983388877827135,
+          "active_fraction": 0.19423360022979427,
+          "spikes": 3070570.0
+        },
+        "sugar_plus_bitter": {
+          "rate": 89.99999999999999,
+          "network_rate": 28.200978584088706,
+          "active_fraction": 0.19849915622419304,
+          "spikes": 3012178.0
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "sugar_grn": 129,
+        "bitter_grn": 65
+      },
+      "seconds": 19.360909938812256,
+      "notes": []
+    },
+    {
+      "task": "looming_to_giant_fiber",
+      "title": "Looming \u2192 giant fiber escape",
+      "passed": false,
+      "score": 0.6666666666666666,
+      "checks": [
+        {
+          "description": "readout rate[loom] > 5.0 Hz",
+          "value": 196.42857142857142,
+          "passed": true
+        },
+        {
+          "description": "rate[loom] / rate[baseline] > 5.0",
+          "value": 196429.57142857142,
+          "passed": true
+        },
+        {
+          "description": "active fraction[loom] < 0.1",
+          "value": 0.2016588273311551,
+          "passed": false
+        }
+      ],
+      "measurements": {
+        "baseline": {
+          "rate": 0.0,
+          "network_rate": 0.0,
+          "active_fraction": 0.0,
+          "spikes": 0.0
+        },
+        "loom": {
+          "rate": 196.42857142857142,
+          "network_rate": 25.77309355396318,
+          "active_fraction": 0.2016588273311551,
+          "spikes": 1431467.0
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "looming_detectors": 314
+      },
+      "seconds": 6.331645727157593,
+      "notes": []
+    },
+    {
+      "task": "taste_specificity",
+      "title": "Bitter alone does not extend the proboscis",
+      "passed": true,
+      "score": 1.0,
+      "checks": [
+        {
+          "description": "readout rate[bitter] < 2.0 Hz",
+          "value": 0.0,
+          "passed": true
+        },
+        {
+          "description": "active fraction[bitter] < 0.1",
+          "value": 0.0032602060967290222,
+          "passed": true
+        }
+      ],
+      "measurements": {
+        "bitter": {
+          "rate": 0.0,
+          "network_rate": 0.2002604770189417,
+          "active_fraction": 0.0032602060967290222,
+          "spikes": 16613.0
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "bitter_grn": 65
+      },
+      "seconds": 5.695995569229126,
+      "notes": []
+    }
+  ],
+  "label": "LIF gain 1.0"
+}

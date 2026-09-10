@@ -24,6 +24,22 @@ flywire783: 139,255 neurons, 2,7xx,xxx edges · gain=1.0 w_syn=0.275 mV
 └────────────────────────────────────────┴────────┴─────────────────────────────────────┘
 ```
 
+## First result: the reflex window on FlyWire v783
+
+Run against the real connectome (Codex v783, Princeton-filtered connections, ≥5 synapses, 139,255 neurons / 3.7 M edges), sweeping only the global gain:
+
+| gain | sugar → MN9 | bitter cancels sugar | looming → GF | brain awake during sugar | verdict |
+|---|---|---|---|---|---|
+| 0.30 | no | – | yes | 0.1 % | taste pathway never ignites |
+| 0.35 | no | – | yes | 0.2 % | same |
+| **0.40** | **yes** | **yes (to 0 Hz)** | **yes** | **8 %** | **passes everything** |
+| **0.45** | **yes** | **yes** | **yes** | **9 %** | **passes everything** |
+| 0.50 | yes | partially | yes | 10 % | bitter can't hold it down |
+| 0.70 | yes | yes | yes | 14 % | too much of the brain firing |
+| 1.00 (Shiu 2024) | yes | yes | yes | 19 % | a fifth of the brain at 29 Hz — not a reflex, a seizure |
+
+So on the July-2025 synapse predictions the working window is **gain ≈ 0.40–0.45**, less than half of the 1.0 that Shiu et al. calibrated on the earlier Buhmann predictions. That is the kind of thing this benchmark exists to catch: the connectome got re-predicted, the weights shifted, and a parameter that used to be right silently stopped being right. Full table with per-check values in [`LEADERBOARD.md`](LEADERBOARD.md); reproduce with the commands under *The real connectome*.
+
 ## The tasks
 
 | # | task | what it tests | source |
@@ -34,7 +50,7 @@ flywire783: 139,255 neurons, 2,7xx,xxx edges · gain=1.0 w_syn=0.275 mV
 | 4 | `looming_to_giant_fiber` | LPLC2 / LC4 → Giant Fiber (escape) fires | von Reyn et al. 2014; Ache et al. 2019 |
 | 5 | `taste_specificity` | bitter alone does **not** drive MN9 (negative control) | Shiu et al. 2024 |
 
-Each task is a YAML file in [`tasks/`](tasks/): a readout population, one or more stimulus conditions, and a list of checks. A task passes if every check passes; the suite score is the mean fraction of checks passed. Adding a task is adding a file. PRs with new, *cited* reflexes are the most useful contribution.
+Each task is a YAML file in [`tasks/`](tasks/): a readout population, one or more stimulus conditions, and a list of checks. A task passes if every check passes; the suite score is the mean fraction of checks passed. Adding a task is adding a file. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to submit results, tasks, or a different simulator (`--simulator mymodule:MyModel`).
 
 ## Install
 
@@ -47,15 +63,17 @@ pytest
 
 ### The real connectome
 
-1. Make a free account at [codex.flywire.ai](https://codex.flywire.ai) and download, for data version **783**: `connections.csv.gz`, `neurons.csv.gz`, `classification.csv.gz`, `labels.csv.gz`.
-2. Put them in one directory and build the cache (one-time, a few minutes, ~1 GB RAM):
+1. Sign in at [codex.flywire.ai](https://codex.flywire.ai) (free, Google account), open **Download Data**, dataset FAFB v783, and grab: *Connections (Filtered)*, *Neurotransmitter Type Predictions*, *Classification / Hierarchical Annotations*, *Community Labels (Raw)*, *Marked Neuron Coordinates*, *Cell Types*.
+2. Save them as `connections.csv.gz`, `neurons.csv.gz`, `classification.csv.gz`, `labels.csv.gz`, `coordinates.csv.gz`, `cell_types.csv.gz` in one directory and build the cache (one-time, ~30 s, ~2 GB RAM):
 
 ```bash
-flybench build ~/Downloads/flywire783 --name flywire783
+flybench build data/ --name flywire783
+flybench run -c flywire783 --gain 0.45 -v -o results/gain0.45.json
 flybench run -c flywire783 --config configs/shiu2024.yaml -o results/shiu2024.json
-flybench run -c flywire783 --gain 0.65 -o results/gain065.json
 flybench compare results/ -o LEADERBOARD.md
 ```
+
+Each full run is ~45 s on a laptop. Real neuron sets the tasks resolve to on v783: sugar GRNs = `sub_class: sugar/water` (129), bitter GRNs = `sub_class: bitter` (65), MN9 = `cell_type: CB0701` (2, labelled "Motor neuron 9; MN9"), Giant Fiber = `cell_type: DNp01` (2), looming = `LPLC2` + `LC4` (314).
 
 Edges with fewer than 5 synapses are dropped (`--min-synapses`), matching Shiu et al.
 

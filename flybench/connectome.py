@@ -207,6 +207,8 @@ def build_from_codex(codex_dir: Path | str, min_synapses: int = 5, name: str = "
       classification.csv[.gz]  root_id, flow, super_class, class, sub_class, cell_type,
                                hemibrain_type, hemilineage, side, nerve
       labels.csv[.gz]          root_id, label, ...   (community labels; optional)
+      coordinates.csv[.gz]     root_id, position     (marked neuron coordinates; optional, gives 3D positions)
+      cell_types.csv[.gz]      root_id, primary_type (consolidated cell types; optional, fills cell_type gaps)
     """
     d = Path(codex_dir)
     conn = pd.read_csv(_find(d, "connections"), dtype={"pre_root_id": np.int64, "post_root_id": np.int64})
@@ -234,21 +236,39 @@ def build_from_codex(codex_dir: Path | str, min_synapses: int = 5, name: str = "
     vals = conn["syn_count"].to_numpy().astype(np.float32) * sign_per_neuron[pre]
     W = sp.csr_matrix((vals, (pre, post)), shape=(n, n), dtype=np.float32)
 
-    # Positions.
+    # Positions: prefer coordinates.csv (Codex "Marked Neuron Coordinates"), else a position column in neurons.csv.
     positions = np.full((n, 3), np.nan, dtype=np.float32)
-    pos_col = next((c for c in neurons.columns if c.lower() in ("position", "pos", "soma_position")), None)
+    coords_path = _find(d, "coordinates", required=False)
+    pos_src = pd.read_csv(coords_path, dtype={"root_id": np.int64}) if coords_path is not None else neurons
+    pos_src = pos_src.drop_duplicates("root_id")
+    pos_col = next((c for c in pos_src.columns if c.lower() in ("position", "pos", "soma_position")), None)
     if pos_col is not None:
-        parsed = neurons[pos_col].astype(str).map(_parse_pos)
-        ok = parsed.map(lambda v: v is not None)
-        positions[index.get_indexer(neurons.loc[ok, "root_id"])] = np.stack(parsed[ok].to_list())
-    elif {"x", "y", "z"} <= set(neurons.columns):
-        positions[index.get_indexer(neurons["root_id"])] = neurons[["x", "y", "z"]].to_numpy(np.float32)
+        parsed = pos_src[pos_col].astype(str).map(_parse_pos)
+        ok = parsed.map(lambda v: v is not None).to_numpy()
+        rows = index.get_indexer(pos_src.loc[ok, "root_id"])
+        vals = np.stack(parsed[ok].to_list())
+        positions[rows[rows >= 0]] = vals[rows >= 0]
+    elif {"x", "y", "z"} <= set(pos_src.columns):
+        rows = index.get_indexer(pos_src["root_id"])
+        positions[rows[rows >= 0]] = pos_src[["x", "y", "z"]].to_numpy(np.float32)[rows >= 0]
 
     # Annotations.
     ann = pd.DataFrame({"root_id": root_ids})
     ann = ann.merge(classification, on="root_id", how="left")
     keep = [c for c in ("nt_type", "group") if c in neurons.columns]
     ann = ann.merge(neurons[["root_id", *keep]], on="root_id", how="left")
+    # Consolidated cell types (Codex "Cell Types"): fill empty cell_type from primary_type.
+    ct_path = _find(d, "cell_types", required=False)
+    if ct_path is not None:
+        ct = pd.read_csv(ct_path, dtype={"root_id": np.int64}, keep_default_na=False).drop_duplicates("root_id")
+        pt_col = next((c for c in ct.columns if c in ("primary_type", "cell_type", "type")), None)
+        if pt_col is not None:
+            ann = ann.merge(ct[["root_id", pt_col]].rename(columns={pt_col: "primary_type"}), on="root_id", how="left")
+            if "cell_type" in ann.columns:
+                empty = ann["cell_type"].isna() | (ann["cell_type"].astype(str) == "")
+                ann.loc[empty, "cell_type"] = ann.loc[empty, "primary_type"]
+            else:
+                ann["cell_type"] = ann["primary_type"]
     if labels_path is not None:
         labels = pd.read_csv(labels_path, dtype={"root_id": np.int64}, keep_default_na=False)
         lab_col = "label" if "label" in labels.columns else labels.columns[1]

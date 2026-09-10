@@ -26,12 +26,13 @@ shows up in the leaderboard.
 
 from __future__ import annotations
 
+import importlib
 import json
 import operator
 import time
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 import numpy as np
 import yaml
@@ -82,7 +83,20 @@ def _stimuli(c: Connectome, spec_list: list[dict], sizes: dict[str, int]) -> lis
     return out
 
 
-def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False) -> TaskResult:
+SimulatorFactory = Callable[[Connectome, LIFParams], Any]
+
+
+def resolve_simulator(spec: str | None) -> SimulatorFactory:
+    """'pkg.module:ClassOrFactory' -> callable(connectome, params) returning an object with .run()."""
+    if not spec:
+        return LIFSimulator
+    mod, _, attr = spec.partition(":")
+    obj = getattr(importlib.import_module(mod), attr or "Simulator")
+    return obj
+
+
+def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False,
+             simulator: SimulatorFactory = LIFSimulator) -> TaskResult:
     t0 = time.time()
     notes: list[str] = []
     readout = c.select(task["readout"]["select"])
@@ -90,7 +104,7 @@ def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False
         notes.append("readout selector matched 0 neurons")
     duration = float(task.get("duration_ms", 1000))
     window = task.get("window", [0, duration])
-    sim = LIFSimulator(c, params)
+    sim = simulator(c, params)
 
     measurements: dict[str, dict[str, float]] = {}
     stim_sizes: dict[str, int] = {}
@@ -140,19 +154,21 @@ def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False
     )
 
 
-def run_suite(c: Connectome, params: LIFParams, tasks: list[dict] | None = None, verbose: bool = False) -> dict[str, Any]:
+def run_suite(c: Connectome, params: LIFParams, tasks: list[dict] | None = None, verbose: bool = False,
+              simulator: SimulatorFactory = LIFSimulator) -> dict[str, Any]:
     tasks = tasks or load_tasks()
     results = []
     for task in tasks:
         if verbose:
             print(f"[{task['name']}] {task.get('title', '')}")
-        results.append(run_task(task, c, params, verbose=verbose))
+        results.append(run_task(task, c, params, verbose=verbose, simulator=simulator))
     total = float(np.mean([r.score for r in results])) if results else 0.0
     return {
         "connectome": c.name,
         "n_neurons": c.n,
         "n_edges": c.n_edges,
         "params": asdict(params),
+        "simulator": f"{simulator.__module__}.{getattr(simulator, '__name__', type(simulator).__name__)}",
         "score": total,
         "passed": sum(r.passed for r in results),
         "n_tasks": len(results),
@@ -172,11 +188,13 @@ def leaderboard(reports: list[dict]) -> str:
     if not reports:
         return "_no results_"
     task_names = [t["task"] for t in reports[0]["tasks"]]
-    head = "| run | connectome | gain | w_syn | score | " + " | ".join(task_names) + " |"
-    sep = "|" + "---|" * (5 + len(task_names))
+    head = "| run | connectome | simulator | gain | w_syn | score | max brain active | " + " | ".join(task_names) + " |"
+    sep = "|" + "---|" * (7 + len(task_names))
     rows = []
     for r in sorted(reports, key=lambda r: -r["score"]):
         cells = ["✅" if t["passed"] else f"{t['score']:.0%}" for t in r["tasks"]]
         p = r["params"]
-        rows.append(f"| {r.get('label', '')} | {r['connectome']} | {p['gain']} | {p['w_syn_mv']} | {r['score']:.2f} | " + " | ".join(cells) + " |")
+        sim = r.get("simulator", "flybench.sim.LIFSimulator").replace("flybench.sim.", "")
+        max_active = max((m["active_fraction"] for t in r["tasks"] for m in t["measurements"].values()), default=0.0)
+        rows.append(f"| {r.get('label', '')} | {r['connectome']} | {sim} | {p['gain']} | {p['w_syn_mv']} | {r['score']:.2f} | {max_active:.1%} | " + " | ".join(cells) + " |")
     return "\n".join([head, sep, *rows])

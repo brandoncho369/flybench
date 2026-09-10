@@ -22,13 +22,15 @@ CLASS_ORDER = ["other", "sensory", "visual_projection", "central", "descending",
 
 # Named neuron sets the explorer exposes as buttons. Same selector grammar as tasks.
 DEFAULT_SETS = {
-    "sugar GRNs":     {"all_of": [{"labels_regex": "sugar"}, {"super_class": "sensory"}, {"not": {"labels_regex": "bitter"}}]},
-    "bitter GRNs":    {"all_of": [{"labels_regex": "bitter"}, {"super_class": "sensory"}]},
+    "sugar GRNs":     {"any": [{"sub_class": "sugar/water"}, {"all_of": [{"labels_regex": "sugar"}, {"super_class": "sensory"}, {"not": {"labels_regex": "bitter"}}]}]},
+    "bitter GRNs":    {"any": [{"sub_class": "bitter"}, {"all_of": [{"labels_regex": "bitter"}, {"super_class": "sensory"}]}]},
     "water GRNs":     {"all_of": [{"labels_regex": "water"}, {"super_class": "sensory"}]},
     "looming (LPLC2/LC4)": {"any": [{"cell_type": "LPLC2"}, {"cell_type": "LC4"}, {"hemibrain_type": "LPLC2"}, {"hemibrain_type": "LC4"}]},
     "olfactory RNs":  {"any": [{"class": "olfactory"}, {"cell_type": "ORN"}, {"labels_regex": "ORN"}]},
-    "MN9 (proboscis)": {"any": [{"cell_type": "MN9"}, {"hemibrain_type": "MN9"}]},
-    "Giant Fiber":    {"any": [{"cell_type": "GF"}, {"hemibrain_type": "Giant Fiber"}, {"cell_type": "DNp01"}]},
+    "MN9 (proboscis)": {"any": [{"cell_type": "MN9"}, {"cell_type": "CB0701"}, {"hemibrain_type": "MN9"}, {"all_of": [{"labels_regex": r"\bMN9\b"}, {"super_class": "motor"}]}]},
+    "Giant Fiber":    {"any": [{"cell_type": "GF"}, {"cell_type": "DNp01"}, {"hemibrain_type": "Giant Fiber"}, {"all_of": [{"labels_regex": "giant fib"}, {"super_class": "descending"}]}]},
+    "JO (antennal mechanosensory)": {"cell_type_regex": "^JO-"},
+    "photoreceptors": {"sub_class": "photo_receptor"},
     "descending neurons": {"super_class": "descending"},
 }
 

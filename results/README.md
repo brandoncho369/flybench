@@ -1,0 +1,1 @@
+Each JSON here is one `flybench run ... -o results/<name>.json`. `flybench compare results/ -o LEADERBOARD.md` regenerates the table. To submit a result, open a PR adding your JSON (and, if you used a custom simulator or task, the code that produced it).
