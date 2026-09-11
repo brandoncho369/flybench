@@ -7,6 +7,8 @@ Files written to <out>/:
   indices.bin     int32   (nnz)   postsynaptic index
   weights.bin     float32 (nnz)   signed synapse counts
   classes.bin     uint8   (n)     colour class per neuron (see CLASS_ORDER)
+  types.bin       uint16  (n)     cell-type id per neuron (0 = untyped)
+  types.json      {names: [...], counts: [...], super_class: [...]}  id -> name, ordered by count desc
 """
 
 from __future__ import annotations
@@ -61,6 +63,28 @@ def export_web(c: Connectome, out: Path | str, sets: dict | None = None, max_neu
     (out / "indices.bin").write_bytes(W.indices.astype(np.int32).tobytes())
     (out / "weights.bin").write_bytes(W.data.astype(np.float32).tobytes())
     (out / "classes.bin").write_bytes(cls.tobytes())
+    # every annotated cell type, so the explorer can activate any of them by name
+    ct = c.annotations["cell_type"].astype(str).to_numpy() if "cell_type" in c.annotations else np.full(c.n, "")
+    ct = np.where(ct == "nan", "", ct)
+    names, inv, counts = np.unique(ct, return_inverse=True, return_counts=True)
+    order = np.argsort(-counts, kind="stable")
+    order = np.concatenate([[int(np.flatnonzero(names == "")[0])] if "" in names else [], [i for i in order if names[i] != ""]]).astype(int)
+    remap = np.empty(len(names), dtype=np.int64); remap[order] = np.arange(len(names))
+    ids = remap[inv]
+    if ids.max() > 65535:
+        raise ValueError("more than 65535 cell types; widen types.bin")
+    if "" not in names:   # keep id 0 reserved for "untyped"
+        ids = ids + 1
+    type_sc = []
+    for i in order:
+        rows = np.flatnonzero(inv == i)
+        vals, cnt = np.unique(sc[rows], return_counts=True)
+        type_sc.append(str(vals[np.argmax(cnt)]))
+    tnames = [str(names[i]) for i in order]; tcounts = [int(counts[i]) for i in order]
+    if "" not in names:
+        tnames.insert(0, ""); tcounts.insert(0, 0); type_sc.insert(0, "other")
+    (out / "types.bin").write_bytes(ids.astype(np.uint16).tobytes())
+    (out / "types.json").write_text(json.dumps({"names": tnames, "counts": tcounts, "super_class": type_sc}), encoding="utf-8")
     meta = {
         "name": c.name,
         "n": int(c.n),
