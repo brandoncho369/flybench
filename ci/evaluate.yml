@@ -1,0 +1,71 @@
+# Evaluates submission configs on the real connectome.
+#   pull_request: run every config the PR adds/changes, comment the scores on the PR.
+#   push to default branch: run any config that has no result yet, commit the result + leaderboard, ping the website.
+# The prebuilt connectome cache (18 MB) is fetched from the release tagged `cache-flywire783`.
+name: evaluate
+on:
+  pull_request:
+    paths: ["configs/submissions/*.yaml"]
+  push:
+    branches: [main, master]
+    paths: ["configs/submissions/*.yaml"]
+permissions:
+  contents: write
+  pull-requests: write
+concurrency:
+  group: evaluate-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install -e .
+      - name: pick configs
+        id: pick
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git diff --name-only --diff-filter=AM origin/${{ github.base_ref }}...HEAD -- 'configs/submissions/*.yaml' > configs.txt
+          else
+            : > configs.txt
+            for f in configs/submissions/*.yaml; do
+              s=$(python -c "import sys,yaml,flybench.evaluate as e; print(e.slug(yaml.safe_load(open(sys.argv[1]))['label']))" "$f")
+              [ -f "results/$s.json" ] || echo "$f" >> configs.txt
+            done
+          fi
+          echo "count=$(grep -c . configs.txt || true)" >> "$GITHUB_OUTPUT"; cat configs.txt
+      - name: evaluate
+        if: steps.pick.outputs.count != '0'
+        run: |
+          : > comment.md
+          while read -r f; do
+            [ -z "$f" ] && continue
+            flybench evaluate "$f" --comment part.md
+            cat part.md >> comment.md; echo >> comment.md
+          done < configs.txt
+      - name: comment on PR
+        if: github.event_name == 'pull_request' && steps.pick.outputs.count != '0'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const body = fs.readFileSync('comment.md', 'utf8');
+            await github.rest.issues.createComment({ ...context.repo, issue_number: context.issue.number, body });
+      - name: commit results + leaderboard
+        if: github.event_name == 'push' && steps.pick.outputs.count != '0'
+        run: |
+          flybench validate results/
+          flybench compare results/ -o LEADERBOARD.md
+          git config user.name "flybench-bot" && git config user.email "bot@fly-bench.com"
+          git add results/*.json LEADERBOARD.md
+          git diff --cached --quiet || git commit -m "results: evaluate merged submissions [skip ci]" && git push
+      - name: notify fly-explorer
+        if: github.event_name == 'push' && steps.pick.outputs.count != '0' && env.TOKEN != ''
+        env: { TOKEN: "${{ secrets.FLY_EXPLORER_TOKEN }}" }
+        run: |
+          curl -sS -X POST -H "Authorization: Bearer $TOKEN" -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/brandoncho369/fly-explorer/dispatches -d '{"event_type":"flybench-results"}'

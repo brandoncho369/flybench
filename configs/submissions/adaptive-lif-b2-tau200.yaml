@@ -1,0 +1,10 @@
+label: Adaptive LIF (b 2 mV, tau 200 ms)
+note: LIF + spike-frequency adaptation (Benda & Herz 2003), gain 0.45. Hypothesis for an off switch; not a claim of biological accuracy.
+connectome: flywire783
+seeds: 3
+params:
+  gain: 0.45
+  extra:
+    b_mv: 2.0
+    tau_a_ms: 200.0
+simulator: flybench.models.adaptive_lif:AdaptiveLIFSimulator

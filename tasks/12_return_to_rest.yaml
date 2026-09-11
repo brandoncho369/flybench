@@ -1,0 +1,26 @@
+name: return_to_rest
+title: The brain goes quiet again after the stimulus ends
+tier: hard
+description: >
+  A real fly tastes sugar, extends its proboscis, and a second later is at rest
+  again. In this model a half-second taste of sugar leaves ~8% of the brain
+  firing at a constant rate indefinitely: recurrent excitation sustains itself
+  and nothing in a static wiring diagram with five constants can switch it off
+  (no spike-frequency adaptation, no short-term synaptic depression, no
+  neuromodulation). This task stimulates for 500 ms, then measures 1–1.3 s after
+  the stimulus stopped. It is the clearest single number for "what a wiring
+  diagram is missing".
+citation: Dethier 1976 (PER duration); Shiu et al. 2024 (activity tracks stimulus); Benda & Herz 2003 (adaptation)
+duration_ms: 2000
+window: [250, 700]
+readout:
+  select: {any: [{cell_type: MN9}, {cell_type: CB0701}, {hemibrain_type: MN9}, {all_of: [{labels_regex: "\\bMN9\\b"}, {super_class: motor}]}]}
+conditions:
+  sugar:
+    stimuli:
+      - {name: sugar_grn, select: {any: [{sub_class: "sugar/water"}, {all_of: [{labels_regex: "sugar"}, {super_class: sensory}, {not: {labels_regex: "bitter"}}]}]}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
+checks:
+  - {type: rate, cond: sugar, op: ">", value: 5}                                        # it did respond
+  - {type: rate, cond: sugar, op: "<", value: 5, window: [1700, 2000]}                  # ...and stopped
+  - {type: network_rate, cond: sugar, op: "<", value: 0.5, window: [1700, 2000]}
+  - {type: active_fraction, cond: sugar, op: "<", value: 0.01, window: [1700, 2000]}

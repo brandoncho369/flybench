@@ -42,6 +42,7 @@ class LIFParams:
     gain: float = 1.0           # global multiplier on all weights
     dt_ms: float = 0.1
     seed: int = 0
+    extra: dict = field(default_factory=dict)   # model-specific constants for alternative simulators
 
     @classmethod
     def from_dict(cls, d: dict) -> "LIFParams":

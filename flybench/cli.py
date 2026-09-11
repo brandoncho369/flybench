@@ -211,5 +211,59 @@ def verify(report, cache, tolerance, mark):
         console.print(f"marked verified → {report}")
 
 
+@main.command()
+@click.argument("report", type=click.Path(exists=True, dir_okay=False))
+@click.option("--note", default="", help="one line: what you changed vs. the reference model")
+@click.option("--dry-run", is_flag=True, help="show the PR that would be opened, change nothing")
+def submit(report, note, dry_run):
+    """Validate a result and open the pull request for it (needs the GitHub CLI, `gh`)."""
+    from .submit import submit as _submit
+
+    raise SystemExit(_submit(Path(report), note=note, dry_run=dry_run))
+
+
+@main.command()
+@click.argument("config", type=click.Path(exists=True, dir_okay=False))
+@click.option("--out", "-o", default=None, help="result JSON (default results/<slug>.json)")
+@click.option("--comment", default=None, help="write the markdown summary here (CI posts it on the PR)")
+@click.option("--seeds", default=None, type=int, help="override the config's seed count")
+@click.option("--cache", default=str(DEFAULT_CACHE), show_default=True)
+def evaluate(config, out, comment, seeds, cache):
+    """Evaluate a submission config (configs/submissions/*.yaml) on the real connectome. This is what CI runs."""
+    from .evaluate import evaluate as _evaluate
+
+    _evaluate(Path(config), Path(out) if out else None, Path(comment) if comment else None, Path(cache), seeds)
+
+
+@main.command()
+@click.argument("label")
+@click.option("--gain", type=float, required=True)
+@click.option("--note", default="", help="one line: what you changed")
+@click.option("--seeds", default=3, show_default=True)
+@click.option("--simulator", default="flybench.sim:LIFSimulator", show_default=True)
+@click.option("--open-pr", is_flag=True, help="also branch, commit and open the pull request (needs gh)")
+def propose(label, gain, note, seeds, simulator, open_pr):
+    """Write a submission config for CI to evaluate. Nothing runs locally."""
+    from .evaluate import slug, validate_submission
+
+    cfg = {"label": label, "note": note, "connectome": "flywire783", "seeds": seeds, "params": {"gain": gain}, "simulator": simulator}
+    errs = validate_submission(cfg)
+    if errs:
+        console.print("[red]invalid:[/]"); [console.print("  " + e) for e in errs]; raise SystemExit(1)
+    path = Path("configs/submissions") / f"{slug(label)}.yaml"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(yaml.safe_dump(cfg, sort_keys=False), encoding="utf-8")
+    console.print(f"[green]wrote[/] {path}")
+    if open_pr:
+        import subprocess
+        branch = f"submit/{slug(label)}"
+        subprocess.run(["git", "checkout", "-B", branch], check=True)
+        subprocess.run(["git", "add", str(path)], check=True)
+        subprocess.run(["git", "commit", "-m", f"Submission: {label}"], check=True)
+        subprocess.run(["gh", "pr", "create", "--repo", "brandoncho369/flybench", "--title", f"Submission: {label}", "--body", f"{note}\n\n_CI will evaluate this config and comment the scores._", "--head", branch], check=False)
+    else:
+        console.print("next: commit it on a branch and open a PR (or rerun with --open-pr). CI does the rest.")
+
+
 if __name__ == "__main__":
     main()

@@ -1,0 +1,7 @@
+label: LIF gain 0.45 (reference)
+note: Shiu 2024 constants, gain 0.45 — the robust core window on FlyWire v783
+connectome: flywire783
+seeds: 3
+params:
+  gain: 0.45
+simulator: flybench.sim:LIFSimulator

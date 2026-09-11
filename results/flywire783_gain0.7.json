@@ -1,13 +1,14 @@
 {
   "schema": 1,
   "flybench_version": "0.1.0",
-  "label": "LIF gain 0.7",
+  "seeds": 1,
+  "verified": true,
+  "core_score": 0.8666666666666666,
+  "hard_score": 0.738095238095238,
   "tier": [
     "core",
     "hard"
   ],
-  "seeds": 1,
-  "verified": true,
   "connectome": "flywire783",
   "connectome_meta": {
     "source": "flywire-codex",
@@ -31,11 +32,9 @@
     "seed": 0
   },
   "simulator": "flybench.sim.LIFSimulator",
-  "core_score": 0.8666666666666666,
-  "hard_score": 0.8194444444444443,
-  "score": 0.8409090909090909,
+  "score": 0.7916666666666666,
   "passed": 6,
-  "n_tasks": 11,
+  "n_tasks": 12,
   "tasks": [
     {
       "task": "stability",
@@ -66,7 +65,7 @@
       },
       "readout_size": 139255,
       "stimulus_sizes": {},
-      "seconds": 1.3998045921325684,
+      "seconds": 1.096259355545044,
       "notes": []
     },
     {
@@ -113,7 +112,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 11.847205400466919,
+      "seconds": 8.71559762954712,
       "notes": []
     },
     {
@@ -156,7 +155,7 @@
         "sugar_grn": 129,
         "bitter_grn": 65
       },
-      "seconds": 17.860963582992554,
+      "seconds": 13.106697797775269,
       "notes": []
     },
     {
@@ -203,7 +202,7 @@
       "stimulus_sizes": {
         "looming_detectors": 314
       },
-      "seconds": 6.442002296447754,
+      "seconds": 4.361909627914429,
       "notes": []
     },
     {
@@ -237,7 +236,7 @@
       "stimulus_sizes": {
         "bitter_grn": 65
       },
-      "seconds": 5.012965202331543,
+      "seconds": 3.6060893535614014,
       "notes": []
     },
     {
@@ -289,7 +288,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 17.09731435775757,
+      "seconds": 12.563776731491089,
       "notes": []
     },
     {
@@ -324,7 +323,7 @@
         "pulse1": 129,
         "pulse2": 129
       },
-      "seconds": 13.38548755645752,
+      "seconds": 9.74686312675476,
       "notes": []
     },
     {
@@ -380,7 +379,7 @@
       "stimulus_sizes": {
         "da1_orn": 127
       },
-      "seconds": 9.222503185272217,
+      "seconds": 6.559413909912109,
       "notes": []
     },
     {
@@ -437,7 +436,7 @@
         "sugar_grn": 129,
         "looming_detectors": 314
       },
-      "seconds": 16.221609115600586,
+      "seconds": 11.307628870010376,
       "notes": []
     },
     {
@@ -492,7 +491,7 @@
       "stimulus_sizes": {
         "looming_detectors": 314
       },
-      "seconds": 6.131626129150391,
+      "seconds": 4.725741863250732,
       "notes": []
     },
     {
@@ -533,8 +532,53 @@
       "stimulus_sizes": {
         "photoreceptors": 11153
       },
-      "seconds": 6.061213970184326,
+      "seconds": 4.408928155899048,
+      "notes": []
+    },
+    {
+      "task": "return_to_rest",
+      "title": "The brain goes quiet again after the stimulus ends",
+      "passed": false,
+      "score": 0.25,
+      "checks": [
+        {
+          "description": "rate[sugar] > 5.0 Hz",
+          "value": 424.44444444444446,
+          "passed": true
+        },
+        {
+          "description": "rate[sugar, 1700-2000ms] < 5.0 Hz",
+          "value": 48.333333333333336,
+          "passed": false
+        },
+        {
+          "description": "network rate[sugar, 1700-2000ms] < 0.5 Hz",
+          "value": 18.850214833698374,
+          "passed": false
+        },
+        {
+          "description": "active fraction[sugar, 1700-2000ms] < 0.01",
+          "value": 0.11877490933898244,
+          "passed": false
+        }
+      ],
+      "measurements": {
+        "sugar": {
+          "rate": 424.44444444444446,
+          "network_rate": 17.411351676979482,
+          "active_fraction": 0.13554270941797422,
+          "spikes": 4507336.0,
+          "rate[default]": 424.44444444444446,
+          "readout_active_fraction[default]": 1.0
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "sugar_grn": 129
+      },
+      "seconds": 14.537784337997437,
       "notes": []
     }
-  ]
+  ],
+  "label": "LIF gain 0.7"
 }

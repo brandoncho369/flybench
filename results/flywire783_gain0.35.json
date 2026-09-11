@@ -1,13 +1,14 @@
 {
   "schema": 1,
   "flybench_version": "0.1.0",
-  "label": "LIF gain 0.35",
+  "seeds": 1,
+  "verified": true,
+  "core_score": 0.6666666666666666,
+  "hard_score": 0.5595238095238095,
   "tier": [
     "core",
     "hard"
   ],
-  "seeds": 1,
-  "verified": true,
   "connectome": "flywire783",
   "connectome_meta": {
     "source": "flywire-codex",
@@ -31,11 +32,9 @@
     "seed": 0
   },
   "simulator": "flybench.sim.LIFSimulator",
-  "core_score": 0.6666666666666666,
-  "hard_score": 0.5277777777777778,
-  "score": 0.5909090909090909,
+  "score": 0.6041666666666666,
   "passed": 4,
-  "n_tasks": 11,
+  "n_tasks": 12,
   "tasks": [
     {
       "task": "stability",
@@ -66,7 +65,7 @@
       },
       "readout_size": 139255,
       "stimulus_sizes": {},
-      "seconds": 1.5601756572723389,
+      "seconds": 1.1555604934692383,
       "notes": []
     },
     {
@@ -113,7 +112,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 8.197491884231567,
+      "seconds": 6.214309453964233,
       "notes": []
     },
     {
@@ -156,7 +155,7 @@
         "sugar_grn": 129,
         "bitter_grn": 65
       },
-      "seconds": 11.505679368972778,
+      "seconds": 8.099050283432007,
       "notes": []
     },
     {
@@ -203,7 +202,7 @@
       "stimulus_sizes": {
         "looming_detectors": 314
       },
-      "seconds": 5.451348781585693,
+      "seconds": 3.903470277786255,
       "notes": []
     },
     {
@@ -237,7 +236,7 @@
       "stimulus_sizes": {
         "bitter_grn": 65
       },
-      "seconds": 4.707386255264282,
+      "seconds": 3.2852389812469482,
       "notes": []
     },
     {
@@ -289,7 +288,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 9.647132158279419,
+      "seconds": 6.581365346908569,
       "notes": []
     },
     {
@@ -324,7 +323,7 @@
         "pulse1": 129,
         "pulse2": 129
       },
-      "seconds": 7.863142728805542,
+      "seconds": 5.685495376586914,
       "notes": []
     },
     {
@@ -380,7 +379,7 @@
       "stimulus_sizes": {
         "da1_orn": 127
       },
-      "seconds": 8.007214546203613,
+      "seconds": 5.82353663444519,
       "notes": []
     },
     {
@@ -437,7 +436,7 @@
         "sugar_grn": 129,
         "looming_detectors": 314
       },
-      "seconds": 11.495675325393677,
+      "seconds": 8.71074104309082,
       "notes": []
     },
     {
@@ -492,7 +491,7 @@
       "stimulus_sizes": {
         "looming_detectors": 314
       },
-      "seconds": 5.1957008838653564,
+      "seconds": 4.226343870162964,
       "notes": []
     },
     {
@@ -533,8 +532,53 @@
       "stimulus_sizes": {
         "photoreceptors": 11153
       },
-      "seconds": 4.436044931411743,
+      "seconds": 3.4378411769866943,
+      "notes": []
+    },
+    {
+      "task": "return_to_rest",
+      "title": "The brain goes quiet again after the stimulus ends",
+      "passed": false,
+      "score": 0.75,
+      "checks": [
+        {
+          "description": "rate[sugar] > 5.0 Hz",
+          "value": 0.0,
+          "passed": false
+        },
+        {
+          "description": "rate[sugar, 1700-2000ms] < 5.0 Hz",
+          "value": 0.0,
+          "passed": true
+        },
+        {
+          "description": "network rate[sugar, 1700-2000ms] < 0.5 Hz",
+          "value": 0.0,
+          "passed": true
+        },
+        {
+          "description": "active fraction[sugar, 1700-2000ms] < 0.01",
+          "value": 0.0,
+          "passed": true
+        }
+      ],
+      "measurements": {
+        "sugar": {
+          "rate": 0.0,
+          "network_rate": 0.11382794952505196,
+          "active_fraction": 0.001572654482783383,
+          "spikes": 7878.0,
+          "rate[default]": 0.0,
+          "readout_active_fraction[default]": 0.0
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "sugar_grn": 129
+      },
+      "seconds": 6.577326536178589,
       "notes": []
     }
-  ]
+  ],
+  "label": "LIF gain 0.35"
 }

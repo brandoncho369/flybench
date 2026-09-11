@@ -7,7 +7,7 @@
   "properties": {
     "schema": { "const": 1 },
     "flybench_version": { "type": "string" },
-    "label": { "type": "string", "minLength": 1, "maxLength": 60, "pattern": "^[A-Za-z0-9 ._()+/-]+$" },
+    "label": { "type": "string", "minLength": 1, "maxLength": 60, "pattern": "^[A-Za-z0-9 ._,()+/-]+$" },
     "connectome": { "type": "string", "minLength": 1 },
     "connectome_meta": { "type": "object" },
     "simulator": { "type": "string" },

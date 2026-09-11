@@ -31,12 +31,18 @@ Results that a maintainer could not re-run (custom simulators we cannot install,
 
 ## 1. Submit a result
 
-Change parameters, not neurons. Then:
+**Easiest: the form at [fly-bench.com/submit](https://www.fly-bench.com/submit).** Pick a model and parameters, click the button; GitHub opens a pull request with a small config file; CI runs the full suite on the real connectome with three seeds and comments the scores; a maintainer merges; your row is live and marked verified. Nothing to install, nothing to download.
+
+From the command line, the same thing is `flybench propose "my label" --gain 0.42 --note "…" --open-pr`, which writes `configs/submissions/<slug>.yaml` and opens the PR. Only the built-in simulators run in CI; custom code is verified by hand (section 3).
+
+If you'd rather run it yourself and submit the finished report (for example with a custom simulator), change parameters, not neurons, then two commands:
 
 ```bash
 flybench run -c flywire783 --gain 0.42 --seeds 3 --label "LIF gain 0.42" -o results/lif-gain-0.42.json
-flybench validate results/lif-gain-0.42.json
+flybench submit results/lif-gain-0.42.json --note "gain 0.42, otherwise Shiu 2024 defaults"
 ```
+
+`submit` validates the file, makes a branch, commits, and opens the pull request with the template filled in from the report (it uses the GitHub CLI, `gh`; install it once and run `gh auth login`). `--dry-run` shows the PR text without doing anything. If you'd rather do it by hand, `flybench validate` then a normal PR works too.
 
 Use `--seeds 3` (or more). Single-seed results are accepted but a maintainer will re-run with three, and the knife-edge behaviour near the gain window means single-seed passes sometimes don't survive that. Label rule: letters, digits, spaces, `._()+/-`, at most 60 characters, unique across `results/`. State the Codex data version and connection file you built from; results on different builds are not comparable and the PR template asks for it.
 

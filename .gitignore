@@ -9,3 +9,4 @@ results/*
 *.csv
 *.csv.gz
 data/
+flywire783-cache.zip

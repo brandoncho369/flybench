@@ -4,7 +4,7 @@
   "seeds": 3,
   "verified": true,
   "core_score": 0.8333333333333333,
-  "hard_score": 0.5277777777777778,
+  "hard_score": 0.4523809523809524,
   "tier": [
     "core",
     "hard"
@@ -32,9 +32,9 @@
     "seed": 0
   },
   "simulator": "flybench.sim.LIFSimulator",
-  "score": 0.6666666666666666,
+  "score": 0.611111111111111,
   "passed": 4,
-  "n_tasks": 11,
+  "n_tasks": 12,
   "tasks": [
     {
       "task": "stability",
@@ -65,7 +65,7 @@
       },
       "readout_size": 139255,
       "stimulus_sizes": {},
-      "seconds": 3.322141647338867,
+      "seconds": 3.4210479259490967,
       "notes": []
     },
     {
@@ -112,7 +112,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 19.11629629135132,
+      "seconds": 19.678751468658447,
       "notes": [
         "seed-sensitive: check 0: passes on 2/3 seeds"
       ]
@@ -157,7 +157,7 @@
         "sugar_grn": 129,
         "bitter_grn": 65
       },
-      "seconds": 25.758004426956177,
+      "seconds": 26.17856001853943,
       "notes": [
         "seed-sensitive: check 0: passes on 2/3 seeds"
       ]
@@ -206,7 +206,7 @@
       "stimulus_sizes": {
         "looming_detectors": 314
       },
-      "seconds": 10.792283058166504,
+      "seconds": 11.978628158569336,
       "notes": []
     },
     {
@@ -240,7 +240,7 @@
       "stimulus_sizes": {
         "bitter_grn": 65
       },
-      "seconds": 7.805178642272949,
+      "seconds": 10.24662709236145,
       "notes": []
     },
     {
@@ -292,7 +292,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 19.65691113471985,
+      "seconds": 21.971253156661987,
       "notes": [
         "seed-sensitive: check 1: passes on 2/3 seeds; check 3: passes on 2/3 seeds"
       ]
@@ -329,7 +329,7 @@
         "pulse1": 129,
         "pulse2": 129
       },
-      "seconds": 21.72930335998535,
+      "seconds": 19.835685968399048,
       "notes": [
         "seed-sensitive: check 0: passes on 2/3 seeds; check 1: passes on 2/3 seeds"
       ]
@@ -387,7 +387,7 @@
       "stimulus_sizes": {
         "da1_orn": 127
       },
-      "seconds": 18.22630214691162,
+      "seconds": 18.496195793151855,
       "notes": []
     },
     {
@@ -444,7 +444,7 @@
         "sugar_grn": 129,
         "looming_detectors": 314
       },
-      "seconds": 23.79131031036377,
+      "seconds": 27.173135995864868,
       "notes": [
         "seed-sensitive: check 0: passes on 2/3 seeds"
       ]
@@ -501,7 +501,7 @@
       "stimulus_sizes": {
         "looming_detectors": 314
       },
-      "seconds": 10.670278072357178,
+      "seconds": 11.717362642288208,
       "notes": []
     },
     {
@@ -542,8 +542,54 @@
       "stimulus_sizes": {
         "photoreceptors": 11153
       },
-      "seconds": 10.433132648468018,
+      "seconds": 10.025018692016602,
       "notes": []
+    },
+    {
+      "task": "return_to_rest",
+      "title": "The brain goes quiet again after the stimulus ends",
+      "passed": false,
+      "score": 0.0,
+      "checks": [
+        {
+          "description": "rate[sugar] > 5.0 Hz  [2/3 seeds, sd 176]",
+          "value": 129.62962962962962,
+          "passed": false
+        },
+        {
+          "description": "rate[sugar, 1700-2000ms] < 5.0 Hz  [2/3 seeds, sd 204]",
+          "value": 144.44444444444446,
+          "passed": false
+        },
+        {
+          "description": "network rate[sugar, 1700-2000ms] < 0.5 Hz  [2/3 seeds, sd 4.53]",
+          "value": 3.2000207453153493,
+          "passed": false
+        },
+        {
+          "description": "active fraction[sugar, 1700-2000ms] < 0.01  [2/3 seeds, sd 0.0339]",
+          "value": 0.023939296015702608,
+          "passed": false
+        }
+      ],
+      "measurements": {
+        "sugar": {
+          "rate": 129.62962962962962,
+          "network_rate": 1.7951932040474643,
+          "active_fraction": 0.027673452778475938,
+          "spikes": 692514.6666666666,
+          "rate[default]": 129.62962962962962,
+          "readout_active_fraction[default]": 1.0
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "sugar_grn": 129
+      },
+      "seconds": 26.71802568435669,
+      "notes": [
+        "seed-sensitive: check 0: passes on 2/3 seeds; check 1: passes on 2/3 seeds; check 2: passes on 2/3 seeds; check 3: passes on 2/3 seeds"
+      ]
     }
   ],
   "label": "LIF gain 0.4 (3 seeds)"

@@ -42,7 +42,7 @@ So on the July-2025 synapse predictions the working window is around **gain 0.45
 
 Re-running with three random seeds (`--seeds 3`) sharpened it further: **0.40 is a knife edge** — sugar reaches the proboscis on only 2 of 3 seeds, and it "passed" the adaptation task purely because one seed's second pulse failed to ignite. **0.45 passes every core task on every seed.** With more than one seed a check only counts as passed if it holds on every seed, so single-seed luck cannot climb the leaderboard.
 
-Inside that window the reference model then fails most of the **hard** tier. The failures are informative, not embarrassing: MN9 ignition is all-or-nothing (0 Hz or ~430 Hz, nothing in between — no dose response); a second sugar pulse gets exactly the response of the first (no adaptation, because the model has no state that outlives 20 ms); driving one olfactory glomerulus fires ~84 % of all projection neurons (no lateral inhibition, the antennal lobe is a broadcast); looming recruits ~30 % of all descending neurons rather than a takeoff ensemble. Each of those is a concrete thing a better model has to add — adaptation currents, per-transmitter weights, gap junctions, neuromodulation — and each one is now a number you can move. Full table in [`LEADERBOARD.md`](LEADERBOARD.md).
+Inside that window the reference model then fails most of the **hard** tier. The starkest failure is the simplest: after a half-second taste of sugar, ~8 % of the brain keeps firing at a perfectly constant rate *forever* (MN9 at 354 Hz one second after the stimulus ended, unchanged at three seconds). Recurrent excitation sustains itself and nothing in the model can switch it off. A real fly is at rest a second later. The other failures are informative, not embarrassing: MN9 ignition is all-or-nothing (0 Hz or ~430 Hz, nothing in between — no dose response); a second sugar pulse gets exactly the response of the first (no adaptation, because the model has no state that outlives 20 ms); driving one olfactory glomerulus fires ~84 % of all projection neurons (no lateral inhibition, the antennal lobe is a broadcast); looming recruits ~30 % of all descending neurons rather than a takeoff ensemble. Each of those is a concrete thing a better model has to add — adaptation currents, per-transmitter weights, gap junctions, neuromodulation — and each one is now a number you can move. Full table in [`LEADERBOARD.md`](LEADERBOARD.md).
 
 ## The tasks
 
@@ -61,6 +61,7 @@ Two tiers. **Core** is the reflexes the reference LIF model is known to reproduc
 | hard | `crosstalk` | sugar does not fire the Giant Fiber; looming does not extend the proboscis | von Reyn et al. 2014 |
 | hard | `looming_dn_ensemble` | looming drives DNp02/DNp11 but not most of the ~1300 descending neurons | Ache et al. 2019; Namiki et al. 2018 |
 | hard | `flash_is_not_loom` | a full-field flash on every photoreceptor does not fire the Giant Fiber | von Reyn et al. 2014; Klapoetke et al. 2017 |
+| hard | `return_to_rest` | one second after a 500 ms taste of sugar, the brain is quiet again | Dethier 1976; Shiu et al. 2024; Benda & Herz 2003 |
 
 `flybench run --tier core` / `--tier hard` / `--tier all`. Each task is a YAML file in [`tasks/`](tasks/): a readout population, one or more stimulus conditions, and a list of checks. A task passes if every check passes; the suite score is the mean fraction of checks passed. Adding a task is adding a file. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to submit results, tasks, or a different simulator (`--simulator mymodule:MyModel`).
 
@@ -109,6 +110,16 @@ No per-neuron tuning, on purpose. If the network reproduces a reflex, the wiring
 Stimuli are Poisson spike trains forced onto a selected population (e.g. "all sensory neurons whose community label contains *sugar*"). Readouts are mean firing rates of a selected population over a window. Selectors are small YAML expressions over the Codex annotation columns — run `flybench select '{labels_regex: sugar, super_class: sensory}'` to see what one matches on your build. **The FlyWire community labels are free text and evolve between data versions; if a task reports "matched 0 neurons", the fix is to update the selector in the YAML, and a PR with the corrected root IDs is very welcome.**
 
 The simulator is event-driven on the synaptic side (only neurons that spiked propagate), so a full-brain run at 0.1 ms resolution takes seconds to low minutes on a laptop depending on how much of the brain you wake up.
+
+## What a score means — and what it doesn't
+
+A score is the fraction of listed behaviours a model reproduces under fixed, cited conditions. **A higher score does not mean a model is closer to a real fly's biology.** A model can pass more tasks by adding a mechanism flies don't have, or a real mechanism with wrong numbers, or by being tuned to the public tasks. Three habits keep the leaderboard honest:
+
+1. Every row carries its constants and a one-line note; read it as a hypothesis with its evidence attached, not as a ranking of truth.
+2. Mechanisms added to a model should be ones neuroscience has independent evidence for (spike-frequency adaptation, synaptic depression, gap junctions, neuromodulation) with constants in literature ranges, and the citation goes in the note.
+3. A change that fixes one task while breaking a core reflex is a finding, not a failure to hide; it usually means the mechanism is real but the numbers are not.
+
+The reference model is deliberately the simplest thing that works. Every improvement on it is a claim to be argued with, and the benchmark exists so the argument can happen with numbers.
 
 ## What this is not
 

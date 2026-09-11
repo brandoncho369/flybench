@@ -220,7 +220,7 @@ def test_task_unknown_check_type_raises(toy):
 
 def test_suite_tiers_and_scores(toy):
     core = load_tasks(tier="core"); hard = load_tasks(tier="hard"); everything = load_tasks(tier="all")
-    assert len(core) == 5 and len(hard) == 6 and len(everything) == 11
+    assert len(core) == 5 and len(hard) == 7 and len(everything) == 12
     assert {t["tier"] for t in hard} == {"hard"} and all(t.get("tier", "core") == "core" for t in core)
     report = run_suite(toy, LIFParams(), core)
     assert report["core_score"] == 1.0 and report["hard_score"] is None
@@ -383,3 +383,60 @@ def test_cli_validate_and_verify(tmp_path):
     # tamper -> validate fails
     d = json.loads(out.read_text()); d["score"] = 0.123; out.write_text(json.dumps(d))
     assert r.invoke(main, ["validate", str(out)]).exit_code == 1
+
+
+def test_submit_dry_run_and_body(tmp_path):
+    from flybench.submit import pr_body, submit
+    cache = tmp_path / "cache"
+    r = CliRunner()
+    assert r.invoke(main, ["toy", "--cache", str(cache)]).exit_code == 0
+    out = tmp_path / "a.json"
+    assert r.invoke(main, ["run", "--cache", str(cache), "--tier", "core", "-o", str(out), "--label", "My Run (v2)"]).exit_code == 0
+    res = r.invoke(main, ["submit", str(out), "--dry-run", "--note", "tested a thing"])
+    assert res.exit_code == 0, res.output
+    assert "submit/my-run-v2" in res.output and "tested a thing" in res.output
+    body = pr_body(json.loads(out.read_text()), "")
+    assert "| stability |" in body and "please fill in" in body
+    bad = tmp_path / "bad.json"; bad.write_text('{"schema": 1}')
+    assert submit(bad, dry_run=True) == 1
+
+
+# ---------------------------------------------------------------- submissions configs + adaptive model
+
+def test_validate_submission():
+    from flybench.evaluate import validate_submission, slug
+    good = {"label": "Me, LIF gain 0.42", "note": "x", "connectome": "flywire783", "seeds": 3, "params": {"gain": 0.42}, "simulator": "flybench.sim:LIFSimulator"}
+    assert validate_submission(good) == []
+    assert slug(good["label"]) == "me-lif-gain-0-42"
+    bad = dict(good, label="<script>"); assert any("label" in e for e in validate_submission(bad))
+    bad = dict(good, simulator="os:system"); assert any("simulator" in e for e in validate_submission(bad))
+    bad = dict(good, params={"gain": 0.42, "hack": 1}); assert any("hack" in e for e in validate_submission(bad))
+    bad = dict(good, params={"gain": 50}); assert any("gain" in e for e in validate_submission(bad))
+    bad = dict(good, seeds=99); assert any("seeds" in e for e in validate_submission(bad))
+    bad = dict(good, connectome="secret"); assert any("connectome" in e for e in validate_submission(bad))
+    ok = dict(good, params={"gain": 0.45, "extra": {"b_mv": 2, "tau_a_ms": 200}}, simulator="flybench.models.adaptive_lif:AdaptiveLIFSimulator")
+    assert validate_submission(ok) == []
+    assert validate_submission("nope") == ["config must be a mapping"]
+
+
+def test_evaluate_on_toy(tmp_path):
+    from flybench.evaluate import evaluate
+    cfg = tmp_path / "s.yaml"
+    cfg.write_text("label: toy eval\nnote: n\nconnectome: toy\nseeds: 1\nparams:\n  gain: 1.0\nsimulator: flybench.sim:LIFSimulator\n")
+    r = evaluate(cfg, out=tmp_path / "r.json", comment=tmp_path / "c.md", cache=tmp_path / "cache")
+    assert r["verified"] is True and r["label"] == "toy eval" and (tmp_path / "c.md").read_text(encoding="utf-8").startswith("### flybench evaluation")
+    from flybench.validate import validate_report
+    assert validate_report(json.loads((tmp_path / "r.json").read_text())) == []
+
+
+def test_adaptive_lif_silences_and_keeps_reflexes(toy):
+    from flybench.models.adaptive_lif import AdaptiveLIFSimulator, AdaptiveParams
+    sugar = toy.select({"labels_regex": "sugar"}); mn9 = toy.select("MN9")
+    ref = LIFSimulator(toy, LIFParams(seed=1)).run(600, [Stimulus(sugar, 100, 100, 400)])
+    ada = AdaptiveLIFSimulator(toy, LIFParams(seed=1), AdaptiveParams(b_mv=2, tau_a_ms=200)).run(600, [Stimulus(sugar, 100, 100, 400)])
+    assert ada.rate_hz(mn9, 150, 400) > 1                          # still responds (the toy is weakly wired; the real brain gives ~50 Hz)
+    assert ada.rate_hz(mn9, 150, 400) < ref.rate_hz(mn9, 150, 400)  # but less than the un-adapting reference
+    assert ada.rate_hz(None, 500, 600) <= ref.rate_hz(None, 500, 600)
+    # extra params flow through LIFParams.extra
+    sim = AdaptiveLIFSimulator(toy, LIFParams(extra={"b_mv": 3.5, "tau_a_ms": 100}))
+    assert sim.ap.b_mv == 3.5 and sim.ap.tau_a_ms == 100
