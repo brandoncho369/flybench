@@ -16,7 +16,7 @@ readouts:
 conditions:
   sugar:
     stimuli:
-      - {name: sugar_grn, select: {any: [{sub_class: "sugar/water"}, {all_of: [{labels_regex: "sugar"}, {super_class: sensory}, {not: {labels_regex: "bitter"}}]}]}, rate_hz: 100, t_start_ms: 200, t_end_ms: 800}
+      - {name: sugar_grn, select: {any: [{sub_class: "sugar/water"}, {all_of: [{labels_regex: "sugar"}, {super_class: sensory}, {not: {labels_regex: "bitter"}}]}, {all_of: [{sub_class: "labellar bristle"}, {cell_type_regex: "^LB3[a-d]$"}]}]}, rate_hz: 100, t_start_ms: 200, t_end_ms: 800}
   loom:
     stimuli:
       - {name: looming_detectors, select: {any: [{cell_type: LPLC2}, {cell_type: LC4}, {hemibrain_type: LPLC2}, {hemibrain_type: LC4}]}, rate_hz: 150, t_start_ms: 200, t_end_ms: 800}

@@ -10,3 +10,7 @@
 | LIF gain 1.0 | flywire783 | LIFSimulator | 1.0 | 0.275 | 1 | ✅ | 0.77 | 0.64 | 34.1% | ✅ | 67% | 50% | 67% | ✅ | 75% | ✅ | 50% | ✅ | 67% | 33% | 25% |
 | LIF gain 0.3 | flywire783 | LIFSimulator | 0.3 | 0.275 | 1 | ✅ | 0.67 | 0.64 | 9.3% | ✅ | 33% | 0% | ✅ | ✅ | 25% | 0% | 75% | 75% | ✅ | ✅ | 75% |
 | LIF gain 0.35 | flywire783 | LIFSimulator | 0.35 | 0.275 | 1 | ✅ | 0.67 | 0.56 | 10.0% | ✅ | 33% | 0% | ✅ | ✅ | 25% | 0% | 50% | 75% | 67% | ✅ | 75% |
+| MaleCNS gain 0.45 | malecns | LIFSimulator | 0.45 | 0.275 | 3 | self-reported | 0.57 | 0.56 | 8.6% | ✅ | 33% | 0% | ✅ | 50% | 25% | 0% | 50% | 75% | 67% | ✅ | 75% |
+| MaleCNS gain 0.65 (Minecraft demo) | malecns | LIFSimulator | 0.65 | 0.275 | 3 | self-reported | 0.57 | 0.56 | 16.0% | ✅ | 67% | 50% | 67% | 0% | 75% | 0% | 50% | 75% | 67% | ✅ | 25% |
+| MaleCNS gain 0.50 | malecns | LIFSimulator | 0.5 | 0.275 | 3 | self-reported | 0.57 | 0.42 | 9.4% | ✅ | 33% | 0% | ✅ | 50% | 25% | 0% | 50% | 50% | 67% | ✅ | 0% |
+| MaleCNS gain 0.55 | malecns | LIFSimulator | 0.55 | 0.275 | 3 | self-reported | 0.50 | 0.52 | 12.6% | ✅ | 33% | 0% | 67% | 50% | 25% | 0% | 50% | 50% | 67% | ✅ | 75% |

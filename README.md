@@ -94,7 +94,7 @@ flybench build data-malecns --name malecns
 flybench run -c malecns --config configs/malecns_minecraft.yaml --seeds 3 -o results/malecns-gain-0.65.json
 ```
 
-Task selectors were written against FlyWire's names; on another dataset some will report "matched 0 neurons" until someone adds fallbacks for that dataset's names (`flybench select -c malecns '{...}'` to find them).
+Result (3 seeds each, [docs/MALECNS.md](docs/MALECNS.md)): on the male CNS there is **no gain at which the reference model does both taste and vision**. At 0.45 looming → giant fiber is clean but sugar never reaches the proboscis; at the demo's 0.65 sugar works but so does quinine, a shadow triggers feeding, 39% of descending neurons fire, and the network never quiets. Part of the gap is the dataset's transmitter predictions (13% of the male sugar neurons are called glutamatergic, which the model treats as inhibitory). Selectors for that dataset were identified from wiring onto named second-order neurons; the table is in the doc.
 
 Each full run is ~45 s on a laptop. Real neuron sets the tasks resolve to on v783: sugar GRNs = `sub_class: sugar/water` (129), bitter GRNs = `sub_class: bitter` (65), MN9 = `cell_type: CB0701` (2, labelled "Motor neuron 9; MN9"), Giant Fiber = `cell_type: DNp01` (2), looming = `LPLC2` + `LC4` (314).
 

@@ -10,3 +10,4 @@ results/*
 *.csv.gz
 data/
 flywire783-cache.zip
+data-malecns/ 

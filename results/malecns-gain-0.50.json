@@ -1,0 +1,595 @@
+{
+  "schema": 1,
+  "flybench_version": "0.1.0",
+  "seeds": 3,
+  "verified": false,
+  "core_score": 0.5666666666666667,
+  "hard_score": 0.41666666666666663,
+  "tier": [
+    "core",
+    "hard"
+  ],
+  "connectome": "malecns",
+  "connectome_meta": {
+    "source": "flywire-codex",
+    "min_synapses": 5,
+    "n": 176422,
+    "n_edges": 6287789
+  },
+  "n_neurons": 176422,
+  "n_edges": 6287789,
+  "params": {
+    "v_rest_mv": -52.0,
+    "v_reset_mv": -52.0,
+    "v_th_mv": -45.0,
+    "tau_m_ms": 20.0,
+    "tau_syn_ms": 5.0,
+    "t_ref_ms": 2.2,
+    "delay_ms": 1.8,
+    "w_syn_mv": 0.275,
+    "gain": 0.5,
+    "dt_ms": 0.1,
+    "seed": 0,
+    "extra": {}
+  },
+  "simulator": "flybench.sim.LIFSimulator",
+  "score": 0.4791666666666667,
+  "passed": 3,
+  "n_tasks": 12,
+  "tasks": [
+    {
+      "task": "stability",
+      "title": "Silence in, silence out",
+      "passed": true,
+      "score": 1.0,
+      "checks": [
+        {
+          "description": "network rate[baseline] < 0.5 Hz  [3/3 seeds, sd 0]",
+          "value": 0.0,
+          "passed": true
+        },
+        {
+          "description": "active fraction[baseline] < 0.01  [3/3 seeds, sd 0]",
+          "value": 0.0,
+          "passed": true
+        }
+      ],
+      "measurements": {
+        "baseline": {
+          "rate": 0.0,
+          "network_rate": 0.0,
+          "active_fraction": 0.0,
+          "spikes": 0.0,
+          "rate[default]": 0.0,
+          "readout_active_fraction[default]": 0.0
+        }
+      },
+      "readout_size": 176422,
+      "stimulus_sizes": {},
+      "seconds": 4.263425588607788,
+      "notes": []
+    },
+    {
+      "task": "sugar_to_proboscis",
+      "title": "Sugar \u2192 proboscis extension",
+      "passed": false,
+      "score": 0.3333333333333333,
+      "checks": [
+        {
+          "description": "rate[sugar] > 5.0 Hz  [1/3 seeds, sd 6.43]",
+          "value": 4.545454545454545,
+          "passed": false
+        },
+        {
+          "description": "rate[sugar] / rate[baseline] > 5.0  [1/3 seeds, sd 6.43e+03]",
+          "value": 4546.454545454545,
+          "passed": false
+        },
+        {
+          "description": "active fraction[sugar] < 0.1  [3/3 seeds, sd 0.00518]",
+          "value": 0.004428774944923725,
+          "passed": true
+        }
+      ],
+      "measurements": {
+        "baseline": {
+          "rate": 0.0,
+          "network_rate": 0.0,
+          "active_fraction": 0.0,
+          "spikes": 0.0,
+          "rate[default]": 0.0,
+          "readout_active_fraction[default]": 0.0
+        },
+        "sugar": {
+          "rate": 4.545454545454545,
+          "network_rate": 0.08383136439728019,
+          "active_fraction": 0.004428774944923725,
+          "spikes": 50908.0,
+          "rate[default]": 4.545454545454545,
+          "readout_active_fraction[default]": 0.16666666666666666
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "sugar_grn": 77
+      },
+      "seconds": 25.3085675239563,
+      "notes": [
+        "seed-sensitive: check 0: passes on 1/3 seeds; check 1: passes on 1/3 seeds"
+      ]
+    },
+    {
+      "task": "bitter_suppression",
+      "title": "Bitter suppresses the sugar response",
+      "passed": false,
+      "score": 0.0,
+      "checks": [
+        {
+          "description": "rate[sugar] > 5.0 Hz  [1/3 seeds, sd 6.43]",
+          "value": 4.545454545454545,
+          "passed": false
+        },
+        {
+          "description": "rate[sugar_plus_bitter] / rate[sugar] < 0.5  [0/3 seeds, sd 4.42e+04]",
+          "value": 61821.381656860314,
+          "passed": false
+        }
+      ],
+      "measurements": {
+        "sugar": {
+          "rate": 4.545454545454545,
+          "network_rate": 0.08383136439728019,
+          "active_fraction": 0.004428774944923725,
+          "spikes": 50908.0,
+          "rate[default]": 4.545454545454545,
+          "readout_active_fraction[default]": 0.16666666666666666
+        },
+        "sugar_plus_bitter": {
+          "rate": 96.36363636363636,
+          "network_rate": 9.76466550760006,
+          "active_fraction": 0.09030997645796253,
+          "spikes": 1310092.6666666667,
+          "rate[default]": 96.36363636363636,
+          "readout_active_fraction[default]": 0.5
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "sugar_grn": 77,
+        "bitter_grn": 38
+      },
+      "seconds": 48.47728085517883,
+      "notes": [
+        "seed-sensitive: check 0: passes on 1/3 seeds"
+      ]
+    },
+    {
+      "task": "looming_to_giant_fiber",
+      "title": "Looming \u2192 giant fiber escape",
+      "passed": true,
+      "score": 1.0,
+      "checks": [
+        {
+          "description": "rate[loom] > 5.0 Hz  [3/3 seeds, sd 1.46]",
+          "value": 433.9285714285714,
+          "passed": true
+        },
+        {
+          "description": "rate[loom] / rate[baseline] > 5.0  [3/3 seeds, sd 1.46e+03]",
+          "value": 433929.57142857136,
+          "passed": true
+        },
+        {
+          "description": "active fraction[loom] < 0.1  [3/3 seeds, sd 0.000588]",
+          "value": 0.0939414207600715,
+          "passed": true
+        }
+      ],
+      "measurements": {
+        "baseline": {
+          "rate": 0.0,
+          "network_rate": 0.0,
+          "active_fraction": 0.0,
+          "spikes": 0.0,
+          "rate[default]": 0.0,
+          "readout_active_fraction[default]": 0.0
+        },
+        "loom": {
+          "rate": 433.9285714285714,
+          "network_rate": 6.532409304314169,
+          "active_fraction": 0.0939414207600715,
+          "spikes": 501929.6666666667,
+          "rate[default]": 433.9285714285714,
+          "readout_active_fraction[default]": 1.0
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "looming_detectors": 311
+      },
+      "seconds": 16.060519456863403,
+      "notes": []
+    },
+    {
+      "task": "taste_specificity",
+      "title": "Bitter alone does not extend the proboscis",
+      "passed": false,
+      "score": 0.5,
+      "checks": [
+        {
+          "description": "rate[bitter] < 2.0 Hz  [0/3 seeds, sd 7.73]",
+          "value": 72.42424242424242,
+          "passed": false
+        },
+        {
+          "description": "active fraction[bitter] < 0.1  [3/3 seeds, sd 0.000558]",
+          "value": 0.08869642108127103,
+          "passed": true
+        }
+      ],
+      "measurements": {
+        "bitter": {
+          "rate": 72.42424242424242,
+          "network_rate": 9.841705305082888,
+          "active_fraction": 0.08869642108127103,
+          "spikes": 1320131.0,
+          "rate[default]": 72.42424242424242,
+          "readout_active_fraction[default]": 0.5
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "bitter_grn": 38
+      },
+      "seconds": 22.06996488571167,
+      "notes": []
+    },
+    {
+      "task": "dose_response",
+      "title": "Proboscis response scales with sugar intensity",
+      "passed": false,
+      "score": 0.25,
+      "checks": [
+        {
+          "description": "rate[weak] > 1.0 Hz  [0/3 seeds, sd 0]",
+          "value": 0.0,
+          "passed": false
+        },
+        {
+          "description": "rate[strong] > 5.0 Hz  [1/3 seeds, sd 6.43]",
+          "value": 4.545454545454545,
+          "passed": false
+        },
+        {
+          "description": "rate[weak] / rate[strong] < 0.6  [1/3 seeds, sd 0.471]",
+          "value": 0.6666911093186499,
+          "passed": false
+        },
+        {
+          "description": "rate[strong] < 300.0 Hz  [3/3 seeds, sd 6.43]",
+          "value": 4.545454545454545,
+          "passed": true
+        }
+      ],
+      "measurements": {
+        "weak": {
+          "rate": 0.0,
+          "network_rate": 0.009869586112911775,
+          "active_fraction": 0.0005120298677791507,
+          "spikes": 1037.0,
+          "rate[default]": 0.0,
+          "readout_active_fraction[default]": 0.0
+        },
+        "strong": {
+          "rate": 4.545454545454545,
+          "network_rate": 0.08383136439728019,
+          "active_fraction": 0.004428774944923725,
+          "spikes": 50908.0,
+          "rate[default]": 4.545454545454545,
+          "readout_active_fraction[default]": 0.16666666666666666
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "sugar_grn": 77
+      },
+      "seconds": 27.47877597808838,
+      "notes": [
+        "seed-sensitive: check 1: passes on 1/3 seeds; check 2: passes on 1/3 seeds"
+      ]
+    },
+    {
+      "task": "adaptation",
+      "title": "Repeated sugar gives a smaller second response",
+      "passed": false,
+      "score": 0.0,
+      "checks": [
+        {
+          "description": "rate[two_pulses] > 5.0 Hz  [0/3 seeds, sd 0]",
+          "value": 0.0,
+          "passed": false
+        },
+        {
+          "description": "rate[two_pulses, 950-1300ms] / rate[two_pulses] < 0.7  [0/3 seeds, sd 0]",
+          "value": 1.0,
+          "passed": false
+        }
+      ],
+      "measurements": {
+        "two_pulses": {
+          "rate": 0.0,
+          "network_rate": 0.05327593848299883,
+          "active_fraction": 0.0007557636424784514,
+          "spikes": 7633.666666666667,
+          "rate[default]": 0.0,
+          "readout_active_fraction[default]": 0.0
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "pulse1": 77,
+        "pulse2": 77
+      },
+      "seconds": 26.519421577453613,
+      "notes": []
+    },
+    {
+      "task": "olfactory_sparse_coding",
+      "title": "One odour channel stays one channel",
+      "passed": false,
+      "score": 0.5,
+      "checks": [
+        {
+          "description": "rate[cva, da1_pn] > 10.0 Hz  [3/3 seeds, sd 0.121]",
+          "value": 435.11111111111114,
+          "passed": true
+        },
+        {
+          "description": "rate[cva, da1_pn] / rate[baseline] > 5.0  [3/3 seeds, sd 121]",
+          "value": 435112.11111111107,
+          "passed": true
+        },
+        {
+          "description": "readout active fraction[cva, all_pn] < 0.3  [0/3 seeds, sd 1.11e-16]",
+          "value": 0.8881355932203391,
+          "passed": false
+        },
+        {
+          "description": "active fraction[cva] < 0.05  [0/3 seeds, sd 0.000171]",
+          "value": 0.09049891736858214,
+          "passed": false
+        }
+      ],
+      "measurements": {
+        "baseline": {
+          "rate": 0.0,
+          "network_rate": 0.0,
+          "active_fraction": 0.0,
+          "spikes": 0.0,
+          "rate[da1_pn]": 0.0,
+          "readout_active_fraction[da1_pn]": 0.0,
+          "rate[all_pn]": 0.0,
+          "readout_active_fraction[all_pn]": 0.0
+        },
+        "cva": {
+          "rate": 435.11111111111114,
+          "network_rate": 10.074266373934215,
+          "active_fraction": 0.09049891736858214,
+          "spikes": 1009851.6666666666,
+          "rate[da1_pn]": 435.11111111111114,
+          "readout_active_fraction[da1_pn]": 1.0,
+          "rate[all_pn]": 307.9020715630885,
+          "readout_active_fraction[all_pn]": 0.8881355932203391
+        }
+      },
+      "readout_size": 15,
+      "stimulus_sizes": {
+        "da1_orn": 204
+      },
+      "seconds": 22.53330421447754,
+      "notes": []
+    },
+    {
+      "task": "crosstalk",
+      "title": "Taste does not trigger escape; looming does not trigger feeding",
+      "passed": false,
+      "score": 0.5,
+      "checks": [
+        {
+          "description": "rate[sugar, mn9] > 5.0 Hz  [1/3 seeds, sd 6.43]",
+          "value": 4.545454545454545,
+          "passed": false
+        },
+        {
+          "description": "rate[sugar, gf] < 2.0 Hz  [3/3 seeds, sd 0]",
+          "value": 0.0,
+          "passed": true
+        },
+        {
+          "description": "rate[loom, gf] > 5.0 Hz  [3/3 seeds, sd 1.55]",
+          "value": 433.030303030303,
+          "passed": true
+        },
+        {
+          "description": "rate[loom, mn9] < 2.0 Hz  [2/3 seeds, sd 4.29]",
+          "value": 3.03030303030303,
+          "passed": false
+        }
+      ],
+      "measurements": {
+        "sugar": {
+          "rate": 4.545454545454545,
+          "network_rate": 0.08383136439728019,
+          "active_fraction": 0.004428774944923725,
+          "spikes": 13776.0,
+          "rate[mn9]": 4.545454545454545,
+          "readout_active_fraction[mn9]": 0.16666666666666666,
+          "rate[gf]": 0.0,
+          "readout_active_fraction[gf]": 0.0
+        },
+        "loom": {
+          "rate": 3.03030303030303,
+          "network_rate": 9.092853464643829,
+          "active_fraction": 0.09415303457996545,
+          "spikes": 1074758.3333333333,
+          "rate[mn9]": 3.03030303030303,
+          "readout_active_fraction[mn9]": 0.16666666666666666,
+          "rate[gf]": 433.030303030303,
+          "readout_active_fraction[gf]": 1.0
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "sugar_grn": 77,
+        "looming_detectors": 311
+      },
+      "seconds": 30.074182987213135,
+      "notes": [
+        "seed-sensitive: check 0: passes on 1/3 seeds; check 3: passes on 2/3 seeds"
+      ]
+    },
+    {
+      "task": "looming_dn_ensemble",
+      "title": "Looming recruits the takeoff ensemble, not the whole descending tract",
+      "passed": false,
+      "score": 0.6666666666666666,
+      "checks": [
+        {
+          "description": "rate[loom, gf] > 5.0 Hz  [3/3 seeds, sd 1.46]",
+          "value": 433.9285714285714,
+          "passed": true
+        },
+        {
+          "description": "rate[loom, dnp] > 5.0 Hz  [3/3 seeds, sd 2.34]",
+          "value": 428.27380952380946,
+          "passed": true
+        },
+        {
+          "description": "readout active fraction[loom, all_dn] < 0.15  [0/3 seeds, sd 0.00251]",
+          "value": 0.30952380952380953,
+          "passed": false
+        }
+      ],
+      "measurements": {
+        "baseline": {
+          "rate": 0.0,
+          "network_rate": 0.0,
+          "active_fraction": 0.0,
+          "spikes": 0.0,
+          "rate[gf]": 0.0,
+          "readout_active_fraction[gf]": 0.0,
+          "rate[dnp]": 0.0,
+          "readout_active_fraction[dnp]": 0.0,
+          "rate[all_dn]": 0.0,
+          "readout_active_fraction[all_dn]": 0.0
+        },
+        "loom": {
+          "rate": 433.9285714285714,
+          "network_rate": 6.532409304314169,
+          "active_fraction": 0.0939414207600715,
+          "spikes": 501929.6666666667,
+          "rate[gf]": 433.9285714285714,
+          "readout_active_fraction[gf]": 1.0,
+          "rate[dnp]": 428.27380952380946,
+          "readout_active_fraction[dnp]": 1.0,
+          "rate[all_dn]": 28.99388478795773,
+          "readout_active_fraction[all_dn]": 0.30952380952380953
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "looming_detectors": 311
+      },
+      "seconds": 15.493256568908691,
+      "notes": []
+    },
+    {
+      "task": "flash_is_not_loom",
+      "title": "A uniform flash is not a looming object",
+      "passed": true,
+      "score": 1.0,
+      "checks": [
+        {
+          "description": "rate[flash, gf] < 5.0 Hz  [3/3 seeds, sd 0]",
+          "value": 0.0,
+          "passed": true
+        },
+        {
+          "description": "rate[flash, lplc2] < 20.0 Hz  [3/3 seeds, sd 0]",
+          "value": 0.0,
+          "passed": true
+        },
+        {
+          "description": "active fraction[flash] < 0.3  [3/3 seeds, sd 3.24e-05]",
+          "value": 0.03999501195995964,
+          "passed": true
+        }
+      ],
+      "measurements": {
+        "flash": {
+          "rate": 0.0,
+          "network_rate": 1.6656976697107746,
+          "active_fraction": 0.03999501195995964,
+          "spikes": 117176.0,
+          "rate[gf]": 0.0,
+          "readout_active_fraction[gf]": 0.0,
+          "rate[lplc2]": 0.0,
+          "readout_active_fraction[lplc2]": 0.0
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "photoreceptors": 6091
+      },
+      "seconds": 10.715940475463867,
+      "notes": []
+    },
+    {
+      "task": "return_to_rest",
+      "title": "The brain goes quiet again after the stimulus ends",
+      "passed": false,
+      "score": 0.0,
+      "checks": [
+        {
+          "description": "rate[sugar] > 5.0 Hz  [0/3 seeds, sd 0.524]",
+          "value": 0.3703703703703704,
+          "passed": false
+        },
+        {
+          "description": "rate[sugar, 1700-2000ms] < 5.0 Hz  [2/3 seeds, sd 7.86]",
+          "value": 5.555555555555556,
+          "passed": false
+        },
+        {
+          "description": "network rate[sugar, 1700-2000ms] < 0.5 Hz  [2/3 seeds, sd 4.71]",
+          "value": 3.3328798751478463,
+          "passed": false
+        },
+        {
+          "description": "active fraction[sugar, 1700-2000ms] < 0.01  [2/3 seeds, sd 0.0347]",
+          "value": 0.024533977243956725,
+          "passed": false
+        }
+      ],
+      "measurements": {
+        "sugar": {
+          "rate": 0.3703703703703704,
+          "network_rate": 0.05420504791331559,
+          "active_fraction": 0.0009447045530980641,
+          "spikes": 618808.6666666666,
+          "rate[default]": 0.3703703703703704,
+          "readout_active_fraction[default]": 0.16666666666666666
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "sugar_grn": 77
+      },
+      "seconds": 30.4024715423584,
+      "notes": [
+        "seed-sensitive: check 1: passes on 2/3 seeds; check 2: passes on 2/3 seeds; check 3: passes on 2/3 seeds"
+      ]
+    }
+  ],
+  "label": "MaleCNS gain 0.50"
+}

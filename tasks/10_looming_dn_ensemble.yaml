@@ -13,7 +13,7 @@ window: [220, 500]
 readouts:
   gf:   {select: {any: [{cell_type: GF}, {cell_type: DNp01}, {hemibrain_type: "Giant Fiber"}]}}
   dnp:  {select: {cell_type: [DNp02, DNp11]}}
-  all_dn: {select: {super_class: descending}}
+  all_dn: {select: {super_class_regex: "^descending"}}   # FlyWire "descending", MaleCNS "descending_neuron"
 conditions:
   baseline: {stimuli: []}
   loom:

@@ -13,19 +13,19 @@ conditions:
   sugar:
     stimuli:
       - name: sugar_grn
-        select: {any: [{sub_class: "sugar/water"}, {all_of: [{labels_regex: "sugar"}, {super_class: sensory}, {not: {labels_regex: "bitter"}}]}]}
+        select: {any: [{sub_class: "sugar/water"}, {all_of: [{labels_regex: "sugar"}, {super_class: sensory}, {not: {labels_regex: "bitter"}}]}, {all_of: [{sub_class: "labellar bristle"}, {cell_type_regex: "^LB3[a-d]$"}]}]}
         rate_hz: 100
         t_start_ms: 200
         t_end_ms: 800
   sugar_plus_bitter:
     stimuli:
       - name: sugar_grn
-        select: {any: [{sub_class: "sugar/water"}, {all_of: [{labels_regex: "sugar"}, {super_class: sensory}, {not: {labels_regex: "bitter"}}]}]}
+        select: {any: [{sub_class: "sugar/water"}, {all_of: [{labels_regex: "sugar"}, {super_class: sensory}, {not: {labels_regex: "bitter"}}]}, {all_of: [{sub_class: "labellar bristle"}, {cell_type_regex: "^LB3[a-d]$"}]}]}
         rate_hz: 100
         t_start_ms: 200
         t_end_ms: 800
       - name: bitter_grn
-        select: {any: [{sub_class: bitter}, {all_of: [{labels_regex: "bitter"}, {super_class: sensory}]}]}
+        select: {any: [{sub_class: bitter}, {all_of: [{labels_regex: "bitter"}, {super_class: sensory}]}, {all_of: [{sub_class: "labellar bristle"}, {cell_type_regex: "^LB1[a-d]$"}]}]}
         rate_hz: 100
         t_start_ms: 200
         t_end_ms: 800

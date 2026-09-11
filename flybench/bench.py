@@ -197,19 +197,23 @@ def _run_task_multiseed(task, c, params, verbose, simulator, seeds: int) -> Task
     t0 = time.time()
     runs = [run_task(task, c, replace(params, seed=params.seed + k), verbose=False, simulator=simulator) for k in range(seeds)]
     base = runs[0]
+    def nmean(v):  # all-NaN (an empty selector) is a legitimate "no measurement", not a warning
+        v = np.asarray(v, dtype=float); return float(v[np.isfinite(v)].mean()) if np.isfinite(v).any() else float("nan")
+    def nstd(v):
+        v = np.asarray(v, dtype=float); return float(v[np.isfinite(v)].std()) if np.isfinite(v).any() else float("nan")
     # mean of every measurement across seeds
-    measurements = {cond: {k: float(np.nanmean([r.measurements[cond][k] for r in runs])) for k in base.measurements[cond]} for cond in base.measurements}
+    measurements = {cond: {k: nmean([r.measurements[cond][k] for r in runs]) for k in base.measurements[cond]} for cond in base.measurements}
     checks: list[CheckResult] = []
     for i, ch in enumerate(base.checks):
         vals = np.array([r.checks[i].value for r in runs], dtype=float)
         passes = sum(r.checks[i].passed for r in runs)
         chk = task["checks"][i]
         op = OPS[chk["op"]]; target = float(chk["value"])
-        mean = float(np.nanmean(vals))
+        mean = nmean(vals)
         # robust pass: the mean must satisfy the check AND every seed must. A reflex that fires on
         # 2 of 3 random draws is a coin flip, not a reproduced behaviour.
         passed = bool(np.isfinite(mean) and op(mean, target) and passes == seeds)
-        desc = f"{ch.description}  [{passes}/{seeds} seeds, sd {float(np.nanstd(vals)):.3g}]"
+        desc = f"{ch.description}  [{passes}/{seeds} seeds, sd {nstd(vals):.3g}]"
         checks.append(CheckResult(desc, mean, passed))
     notes = list(dict.fromkeys(n for r in runs for n in r.notes))
     flaky = [f"check {i}: passes on {sum(r.checks[i].passed for r in runs)}/{seeds} seeds" for i in range(len(base.checks))
