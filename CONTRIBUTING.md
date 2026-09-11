@@ -48,7 +48,7 @@ Use `--seeds 3` (or more). Single-seed results are accepted but a maintainer wil
 
 ## 2. Add a task
 
-One YAML file in `tasks/`, copied from an existing one. It needs a readout (or several named readouts), one or more stimulus conditions, checks with an operator and threshold, a `citation` to published fly behaviour, and a `tier`: `core` if the reference LIF model passes it (it becomes a regression test), `hard` if it does not (it becomes a target). Then:
+One YAML file in `tasks/`, copied from an existing one. It needs a readout (or several named readouts), one or more stimulus conditions, checks with an operator and threshold, a `citation` to published fly behaviour, a `tier` (`core` if the reference LIF model passes it — it becomes a regression test — `hard` if it does not — it becomes a target), and a `circuit` (`taste`, `escape`, `olfaction`, `stability`, `physiology`, `robustness`, or propose a new one) so that seven tasks on one pathway count once in the by-circuit score. **Every check needs a `basis`**: either a citation for the number, or `convention: <why this number>` when it is a judgement call. The lint refuses a task without one; a threshold nobody can trace is how a benchmark quietly becomes an opinion. A condition may carry `weight_jitter: 0.25` to run it on a perturbed copy of the connectome (every synapse count multiplied by lognormal noise) — a stand-in for a different individual. Then:
 
 ```bash
 flybench lint tasks/your_task.yaml

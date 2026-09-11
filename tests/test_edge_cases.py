@@ -220,7 +220,7 @@ def test_task_unknown_check_type_raises(toy):
 
 def test_suite_tiers_and_scores(toy):
     core = load_tasks(tier="core"); hard = load_tasks(tier="hard"); everything = load_tasks(tier="all")
-    assert len(core) == 5 and len(hard) == 7 and len(everything) == 12
+    assert len(core) == 5 and len(hard) == 9 and len(everything) == 14
     assert {t["tier"] for t in hard} == {"hard"} and all(t.get("tier", "core") == "core" for t in core)
     report = run_suite(toy, LIFParams(), core)
     assert report["core_score"] == 1.0 and report["hard_score"] is None

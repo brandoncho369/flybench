@@ -8,7 +8,8 @@ import yaml
 
 from .bench import OPS
 
-METRICS = {"rate", "network_rate", "active_fraction", "readout_active_fraction", "ratio"}
+METRICS = {"rate", "network_rate", "active_fraction", "readout_active_fraction", "ratio", "spikes_per_neuron"}
+CIRCUITS = {"stability", "taste", "escape", "olfaction", "physiology", "robustness"}
 REQUIRED = {"name", "title", "conditions", "checks"}
 TIERS = {"core", "hard"}
 
@@ -25,6 +26,8 @@ def lint_task(task: dict, source: str = "<task>") -> list[str]:
         errs.append(f"tier must be one of {sorted(TIERS)}")
     if not task.get("citation"):
         errs.append("needs a `citation` (published fly behaviour)")
+    if task.get("circuit") not in CIRCUITS:
+        errs.append(f"needs `circuit` (one of {sorted(CIRCUITS)}) so the score can be weighted per pathway")
     duration = float(task.get("duration_ms", 1000))
     if duration <= 0:
         errs.append("duration_ms must be > 0")
@@ -40,6 +43,9 @@ def lint_task(task: dict, source: str = "<task>") -> list[str]:
         errs.append("conditions must be a non-empty mapping")
         return errs
     for cname, cond in conds.items():
+        jit = cond.get("weight_jitter", 0)
+        if not (isinstance(jit, (int, float)) and 0 <= jit <= 1):
+            errs.append(f"{cname}: weight_jitter must be a number in [0, 1] (lognormal sigma)")
         for i, s in enumerate(cond.get("stimuli", []) or []):
             if "select" not in s:
                 errs.append(f"{cname}: stimulus {i} has no `select`")
@@ -58,6 +64,8 @@ def lint_task(task: dict, source: str = "<task>") -> list[str]:
             errs.append(f"check {i}: unknown op {chk.get('op')!r}")
         if "value" not in chk:
             errs.append(f"check {i}: missing value")
+        if not str(chk.get("basis", "")).strip():
+            errs.append(f"check {i}: needs `basis` — a citation for the threshold, or 'convention: <why this number>'")
         if chk.get("cond") not in conds:
             errs.append(f"check {i}: cond {chk.get('cond')!r} is not a condition")
         if typ == "ratio" and chk.get("over") not in conds:

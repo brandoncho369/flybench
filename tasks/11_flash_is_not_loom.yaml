@@ -9,6 +9,7 @@ description: >
   synaptic delays alone — no dendritic nonlinearities, no adaptation — so this
   is expected to be hard. Failure here means the model's visual front end is a
   brightness detector, which is worth knowing before wiring it to a game.
+circuit: escape
 citation: von Reyn et al. 2014 (Nat. Neurosci.); Card & Dickinson 2008 (Curr. Biol.); Klapoetke et al. 2017 (Nature)
 duration_ms: 700
 window: [250, 600]
@@ -20,6 +21,6 @@ conditions:
     stimuli:
       - {name: photoreceptors, select: {any: [{sub_class: photo_receptor}, {cell_type_regex: "^R[1-8]"}]}, rate_hz: 50, t_start_ms: 200, t_end_ms: 600}
 checks:
-  - {type: rate, cond: flash, readout: gf, op: "<", value: 5}
-  - {type: rate, cond: flash, readout: lplc2, op: "<", value: 20}
-  - {type: active_fraction, cond: flash, op: "<", value: 0.3}
+  - {type: rate, cond: flash, readout: gf, op: "<", value: 5, basis: "von Reyn et al. 2014; Klapoetke et al. 2017 (LPLC2 is loom-selective; full-field flash does not trigger GF escape); convention: <5 Hz"}
+  - {type: rate, cond: flash, readout: lplc2, op: "<", value: 20, basis: "Klapoetke et al. 2017 (LPLC2 responds weakly to non-looming stimuli); convention: <20 Hz"}
+  - {type: active_fraction, cond: flash, op: "<", value: 0.3, basis: "convention: a full-field flash on 11k photoreceptors legitimately activates much of the optic lobe; 30% ceiling guards only against whole-brain recruitment"}

@@ -5,6 +5,7 @@ description: >
   whose gain is too high "passes" every reflex because everything fires; this
   task is the guard against that. (Real flies do have spontaneous activity —
   the LIF model has none by construction, so quiet is the correct answer here.)
+circuit: stability
 citation: Shiu et al. 2024, Nature — model is silent without input by design
 duration_ms: 500
 readout:
@@ -12,5 +13,5 @@ readout:
 conditions:
   baseline: {stimuli: []}
 checks:
-  - {type: network_rate, cond: baseline, op: "<", value: 0.5}
-  - {type: active_fraction, cond: baseline, op: "<", value: 0.01}
+  - {type: network_rate, cond: baseline, op: "<", value: 0.5, basis: "Shiu et al. 2024 (silent without input); convention: 0.5 Hz mean over all neurons is below any spontaneous rate reported in fly recordings"}
+  - {type: active_fraction, cond: baseline, op: "<", value: 0.01, basis: "convention: fewer than 1% of neurons may fire spontaneously in 1 s; the fly brain at rest is not silent (Shiu 2024 Fig. 1), but its spontaneous activity is not reproduced by this model class"}

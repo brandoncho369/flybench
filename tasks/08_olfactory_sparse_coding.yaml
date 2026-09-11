@@ -8,6 +8,7 @@ description: >
   fire DA1 PNs strongly while most PNs of the other ~50 glomeruli stay quiet,
   and the third-order lateral horn should not light up wholesale. A model with
   the wrong excitation/inhibition balance turns one odour into "all odours".
+circuit: olfaction
 citation: Olsen & Wilson 2008 (Nature); Wilson 2013 (Annu. Rev. Neurosci.); Kohl et al. 2013
 duration_ms: 800
 window: [250, 700]
@@ -20,7 +21,7 @@ conditions:
     stimuli:
       - {name: da1_orn, select: {cell_type: ORN_DA1}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
 checks:
-  - {type: rate, cond: cva, readout: da1_pn, op: ">", value: 10}
-  - {type: ratio, cond: cva, over: baseline, readout: da1_pn, op: ">", value: 5}
-  - {type: readout_active_fraction, cond: cva, readout: all_pn, op: "<", value: 0.3}
-  - {type: active_fraction, cond: cva, op: "<", value: 0.05}
+  - {type: rate, cond: cva, readout: da1_pn, op: ">", value: 10, basis: "Olsen & Wilson 2008 (PN responses tens of Hz to cognate odour); convention: 10 Hz"}
+  - {type: ratio, cond: cva, over: baseline, readout: da1_pn, op: ">", value: 5, basis: "convention: a 5x rise over baseline; baseline is ~0 Hz so any real response clears this easily — it exists to fail models whose baseline is already high"}
+  - {type: readout_active_fraction, cond: cva, readout: all_pn, op: "<", value: 0.3, basis: "Wilson 2013 (one odour activates a minority of glomeruli); convention: <30% of PNs, lenient"}
+  - {type: active_fraction, cond: cva, op: "<", value: 0.05, basis: "convention: an odour should not recruit 5% of the whole brain"}

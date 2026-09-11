@@ -4,6 +4,7 @@ description: >
   Co-activating bitter GRNs with sugar GRNs should reduce MN9 output relative
   to sugar alone. Flies reject sucrose laced with quinine; the connectome
   should show why (bitter-driven inhibition onto the sugar pathway).
+circuit: taste
 citation: Shiu et al. 2024 (Nature) Fig. 3; Jaeger et al. 2018
 duration_ms: 1000
 window: [250, 800]
@@ -30,5 +31,5 @@ conditions:
         t_start_ms: 200
         t_end_ms: 800
 checks:
-  - {type: rate, cond: sugar, op: ">", value: 5}
-  - {type: ratio, cond: sugar_plus_bitter, over: sugar, op: "<", value: 0.5}
+  - {type: rate, cond: sugar, op: ">", value: 5, basis: "convention: 5 Hz over the window is ~2.5 spikes per neuron, the smallest response that is unambiguously not noise (baseline is 0 Hz)"}
+  - {type: ratio, cond: sugar_plus_bitter, over: sugar, op: "<", value: 0.5, basis: "Shiu et al. 2024 Fig. 3 (bitter co-activation abolishes MN9 response in the model); Jaeger et al. 2018 (bitter suppresses PER behaviourally). 0.5 is a convention: half is the smallest suppression worth calling suppression"}

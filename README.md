@@ -131,6 +131,17 @@ A score is the fraction of listed behaviours a model reproduces under fixed, cit
 
 The reference model is deliberately the simplest thing that works. Every improvement on it is a claim to be argued with, and the benchmark exists so the argument can happen with numbers.
 
+**How good is the ruler itself?** Honestly: calibrated at the coarse end. It reliably tells "this brain is seizing" from "this pathway is dead" from "this reflex works"; it cannot yet rank two nearly-right models. What keeps it honest, and what we changed once we noticed the gaps:
+
+- *Every threshold has a provenance.* Each check carries a `basis`: a citation for the number, or an explicit `convention:` explaining the judgement call. The lint refuses tasks without one. Most of our numbers are conventions and say so.
+- *Effect sizes, not just pass/fail.* Every check reports a margin (how far from the line, in decades, e.g. `+3.2x` or `-1.4x`), so two models on either side of 5 Hz are not mistaken for categorically different.
+- *Ceilings, not only floors.* The reflex tasks only ask that a pathway conducts; the reference model passes them with the giant fiber at ~430 Hz, its refractory ceiling, when the real GF fires **once** per escape (von Reyn et al. 2014). Task 13 (`physiological_rates`) measures spikes per neuron and fails saturation. The reference model fails it.
+- *Circuits count once.* Seven tasks hinge on the sugar → MN9 pathway, so the task-weighted score is dominated by one circuit. Reports also carry `core_by_circuit` / `hard_by_circuit`: the mean over circuits of the mean within each.
+- *It's one animal.* A connectome is one fly; synapse counts differ between individuals by tens of percent while behaviour does not. Task 14 (`wiring_robustness`) reruns the core reflexes on a copy where every synapse count is jittered ±25% (lognormal). A model that only works at one specimen's exact counts has fit the specimen, not the species. This is also the answer to "wouldn't a different female's connectome give different results?" — it would, somewhat, and the benchmark now measures how much.
+- *Hold-out.* CI can run a small set of unpublished tasks (`FLYBENCH_HOLDOUT_URL` secret) and report only pass/fail, as a check against tuning to the public YAML.
+
+What is still weak: the thresholds are conventions far more often than measurements, four circuits is not a fly, and nothing here is calibrated against real recordings. Contributions that replace a `convention:` with a citation are the most valuable kind.
+
 ## What this is not
 
 * **Not a fly.** No neuromodulation, no neuropeptides, no gap junctions, no plasticity, no spontaneous activity, no body. Absolute firing rates from this model should not be trusted; only which populations respond, and roughly in what order.

@@ -8,6 +8,7 @@ description: >
   any input arrives) has lost that gradation. Weak drive (20 Hz on the sugar
   GRNs) should give a clearly smaller MN9 response than strong drive (100 Hz),
   and both should be above baseline.
+circuit: taste
 citation: Dethier 1976; Dahanukar et al. 2007 (Neuron); Shiu et al. 2024
 duration_ms: 1000
 window: [250, 800]
@@ -21,7 +22,7 @@ conditions:
     stimuli:
       - {name: sugar_grn, select: {any: [{sub_class: "sugar/water"}, {all_of: [{labels_regex: "sugar"}, {super_class: sensory}, {not: {labels_regex: "bitter"}}]}, {all_of: [{sub_class: "labellar bristle"}, {cell_type_regex: "^LB3[a-d]$"}]}]}, rate_hz: 100, t_start_ms: 200, t_end_ms: 800}
 checks:
-  - {type: rate, cond: weak, op: ">", value: 1}
-  - {type: rate, cond: strong, op: ">", value: 5}
-  - {type: ratio, cond: weak, over: strong, op: "<", value: 0.6}
-  - {type: rate, cond: strong, op: "<", value: 300}
+  - {type: rate, cond: weak, op: ">", value: 1, basis: "Dethier 1976; Dahanukar et al. 2007 (PER probability rises with sucrose concentration); convention: 1 Hz = a detectable weak response"}
+  - {type: rate, cond: strong, op: ">", value: 5, basis: "convention: 5 Hz over the window is ~2.5 spikes per neuron, the smallest response that is unambiguously not noise (baseline is 0 Hz)"}
+  - {type: ratio, cond: weak, over: strong, op: "<", value: 0.6, basis: "convention: a 5x weaker stimulus should give a visibly weaker response; 0.6 is lenient on purpose"}
+  - {type: rate, cond: strong, op: "<", value: 300, basis: "convention: 300 Hz is above any sustained motor-neuron rate in the fly literature (Schwarz et al. 2017 MN9 recordings show bursts, not sustained hundreds of Hz); above it the readout is saturating, not responding"}

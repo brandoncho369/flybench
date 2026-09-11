@@ -7,6 +7,7 @@ description: >
   circuits pass their own reflex tests in the core tier; this task asks whether
   they stay separate, which fails when the global gain is high enough that
   activity spreads through shared interneurons.
+circuit: taste
 citation: von Reyn et al. 2014; Shiu et al. 2024
 duration_ms: 900
 window: [250, 800]
@@ -21,7 +22,7 @@ conditions:
     stimuli:
       - {name: looming_detectors, select: {any: [{cell_type: LPLC2}, {cell_type: LC4}, {hemibrain_type: LPLC2}, {hemibrain_type: LC4}]}, rate_hz: 150, t_start_ms: 200, t_end_ms: 800}
 checks:
-  - {type: rate, cond: sugar, readout: mn9, op: ">", value: 5}
-  - {type: rate, cond: sugar, readout: gf, op: "<", value: 2}
-  - {type: rate, cond: loom, readout: gf, op: ">", value: 5}
-  - {type: rate, cond: loom, readout: mn9, op: "<", value: 2}
+  - {type: rate, cond: sugar, readout: mn9, op: ">", value: 5, basis: "convention: 5 Hz over the window is ~2.5 spikes per neuron, the smallest response that is unambiguously not noise (baseline is 0 Hz)"}
+  - {type: rate, cond: sugar, readout: gf, op: "<", value: 2, basis: "von Reyn et al. 2014 (GF is driven by visual looming, not taste); convention: <2 Hz = silent"}
+  - {type: rate, cond: loom, readout: gf, op: ">", value: 5, basis: "convention: 5 Hz over the window is ~2.5 spikes per neuron, the smallest response that is unambiguously not noise (baseline is 0 Hz)"}
+  - {type: rate, cond: loom, readout: mn9, op: "<", value: 2, basis: "convention: looming should not drive the feeding motor neuron; <2 Hz = silent"}

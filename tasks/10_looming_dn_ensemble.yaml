@@ -7,6 +7,7 @@ description: >
   the response is selective — a few dozen of the ~1300 descending neurons, not
   a general alarm. Checks that the named looming DNs fire and that the
   descending population as a whole stays mostly silent.
+circuit: escape
 citation: Ache et al. 2019 (Curr. Biol.); Namiki et al. 2018 (eLife); Dombrovski et al. 2023 (Nature)
 duration_ms: 600
 window: [220, 500]
@@ -20,6 +21,6 @@ conditions:
     stimuli:
       - {name: looming_detectors, select: {any: [{cell_type: LPLC2}, {cell_type: LC4}, {hemibrain_type: LPLC2}, {hemibrain_type: LC4}]}, rate_hz: 150, t_start_ms: 200, t_end_ms: 500}
 checks:
-  - {type: rate, cond: loom, readout: gf, op: ">", value: 5}
-  - {type: rate, cond: loom, readout: dnp, op: ">", value: 5}
-  - {type: readout_active_fraction, cond: loom, readout: all_dn, op: "<", value: 0.15}
+  - {type: rate, cond: loom, readout: gf, op: ">", value: 5, basis: "convention: 5 Hz over the window is ~2.5 spikes per neuron, the smallest response that is unambiguously not noise (baseline is 0 Hz)"}
+  - {type: rate, cond: loom, readout: dnp, op: ">", value: 5, basis: "Ache et al. 2019 (DNp02/DNp11 respond to looming); convention: 5 Hz"}
+  - {type: readout_active_fraction, cond: loom, readout: all_dn, op: "<", value: 0.15, basis: "Namiki et al. 2018 (~1300 DNs, looming engages a small ensemble); convention: <15% of all DNs"}

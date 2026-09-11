@@ -1,0 +1,30 @@
+name: physiological_rates
+title: Neurons fire at fly rates, not at their refractory ceiling
+tier: hard
+circuit: physiology
+description: >
+  Passing the reflex tasks only requires that a pathway conducts. This task asks whether the
+  readouts fire the way the real neurons do. The Giant Fiber produces a single spike per escape
+  (von Reyn et al. 2014): it should spike about once when the loom arrives and be silent before.
+  MN9 drives proboscis extension with bursts, not a sustained hundreds-of-Hz tone. The reference
+  LIF model pins both at ~430 Hz — their 2.2 ms refractory ceiling — which is a saturating
+  network, not a reflex. A model that passes here has gain control the wiring alone does not give.
+citation: "von Reyn et al. 2014 (single GF spike per takeoff); Ache et al. 2019; Schwarz et al. 2017 (MN9 recordings during feeding)"
+duration_ms: 800
+window: [200, 700]
+readouts:
+  gf:  {select: {any: [{cell_type: GF}, {cell_type: DNp01}, {hemibrain_type: "Giant Fiber"}, {all_of: [{labels_regex: "giant fib"}, {super_class: descending}]}]}}
+  mn9: {select: {any: [{cell_type: MN9}, {cell_type: CB0701}, {hemibrain_type: MN9}, {all_of: [{labels_regex: "\\bMN9\\b"}, {super_class: motor}]}]}}
+conditions:
+  loom:
+    stimuli:
+      - {name: looming_detectors, select: {any: [{cell_type: LPLC2}, {cell_type: LC4}, {hemibrain_type: LPLC2}, {hemibrain_type: LC4}]}, rate_hz: 150, t_start_ms: 200, t_end_ms: 500}
+  sugar:
+    stimuli:
+      - {name: sugar_grn, select: {any: [{sub_class: "sugar/water"}, {all_of: [{labels_regex: "sugar"}, {super_class: sensory}, {not: {labels_regex: "bitter"}}]}, {all_of: [{sub_class: "labellar bristle"}, {cell_type_regex: "^LB3[a-d]$"}]}]}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
+checks:
+  - {type: spikes_per_neuron, cond: loom, readout: gf, op: ">=", value: 1, window: [200, 500], basis: "von Reyn et al. 2014: a looming stimulus evokes a GF spike; at least one per neuron during the loom"}
+  - {type: spikes_per_neuron, cond: loom, readout: gf, op: "<=", value: 4, window: [200, 500], basis: "von Reyn et al. 2014; Ache et al. 2019: one GF spike per escape, occasionally a short burst; 4 is a lenient ceiling. The reference model fires ~120 in this window"}
+  - {type: spikes_per_neuron, cond: loom, readout: gf, op: "<", value: 1, window: [0, 200], basis: "convention: no GF spike before the loom begins"}
+  - {type: rate, cond: sugar, readout: mn9, op: ">", value: 5, basis: "convention: the pathway must still conduct (same threshold as task 02)"}
+  - {type: rate, cond: sugar, readout: mn9, op: "<", value: 150, basis: "convention: sustained motor-neuron rates in Drosophila feeding recordings are tens of Hz in bursts (Schwarz et al. 2017); 150 Hz is a generous ceiling well below the 430 Hz refractory limit"}

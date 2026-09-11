@@ -10,6 +10,7 @@ description: >
   neuromodulation). This task stimulates for 500 ms, then measures 1–1.3 s after
   the stimulus stopped. It is the clearest single number for "what a wiring
   diagram is missing".
+circuit: taste
 citation: Dethier 1976 (PER duration); Shiu et al. 2024 (activity tracks stimulus); Benda & Herz 2003 (adaptation)
 duration_ms: 2000
 window: [250, 700]
@@ -20,7 +21,7 @@ conditions:
     stimuli:
       - {name: sugar_grn, select: {any: [{sub_class: "sugar/water"}, {all_of: [{labels_regex: "sugar"}, {super_class: sensory}, {not: {labels_regex: "bitter"}}]}, {all_of: [{sub_class: "labellar bristle"}, {cell_type_regex: "^LB3[a-d]$"}]}]}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
 checks:
-  - {type: rate, cond: sugar, op: ">", value: 5}                                        # it did respond
-  - {type: rate, cond: sugar, op: "<", value: 5, window: [1700, 2000]}                  # ...and stopped
-  - {type: network_rate, cond: sugar, op: "<", value: 0.5, window: [1700, 2000]}
-  - {type: active_fraction, cond: sugar, op: "<", value: 0.01, window: [1700, 2000]}
+  - {type: rate, cond: sugar, op: ">", value: 5, basis: "convention: 5 Hz over the window is ~2.5 spikes per neuron, the smallest response that is unambiguously not noise (baseline is 0 Hz)"}
+  - {type: rate, cond: sugar, op: "<", value: 5, window: [1700, 2000], basis: "Dethier 1976 (PER ends when the stimulus ends); convention: MN9 <5 Hz one second later"}
+  - {type: network_rate, cond: sugar, op: "<", value: 0.5, window: [1700, 2000], basis: "convention: back to the stability threshold (task 01)"}
+  - {type: active_fraction, cond: sugar, op: "<", value: 0.01, window: [1700, 2000], basis: "convention: back to the stability threshold (task 01)"}

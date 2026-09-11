@@ -1,0 +1,37 @@
+name: wiring_robustness
+title: The reflexes survive a different individual's synapse counts
+tier: hard
+circuit: robustness
+description: >
+  A connectome is one animal. Synapse counts between the same two cell types differ between
+  individuals and between hemispheres of the same fly by tens of percent, while the behaviour
+  is the same in every fly. So a model that only reproduces a reflex at one exact set of
+  synapse counts has fit the specimen, not the species. Here every synapse count is multiplied
+  by independent lognormal noise (sigma 0.25, i.e. roughly ±25%) — a stand-in for a second
+  individual with the same wiring diagram — and the two core reflexes must still work and
+  the brain must still be quiet at rest. Real flies have homeostatic mechanisms that make this
+  robustness automatic; a five-constant model has none.
+citation: "Schlegel et al. 2024 (FlyWire vs hemibrain: cell-type connectivity conserved, synapse counts vary); Takemura et al. 2015; Marder & Goaillard 2006 (robustness to parameter variation)"
+duration_ms: 800
+window: [220, 700]
+readouts:
+  gf:  {select: {any: [{cell_type: GF}, {cell_type: DNp01}, {hemibrain_type: "Giant Fiber"}, {all_of: [{labels_regex: "giant fib"}, {super_class: descending}]}]}}
+  mn9: {select: {any: [{cell_type: MN9}, {cell_type: CB0701}, {hemibrain_type: MN9}, {all_of: [{labels_regex: "\\bMN9\\b"}, {super_class: motor}]}]}}
+conditions:
+  baseline_other_fly:
+    weight_jitter: 0.25
+    stimuli: []
+  sugar_other_fly:
+    weight_jitter: 0.25
+    stimuli:
+      - {name: sugar_grn, select: {any: [{sub_class: "sugar/water"}, {all_of: [{labels_regex: "sugar"}, {super_class: sensory}, {not: {labels_regex: "bitter"}}]}, {all_of: [{sub_class: "labellar bristle"}, {cell_type_regex: "^LB3[a-d]$"}]}]}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
+  loom_other_fly:
+    weight_jitter: 0.25
+    stimuli:
+      - {name: looming_detectors, select: {any: [{cell_type: LPLC2}, {cell_type: LC4}, {hemibrain_type: LPLC2}, {hemibrain_type: LC4}]}, rate_hz: 150, t_start_ms: 200, t_end_ms: 500}
+checks:
+  - {type: network_rate, cond: baseline_other_fly, op: "<", value: 0.5, basis: "convention: same threshold as task 01: silent without input"}
+  - {type: rate, cond: sugar_other_fly, readout: mn9, op: ">", value: 5, basis: "convention: same threshold as task 02: sugar still reaches the proboscis in the other individual"}
+  - {type: active_fraction, cond: sugar_other_fly, op: "<", value: 0.1, basis: "convention: same threshold as task 02"}
+  - {type: rate, cond: loom_other_fly, readout: gf, op: ">", value: 5, window: [220, 500], basis: "convention: same threshold as task 04: looming still reaches the giant fiber"}
+  - {type: active_fraction, cond: loom_other_fly, op: "<", value: 0.1, window: [220, 500], basis: "convention: same threshold as task 04"}

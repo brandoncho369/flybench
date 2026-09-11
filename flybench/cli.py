@@ -94,7 +94,12 @@ def run(connectome, config, gain, task_paths, out, label, cache, simulator, tier
     table = Table(title=f"flybench · score {report['score']:.2f} · {report['passed']}/{report['n_tasks']} tasks")
     table.add_column("task"); table.add_column("result"); table.add_column("checks"); table.add_column("notes", style="dim")
     for t in report["tasks"]:
-        checks = "\n".join(("✓ " if ch["passed"] else "✗ ") + escape(f"{ch['description']}  [{ch['value']:.3g}]") for ch in t["checks"])
+        def marg(ch):  # effect size: how far from the line, as a multiplier on the passing (+) or failing (-) side
+            m = ch.get("margin")
+            if m is None or m != m:
+                return ""
+            return f" [dim]{'+' if m >= 0 else '-'}{10 ** abs(m):.1f}x[/]"
+        checks = "\n".join(("✓ " if ch["passed"] else "✗ ") + escape(f"{ch['description']}  [{ch['value']:.3g}]") + marg(ch) for ch in t["checks"])
         table.add_row(t["title"], "[green]PASS[/]" if t["passed"] else f"[red]FAIL[/] ({t['score']:.0%})", checks, "\n".join(t["notes"]))
     console.print(table)
     if out:

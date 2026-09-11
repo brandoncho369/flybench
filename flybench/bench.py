@@ -51,6 +51,17 @@ class CheckResult:
     description: str
     value: float
     passed: bool
+    margin: float = float("nan")   # signed log10 distance from the threshold: +1 = 10x on the passing side, -1 = 10x on the failing side
+    basis: str = ""                # where the threshold comes from (citation, or "convention: ...")
+
+
+def margin_of(value: float, op: str, target: float) -> float:
+    """Effect size for a check: how far the measurement sits from the line, in decades, sign = pass side."""
+    if not np.isfinite(value):
+        return float("nan")
+    v, t = max(abs(value), EPS), max(abs(target), EPS)
+    m = float(np.log10(v / t))
+    return m if op in (">", ">=") else -m
 
 
 @dataclass
@@ -112,7 +123,21 @@ def _metric(res: SimResult, readout: np.ndarray, name: str, w0: float, w1: float
             return float("nan")
         m = (res.spike_times_ms >= w0) & (res.spike_times_ms < w1)
         return float(len(np.intersect1d(res.spike_neurons[m], readout)) / readout.size)
+    if name == "spikes_per_neuron":
+        if readout.size == 0:
+            return float("nan")
+        m = (res.spike_times_ms >= w0) & (res.spike_times_ms < w1)
+        return float(np.isin(res.spike_neurons[m], readout).sum() / readout.size)
     raise ValueError(f"unknown metric {name}")
+
+
+def perturb_weights(c: Connectome, sigma: float, seed: int) -> Connectome:
+    """Same neurons, same edges, every synapse count multiplied by lognormal(0, sigma) noise."""
+    rng = np.random.default_rng(10_000 + seed)
+    W = c.W.copy()
+    W.data = (W.data * rng.lognormal(0.0, sigma, size=W.data.shape)).astype(np.float32)
+    return Connectome(root_ids=c.root_ids, W=W, positions=c.positions, annotations=c.annotations, name=c.name,
+                      meta={**c.meta, "weight_jitter": sigma})
 
 
 def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False,
@@ -137,6 +162,7 @@ def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False
     duration = float(task.get("duration_ms", 1000))
     window = task.get("window", [0, duration])
     sim = simulator(c, params)
+    jittered: dict[float, Any] = {}
 
     results: dict[str, SimResult] = {}
     measurements: dict[str, dict[str, float]] = {}
@@ -146,7 +172,15 @@ def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False
         for s in stims:
             if s.neurons.size == 0:
                 notes.append(f"{cond_name}: stimulus {s.name!r} matched 0 neurons")
-        res: SimResult = sim.run(duration, stims)
+        jit = float(cond.get("weight_jitter", 0.0))
+        if jit > 0:
+            # "a different individual": every synapse count scaled by an independent lognormal factor
+            # (sigma = jit, in log units), same wiring diagram. Seeded so conditions are comparable.
+            if jit not in jittered:
+                jittered[jit] = simulator(perturb_weights(c, jit, params.seed), params)
+            res: SimResult = jittered[jit].run(duration, stims)
+        else:
+            res = sim.run(duration, stims)
         results[cond_name] = res
         m = {
             "rate": _metric(res, readouts[default_readout], "rate", *window),
@@ -179,10 +213,10 @@ def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False
             desc = f"rate{tag} / rate[{chk['over']}] {chk['op']} {target}"
         else:
             val = _metric(results[chk["cond"]], ridx, typ, *w)
-            unit = " Hz" if typ.endswith("rate") else ""
+            unit = " Hz" if typ.endswith("rate") else (" spikes/neuron" if typ == "spikes_per_neuron" else "")
             desc = f"{typ.replace('_', ' ')}{tag} {chk['op']} {target}{unit}"
         passed = bool(not np.isnan(val) and op(val, target))
-        checks.append(CheckResult(desc, float(val), passed))
+        checks.append(CheckResult(desc, float(val), passed, margin_of(float(val), chk["op"], target), str(chk.get("basis", ""))))
 
     score = sum(ch.passed for ch in checks) / max(len(checks), 1)
     return TaskResult(
@@ -214,7 +248,7 @@ def _run_task_multiseed(task, c, params, verbose, simulator, seeds: int) -> Task
         # 2 of 3 random draws is a coin flip, not a reproduced behaviour.
         passed = bool(np.isfinite(mean) and op(mean, target) and passes == seeds)
         desc = f"{ch.description}  [{passes}/{seeds} seeds, sd {nstd(vals):.3g}]"
-        checks.append(CheckResult(desc, mean, passed))
+        checks.append(CheckResult(desc, mean, passed, margin_of(mean, chk["op"], target), str(chk.get("basis", ""))))
     notes = list(dict.fromkeys(n for r in runs for n in r.notes))
     flaky = [f"check {i}: passes on {sum(r.checks[i].passed for r in runs)}/{seeds} seeds" for i in range(len(base.checks))
              if 0 < sum(r.checks[i].passed for r in runs) < seeds]
@@ -239,10 +273,17 @@ def run_suite(c: Connectome, params: LIFParams, tasks: list[dict] | None = None,
         results.append(run_task(task, c, params, verbose=verbose, simulator=simulator, seeds=seeds))
     total = float(np.mean([r.score for r in results])) if results else 0.0
     tiers = {t["name"]: t.get("tier", "core") for t in tasks}
-    tier_scores = {}
+    circuits = {t["name"]: t.get("circuit", t["name"]) for t in tasks}
+    tier_scores, circuit_scores = {}, {}
     for tier in ("core", "hard"):
         rs = [r.score for r in results if tiers.get(r.task) == tier]
         tier_scores[tier] = float(np.mean(rs)) if rs else None
+        # by circuit: seven tasks that all hinge on sugar->MN9 count once, so one pathway cannot dominate the score
+        by_c: dict[str, list[float]] = {}
+        for r in results:
+            if tiers.get(r.task) == tier:
+                by_c.setdefault(circuits[r.task], []).append(r.score)
+        circuit_scores[tier] = float(np.mean([np.mean(v) for v in by_c.values()])) if by_c else None
     return {
         "schema": 1,
         "flybench_version": __version__,
@@ -250,6 +291,9 @@ def run_suite(c: Connectome, params: LIFParams, tasks: list[dict] | None = None,
         "verified": False,          # flipped to true by a maintainer who re-ran it (see CONTRIBUTING.md)
         "core_score": tier_scores["core"],
         "hard_score": tier_scores["hard"],
+        "core_by_circuit": circuit_scores["core"],   # mean over circuits of the mean task score in that circuit
+        "hard_by_circuit": circuit_scores["hard"],
+        "circuits": {t["name"]: circuits[t["name"]] for t in tasks},
         "tier": sorted({t.get("tier", "core") for t in tasks}),
         "connectome": c.name,
         "connectome_meta": {k: c.meta.get(k) for k in ("source", "min_synapses", "n", "n_edges")},
@@ -280,8 +324,8 @@ def leaderboard(reports: list[dict]) -> str:
         for t in r["tasks"]:
             if t["task"] not in task_names:
                 task_names.append(t["task"])
-    head = "| run | connectome | simulator | gain | w_syn | seeds | verified | core | hard | max brain active | " + " | ".join(task_names) + " |"
-    sep = "|" + "---|" * (10 + len(task_names))
+    head = "| run | connectome | simulator | gain | w_syn | seeds | verified | core | hard | core by circuit | hard by circuit | max brain active | " + " | ".join(task_names) + " |"
+    sep = "|" + "---|" * (12 + len(task_names))
     rows = []
     fmt = lambda v: "–" if v is None else f"{v:.2f}"  # noqa: E731
     # rank by core score, then hard score, then more seeds (more evidence), then verified
@@ -292,5 +336,5 @@ def leaderboard(reports: list[dict]) -> str:
         sim = r.get("simulator", "flybench.sim.LIFSimulator").replace("flybench.sim.", "")
         max_active = max((m["active_fraction"] for t in r["tasks"] for m in t["measurements"].values()), default=0.0)
         ver = "✅" if r.get("verified") else "self-reported"
-        rows.append(f"| {r.get('label', '')} | {r['connectome']} | {sim} | {p['gain']} | {p['w_syn_mv']} | {r.get('seeds', 1)} | {ver} | {fmt(r.get('core_score'))} | {fmt(r.get('hard_score'))} | {max_active:.1%} | " + " | ".join(cells) + " |")
+        rows.append(f"| {r.get('label', '')} | {r['connectome']} | {sim} | {p['gain']} | {p['w_syn_mv']} | {r.get('seeds', 1)} | {ver} | {fmt(r.get('core_score'))} | {fmt(r.get('hard_score'))} | {fmt(r.get('core_by_circuit'))} | {fmt(r.get('hard_by_circuit'))} | {max_active:.1%} | " + " | ".join(cells) + " |")
     return "\n".join([head, sep, *rows])

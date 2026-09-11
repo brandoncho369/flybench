@@ -9,6 +9,7 @@ description: >
   the first — so the reference LIF is expected to fail here. That is the
   point: this task measures something the wiring diagram alone does not give
   you.
+circuit: taste
 citation: Duerr & Quinn 1982 (PNAS, PER habituation); Paranjpe et al. 2012 (J. Neurosci.)
 duration_ms: 1400
 window: [250, 600]
@@ -20,5 +21,5 @@ conditions:
       - {name: pulse1, select: {any: [{sub_class: "sugar/water"}, {all_of: [{labels_regex: "sugar"}, {super_class: sensory}, {not: {labels_regex: "bitter"}}]}, {all_of: [{sub_class: "labellar bristle"}, {cell_type_regex: "^LB3[a-d]$"}]}]}, rate_hz: 100, t_start_ms: 200, t_end_ms: 600}
       - {name: pulse2, select: {any: [{sub_class: "sugar/water"}, {all_of: [{labels_regex: "sugar"}, {super_class: sensory}, {not: {labels_regex: "bitter"}}]}, {all_of: [{sub_class: "labellar bristle"}, {cell_type_regex: "^LB3[a-d]$"}]}]}, rate_hz: 100, t_start_ms: 900, t_end_ms: 1300}
 checks:
-  - {type: rate, cond: two_pulses, op: ">", value: 5, window: [250, 600]}
-  - {type: ratio, cond: two_pulses, over: two_pulses, op: "<", value: 0.7, window: [950, 1300], over_window: [250, 600]}
+  - {type: rate, cond: two_pulses, op: ">", value: 5, window: [250, 600], basis: "convention: 5 Hz over the window is ~2.5 spikes per neuron, the smallest response that is unambiguously not noise (baseline is 0 Hz)"}
+  - {type: ratio, cond: two_pulses, over: two_pulses, op: "<", value: 0.7, window: [950, 1300], over_window: [250, 600], basis: "Duerr & Quinn 1982; Paranjpe et al. 2012 (PER habituates with repeated sucrose); convention: second response < 70% of the first"}

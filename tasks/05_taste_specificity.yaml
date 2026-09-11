@@ -4,6 +4,7 @@ description: >
   A negative control. Bitter GRNs alone should not drive MN9; if they do, the
   model has lost the sign of its inhibitory synapses or the gain is high enough
   that any input reaches any output.
+circuit: taste
 citation: Shiu et al. 2024 (Nature)
 duration_ms: 1000
 window: [250, 800]
@@ -18,5 +19,5 @@ conditions:
         t_start_ms: 200
         t_end_ms: 800
 checks:
-  - {type: rate, cond: bitter, op: "<", value: 2}
-  - {type: active_fraction, cond: bitter, op: "<", value: 0.1}
+  - {type: rate, cond: bitter, op: "<", value: 2, basis: "Shiu et al. 2024 (bitter alone does not drive MN9); convention: 2 Hz is <1 spike per neuron per window, i.e. effectively silent"}
+  - {type: active_fraction, cond: bitter, op: "<", value: 0.1, basis: "convention: Shiu et al. 2024 report sparse activity on stimulation; 10% of all neurons is a generous ceiling chosen so a healthy sparse response passes and mass recruitment fails"}

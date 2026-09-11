@@ -84,6 +84,30 @@ def ensure_cache(name: str, cache: Path = DEFAULT_CACHE) -> Path:
     return target
 
 
+def run_holdout(c, params, sim, seeds: int) -> dict | None:
+    """Unpublished tasks, run only where FLYBENCH_HOLDOUT_URL is set (CI secret pointing at a private
+    YAML bundle). Only pass/fail per task and the tier score are reported — no thresholds, no values —
+    so nobody can tune to them. This is the benchmark's check on its own public tasks."""
+    import os, tempfile, zipfile, io
+    url = os.environ.get("FLYBENCH_HOLDOUT_URL")
+    if not url:
+        return None
+    import requests
+    r = requests.get(url, timeout=120)
+    r.raise_for_status()
+    with tempfile.TemporaryDirectory() as td:
+        d = Path(td)
+        if url.endswith(".zip") or r.content[:2] == b"PK":
+            zipfile.ZipFile(io.BytesIO(r.content)).extractall(d)
+        else:
+            (d / "holdout.yaml").write_bytes(r.content)
+        paths = sorted(d.rglob("*.yaml"))
+        if not paths:
+            return {"n_tasks": 0, "score": None, "passed": {}}
+        rep = run_suite(c, params, load_tasks(paths), simulator=sim, seeds=seeds)
+    return {"n_tasks": rep["n_tasks"], "score": rep["score"], "passed": {t["task"]: t["passed"] for t in rep["tasks"]}}
+
+
 def evaluate(config_path: Path, out: Path | None = None, comment: Path | None = None, cache: Path = DEFAULT_CACHE, seeds_override: int | None = None) -> dict:
     cfg = yaml.safe_load(Path(config_path).read_text(encoding="utf-8"))
     errs = validate_submission(cfg)
@@ -96,6 +120,9 @@ def evaluate(config_path: Path, out: Path | None = None, comment: Path | None = 
     sim = resolve_simulator(cfg.get("simulator", "flybench.sim:LIFSimulator"))
     seeds = seeds_override or int(cfg.get("seeds", 3))
     report = run_suite(c, params, load_tasks(), simulator=sim, seeds=seeds)
+    holdout = run_holdout(c, params, sim, seeds)
+    if holdout is not None:
+        report["holdout"] = holdout
     report["label"] = cfg["label"]
     report["note"] = str(cfg.get("note", ""))
     report["verified"] = True            # produced by the benchmark's own CI, not self-reported
@@ -119,7 +146,7 @@ def summary_markdown(r: dict) -> str:
     p = r["params"]
     return f"""### flybench evaluation — `{r['label']}`
 
-**core {r['core_score']:.2f} · hard {r['hard_score']:.2f}** · {r['seeds']} seeds · {r['connectome']} · `{r['simulator'].replace('flybench.', '')}` · gain {p['gain']}
+**core {r['core_score']:.2f} · hard {r['hard_score']:.2f}** (by circuit {r.get('core_by_circuit') or 0:.2f} / {r.get('hard_by_circuit') or 0:.2f}){(" · hold-out " + str(r['holdout']['score'] if r['holdout']['score'] is None else f"{r['holdout']['score']:.2f}") + f" on {r['holdout']['n_tasks']} unpublished tasks") if r.get('holdout') else ""} · {r['seeds']} seeds · {r['connectome']} · `{r['simulator'].replace('flybench.', '')}` · gain {p['gain']}
 
 | task | result | seed notes |
 |---|---|---|

@@ -10,6 +10,7 @@ description: >
   second-order sugar neurons named in Shiu et al. 2022 (G2N-1, Clavicle, Zorro, Usnea, Phantom,
   Fudog): labellar bristle types LB3a–d carry >95% of GRN input to those cells, and LB1a–d
   instead target Scapula (the bitter second-order neuron). See docs/MALECNS.md for the table.
+circuit: taste
 citation: Dethier 1976; Shiu et al. 2024 (Nature) Fig. 2
 duration_ms: 1000
 window: [250, 800]
@@ -25,6 +26,6 @@ conditions:
         t_start_ms: 200
         t_end_ms: 800
 checks:
-  - {type: rate, cond: sugar, op: ">", value: 5}
-  - {type: ratio, cond: sugar, over: baseline, op: ">", value: 5}
-  - {type: active_fraction, cond: sugar, op: "<", value: 0.1}
+  - {type: rate, cond: sugar, op: ">", value: 5, basis: "convention: 5 Hz over the window is ~2.5 spikes per neuron, the smallest response that is unambiguously not noise (baseline is 0 Hz)"}
+  - {type: ratio, cond: sugar, over: baseline, op: ">", value: 5, basis: "convention: a 5x rise over baseline; baseline is ~0 Hz so any real response clears this easily — it exists to fail models whose baseline is already high"}
+  - {type: active_fraction, cond: sugar, op: "<", value: 0.1, basis: "convention: Shiu et al. 2024 report sparse activity on stimulation; 10% of all neurons is a generous ceiling chosen so a healthy sparse response passes and mass recruitment fails"}
