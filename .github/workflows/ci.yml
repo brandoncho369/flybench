@@ -9,4 +9,6 @@ jobs:
         with: { python-version: "3.11" }
       - run: pip install -e ".[dev]"
       - run: pytest -q
+      - run: flybench lint
+      - run: flybench validate results/
       - run: flybench run --gain 1.0 --tier core

@@ -65,17 +65,18 @@ def toy(cache):
 @click.option("--cache", default=str(DEFAULT_CACHE), show_default=True)
 @click.option("--simulator", default=None, help="custom simulator as 'module:Class' (see CONTRIBUTING.md)")
 @click.option("--tier", default="all", type=click.Choice(["core", "hard", "all"]), show_default=True)
+@click.option("--seeds", default=1, show_default=True, help="run every condition this many times with different seeds; checks must hold on the mean")
 @click.option("-v", "--verbose", is_flag=True)
-def run(connectome, config, gain, task_paths, out, label, cache, simulator, tier, verbose):
+def run(connectome, config, gain, task_paths, out, label, cache, simulator, tier, seeds, verbose):
     """Run the benchmark suite."""
     c = load_connectome(connectome, cache)
-    overrides = yaml.safe_load(Path(config).read_text()) if config else {}
+    overrides = yaml.safe_load(Path(config).read_text(encoding="utf-8")) if config else {}
     if gain is not None:
         overrides["gain"] = gain
     params = LIFParams.from_dict(overrides or {})
     console.print(f"[bold]{c.name}[/]: {c.n:,} neurons, {c.n_edges:,} edges · gain={params.gain} w_syn={params.w_syn_mv} mV")
     tasks = load_tasks([Path(p) for p in task_paths]) if task_paths else load_tasks(tier=tier)
-    report = run_suite(c, params, tasks, verbose=verbose, simulator=resolve_simulator(simulator))
+    report = run_suite(c, params, tasks, verbose=verbose, simulator=resolve_simulator(simulator), seeds=seeds)
     report["label"] = label or (Path(config).stem if config else f"gain{params.gain}")
 
     table = Table(title=f"flybench · score {report['score']:.2f} · {report['passed']}/{report['n_tasks']} tasks")
@@ -98,10 +99,10 @@ def compare(results, out):
     for r in results:
         p = Path(r)
         files += sorted(p.glob("*.json")) if p.is_dir() else [p]
-    reports = [json.loads(f.read_text()) for f in files]
+    reports = [json.loads(f.read_text(encoding="utf-8")) for f in files]
     md = leaderboard(reports)
     if out:
-        Path(out).write_text(md + "\n")
+        Path(out).write_text(md + "\n", encoding="utf-8")
         console.print(f"leaderboard → {out}")
     else:
         console.print(md)
@@ -151,6 +152,63 @@ def lint(paths):
             console.print(f"    {e}")
     if problems:
         raise SystemExit(1)
+
+
+@main.command()
+@click.argument("paths", nargs=-1, type=click.Path(exists=True))
+def validate(paths):
+    """Validate result JSON reports (defaults to results/). This is what CI runs on every pull request."""
+    from .validate import validate_files
+
+    files = []
+    for p in paths or ["results"]:
+        pp = Path(p)
+        files += sorted(pp.glob("*.json")) if pp.is_dir() else [pp]
+    if not files:
+        console.print("no result files found"); raise SystemExit(1)
+    problems = validate_files(files)
+    for f in files:
+        errs = problems.get(str(f))
+        console.print(("[red]✗[/] " if errs else "[green]✓[/] ") + escape(str(f)))
+        for e in errs or []:
+            console.print("    " + escape(e))
+    if problems:
+        raise SystemExit(1)
+
+
+@main.command()
+@click.argument("report", type=click.Path(exists=True, dir_okay=False))
+@click.option("--cache", default=str(DEFAULT_CACHE), show_default=True)
+@click.option("--tolerance", default=0.05, show_default=True, help="max allowed difference in any task score")
+@click.option("--mark", is_flag=True, help="on success, write verified: true into the report")
+def verify(report, cache, tolerance, mark):
+    """Re-run a submitted report's parameters and compare scores. Maintainers run this before marking a result verified."""
+    from .validate import validate_report
+
+    r = json.loads(Path(report).read_text(encoding="utf-8"))
+    errs = validate_report(r)
+    if errs:
+        console.print("[red]report is not valid:[/]"); [console.print("  " + escape(e)) for e in errs]; raise SystemExit(1)
+    if r.get("simulator", "flybench.sim.LIFSimulator") != "flybench.sim.LIFSimulator":
+        console.print(f"[yellow]custom simulator {r['simulator']} — install it, then re-run with --simulator to verify manually[/]"); raise SystemExit(2)
+    c = load_connectome(r["connectome"], cache)
+    params = LIFParams.from_dict(r["params"])
+    names = {t["task"] for t in r["tasks"]}
+    tasks = [t for t in load_tasks() if t["name"] in names]
+    fresh = run_suite(c, params, tasks, seeds=int(r.get("seeds", 1)))
+    worst = 0.0
+    for a in r["tasks"]:
+        b = next((t for t in fresh["tasks"] if t["task"] == a["task"]), None)
+        d = abs(a["score"] - b["score"]) if b else 1.0
+        worst = max(worst, d)
+        console.print(("[green]✓[/] " if d <= tolerance else "[red]✗[/] ") + f"{a['task']}: submitted {a['score']:.2f}, re-run {b['score'] if b else float('nan'):.2f}")
+    if worst > tolerance:
+        console.print(f"[red]not reproduced[/] (max diff {worst:.2f} > {tolerance})"); raise SystemExit(1)
+    console.print(f"[green]reproduced[/] within {tolerance}")
+    if mark:
+        r["verified"] = True
+        Path(report).write_text(json.dumps(r, indent=2), encoding="utf-8")
+        console.print(f"marked verified → {report}")
 
 
 if __name__ == "__main__":

@@ -86,7 +86,7 @@ class Connectome:
         np.save(path / "positions.npy", self.positions)
         self.annotations.to_parquet(path / "annotations.parquet") if _has_parquet() \
             else self.annotations.to_csv(path / "annotations.csv", index=False)
-        (path / "meta.json").write_text(json.dumps({"name": self.name, **self.meta}, indent=2))
+        (path / "meta.json").write_text(json.dumps({"name": self.name, **self.meta}, indent=2), encoding="utf-8")
         return path
 
     @classmethod
@@ -99,7 +99,7 @@ class Connectome:
             ann = pd.read_parquet(path / "annotations.parquet")
         else:
             ann = pd.read_csv(path / "annotations.csv", dtype=str, keep_default_na=False)
-        meta = json.loads((path / "meta.json").read_text()) if (path / "meta.json").exists() else {}
+        meta = json.loads((path / "meta.json").read_text(encoding="utf-8")) if (path / "meta.json").exists() else {}
         name = meta.pop("name", path.name)
         return cls(root_ids=root_ids, W=W, positions=positions, annotations=ann, name=name, meta=meta)
 

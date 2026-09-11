@@ -37,6 +37,7 @@ from typing import Any, Callable
 import numpy as np
 import yaml
 
+from . import __version__
 from .connectome import Connectome
 from .sim import LIFParams, LIFSimulator, SimResult, Stimulus
 
@@ -69,7 +70,7 @@ class TaskResult:
 def load_tasks(paths: list[Path] | None = None, tier: str = "all") -> list[dict]:
     """tier: 'core' (reflexes the reference LIF must pass), 'hard', or 'all'."""
     paths = paths or sorted(TASK_DIR.glob("*.yaml"))
-    tasks = [yaml.safe_load(Path(p).read_text()) for p in paths]
+    tasks = [yaml.safe_load(Path(p).read_text(encoding="utf-8")) for p in paths]
     if tier != "all":
         tasks = [t for t in tasks if t.get("tier", "core") == tier]
     return tasks
@@ -115,7 +116,12 @@ def _metric(res: SimResult, readout: np.ndarray, name: str, w0: float, w1: float
 
 
 def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False,
-             simulator: SimulatorFactory = LIFSimulator) -> TaskResult:
+             simulator: SimulatorFactory = LIFSimulator, seeds: int = 1) -> TaskResult:
+    """Run one task. With seeds > 1 every condition is simulated `seeds` times (seed, seed+1, ...);
+    a check passes only if it holds on the mean AND on every individual seed, and the per-seed
+    pass count is reported, so a knife-edge result cannot masquerade as a robust one."""
+    if seeds > 1:
+        return _run_task_multiseed(task, c, params, verbose, simulator, seeds)
     t0 = time.time()
     notes: list[str] = []
     # readouts: either `readout: {select: ...}` (named "default") or `readouts: {name: {select: ...}}`
@@ -186,14 +192,47 @@ def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False
     )
 
 
+def _run_task_multiseed(task, c, params, verbose, simulator, seeds: int) -> TaskResult:
+    from dataclasses import replace
+    t0 = time.time()
+    runs = [run_task(task, c, replace(params, seed=params.seed + k), verbose=False, simulator=simulator) for k in range(seeds)]
+    base = runs[0]
+    # mean of every measurement across seeds
+    measurements = {cond: {k: float(np.nanmean([r.measurements[cond][k] for r in runs])) for k in base.measurements[cond]} for cond in base.measurements}
+    checks: list[CheckResult] = []
+    for i, ch in enumerate(base.checks):
+        vals = np.array([r.checks[i].value for r in runs], dtype=float)
+        passes = sum(r.checks[i].passed for r in runs)
+        chk = task["checks"][i]
+        op = OPS[chk["op"]]; target = float(chk["value"])
+        mean = float(np.nanmean(vals))
+        # robust pass: the mean must satisfy the check AND every seed must. A reflex that fires on
+        # 2 of 3 random draws is a coin flip, not a reproduced behaviour.
+        passed = bool(np.isfinite(mean) and op(mean, target) and passes == seeds)
+        desc = f"{ch.description}  [{passes}/{seeds} seeds, sd {float(np.nanstd(vals)):.3g}]"
+        checks.append(CheckResult(desc, mean, passed))
+    notes = list(dict.fromkeys(n for r in runs for n in r.notes))
+    flaky = [f"check {i}: passes on {sum(r.checks[i].passed for r in runs)}/{seeds} seeds" for i in range(len(base.checks))
+             if 0 < sum(r.checks[i].passed for r in runs) < seeds]
+    if flaky:
+        notes.append("seed-sensitive: " + "; ".join(flaky))
+    score = sum(ch.passed for ch in checks) / max(len(checks), 1)
+    if verbose:
+        for cond, m in measurements.items():
+            print(f"  {cond:>16}: readout {m['rate']:.2f} Hz (mean of {seeds} seeds), network {m['network_rate']:.3f} Hz, active {m['active_fraction']:.3%}")
+    return TaskResult(task=task["name"], title=base.title, passed=all(ch.passed for ch in checks) and bool(checks), score=float(score),
+                      checks=checks, measurements=measurements, readout_size=base.readout_size, stimulus_sizes=base.stimulus_sizes,
+                      seconds=time.time() - t0, notes=notes)
+
+
 def run_suite(c: Connectome, params: LIFParams, tasks: list[dict] | None = None, verbose: bool = False,
-              simulator: SimulatorFactory = LIFSimulator) -> dict[str, Any]:
+              simulator: SimulatorFactory = LIFSimulator, seeds: int = 1) -> dict[str, Any]:
     tasks = tasks or load_tasks()
     results = []
     for task in tasks:
         if verbose:
             print(f"[{task['name']}] {task.get('title', '')}")
-        results.append(run_task(task, c, params, verbose=verbose, simulator=simulator))
+        results.append(run_task(task, c, params, verbose=verbose, simulator=simulator, seeds=seeds))
     total = float(np.mean([r.score for r in results])) if results else 0.0
     tiers = {t["name"]: t.get("tier", "core") for t in tasks}
     tier_scores = {}
@@ -201,10 +240,15 @@ def run_suite(c: Connectome, params: LIFParams, tasks: list[dict] | None = None,
         rs = [r.score for r in results if tiers.get(r.task) == tier]
         tier_scores[tier] = float(np.mean(rs)) if rs else None
     return {
+        "schema": 1,
+        "flybench_version": __version__,
+        "seeds": seeds,
+        "verified": False,          # flipped to true by a maintainer who re-ran it (see CONTRIBUTING.md)
         "core_score": tier_scores["core"],
         "hard_score": tier_scores["hard"],
         "tier": sorted({t.get("tier", "core") for t in tasks}),
         "connectome": c.name,
+        "connectome_meta": {k: c.meta.get(k) for k in ("source", "min_synapses", "n", "n_edges")},
         "n_neurons": c.n,
         "n_edges": c.n_edges,
         "params": asdict(params),
@@ -219,7 +263,7 @@ def run_suite(c: Connectome, params: LIFParams, tasks: list[dict] | None = None,
 def save_report(report: dict, path: Path | str) -> Path:
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(report, indent=2))
+    path.write_text(json.dumps(report, indent=2), encoding="utf-8")
     return path
 
 
@@ -232,16 +276,17 @@ def leaderboard(reports: list[dict]) -> str:
         for t in r["tasks"]:
             if t["task"] not in task_names:
                 task_names.append(t["task"])
-    head = "| run | connectome | simulator | gain | w_syn | core | hard | max brain active | " + " | ".join(task_names) + " |"
-    sep = "|" + "---|" * (8 + len(task_names))
+    head = "| run | connectome | simulator | gain | w_syn | seeds | verified | core | hard | max brain active | " + " | ".join(task_names) + " |"
+    sep = "|" + "---|" * (10 + len(task_names))
     rows = []
     fmt = lambda v: "–" if v is None else f"{v:.2f}"  # noqa: E731
-    # rank by core score, then hard score: a model must reproduce the known reflexes before its hard-tier wins count
-    for r in sorted(reports, key=lambda r: (-(r.get("core_score") or 0), -(r.get("hard_score") or 0))):
+    # rank by core score, then hard score, then more seeds (more evidence), then verified
+    for r in sorted(reports, key=lambda r: (-(r.get("core_score") or 0), -(r.get("hard_score") or 0), -int(r.get("seeds", 1)), -int(bool(r.get("verified"))))):
         by_name = {t["task"]: t for t in r["tasks"]}
         cells = [("✅" if by_name[n]["passed"] else f"{by_name[n]['score']:.0%}") if n in by_name else "–" for n in task_names]
         p = r["params"]
         sim = r.get("simulator", "flybench.sim.LIFSimulator").replace("flybench.sim.", "")
         max_active = max((m["active_fraction"] for t in r["tasks"] for m in t["measurements"].values()), default=0.0)
-        rows.append(f"| {r.get('label', '')} | {r['connectome']} | {sim} | {p['gain']} | {p['w_syn_mv']} | {fmt(r.get('core_score'))} | {fmt(r.get('hard_score'))} | {max_active:.1%} | " + " | ".join(cells) + " |")
+        ver = "✅" if r.get("verified") else "self-reported"
+        rows.append(f"| {r.get('label', '')} | {r['connectome']} | {sim} | {p['gain']} | {p['w_syn_mv']} | {r.get('seeds', 1)} | {ver} | {fmt(r.get('core_score'))} | {fmt(r.get('hard_score'))} | {max_active:.1%} | " + " | ".join(cells) + " |")
     return "\n".join([head, sep, *rows])

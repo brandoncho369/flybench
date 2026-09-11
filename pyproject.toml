@@ -17,6 +17,7 @@ dependencies = [
   "pyyaml>=6.0",
   "click>=8.1",
   "rich>=13.0",
+  "jsonschema>=4.0",
 ]
 
 [project.optional-dependencies]
@@ -27,6 +28,9 @@ flybench = "flybench.cli:main"
 
 [tool.setuptools.packages.find]
 include = ["flybench*"]
+
+[tool.setuptools.package-data]
+flybench = ["schema/*.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

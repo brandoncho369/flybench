@@ -326,3 +326,60 @@ def test_cli_end_to_end(tmp_path):
     assert r.invoke(main, ["lint"]).exit_code == 0
     res = r.invoke(main, ["run", "--cache", str(cache), "-c", "does-not-exist"])
     assert res.exit_code != 0
+
+
+# ---------------------------------------------------------------- submissions: validate / verify / seeds
+
+def test_run_suite_report_validates(toy):
+    from flybench.validate import validate_report
+    report = run_suite(toy, LIFParams(), load_tasks(tier="core")); report["label"] = "t"
+    assert validate_report(report) == []
+    assert report["schema"] == 1 and report["seeds"] == 1 and report["verified"] is False
+
+
+def test_validate_rejects_tampering(toy, tmp_path):
+    from flybench.validate import validate_files, validate_report
+    report = run_suite(toy, LIFParams(), load_tasks(tier="core")); report["label"] = "t"
+    bad = json.loads(json.dumps(report)); bad["tasks"][0]["score"] = 1.0; bad["tasks"][0]["checks"][0]["passed"] = False
+    assert any("fraction of checks" in e for e in validate_report(bad))
+    bad = json.loads(json.dumps(report)); bad["core_score"] = 0.99
+    assert any("core_score" in e for e in validate_report(bad))
+    bad = json.loads(json.dumps(report)); bad["tasks"][1]["task"] = "made_up_task"
+    assert any("not a task" in e for e in validate_report(bad))
+    bad = json.loads(json.dumps(report)); bad["label"] = "<script>"
+    assert any("schema" in e for e in validate_report(bad))
+    bad = json.loads(json.dumps(report)); del bad["params"]
+    assert validate_report(bad)
+    # duplicate labels across files
+    for i in range(2):
+        (tmp_path / f"r{i}.json").write_text(json.dumps(report))
+    problems = validate_files(sorted(tmp_path.glob("*.json")))
+    assert any("duplicate label" in e for errs in problems.values() for e in errs)
+    (tmp_path / "junk.json").write_text("{not json")
+    assert any("unreadable" in e for e in validate_files([tmp_path / "junk.json"])[str(tmp_path / "junk.json")])
+
+
+def test_multiseed_reports_seed_sensitivity(toy):
+    r = run_task(_task(), toy, LIFParams(seed=1), seeds=3)
+    assert "3/3 seeds" in r.checks[0].description
+    assert r.passed
+    # a check on the knife edge: threshold set at the observed mean so some seeds fall either side
+    single = [run_task(_task(), toy, LIFParams(seed=1 + k)).checks[0].value for k in range(3)]
+    edge = _task(checks=[{"type": "rate", "cond": "sugar", "op": ">", "value": sorted(single)[1] - 1e-9}])
+    r = run_task(edge, toy, LIFParams(seed=1), seeds=3)
+    assert any("seed-sensitive" in n for n in r.notes) or "3/3" in r.checks[0].description
+
+
+def test_cli_validate_and_verify(tmp_path):
+    cache = tmp_path / "cache"
+    r = CliRunner()
+    assert r.invoke(main, ["toy", "--cache", str(cache)]).exit_code == 0
+    out = tmp_path / "res" / "a.json"
+    assert r.invoke(main, ["run", "--cache", str(cache), "--tier", "core", "--seeds", "2", "-o", str(out), "--label", "a"]).exit_code == 0
+    assert r.invoke(main, ["validate", str(out)]).exit_code == 0
+    res = r.invoke(main, ["verify", str(out), "--cache", str(cache), "--mark"])
+    assert res.exit_code == 0, res.output
+    assert json.loads(out.read_text())["verified"] is True
+    # tamper -> validate fails
+    d = json.loads(out.read_text()); d["score"] = 0.123; out.write_text(json.dumps(d))
+    assert r.invoke(main, ["validate", str(out)]).exit_code == 1

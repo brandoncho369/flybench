@@ -70,5 +70,5 @@ def export_web(c: Connectome, out: Path | str, sets: dict | None = None, max_neu
         "populations": populations,
         "source": c.meta,
     }
-    (out / "meta.json").write_text(json.dumps(meta))
+    (out / "meta.json").write_text(json.dumps(meta), encoding="utf-8")
     return out

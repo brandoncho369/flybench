@@ -1,0 +1,32 @@
+# Regenerates LEADERBOARD.md whenever results change on the default branch, and pings
+# fly-explorer so the website snapshot updates too. Needs a repo secret FLY_EXPLORER_TOKEN
+# (a fine-grained PAT with "contents: write" on brandoncho369/fly-explorer).
+name: leaderboard
+on:
+  push:
+    branches: [main, master]
+    paths: ["results/**", "tasks/**", "flybench/bench.py"]
+permissions:
+  contents: write
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install -e .
+      - run: flybench validate results/
+      - run: flybench compare results/ -o LEADERBOARD.md
+      - name: commit if changed
+        run: |
+          git config user.name "flybench-bot" && git config user.email "bot@fly-bench.com"
+          git add LEADERBOARD.md
+          git diff --cached --quiet || git commit -m "leaderboard: regenerate [skip ci]" && git push
+      - name: notify fly-explorer
+        if: ${{ secrets.FLY_EXPLORER_TOKEN != '' }}
+        run: |
+          curl -sS -X POST -H "Authorization: Bearer ${{ secrets.FLY_EXPLORER_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/brandoncho369/fly-explorer/dispatches \
+            -d '{"event_type":"flybench-results"}'

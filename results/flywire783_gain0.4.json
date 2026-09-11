@@ -1,9 +1,20 @@
 {
+  "schema": 1,
+  "flybench_version": "0.1.0",
+  "label": "LIF gain 0.4",
   "tier": [
     "core",
     "hard"
   ],
+  "seeds": 1,
+  "verified": true,
   "connectome": "flywire783",
+  "connectome_meta": {
+    "source": "flywire-codex",
+    "min_synapses": 5,
+    "n": 139255,
+    "n_edges": 3732460
+  },
   "n_neurons": 139255,
   "n_edges": 3732460,
   "params": {
@@ -20,6 +31,8 @@
     "seed": 0
   },
   "simulator": "flybench.sim.LIFSimulator",
+  "core_score": 1.0,
+  "hard_score": 0.6944444444444443,
   "score": 0.8333333333333333,
   "passed": 7,
   "n_tasks": 11,
@@ -523,8 +536,5 @@
       "seconds": 4.464682340621948,
       "notes": []
     }
-  ],
-  "label": "LIF gain 0.4",
-  "core_score": 1.0,
-  "hard_score": 0.6944444444444443
+  ]
 }

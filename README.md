@@ -38,7 +38,9 @@ Run against the real connectome (Codex v783, Princeton-filtered connections, ≥
 | 0.70 | yes | yes | yes | 14 % | too much of the brain firing |
 | 1.00 (Shiu 2024) | yes | yes | yes | 19 % | a fifth of the brain at 29 Hz — not a reflex, a seizure |
 
-So on the July-2025 synapse predictions the working window is **gain ≈ 0.40–0.45**, less than half of the 1.0 that Shiu et al. calibrated on the earlier Buhmann predictions. That is the kind of thing this benchmark exists to catch: the connectome got re-predicted, the weights shifted, and a parameter that used to be right silently stopped being right.
+So on the July-2025 synapse predictions the working window is around **gain 0.45**, less than half of the 1.0 that Shiu et al. calibrated on the earlier Buhmann predictions. That is the kind of thing this benchmark exists to catch: the connectome got re-predicted, the weights shifted, and a parameter that used to be right silently stopped being right.
+
+Re-running with three random seeds (`--seeds 3`) sharpened it further: **0.40 is a knife edge** — sugar reaches the proboscis on only 2 of 3 seeds, and it "passed" the adaptation task purely because one seed's second pulse failed to ignite. **0.45 passes every core task on every seed.** With more than one seed a check only counts as passed if it holds on every seed, so single-seed luck cannot climb the leaderboard.
 
 Inside that window the reference model then fails most of the **hard** tier. The failures are informative, not embarrassing: MN9 ignition is all-or-nothing (0 Hz or ~430 Hz, nothing in between — no dose response); a second sugar pulse gets exactly the response of the first (no adaptation, because the model has no state that outlives 20 ms); driving one olfactory glomerulus fires ~84 % of all projection neurons (no lateral inhibition, the antennal lobe is a broadcast); looming recruits ~30 % of all descending neurons rather than a takeoff ensemble. Each of those is a concrete thing a better model has to add — adaptation currents, per-transmitter weights, gap junctions, neuromodulation — and each one is now a number you can move. Full table in [`LEADERBOARD.md`](LEADERBOARD.md).
 

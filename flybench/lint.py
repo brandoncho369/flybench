@@ -78,7 +78,7 @@ def lint_files(paths: list[Path]) -> dict[str, list[str]]:
     names: dict[str, str] = {}
     for p in paths:
         try:
-            task = yaml.safe_load(Path(p).read_text())
+            task = yaml.safe_load(Path(p).read_text(encoding="utf-8"))
         except yaml.YAMLError as e:
             out[str(p)] = [f"YAML error: {e}"]
             continue
