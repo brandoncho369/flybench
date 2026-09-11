@@ -124,7 +124,7 @@ On the toy connectome with the default weight, gain 0.3 fails the taste tasks (M
 
 ### 4.3 The CLI
 
-`flybench toy` builds and caches the synthetic network. `flybench build <codex_dir>` parses the real CSVs into the cache. `flybench run -c <name> [--gain X | --config file.yaml] [-o results/x.json]` runs the suite and prints a table. `flybench compare results/` reads the JSON reports and prints a markdown leaderboard. `flybench select '{labels_regex: sugar}'` shows what a selector matches, which is the tool you will use to fix selectors against real labels. `flybench export -c <name> -o <dir>` writes the browser format. `configs/` holds two parameter files: the Shiu 2024 defaults and the gain=0.65 value the Minecraft demo used on the male connectome, included so the first interesting result is "what does that gain do on FlyWire".
+`flybench toy` builds and caches the synthetic network. `flybench build <codex_dir>` parses the real CSVs into the cache. `flybench fetch-neuprint <dir>` downloads any neuPrint dataset (e.g. `male-cns:v1.0`, the Minecraft demo's brain) into that same CSV layout first. `flybench run -c <name> [--gain X | --config file.yaml] [-o results/x.json]` runs the suite and prints a table. `flybench compare results/` reads the JSON reports and prints a markdown leaderboard. `flybench select '{labels_regex: sugar}'` shows what a selector matches, which is the tool you will use to fix selectors against real labels. `flybench export -c <name> -o <dir>` writes the browser format. `configs/` holds two parameter files: the Shiu 2024 defaults and the gain=0.65 value the Minecraft demo used on the male connectome, included so the first interesting result is "what does that gain do on FlyWire".
 
 ### 4.4 The export format
 

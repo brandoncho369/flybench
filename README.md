@@ -86,6 +86,16 @@ flybench run -c flywire783 --config configs/shiu2024.yaml -o results/shiu2024.js
 flybench compare results/ -o LEADERBOARD.md
 ```
 
+**Other connectomes.** Any neuPrint dataset can be pulled into the same layout, no login needed. The male CNS the viral Minecraft/Beat Saber demos ran on:
+
+```bash
+flybench fetch-neuprint data-malecns              # male-cns:v1.0 from neuprint.janelia.org, resumable
+flybench build data-malecns --name malecns
+flybench run -c malecns --config configs/malecns_minecraft.yaml --seeds 3 -o results/malecns-gain-0.65.json
+```
+
+Task selectors were written against FlyWire's names; on another dataset some will report "matched 0 neurons" until someone adds fallbacks for that dataset's names (`flybench select -c malecns '{...}'` to find them).
+
 Each full run is ~45 s on a laptop. Real neuron sets the tasks resolve to on v783: sugar GRNs = `sub_class: sugar/water` (129), bitter GRNs = `sub_class: bitter` (65), MN9 = `cell_type: CB0701` (2, labelled "Motor neuron 9; MN9"), Giant Fiber = `cell_type: DNp01` (2), looming = `LPLC2` + `LC4` (314).
 
 Edges with fewer than 5 synapses are dropped (`--min-synapses`), matching Shiu et al.

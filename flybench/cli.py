@@ -47,6 +47,18 @@ def build(codex_dir, name, min_synapses, cache):
             console.print(f"  [yellow]warning:[/] no {col} annotations — did you include the {note}? Most tasks will match 0 neurons.")
 
 
+@main.command("fetch-neuprint")
+@click.argument("out_dir", type=click.Path(file_okay=False))
+@click.option("--dataset", default="male-cns:v1.0", show_default=True, help="neuPrint dataset (the Minecraft demo used male-cns:v1.0)")
+@click.option("--server", default="https://neuprint.janelia.org", show_default=True)
+@click.option("--min-synapses", default=5, show_default=True)
+@click.option("--token", default=None, help="neuPrint token (optional; anonymous works). Also read from NEUPRINT_APPLICATION_CREDENTIALS")
+def fetch_neuprint(out_dir, dataset, server, min_synapses, token):
+    """Download a connectome from neuPrint into a folder `flybench build` can read (resumable)."""
+    from .fetch_neuprint import fetch
+    fetch(out_dir, dataset=dataset, server=server, min_synapses=min_synapses, token=token, log=lambda m: console.print(escape(str(m))))
+
+
 @main.command()
 @click.option("--cache", default=str(DEFAULT_CACHE), show_default=True)
 def toy(cache):

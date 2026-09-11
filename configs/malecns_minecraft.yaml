@@ -1,14 +1,16 @@
 # The settings the viral "fly brain in Minecraft" demo (blendi-remade/fly-brain-minecraft) used:
-# MaleCNS v1.0 connectome, Shiu constants, global gain 0.65, edges with >= 5 synapses.
+# MaleCNS v1.0 connectome (neuPrint dataset male-cns:v1.0, Janelia FlyEM), Shiu constants,
+# global gain 0.65, edges with >= 5 synapses.
 #
-# To reproduce on the same data:
-#   codex.flywire.ai → Download Data → dataset MCNS v1.0 → the same six file types as for FAFB
-#   flybench build data-malecns/ --name malecns
+# To reproduce on the same data (Codex does not serve MaleCNS yet; neuPrint allows anonymous access):
+#   flybench fetch-neuprint data-malecns            # ~10-20 min, resumable; writes CSVs in the Codex layout
+#   flybench build data-malecns --name malecns
 #   flybench run -c malecns --config configs/malecns_minecraft.yaml --seeds 3 --label "MaleCNS gain 0.65 (Minecraft demo)" -o results/malecns-gain-0.65.json
 #
-# Expect some task selectors to match 0 neurons on the male annotations (labels differ);
-# `flybench select -c malecns '{...}'` finds the right names, and a PR adding male-specific
-# fallbacks to the selectors is welcome. The Beat Saber demo used the same connectome and
-# gain with a scripted motor layer; only the brain part is benchmarkable.
+# MaleCNS includes the ventral nerve cord (~176k neurons vs 139k for FlyWire brain-only) and is
+# annotated by a different team, so some task selectors will match 0 neurons on the male names.
+# `flybench select -c malecns '{...}'` finds the right ones; a PR adding male-specific fallbacks
+# (the `any:` selector grammar) is welcome. The Beat Saber demo used the same connectome and gain
+# with a scripted motor layer; only the brain part is benchmarkable.
 w_syn_mv: 0.275
 gain: 0.65
