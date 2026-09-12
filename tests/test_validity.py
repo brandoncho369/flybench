@@ -99,3 +99,20 @@ def test_circuit_weighted_scores(toy):
     n_hard_circuits = len({task["circuit"] for task in tasks if task.get("tier") == "hard"})
     hard_scores = [t["score"] for t, task in zip(fake["tasks"], tasks) if task.get("tier") == "hard"]
     assert np.mean(hard_scores) > 1 / n_hard_circuits         # task-weighted flatters the taste pathway
+
+
+def test_tasks_needing_neurons_the_dataset_lacks_are_skipped_not_failed(toy):
+    from flybench.bench import task_unavailable
+    tasks = load_tasks()
+    jump = next(t for t in tasks if t["name"] == "looming_to_jump_muscle")
+    assert task_unavailable(jump, toy)                      # the toy has no ventral cord
+    sugar = next(t for t in tasks if t["name"] == "sugar_to_proboscis")
+    assert task_unavailable(sugar, toy) is None
+    rep = run_suite(toy, LIFParams(gain=1.0, seed=0), tasks)
+    assert "looming_to_jump_muscle" in rep["skipped"]
+    assert all(t["task"] != "looming_to_jump_muscle" for t in rep["tasks"])
+    assert rep["n_tasks"] == len(tasks) - 1
+    # a required readout that is not defined is a lint error, not a silent skip
+    bad = dict(jump, requires_readouts=["nope"])
+    assert task_unavailable(bad, toy).startswith("requires readout")
+    assert any("nope" in e for e in lint_task(bad))

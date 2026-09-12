@@ -1,0 +1,36 @@
+name: looming_to_jump_muscle
+title: Looming reaches the jump muscle, not just the giant fiber
+tier: hard
+circuit: escape
+description: >
+  The first brain-to-muscle test. The giant fiber does not end in the brain: it descends the
+  neck and synapses directly onto the tergotrochanteral motor neuron (TTMn, the jump muscle)
+  and, through the peripherally synapsing interneuron (PSI), onto the dorsal longitudinal
+  motor neurons (DLMn, the flight power muscles). That is the whole escape: legs push, wings
+  start. This task needs the ventral nerve cord, so it runs on MaleCNS and is skipped on
+  brain-only connectomes such as FlyWire FAFB. A looming stimulus should fire GF, then TTMn
+  and DLMn; the jump muscle should fire a few times, not continuously; and sugar should not
+  make the fly jump.
+citation: "Tanouye & Wyman 1980 (GF -> TTM and DLM); Allen, Godenschwege, Tanouye & Phelan 2006 (the GF circuit); von Reyn et al. 2014 (single GF spike per escape)"
+requires_readouts: [ttmn, dlmn]
+duration_ms: 800
+window: [200, 500]
+readouts:
+  gf:   {select: {any: [{cell_type: GF}, {cell_type: DNp01}]}}
+  ttmn: {select: {cell_type: TTMn}}
+  dlmn: {select: {cell_type_regex: "^DLMn"}}
+conditions:
+  baseline: {stimuli: []}
+  loom:
+    stimuli:
+      - {name: looming_detectors, select: {any: [{cell_type: LPLC2}, {cell_type: LC4}]}, rate_hz: 150, t_start_ms: 200, t_end_ms: 500}
+  sugar:
+    stimuli:
+      - {name: sugar_grn, select: {any: [{sub_class: "sugar/water"}, {all_of: [{sub_class: "labellar bristle"}, {cell_type_regex: "^LB3[a-d]$"}]}]}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
+checks:
+  - {type: spikes_per_neuron, cond: loom, readout: gf, op: ">=", value: 1, basis: "von Reyn et al. 2014: looming evokes a GF spike"}
+  - {type: spikes_per_neuron, cond: loom, readout: ttmn, op: ">=", value: 1, basis: "Tanouye & Wyman 1980; Allen et al. 2006: GF drives TTMn directly (mixed electrical/chemical synapse), one spike per GF spike"}
+  - {type: spikes_per_neuron, cond: loom, readout: dlmn, op: ">=", value: 1, basis: "Tanouye & Wyman 1980: GF -> PSI -> DLMn; the flight power muscles fire once per escape"}
+  - {type: spikes_per_neuron, cond: loom, readout: ttmn, op: "<=", value: 4, basis: "convention: a jump is one TTM contraction; a few spikes at most, not a tone. Same ceiling as task 13"}
+  - {type: spikes_per_neuron, cond: baseline, readout: ttmn, op: "<", value: 1, basis: "convention: the jump muscle is silent without input"}
+  - {type: spikes_per_neuron, cond: sugar, readout: ttmn, op: "<", value: 1, window: [200, 700], basis: "convention: tasting sugar does not make a fly jump"}

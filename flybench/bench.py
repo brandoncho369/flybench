@@ -131,6 +131,18 @@ def _metric(res: SimResult, readout: np.ndarray, name: str, w0: float, w1: float
     raise ValueError(f"unknown metric {name}")
 
 
+def task_unavailable(task: dict, c: Connectome) -> str | None:
+    """A task may declare `requires_readouts: [name, ...]`; if any of those readouts matches no
+    neuron on this connectome, the task cannot be run here and is skipped (not failed)."""
+    for name in task.get("requires_readouts", []) or []:
+        spec = task.get("readouts", {}).get(name) or (task.get("readout") if name == "default" else None)
+        if spec is None:
+            return f"requires readout {name!r} which the task does not define"
+        if c.select(spec["select"]).size == 0:
+            return f"readout {name!r} matches no neurons on {c.name}"
+    return None
+
+
 def perturb_weights(c: Connectome, sigma: float, seed: int) -> Connectome:
     """Same neurons, same edges, every synapse count multiplied by lognormal(0, sigma) noise."""
     rng = np.random.default_rng(10_000 + seed)
@@ -267,10 +279,20 @@ def run_suite(c: Connectome, params: LIFParams, tasks: list[dict] | None = None,
               simulator: SimulatorFactory = LIFSimulator, seeds: int = 1) -> dict[str, Any]:
     tasks = tasks or load_tasks()
     results = []
+    skipped: dict[str, str] = {}
     for task in tasks:
+        why = task_unavailable(task, c)
+        if why:
+            # a task that needs neurons this dataset does not have (e.g. VNC motor neurons on a
+            # brain-only connectome) is not run and not scored, rather than failed
+            skipped[task["name"]] = why
+            if verbose:
+                print(f"[{task['name']}] skipped: {why}")
+            continue
         if verbose:
             print(f"[{task['name']}] {task.get('title', '')}")
         results.append(run_task(task, c, params, verbose=verbose, simulator=simulator, seeds=seeds))
+    tasks = [t for t in tasks if t["name"] not in skipped]
     total = float(np.mean([r.score for r in results])) if results else 0.0
     tiers = {t["name"]: t.get("tier", "core") for t in tasks}
     circuits = {t["name"]: t.get("circuit", t["name"]) for t in tasks}
@@ -294,6 +316,7 @@ def run_suite(c: Connectome, params: LIFParams, tasks: list[dict] | None = None,
         "core_by_circuit": circuit_scores["core"],   # mean over circuits of the mean task score in that circuit
         "hard_by_circuit": circuit_scores["hard"],
         "circuits": {t["name"]: circuits[t["name"]] for t in tasks},
+        "skipped": skipped,   # task -> reason; these are absent from `tasks` and from every score
         "tier": sorted({t.get("tier", "core") for t in tasks}),
         "connectome": c.name,
         "connectome_meta": {k: c.meta.get(k) for k in ("source", "min_synapses", "n", "n_edges")},

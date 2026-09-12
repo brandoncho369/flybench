@@ -4,9 +4,9 @@
   "seeds": 3,
   "verified": false,
   "core_score": 0.5666666666666667,
-  "hard_score": 0.5685185185185184,
+  "hard_score": 0.595,
   "core_by_circuit": 0.6851851851851851,
-  "hard_by_circuit": 0.5941666666666666,
+  "hard_by_circuit": 0.5941666666666667,
   "circuits": {
     "stability": "stability",
     "sugar_to_proboscis": "taste",
@@ -21,8 +21,10 @@
     "flash_is_not_loom": "escape",
     "return_to_rest": "taste",
     "physiological_rates": "physiology",
-    "wiring_robustness": "robustness"
+    "wiring_robustness": "robustness",
+    "looming_to_jump_muscle": "escape"
   },
+  "skipped": {},
   "tier": [
     "core",
     "hard"
@@ -51,9 +53,9 @@
     "extra": {}
   },
   "simulator": "flybench.sim.LIFSimulator",
-  "score": 0.5678571428571428,
+  "score": 0.5855555555555555,
   "passed": 2,
-  "n_tasks": 14,
+  "n_tasks": 15,
   "tasks": [
     {
       "task": "stability",
@@ -88,7 +90,7 @@
       },
       "readout_size": 176422,
       "stimulus_sizes": {},
-      "seconds": 4.053934335708618,
+      "seconds": 8.042720794677734,
       "notes": []
     },
     {
@@ -141,7 +143,7 @@
       "stimulus_sizes": {
         "sugar_grn": 77
       },
-      "seconds": 27.079787254333496,
+      "seconds": 81.9890444278717,
       "notes": []
     },
     {
@@ -188,7 +190,7 @@
         "sugar_grn": 77,
         "bitter_grn": 38
       },
-      "seconds": 42.27059483528137,
+      "seconds": 138.42758655548096,
       "notes": []
     },
     {
@@ -241,7 +243,7 @@
       "stimulus_sizes": {
         "looming_detectors": 311
       },
-      "seconds": 14.865265369415283,
+      "seconds": 42.61214733123779,
       "notes": []
     },
     {
@@ -279,7 +281,7 @@
       "stimulus_sizes": {
         "bitter_grn": 38
       },
-      "seconds": 20.196362495422363,
+      "seconds": 80.26320266723633,
       "notes": []
     },
     {
@@ -339,7 +341,7 @@
       "stimulus_sizes": {
         "sugar_grn": 77
       },
-      "seconds": 27.7427818775177,
+      "seconds": 81.70573806762695,
       "notes": []
     },
     {
@@ -378,7 +380,7 @@
         "pulse1": 77,
         "pulse2": 77
       },
-      "seconds": 31.438457012176514,
+      "seconds": 114.54840087890625,
       "notes": [
         "seed-sensitive: check 0: passes on 2/3 seeds"
       ]
@@ -444,7 +446,7 @@
       "stimulus_sizes": {
         "da1_orn": 204
       },
-      "seconds": 22.88267183303833,
+      "seconds": 67.57587146759033,
       "notes": []
     },
     {
@@ -509,7 +511,7 @@
         "sugar_grn": 77,
         "looming_detectors": 311
       },
-      "seconds": 35.70000720024109,
+      "seconds": 121.17974328994751,
       "notes": []
     },
     {
@@ -570,7 +572,7 @@
       "stimulus_sizes": {
         "looming_detectors": 311
       },
-      "seconds": 15.967246770858765,
+      "seconds": 41.5304274559021,
       "notes": []
     },
     {
@@ -617,7 +619,7 @@
       "stimulus_sizes": {
         "photoreceptors": 6091
       },
-      "seconds": 13.285465955734253,
+      "seconds": 34.95988368988037,
       "notes": []
     },
     {
@@ -669,7 +671,7 @@
       "stimulus_sizes": {
         "sugar_grn": 77
       },
-      "seconds": 46.88806676864624,
+      "seconds": 233.41888570785522,
       "notes": []
     },
     {
@@ -741,7 +743,7 @@
         "looming_detectors": 311,
         "sugar_grn": 77
       },
-      "seconds": 27.6937894821167,
+      "seconds": 85.60832023620605,
       "notes": [
         "seed-sensitive: check 4: passes on 2/3 seeds"
       ]
@@ -825,7 +827,102 @@
         "sugar_grn": 77,
         "looming_detectors": 311
       },
-      "seconds": 36.65642762184143,
+      "seconds": 114.24111318588257,
+      "notes": []
+    },
+    {
+      "task": "looming_to_jump_muscle",
+      "title": "Looming reaches the jump muscle, not just the giant fiber",
+      "passed": false,
+      "score": 0.8333333333333334,
+      "checks": [
+        {
+          "description": "spikes per neuron[loom] >= 1.0 spikes/neuron  [3/3 seeds, sd 1.43]",
+          "value": 127.66666666666667,
+          "passed": true,
+          "margin": 2.1060775192489603,
+          "basis": "von Reyn et al. 2014: looming evokes a GF spike"
+        },
+        {
+          "description": "spikes per neuron[loom] >= 1.0 spikes/neuron  [3/3 seeds, sd 4.29]",
+          "value": 57.666666666666664,
+          "passed": true,
+          "margin": 1.7609248484091329,
+          "basis": "Tanouye & Wyman 1980; Allen et al. 2006: GF drives TTMn directly (mixed electrical/chemical synapse), one spike per GF spike"
+        },
+        {
+          "description": "spikes per neuron[loom] >= 1.0 spikes/neuron  [3/3 seeds, sd 0]",
+          "value": 124.5,
+          "passed": true,
+          "margin": 2.095169351431755,
+          "basis": "Tanouye & Wyman 1980: GF -> PSI -> DLMn; the flight power muscles fire once per escape"
+        },
+        {
+          "description": "spikes per neuron[loom] <= 4.0 spikes/neuron  [0/3 seeds, sd 4.29]",
+          "value": 57.666666666666664,
+          "passed": false,
+          "margin": -1.1588648570811706,
+          "basis": "convention: a jump is one TTM contraction; a few spikes at most, not a tone. Same ceiling as task 13"
+        },
+        {
+          "description": "spikes per neuron[baseline] < 1.0 spikes/neuron  [3/3 seeds, sd 0]",
+          "value": 0.0,
+          "passed": true,
+          "margin": 3.0,
+          "basis": "convention: the jump muscle is silent without input"
+        },
+        {
+          "description": "spikes per neuron[sugar, 200-700ms] < 1.0 spikes/neuron  [3/3 seeds, sd 0]",
+          "value": 0.0,
+          "passed": true,
+          "margin": 3.0,
+          "basis": "convention: tasting sugar does not make a fly jump"
+        }
+      ],
+      "measurements": {
+        "baseline": {
+          "rate": 0.0,
+          "network_rate": 0.0,
+          "active_fraction": 0.0,
+          "spikes": 0.0,
+          "rate[gf]": 0.0,
+          "readout_active_fraction[gf]": 0.0,
+          "rate[ttmn]": 0.0,
+          "readout_active_fraction[ttmn]": 0.0,
+          "rate[dlmn]": 0.0,
+          "readout_active_fraction[dlmn]": 0.0
+        },
+        "loom": {
+          "rate": 425.5555555555556,
+          "network_rate": 10.90304308230644,
+          "active_fraction": 0.11932185328360408,
+          "spikes": 1343911.0,
+          "rate[gf]": 425.5555555555556,
+          "readout_active_fraction[gf]": 1.0,
+          "rate[ttmn]": 192.22222222222226,
+          "readout_active_fraction[ttmn]": 1.0,
+          "rate[dlmn]": 415.0,
+          "readout_active_fraction[dlmn]": 1.0
+        },
+        "sugar": {
+          "rate": 0.0,
+          "network_rate": 3.0446190258458574,
+          "active_fraction": 0.04668163078678774,
+          "spikes": 801306.3333333334,
+          "rate[gf]": 0.0,
+          "readout_active_fraction[gf]": 0.0,
+          "rate[ttmn]": 0.0,
+          "readout_active_fraction[ttmn]": 0.0,
+          "rate[dlmn]": 22.666666666666668,
+          "readout_active_fraction[dlmn]": 0.3666666666666667
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "looming_detectors": 311,
+        "sugar_grn": 77
+      },
+      "seconds": 98.04139614105225,
       "notes": []
     }
   ],

@@ -102,6 +102,8 @@ def run(connectome, config, gain, task_paths, out, label, cache, simulator, tier
         checks = "\n".join(("✓ " if ch["passed"] else "✗ ") + escape(f"{ch['description']}  [{ch['value']:.3g}]") + marg(ch) for ch in t["checks"])
         table.add_row(t["title"], "[green]PASS[/]" if t["passed"] else f"[red]FAIL[/] ({t['score']:.0%})", checks, "\n".join(t["notes"]))
     console.print(table)
+    for name, why in report.get("skipped", {}).items():
+        console.print(f"[dim]skipped {name}: {why}[/]")
     if out:
         p = save_report(report, out)
         console.print(f"report → {p}")

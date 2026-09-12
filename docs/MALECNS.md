@@ -45,8 +45,16 @@ types make only weak contacts with either (some are likely water/mechanosensory)
 out of both stimuli. Pharyngeal and taste-peg GRNs are excluded on both datasets.
 
 This is an inference from wiring, not a label the annotators gave, so it is stated here rather
-than hidden in a selector. If Janelia publishes modality labels, the selectors should switch to
-those and this table becomes a consistency check.
+than hidden in a selector.
+
+**Update (September 2026).** The MaleCNS companion paper on taste (*The complete gustatory
+connectome of adult Drosophila*, Cell 2026; bioRxiv 10.1101/2025.08.25.671814) classified
+labellar GRNs by modality using receptor driver lines and reports **LB1a–e as bitter and
+LB3a–d as sugar/appetitive** — the same split as the wiring inference above, arrived at
+independently. Two edges to reconcile against their table before changing selectors: they
+flag LB3d as high-salt avoidance (so it may belong out of the sugar set) and LB1e as bitter
+(it is currently excluded from ours because its outputs were mixed). Until that is checked,
+the selectors stay as they are; the agreement on the core of the split is the point.
 
 ## Results: the reference model on the male CNS (3 seeds each)
 

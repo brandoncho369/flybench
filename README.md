@@ -68,8 +68,9 @@ Two tiers. **Core** is the reflexes the reference LIF model is known to reproduc
 | hard | `return_to_rest` | one second after a 500 ms taste of sugar, the brain is quiet again | Dethier 1976; Shiu et al. 2024; Benda & Herz 2003 |
 | hard | `physiological_rates` | the giant fiber spikes ~once per loom, not 100+ times; MN9 fires at tens of Hz, not at its refractory ceiling | von Reyn et al. 2014; Schwarz et al. 2017 |
 | hard | `wiring_robustness` | the core reflexes still work when every synapse count is jittered ±25 % (a different individual) | Schlegel et al. 2024; Marder & Goaillard 2006 |
+| hard | `looming_to_jump_muscle` | brain → body: looming fires the giant fiber, then the jump-muscle (TTMn) and flight-power (DLMn) motor neurons in the nerve cord; sugar does not. Needs a connectome with a VNC (MaleCNS); skipped elsewhere | Tanouye & Wyman 1980; Allen et al. 2006; von Reyn et al. 2014 |
 
-`flybench run --tier core` / `--tier hard` / `--tier all`. Each task is a YAML file in [`tasks/`](tasks/): a readout population, one or more stimulus conditions, and a list of checks. A task passes if every check passes; the suite score is the mean fraction of checks passed. Adding a task is adding a file. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to submit results, tasks, or a different simulator (`--simulator mymodule:MyModel`).
+A task can declare `requires_readouts:`; if this connectome has none of those neurons the task is skipped and not scored, not failed (so brain-only datasets are not penalised for lacking a nerve cord). `flybench run --tier core` / `--tier hard` / `--tier all`. Each task is a YAML file in [`tasks/`](tasks/): a readout population, one or more stimulus conditions, and a list of checks. A task passes if every check passes; the suite score is the mean fraction of checks passed. Adding a task is adding a file. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to submit results, tasks, or a different simulator (`--simulator mymodule:MyModel`).
 
 ## Install
 

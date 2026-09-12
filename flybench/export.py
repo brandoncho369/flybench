@@ -22,18 +22,32 @@ from .connectome import Connectome
 
 CLASS_ORDER = ["other", "sensory", "visual_projection", "central", "descending", "motor", "optic", "ascending", "endocrine"]
 
+# MaleCNS (neuPrint) super_class names -> the same colour classes FlyWire uses
+CLASS_ALIASES = {
+    "cb_intrinsic": "central", "vnc_intrinsic": "central", "ol_intrinsic": "optic", "ol_sensory": "sensory",
+    "cb_sensory": "sensory", "vnc_sensory": "sensory", "sensory_ascending": "ascending", "sensory_descending": "descending",
+    "descending_neuron": "descending", "ascending_neuron": "ascending", "cb_motor": "motor", "vnc_motor": "motor",
+    "vnc_efferent": "motor", "cb_efferent": "motor", "efferent_ascending": "ascending", "efferent_descending": "descending",
+    "visual_centrifugal": "visual_projection", "cb_endocrine": "endocrine", "vnc_endocrine": "endocrine",
+}
+
 # Named neuron sets the explorer exposes as buttons. Same selector grammar as tasks.
 DEFAULT_SETS = {
-    "sugar GRNs":     {"any": [{"sub_class": "sugar/water"}, {"all_of": [{"labels_regex": "sugar"}, {"super_class": "sensory"}, {"not": {"labels_regex": "bitter"}}]}]},
-    "bitter GRNs":    {"any": [{"sub_class": "bitter"}, {"all_of": [{"labels_regex": "bitter"}, {"super_class": "sensory"}]}]},
+    "sugar GRNs":     {"any": [{"sub_class": "sugar/water"}, {"all_of": [{"labels_regex": "sugar"}, {"super_class": "sensory"}, {"not": {"labels_regex": "bitter"}}]}, {"all_of": [{"sub_class": "labellar bristle"}, {"cell_type_regex": "^LB3[a-d]$"}]}]},
+    "bitter GRNs":    {"any": [{"sub_class": "bitter"}, {"all_of": [{"labels_regex": "bitter"}, {"super_class": "sensory"}]}, {"all_of": [{"sub_class": "labellar bristle"}, {"cell_type_regex": "^LB1[a-d]$"}]}]},
     "water GRNs":     {"all_of": [{"labels_regex": "water"}, {"super_class": "sensory"}]},
     "looming (LPLC2/LC4)": {"any": [{"cell_type": "LPLC2"}, {"cell_type": "LC4"}, {"hemibrain_type": "LPLC2"}, {"hemibrain_type": "LC4"}]},
     "olfactory RNs":  {"any": [{"class": "olfactory"}, {"cell_type": "ORN"}, {"labels_regex": "ORN"}]},
     "MN9 (proboscis)": {"any": [{"cell_type": "MN9"}, {"cell_type": "CB0701"}, {"hemibrain_type": "MN9"}, {"all_of": [{"labels_regex": r"\bMN9\b"}, {"super_class": "motor"}]}]},
     "Giant Fiber":    {"any": [{"cell_type": "GF"}, {"cell_type": "DNp01"}, {"hemibrain_type": "Giant Fiber"}, {"all_of": [{"labels_regex": "giant fib"}, {"super_class": "descending"}]}]},
     "JO (antennal mechanosensory)": {"cell_type_regex": "^JO-"},
-    "photoreceptors": {"sub_class": "photo_receptor"},
-    "descending neurons": {"super_class": "descending"},
+    "photoreceptors": {"any": [{"sub_class": "photo_receptor"}, {"cell_type_regex": "^R[1-8]"}]},
+    "descending neurons": {"super_class_regex": "^descending"},
+    # body side (MaleCNS only: the ventral nerve cord)
+    "jump muscle MN (TTMn)": {"cell_type": "TTMn"},
+    "flight power MNs (DLMn)": {"cell_type_regex": "^DLMn"},
+    "leg motor neurons": {"all_of": [{"super_class": "vnc_motor"}, {"cell_type_regex": "(flexor|extensor|rotator|reductor|depressor|levator|promotor|remotor|Tergotr|Sternotrochanter|ltm|^Ta |^Ti |^Tr |^Fe ) ?MN$"}]},
+    "wing motor neurons": {"all_of": [{"super_class": "vnc_motor"}, {"sub_class": "wm"}]},
 }
 
 
@@ -50,7 +64,7 @@ def export_web(c: Connectome, out: Path | str, sets: dict | None = None, max_neu
         pos[bad] = np.nanmean(pos[~bad], axis=0) if (~bad).any() else 0.0
 
     sc = c.annotations["super_class"].astype(str).to_numpy() if "super_class" in c.annotations else np.full(c.n, "other")
-    cls = np.array([CLASS_ORDER.index(s) if s in CLASS_ORDER else 0 for s in sc], dtype=np.uint8)
+    cls = np.array([CLASS_ORDER.index(CLASS_ALIASES.get(s, s)) if CLASS_ALIASES.get(s, s) in CLASS_ORDER else 0 for s in sc], dtype=np.uint8)
 
     populations = {}
     for name, spec in sets.items():

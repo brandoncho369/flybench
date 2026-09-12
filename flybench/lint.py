@@ -54,6 +54,9 @@ def lint_task(task: dict, source: str = "<task>") -> list[str]:
                 errs.append(f"{cname}: stimulus {i} window [{t0}, {t1}] is empty or outside the run")
             if float(s.get("rate_hz", 100)) <= 0:
                 errs.append(f"{cname}: stimulus {i} rate_hz must be > 0")
+    for name in task.get("requires_readouts", []) or []:
+        if name not in readouts:
+            errs.append(f"requires_readouts: {name!r} is not a defined readout")
     if not task["checks"]:
         errs.append("needs at least one check")
     for i, chk in enumerate(task["checks"]):
