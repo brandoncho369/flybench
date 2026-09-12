@@ -11,3 +11,4 @@ results/*
 data/
 flywire783-cache.zip
 data-malecns/ 
+!public/data/malecns/ 
