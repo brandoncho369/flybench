@@ -45,12 +45,20 @@
         {
           "description": "network rate[baseline] < 0.5 Hz  [3/3 seeds, sd 0]",
           "value": 0.0,
-          "passed": true
+          "passed": true,
+          "op": "<",
+          "target": 0.5,
+          "margin": 2.6989700043360187,
+          "graded": 0.9999960000160001
         },
         {
           "description": "active fraction[baseline] < 0.01  [3/3 seeds, sd 0]",
           "value": 0.0,
-          "passed": true
+          "passed": true,
+          "op": "<",
+          "target": 0.01,
+          "margin": 1.0,
+          "graded": 0.9900990099009901
         }
       ],
       "measurements": {
@@ -66,7 +74,11 @@
       "readout_size": 139255,
       "stimulus_sizes": {},
       "seconds": 3.4210479259490967,
-      "notes": []
+      "notes": [],
+      "graded": 0.995047504958495,
+      "graded_per_seed": [
+        0.995047504958495
+      ]
     },
     {
       "task": "sugar_to_proboscis",
@@ -77,17 +89,29 @@
         {
           "description": "rate[sugar] > 5.0 Hz  [2/3 seeds, sd 182]",
           "value": 132.4242424242424,
-          "passed": false
+          "passed": false,
+          "op": ">",
+          "target": 5.0,
+          "margin": 1.4229974927565154,
+          "graded": 0.9985764054564588
         },
         {
           "description": "rate[sugar] / rate[baseline] > 5.0  [3/3 seeds, sd 1.82e+05]",
           "value": 132425.2424242424,
-          "passed": true
+          "passed": true,
+          "op": ">",
+          "target": 5.0,
+          "margin": 4.423000772313447,
+          "graded": 0.9999999985743975
         },
         {
           "description": "active fraction[sugar] < 0.1  [3/3 seeds, sd 0.0366]",
           "value": 0.027728507653824522,
-          "passed": true
+          "passed": true,
+          "op": "<",
+          "target": 0.1,
+          "margin": 0.5570735034891997,
+          "graded": 0.9286025249680251
         }
       ],
       "measurements": {
@@ -115,6 +139,10 @@
       "seconds": 19.678751468658447,
       "notes": [
         "seed-sensitive: check 0: passes on 2/3 seeds"
+      ],
+      "graded": 0.9757263096662938,
+      "graded_per_seed": [
+        0.9757263096662938
       ]
     },
     {
@@ -126,12 +154,20 @@
         {
           "description": "rate[sugar] > 5.0 Hz  [2/3 seeds, sd 182]",
           "value": 132.4242424242424,
-          "passed": false
+          "passed": false,
+          "op": ">",
+          "target": 5.0,
+          "margin": 1.4229974927565154,
+          "graded": 0.9985764054564588
         },
         {
           "description": "rate[sugar_plus_bitter] / rate[sugar] < 0.5  [3/3 seeds, sd 0.00023]",
           "value": 0.00023646197342709583,
-          "passed": true
+          "passed": true,
+          "op": "<",
+          "target": 0.5,
+          "margin": 2.6989700043360187,
+          "graded": 0.9999960000160001
         }
       ],
       "measurements": {
@@ -160,6 +196,10 @@
       "seconds": 26.17856001853943,
       "notes": [
         "seed-sensitive: check 0: passes on 2/3 seeds"
+      ],
+      "graded": 0.9992862027362295,
+      "graded_per_seed": [
+        0.9992862027362295
       ]
     },
     {
@@ -171,17 +211,29 @@
         {
           "description": "rate[loom] > 5.0 Hz  [3/3 seeds, sd 0]",
           "value": 433.9285714285714,
-          "passed": true
+          "passed": true,
+          "op": ">",
+          "target": 5.0,
+          "margin": 1.938448242256093,
+          "graded": 0.9998672465374037
         },
         {
           "description": "rate[loom] / rate[baseline] > 5.0  [3/3 seeds, sd 0]",
           "value": 433929.57142857136,
-          "passed": true
+          "passed": true,
+          "op": ">",
+          "target": 5.0,
+          "margin": 4.93844924309819,
+          "graded": 0.9999999998672295
         },
         {
           "description": "active fraction[loom] < 0.1  [3/3 seeds, sd 4.32e-05]",
           "value": 0.026955345708711834,
-          "passed": true
+          "passed": true,
+          "op": "<",
+          "target": 0.1,
+          "margin": 0.5693550938697317,
+          "graded": 0.9322626652631127
         }
       ],
       "measurements": {
@@ -207,7 +259,11 @@
         "looming_detectors": 314
       },
       "seconds": 11.978628158569336,
-      "notes": []
+      "notes": [],
+      "graded": 0.977376637222582,
+      "graded_per_seed": [
+        0.977376637222582
+      ]
     },
     {
       "task": "taste_specificity",
@@ -218,12 +274,20 @@
         {
           "description": "rate[bitter] < 2.0 Hz  [3/3 seeds, sd 0]",
           "value": 0.0,
-          "passed": true
+          "passed": true,
+          "op": "<",
+          "target": 2.0,
+          "margin": 3.3010299956639813,
+          "graded": 0.9999997500000625
         },
         {
           "description": "active fraction[bitter] < 0.1  [3/3 seeds, sd 5.86e-06]",
           "value": 0.0006391152920900506,
-          "passed": true
+          "passed": true,
+          "op": "<",
+          "target": 0.1,
+          "margin": 2.0,
+          "graded": 0.9999000099990001
         }
       ],
       "measurements": {
@@ -241,7 +305,11 @@
         "bitter_grn": 65
       },
       "seconds": 10.24662709236145,
-      "notes": []
+      "notes": [],
+      "graded": 0.9999498799995312,
+      "graded_per_seed": [
+        0.9999498799995312
+      ]
     },
     {
       "task": "dose_response",
@@ -252,22 +320,38 @@
         {
           "description": "rate[weak] > 1.0 Hz  [0/3 seeds, sd 0]",
           "value": 0.0,
-          "passed": false
+          "passed": false,
+          "op": ">",
+          "target": 1.0,
+          "margin": -3.0,
+          "graded": 9.99999000001e-07
         },
         {
           "description": "rate[strong] > 5.0 Hz  [2/3 seeds, sd 182]",
           "value": 132.4242424242424,
-          "passed": false
+          "passed": false,
+          "op": ">",
+          "target": 5.0,
+          "margin": 1.4229974927565154,
+          "graded": 0.9985764054564588
         },
         {
           "description": "rate[weak] / rate[strong] < 0.6  [3/3 seeds, sd 0.00023]",
           "value": 0.00023646197342709583,
-          "passed": true
+          "passed": true,
+          "op": "<",
+          "target": 0.6,
+          "margin": 2.7781512503836434,
+          "graded": 0.9999972222299383
         },
         {
           "description": "rate[strong] < 300.0 Hz  [2/3 seeds, sd 182]",
           "value": 132.4242424242424,
-          "passed": false
+          "passed": false,
+          "op": "<",
+          "target": 300.0,
+          "margin": 0.35515375762712814,
+          "graded": 0.8369276276632718
         }
       ],
       "measurements": {
@@ -295,6 +379,10 @@
       "seconds": 21.971253156661987,
       "notes": [
         "seed-sensitive: check 1: passes on 2/3 seeds; check 3: passes on 2/3 seeds"
+      ],
+      "graded": 0.7088755638371672,
+      "graded_per_seed": [
+        0.7088755638371672
       ]
     },
     {
@@ -306,12 +394,20 @@
         {
           "description": "rate[two_pulses] > 5.0 Hz  [2/3 seeds, sd 168]",
           "value": 124.76190476190476,
-          "passed": false
+          "passed": false,
+          "op": ">",
+          "target": 5.0,
+          "margin": 1.3971119922498074,
+          "graded": 0.9983964627641201
         },
         {
           "description": "rate[two_pulses, 950-1300ms] / rate[two_pulses] < 0.7  [2/3 seeds, sd 0.492]",
           "value": 0.5670261466845982,
-          "passed": false
+          "passed": false,
+          "op": "<",
+          "target": 0.7,
+          "margin": 0.0914949544916711,
+          "graded": 0.6038062087442013
         }
       ],
       "measurements": {
@@ -332,6 +428,10 @@
       "seconds": 19.835685968399048,
       "notes": [
         "seed-sensitive: check 0: passes on 2/3 seeds; check 1: passes on 2/3 seeds"
+      ],
+      "graded": 0.8011013357541608,
+      "graded_per_seed": [
+        0.8011013357541608
       ]
     },
     {
@@ -343,22 +443,38 @@
         {
           "description": "rate[cva, da1_pn] > 10.0 Hz  [3/3 seeds, sd 5.68e-14]",
           "value": 432.8104575163399,
-          "passed": true
+          "passed": true,
+          "op": ">",
+          "target": 10.0,
+          "margin": 1.6362977455984509,
+          "graded": 0.9994664529409055
         },
         {
           "description": "rate[cva, da1_pn] / rate[baseline] > 5.0  [3/3 seeds, sd 0]",
           "value": 432811.45751633984,
-          "passed": true
+          "passed": true,
+          "op": ">",
+          "target": 5.0,
+          "margin": 4.937328744690082,
+          "graded": 0.9999999998665428
         },
         {
           "description": "readout active fraction[cva, all_pn] < 0.3  [0/3 seeds, sd 0]",
           "value": 0.8321678321678322,
-          "passed": false
+          "passed": false,
+          "op": "<",
+          "target": 0.3,
+          "margin": -0.4430896692078065,
+          "graded": 0.11501548926000897
         },
         {
           "description": "active fraction[cva] < 0.05  [0/3 seeds, sd 0.00104]",
           "value": 0.07413976757267841,
-          "passed": false
+          "passed": false,
+          "op": "<",
+          "target": 0.05,
+          "margin": -0.17108121585143707,
+          "graded": 0.31262875866580747
         }
       ],
       "measurements": {
@@ -388,7 +504,11 @@
         "da1_orn": 127
       },
       "seconds": 18.496195793151855,
-      "notes": []
+      "notes": [],
+      "graded": 0.6067776751833163,
+      "graded_per_seed": [
+        0.6067776751833163
+      ]
     },
     {
       "task": "crosstalk",
@@ -399,22 +519,38 @@
         {
           "description": "rate[sugar, mn9] > 5.0 Hz  [2/3 seeds, sd 182]",
           "value": 132.4242424242424,
-          "passed": false
+          "passed": false,
+          "op": ">",
+          "target": 5.0,
+          "margin": 1.4229974927565154,
+          "graded": 0.9985764054564588
         },
         {
           "description": "rate[sugar, gf] < 2.0 Hz  [3/3 seeds, sd 0]",
           "value": 0.0,
-          "passed": true
+          "passed": true,
+          "op": "<",
+          "target": 2.0,
+          "margin": 3.3010299956639813,
+          "graded": 0.9999997500000625
         },
         {
           "description": "rate[loom, gf] > 5.0 Hz  [3/3 seeds, sd 10.3]",
           "value": 427.27272727272725,
-          "passed": true
+          "passed": true,
+          "op": ">",
+          "target": 5.0,
+          "margin": 1.9317351684414736,
+          "graded": 0.9998630789581779
         },
         {
           "description": "rate[loom, mn9] < 2.0 Hz  [3/3 seeds, sd 0.429]",
           "value": 0.30303030303030304,
-          "passed": true
+          "passed": true,
+          "op": "<",
+          "target": 2.0,
+          "margin": 0.8195439355418687,
+          "graded": 0.9775583482944344
         }
       ],
       "measurements": {
@@ -447,6 +583,10 @@
       "seconds": 27.173135995864868,
       "notes": [
         "seed-sensitive: check 0: passes on 2/3 seeds"
+      ],
+      "graded": 0.9939993956772835,
+      "graded_per_seed": [
+        0.9939993956772835
       ]
     },
     {
@@ -458,17 +598,29 @@
         {
           "description": "rate[loom, gf] > 5.0 Hz  [3/3 seeds, sd 0]",
           "value": 433.9285714285714,
-          "passed": true
+          "passed": true,
+          "op": ">",
+          "target": 5.0,
+          "margin": 1.938448242256093,
+          "graded": 0.9998672465374037
         },
         {
           "description": "rate[loom, dnp] > 5.0 Hz  [3/3 seeds, sd 5.69]",
           "value": 183.92857142857142,
-          "passed": true
+          "passed": true,
+          "op": ">",
+          "target": 5.0,
+          "margin": 1.565679193362953,
+          "graded": 0.9992615505178566
         },
         {
           "description": "readout active fraction[loom, all_dn] < 0.15  [0/3 seeds, sd 0.00226]",
           "value": 0.2053639846743295,
-          "passed": false
+          "passed": false,
+          "op": "<",
+          "target": 0.15,
+          "margin": -0.13643302329880785,
+          "graded": 0.34789672201753075
         }
       ],
       "measurements": {
@@ -502,7 +654,11 @@
         "looming_detectors": 314
       },
       "seconds": 11.717362642288208,
-      "notes": []
+      "notes": [],
+      "graded": 0.7823418396909303,
+      "graded_per_seed": [
+        0.7823418396909303
+      ]
     },
     {
       "task": "flash_is_not_loom",
@@ -513,17 +669,29 @@
         {
           "description": "rate[flash, gf] < 5.0 Hz  [3/3 seeds, sd 0]",
           "value": 0.0,
-          "passed": true
+          "passed": true,
+          "op": "<",
+          "target": 5.0,
+          "margin": 3.6989700043360187,
+          "graded": 0.9999999600000016
         },
         {
           "description": "rate[flash, lplc2] < 20.0 Hz  [3/3 seeds, sd 0]",
           "value": 0.0,
-          "passed": true
+          "passed": true,
+          "op": "<",
+          "target": 20.0,
+          "margin": 4.301029995663981,
+          "graded": 0.9999999975
         },
         {
           "description": "active fraction[flash] < 0.3  [3/3 seeds, sd 7.92e-05]",
           "value": 0.10576041554462438,
-          "passed": true
+          "passed": true,
+          "op": "<",
+          "target": 0.3,
+          "margin": 0.4527981061826472,
+          "graded": 0.8894575663628138
         }
       ],
       "measurements": {
@@ -543,7 +711,11 @@
         "photoreceptors": 11153
       },
       "seconds": 10.025018692016602,
-      "notes": []
+      "notes": [],
+      "graded": 0.9631525079542719,
+      "graded_per_seed": [
+        0.9631525079542719
+      ]
     },
     {
       "task": "return_to_rest",
@@ -554,22 +726,38 @@
         {
           "description": "rate[sugar] > 5.0 Hz  [2/3 seeds, sd 176]",
           "value": 129.62962962962962,
-          "passed": false
+          "passed": false,
+          "op": ">",
+          "target": 5.0,
+          "margin": 1.4137342758552696,
+          "graded": 0.9985144550250749
         },
         {
           "description": "rate[sugar, 1700-2000ms] < 5.0 Hz  [2/3 seeds, sd 204]",
           "value": 144.44444444444446,
-          "passed": false
+          "passed": false,
+          "op": "<",
+          "target": 5.0,
+          "margin": -1.4607308385314932,
+          "graded": 0.0011967908275586938
         },
         {
           "description": "network rate[sugar, 1700-2000ms] < 0.5 Hz  [2/3 seeds, sd 4.53]",
           "value": 3.2000207453153493,
-          "passed": false
+          "passed": false,
+          "op": "<",
+          "target": 0.5,
+          "margin": -0.8061827894672552,
+          "graded": 0.02383191952577249
         },
         {
           "description": "active fraction[sugar, 1700-2000ms] < 0.01  [2/3 seeds, sd 0.0339]",
           "value": 0.023939296015702608,
-          "passed": false
+          "passed": false,
+          "op": "<",
+          "target": 0.01,
+          "margin": -0.3791113749345913,
+          "graded": 0.14856856555403078
         }
       ],
       "measurements": {
@@ -589,8 +777,26 @@
       "seconds": 26.71802568435669,
       "notes": [
         "seed-sensitive: check 0: passes on 2/3 seeds; check 1: passes on 2/3 seeds; check 2: passes on 2/3 seeds; check 3: passes on 2/3 seeds"
+      ],
+      "graded": 0.29302793273310923,
+      "graded_per_seed": [
+        0.29302793273310923
       ]
     }
   ],
-  "label": "LIF gain 0.4 (3 seeds)"
+  "label": "LIF gain 0.4 (3 seeds)",
+  "graded": 0.9156163376609202,
+  "graded_ci95": null,
+  "core_graded": 0.9894773069166263,
+  "hard_graded": 0.7356108929757484,
+  "profile": {
+    "-1": 0.9444444444444444,
+    "-0.5": 0.9166666666666666,
+    "-0.25": 0.8611111111111112,
+    "0": 0.8055555555555556,
+    "0.25": 0.7777777777777778,
+    "0.5": 0.7222222222222222,
+    "1": 0.6388888888888888
+  },
+  "rescored": true
 }

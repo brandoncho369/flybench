@@ -33,9 +33,12 @@ CLASS_ALIASES = {
 
 # Named neuron sets the explorer exposes as buttons. Same selector grammar as tasks.
 DEFAULT_SETS = {
-    "sugar GRNs":     {"any": [{"sub_class": "sugar/water"}, {"all_of": [{"labels_regex": "sugar"}, {"super_class": "sensory"}, {"not": {"labels_regex": "bitter"}}]}, {"all_of": [{"sub_class": "labellar bristle"}, {"cell_type_regex": "^LB3[a-d]$"}]}]},
+    "sugar GRNs":     {"any": [{"sub_class": "sugar/water"}, {"all_of": [{"labels_regex": "sugar"}, {"super_class": "sensory"}, {"not": {"labels_regex": "bitter"}}]}, {"all_of": [{"sub_class": "labellar bristle"}, {"cell_type_regex": "^LB3[bc]$"}]}]},
     "bitter GRNs":    {"any": [{"sub_class": "bitter"}, {"all_of": [{"labels_regex": "bitter"}, {"super_class": "sensory"}]}, {"all_of": [{"sub_class": "labellar bristle"}, {"cell_type_regex": "^LB1[a-d]$"}]}]},
-    "water GRNs":     {"all_of": [{"labels_regex": "water"}, {"super_class": "sensory"}]},
+    "water GRNs":     {"any": [{"all_of": [{"labels_regex": "water"}, {"super_class": "sensory"}]}, {"all_of": [{"sub_class": "labellar bristle"}, {"cell_type": "LB3a"}]}]},
+    # MaleCNS-only modalities, from the Cell 2026 gustatory connectome (receptor driver lines)
+    "high-salt GRNs": {"all_of": [{"sub_class": "labellar bristle"}, {"cell_type": "LB3d"}]},
+    "amino-acid GRNs (LB1e)": {"all_of": [{"sub_class": "labellar bristle"}, {"cell_type": "LB1e"}]},
     "looming (LPLC2/LC4)": {"any": [{"cell_type": "LPLC2"}, {"cell_type": "LC4"}, {"hemibrain_type": "LPLC2"}, {"hemibrain_type": "LC4"}]},
     "olfactory RNs":  {"any": [{"class": "olfactory"}, {"cell_type": "ORN"}, {"labels_regex": "ORN"}]},
     "MN9 (proboscis)": {"any": [{"cell_type": "MN9"}, {"cell_type": "CB0701"}, {"hemibrain_type": "MN9"}, {"all_of": [{"labels_regex": r"\bMN9\b"}, {"super_class": "motor"}]}]},

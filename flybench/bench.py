@@ -39,6 +39,7 @@ import yaml
 
 from . import __version__
 from .connectome import Connectome
+from .scoring import grade_check, iqm, performance_profile, stratified_bootstrap_ci
 from .sim import LIFParams, LIFSimulator, SimResult, Stimulus
 
 OPS = {">": operator.gt, ">=": operator.ge, "<": operator.lt, "<=": operator.le, "==": operator.eq}
@@ -53,6 +54,24 @@ class CheckResult:
     passed: bool
     margin: float = float("nan")   # signed log10 distance from the threshold: +1 = 10x on the passing side, -1 = 10x on the failing side
     basis: str = ""                # where the threshold comes from (citation, or "convention: ...")
+    graded: float = 0.0            # [0, 1] score without the cliff (flybench.scoring); divided by `ceiling` when one is set
+    z: float = float("nan")        # (value − observed mean) / observed sd when the check carries a recording; NaN otherwise
+    ceiling: float | None = None   # the score a perfect model of the (non-deterministic) fly would get
+    capped: bool = False           # graded exceeded the ceiling and was clipped to 1
+    per_seed: list[float] = field(default_factory=list)   # the value on each seed (multi-seed runs)
+    op: str = ""                   # the check's comparison and target, so a result file can be re-scored
+    target: float = float("nan")
+
+
+def _graded_check(desc: str, value: float, passed: bool, chk: dict, per_seed: list[float] | None = None) -> CheckResult:
+    """Build a CheckResult with margin and graded score. For a check with a recording (`observed`
+    with a finite sd) the pass flag comes from |z| < k; otherwise it is the threshold pass."""
+    margin = margin_of(value, chk["op"], float(chk["value"]))
+    g, z, pass_z, ceiling, capped = grade_check(value, margin, chk.get("observed"), chk.get("ceiling"), float(chk.get("k", 2.0)))
+    if np.isfinite(z):
+        passed = pass_z
+    return CheckResult(desc, float(value), bool(passed), margin, str(chk.get("basis", "")), g, z, ceiling, capped, list(per_seed or []),
+                       str(chk["op"]), float(chk["value"]))
 
 
 def margin_of(value: float, op: str, target: float) -> float:
@@ -76,6 +95,12 @@ class TaskResult:
     stimulus_sizes: dict[str, int]
     seconds: float
     notes: list[str] = field(default_factory=list)
+    graded: float = 0.0            # mean graded score over checks
+    graded_per_seed: list[float] = field(default_factory=list)
+    # negative controls (flybench.controls): score of the same task on shuffled wiring
+    controls: dict[str, dict[str, float | bool]] = field(default_factory=dict)
+    specificity: float | None = None      # score(real) - max(score(control)); None when no controls ran
+    non_diagnostic: bool = False          # some control also passed: the task is not measuring the wiring
 
 
 def load_tasks(paths: list[Path] | None = None, tier: str = "all") -> list[dict]:
@@ -228,13 +253,14 @@ def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False
             unit = " Hz" if typ.endswith("rate") else (" spikes/neuron" if typ == "spikes_per_neuron" else "")
             desc = f"{typ.replace('_', ' ')}{tag} {chk['op']} {target}{unit}"
         passed = bool(not np.isnan(val) and op(val, target))
-        checks.append(CheckResult(desc, float(val), passed, margin_of(float(val), chk["op"], target), str(chk.get("basis", ""))))
+        checks.append(_graded_check(desc, float(val), passed, chk))
 
     score = sum(ch.passed for ch in checks) / max(len(checks), 1)
+    graded = float(np.mean([ch.graded for ch in checks])) if checks else 0.0
     return TaskResult(
         task=task["name"], title=task.get("title", task["name"]), passed=all(ch.passed for ch in checks) and bool(checks),
         score=float(score), checks=checks, measurements=measurements, readout_size=int(readouts[default_readout].size),
-        stimulus_sizes=stim_sizes, seconds=time.time() - t0, notes=notes,
+        stimulus_sizes=stim_sizes, seconds=time.time() - t0, notes=notes, graded=graded, graded_per_seed=[graded],
     )
 
 
@@ -260,24 +286,34 @@ def _run_task_multiseed(task, c, params, verbose, simulator, seeds: int) -> Task
         # 2 of 3 random draws is a coin flip, not a reproduced behaviour.
         passed = bool(np.isfinite(mean) and op(mean, target) and passes == seeds)
         desc = f"{ch.description}  [{passes}/{seeds} seeds, sd {nstd(vals):.3g}]"
-        checks.append(CheckResult(desc, mean, passed, margin_of(mean, chk["op"], target), str(chk.get("basis", ""))))
+        checks.append(_graded_check(desc, mean, passed, chk, per_seed=[float(v) for v in vals]))
     notes = list(dict.fromkeys(n for r in runs for n in r.notes))
     flaky = [f"check {i}: passes on {sum(r.checks[i].passed for r in runs)}/{seeds} seeds" for i in range(len(base.checks))
              if 0 < sum(r.checks[i].passed for r in runs) < seeds]
     if flaky:
         notes.append("seed-sensitive: " + "; ".join(flaky))
     score = sum(ch.passed for ch in checks) / max(len(checks), 1)
+    # graded score: the mean over checks of the graded score of the seed-mean value; per seed, the same on each seed
+    graded = float(np.mean([ch.graded for ch in checks])) if checks else 0.0
+    graded_per_seed = [r.graded for r in runs]
     if verbose:
         for cond, m in measurements.items():
             print(f"  {cond:>16}: readout {m['rate']:.2f} Hz (mean of {seeds} seeds), network {m['network_rate']:.3f} Hz, active {m['active_fraction']:.3%}")
     return TaskResult(task=task["name"], title=base.title, passed=all(ch.passed for ch in checks) and bool(checks), score=float(score),
                       checks=checks, measurements=measurements, readout_size=base.readout_size, stimulus_sizes=base.stimulus_sizes,
-                      seconds=time.time() - t0, notes=notes)
+                      seconds=time.time() - t0, notes=notes, graded=graded, graded_per_seed=graded_per_seed)
 
 
 def run_suite(c: Connectome, params: LIFParams, tasks: list[dict] | None = None, verbose: bool = False,
-              simulator: SimulatorFactory = LIFSimulator, seeds: int = 1) -> dict[str, Any]:
+              simulator: SimulatorFactory = LIFSimulator, seeds: int = 1,
+              controls: list[str] | None = None) -> dict[str, Any]:
+    """controls: names from flybench.controls.CONTROLS. Each task is then also run on that shuffled
+    wiring; the task's `specificity` is score(real) - max(score(control)), and a task some control
+    also passes is marked `non_diagnostic`."""
+    from .controls import make_control
     tasks = tasks or load_tasks()
+    controls = list(controls or [])
+    control_cs = {name: make_control(c, name, seed=params.seed) for name in controls}
     results = []
     skipped: dict[str, str] = {}
     for task in tasks:
@@ -291,9 +327,27 @@ def run_suite(c: Connectome, params: LIFParams, tasks: list[dict] | None = None,
             continue
         if verbose:
             print(f"[{task['name']}] {task.get('title', '')}")
-        results.append(run_task(task, c, params, verbose=verbose, simulator=simulator, seeds=seeds))
+        r = run_task(task, c, params, verbose=verbose, simulator=simulator, seeds=seeds)
+        for name, cc in control_cs.items():
+            if verbose:
+                print(f"[{task['name']}] control: {name}")
+            rc = run_task(task, cc, params, verbose=False, simulator=simulator, seeds=seeds)
+            r.controls[name] = {"score": rc.score, "passed": rc.passed}
+        if r.controls:
+            r.specificity = float(r.score - max(v["score"] for v in r.controls.values()))
+            # a task whose checks all say "X must NOT happen" is passed by a dead network too; only
+            # tasks that require a response somewhere can be non-diagnostic in the shuffle sense
+            positive = any(str(ch.get("op", "")) in (">", ">=") for ch in task.get("checks", []))
+            r.non_diagnostic = bool(positive and r.passed and any(v["passed"] for v in r.controls.values()))
+            if not positive and r.passed:
+                r.notes.append("null task (no check requires a response): shuffled wiring is expected to pass it too")
+        results.append(r)
     tasks = [t for t in tasks if t["name"] not in skipped]
     total = float(np.mean([r.score for r in results])) if results else 0.0
+    # graded: IQM over tasks of the task graded score; CI by resampling seeds within each task
+    graded_total = iqm([r.graded for r in results]) if results else 0.0
+    ci = stratified_bootstrap_ci([r.graded_per_seed for r in results], seed=params.seed) if results else None
+    profile = performance_profile([ch.margin for r in results for ch in r.checks])
     tiers = {t["name"]: t.get("tier", "core") for t in tasks}
     circuits = {t["name"]: t.get("circuit", t["name"]) for t in tasks}
     tier_scores, circuit_scores = {}, {}
@@ -315,8 +369,16 @@ def run_suite(c: Connectome, params: LIFParams, tasks: list[dict] | None = None,
         "hard_score": tier_scores["hard"],
         "core_by_circuit": circuit_scores["core"],   # mean over circuits of the mean task score in that circuit
         "hard_by_circuit": circuit_scores["hard"],
+        "graded": graded_total,                       # IQM over tasks of the cliff-free graded score (flybench.scoring)
+        "graded_ci95": list(ci) if ci else None,      # stratified bootstrap over seeds; None with a single seed
+        "core_graded": float(np.mean([r.graded for r in results if tiers.get(r.task) == "core"])) if any(tiers.get(r.task) == "core" for r in results) else None,
+        "hard_graded": float(np.mean([r.graded for r in results if tiers.get(r.task) == "hard"])) if any(tiers.get(r.task) == "hard" for r in results) else None,
+        "profile": profile,                           # fraction of checks with margin ≥ τ decades, τ = -1 … 1
         "circuits": {t["name"]: circuits[t["name"]] for t in tasks},
         "skipped": skipped,   # task -> reason; these are absent from `tasks` and from every score
+        "controls": controls,  # negative-control connectomes that were run (flybench.controls)
+        "specificity": float(np.mean([r.specificity for r in results])) if controls and results else None,
+        "non_diagnostic": [r.task for r in results if r.non_diagnostic],
         "tier": sorted({t.get("tier", "core") for t in tasks}),
         "connectome": c.name,
         "connectome_meta": {k: c.meta.get(k) for k in ("source", "min_synapses", "n", "n_edges")},
@@ -347,8 +409,8 @@ def leaderboard(reports: list[dict]) -> str:
         for t in r["tasks"]:
             if t["task"] not in task_names:
                 task_names.append(t["task"])
-    head = "| run | connectome | simulator | gain | w_syn | seeds | verified | core | hard | core by circuit | hard by circuit | max brain active | " + " | ".join(task_names) + " |"
-    sep = "|" + "---|" * (12 + len(task_names))
+    head = "| run | connectome | simulator | gain | w_syn | seeds | verified | core | hard | core by circuit | hard by circuit | graded (95% CI) | specificity | hold-out gap | division | max brain active | " + " | ".join(task_names) + " |"
+    sep = "|" + "---|" * (16 + len(task_names))
     rows = []
     fmt = lambda v: "–" if v is None else f"{v:.2f}"  # noqa: E731
     # rank by core score, then hard score, then more seeds (more evidence), then verified
@@ -359,5 +421,14 @@ def leaderboard(reports: list[dict]) -> str:
         sim = r.get("simulator", "flybench.sim.LIFSimulator").replace("flybench.sim.", "")
         max_active = max((m["active_fraction"] for t in r["tasks"] for m in t["measurements"].values()), default=0.0)
         ver = "✅" if r.get("verified") else "self-reported"
-        rows.append(f"| {r.get('label', '')} | {r['connectome']} | {sim} | {p['gain']} | {p['w_syn_mv']} | {r.get('seeds', 1)} | {ver} | {fmt(r.get('core_score'))} | {fmt(r.get('hard_score'))} | {fmt(r.get('core_by_circuit'))} | {fmt(r.get('hard_by_circuit'))} | {max_active:.1%} | " + " | ".join(cells) + " |")
+        # specificity: real minus best shuffled-wiring score (flybench.controls); "–" when no controls ran
+        spec = "–" if r.get("specificity") is None else f"{r['specificity']:+.2f}"
+        g = r.get("graded"); gci = r.get("graded_ci95")
+        graded = "–" if g is None else (f"{g:.2f} [{gci[0]:.2f}, {gci[1]:.2f}]" if gci else f"{g:.2f}")
+        gap = (r.get("holdout") or {}).get("gap")
+        gap_s = "–" if gap is None else f"{gap:+.2f}"
+        div = r.get("division") or ("closed" if sim == "LIFSimulator" and not r.get("n_free_parameters") else "open")
+        if r.get("n_free_parameters") is not None:
+            div += f" ({r['n_free_parameters']}p)"
+        rows.append(f"| {r.get('label', '')} | {r['connectome']} | {sim} | {p['gain']} | {p['w_syn_mv']} | {r.get('seeds', 1)} | {ver} | {fmt(r.get('core_score'))} | {fmt(r.get('hard_score'))} | {fmt(r.get('core_by_circuit'))} | {fmt(r.get('hard_by_circuit'))} | {graded} | {spec} | {gap_s} | {div} | {max_active:.1%} | " + " | ".join(cells) + " |")
     return "\n".join([head, sep, *rows])

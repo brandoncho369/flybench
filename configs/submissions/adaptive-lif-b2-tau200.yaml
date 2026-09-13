@@ -8,3 +8,6 @@ params:
     b_mv: 2.0
     tau_a_ms: 200.0
 simulator: flybench.models.adaptive_lif:AdaptiveLIFSimulator
+division: open
+n_free_parameters: 0          # b and tau_a are literature values (Benda & Herz 2003), applied uniformly; gain swept
+fit_data: none — constants from the literature, not fitted; gain swept over the same grid as the reference LIF

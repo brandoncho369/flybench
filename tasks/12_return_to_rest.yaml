@@ -19,7 +19,7 @@ readout:
 conditions:
   sugar:
     stimuli:
-      - {name: sugar_grn, select: {any: [{sub_class: "sugar/water"}, {all_of: [{labels_regex: "sugar"}, {super_class: sensory}, {not: {labels_regex: "bitter"}}]}, {all_of: [{sub_class: "labellar bristle"}, {cell_type_regex: "^LB3[a-d]$"}]}]}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
+      - {name: sugar_grn, select: {any: [{sub_class: "sugar/water"}, {all_of: [{labels_regex: "sugar"}, {super_class: sensory}, {not: {labels_regex: "bitter"}}]}, {all_of: [{sub_class: "labellar bristle"}, {cell_type_regex: "^LB3[bc]$"}]}]}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
 checks:
   - {type: rate, cond: sugar, op: ">", value: 5, basis: "convention: 5 Hz over the window is ~2.5 spikes per neuron, the smallest response that is unambiguously not noise (baseline is 0 Hz)"}
   - {type: rate, cond: sugar, op: "<", value: 5, window: [1700, 2000], basis: "Dethier 1976 (PER ends when the stimulus ends); convention: MN9 <5 Hz one second later"}

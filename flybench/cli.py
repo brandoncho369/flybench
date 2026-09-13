@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 import click
+import numpy as np
 import yaml
 from rich.console import Console
 from rich.markup import escape
@@ -78,8 +79,9 @@ def toy(cache):
 @click.option("--simulator", default=None, help="custom simulator as 'module:Class' (see CONTRIBUTING.md)")
 @click.option("--tier", default="all", type=click.Choice(["core", "hard", "all"]), show_default=True)
 @click.option("--seeds", default=1, show_default=True, help="run every condition this many times with different seeds; checks must hold on the mean")
+@click.option("--controls", default=None, help="also score each task on shuffled wiring: 'rewired', 'random', 'signflip', comma-separated, or 'all' (see docs/CONTROLS.md)")
 @click.option("-v", "--verbose", is_flag=True)
-def run(connectome, config, gain, task_paths, out, label, cache, simulator, tier, seeds, verbose):
+def run(connectome, config, gain, task_paths, out, label, cache, simulator, tier, seeds, controls, verbose):
     """Run the benchmark suite."""
     c = load_connectome(connectome, cache)
     overrides = yaml.safe_load(Path(config).read_text(encoding="utf-8")) if config else {}
@@ -88,10 +90,14 @@ def run(connectome, config, gain, task_paths, out, label, cache, simulator, tier
     params = LIFParams.from_dict(overrides or {})
     console.print(f"[bold]{c.name}[/]: {c.n:,} neurons, {c.n_edges:,} edges · gain={params.gain} w_syn={params.w_syn_mv} mV")
     tasks = load_tasks([Path(p) for p in task_paths]) if task_paths else load_tasks(tier=tier)
-    report = run_suite(c, params, tasks, verbose=verbose, simulator=resolve_simulator(simulator), seeds=seeds)
+    from .controls import parse_controls
+    report = run_suite(c, params, tasks, verbose=verbose, simulator=resolve_simulator(simulator), seeds=seeds,
+                       controls=parse_controls(controls))
     report["label"] = label or (Path(config).stem if config else f"gain{params.gain}")
 
-    table = Table(title=f"flybench · score {report['score']:.2f} · {report['passed']}/{report['n_tasks']} tasks")
+    ci = report.get("graded_ci95")
+    ci_s = f" [{ci[0]:.2f}, {ci[1]:.2f}]" if ci else ""
+    table = Table(title=f"flybench · score {report['score']:.2f} · graded {report['graded']:.2f}{ci_s} · {report['passed']}/{report['n_tasks']} tasks")
     table.add_column("task"); table.add_column("result"); table.add_column("checks"); table.add_column("notes", style="dim")
     for t in report["tasks"]:
         def marg(ch):  # effect size: how far from the line, as a multiplier on the passing (+) or failing (-) side
@@ -100,13 +106,115 @@ def run(connectome, config, gain, task_paths, out, label, cache, simulator, tier
                 return ""
             return f" [dim]{'+' if m >= 0 else '-'}{10 ** abs(m):.1f}x[/]"
         checks = "\n".join(("✓ " if ch["passed"] else "✗ ") + escape(f"{ch['description']}  [{ch['value']:.3g}]") + marg(ch) for ch in t["checks"])
-        table.add_row(t["title"], "[green]PASS[/]" if t["passed"] else f"[red]FAIL[/] ({t['score']:.0%})", checks, "\n".join(t["notes"]))
+        notes = list(t["notes"])
+        if t.get("controls"):
+            ctrl = ", ".join(f"{k} {v['score']:.0%}" for k, v in t["controls"].items())
+            notes.append(f"controls: {ctrl} · specificity {t['specificity']:+.2f}" + ("  [red]NON-DIAGNOSTIC[/]" if t.get("non_diagnostic") else ""))
+        res = ("[green]PASS[/]" if t["passed"] else f"[red]FAIL[/] ({t['score']:.0%})") + f"\n[dim]graded {t['graded']:.2f}[/]"
+        table.add_row(t["title"], res, checks, "\n".join(notes))
     console.print(table)
     for name, why in report.get("skipped", {}).items():
         console.print(f"[dim]skipped {name}: {why}[/]")
+    prof = report.get("profile") or {}
+    if prof:
+        console.print("profile (checks with margin ≥ τ): " + "  ".join(f"τ={k}: {v:.0%}" for k, v in prof.items()))
+    if report.get("controls"):
+        nd = report.get("non_diagnostic") or []
+        console.print(f"specificity (mean over tasks, real − best shuffled): {report['specificity']:+.2f}"
+                      + (f" · non-diagnostic: {', '.join(nd)}" if nd else " · every passing task fails on shuffled wiring"))
     if out:
         p = save_report(report, out)
         console.print(f"report → {p}")
+
+
+@main.command()
+@click.argument("a", type=click.Path(exists=True, dir_okay=False))
+@click.argument("b", type=click.Path(exists=True, dir_okay=False))
+def diff(a, b):
+    """Paired comparison of two result files: per-check graded differences (A − B), the probability
+    that A is better on a random check, and a bootstrap CI over seeds when both runs have them."""
+    from .scoring import paired_difference
+    ra, rb = json.loads(Path(a).read_text(encoding="utf-8")), json.loads(Path(b).read_text(encoding="utf-8"))
+    key = lambda t, ch: (t["task"], ch["description"].split("  [")[0])  # noqa: E731
+    ca = {key(t, ch): ch for t in ra["tasks"] for ch in t["checks"]}
+    cb = {key(t, ch): ch for t in rb["tasks"] for ch in t["checks"]}
+    keys = [k for k in ca if k in cb]
+    if not keys:
+        raise SystemExit("the two runs share no checks")
+    if any("graded" not in ca[k] or "graded" not in cb[k] for k in keys):
+        raise SystemExit("one of the runs predates graded scoring; re-run it")
+    d = paired_difference([ca[k]["graded"] for k in keys], [cb[k]["graded"] for k in keys])
+    console.print(f"[bold]{ra.get('label', a)}[/] vs [bold]{rb.get('label', b)}[/] · {d['n']} shared checks "
+                  f"({len(ca) - d['n']} only in A, {len(cb) - d['n']} only in B)")
+    se = f" ± {2 * d['se']:.3f} (95%)" if d["se"] == d["se"] else ""
+    console.print(f"mean graded difference A − B: {d['mean']:+.3f}{se} · P(A better on a random check): {d['p_improve']:.0%}")
+    # bootstrap over seeds: resample each check's per-seed values in both runs, re-grade, recompute the mean paired difference
+    if all(ca[k].get("per_seed") and cb[k].get("per_seed") and ca[k].get("op") for k in keys):
+        from .bench import margin_of
+        from .scoring import graded_from_margin
+        rng = np.random.default_rng(0)
+        boots = []
+        for _ in range(500):
+            diffs = []
+            for k in keys:
+                pa, pb = ca[k]["per_seed"], cb[k]["per_seed"]
+                va = float(np.mean(rng.choice(pa, size=len(pa)))); vb = float(np.mean(rng.choice(pb, size=len(pb))))
+                diffs.append(graded_from_margin(margin_of(va, ca[k]["op"], ca[k]["target"])) - graded_from_margin(margin_of(vb, cb[k]["op"], cb[k]["target"])))
+            boots.append(float(np.mean(diffs)))
+        lo, hi = np.percentile(boots, [2.5, 97.5])
+        console.print(f"seed-bootstrap 95% CI on the mean difference: [{lo:+.3f}, {hi:+.3f}]")
+    table = Table(title="largest per-check changes (graded, A − B)")
+    table.add_column("task"); table.add_column("check"); table.add_column("A"); table.add_column("B"); table.add_column("Δ")
+    for k in sorted(keys, key=lambda k: -abs(ca[k]["graded"] - cb[k]["graded"]))[:12]:
+        table.add_row(k[0], escape(k[1]), f"{ca[k]['graded']:.2f} ({ca[k]['value']:.3g})", f"{cb[k]['graded']:.2f} ({cb[k]['value']:.3g})", f"{ca[k]['graded'] - cb[k]['graded']:+.2f}")
+    console.print(table)
+
+
+@main.command()
+@click.argument("results", nargs=-1, type=click.Path(exists=True))
+def rescore(results):
+    """Fill in graded scores (and the profile) on result files written before graded scoring existed,
+    from the stored values and margins; nothing is re-simulated. Files that already have them are left alone."""
+    import re
+    from .bench import margin_of
+    from .scoring import graded_from_margin, iqm, performance_profile
+    tiers = {t["name"]: t.get("tier", "core") for t in load_tasks()}
+    op_re = re.compile(r"\s(>=|<=|>|<|==)\s([-+]?\d*\.?\d+(?:[eE][-+]?\d+)?)")
+    files = []
+    for r in results:
+        pth = Path(r)
+        files += sorted(pth.glob("*.json")) if pth.is_dir() else [pth]
+    n = 0
+    for f in files:
+        rep = json.loads(f.read_text(encoding="utf-8"))
+        if "graded" in rep:
+            continue
+        complete = True
+        for t in rep["tasks"]:
+            for ch in t["checks"]:
+                m = ch.get("margin")
+                if not isinstance(m, (int, float)) or m != m:
+                    # results older than margins: recover op and target from the description ("rate[sugar] > 5.0 Hz")
+                    mo = op_re.search(ch["description"].split("  [")[0])
+                    if mo and isinstance(ch.get("value"), (int, float)):
+                        ch["op"], ch["target"] = mo.group(1), float(mo.group(2))
+                        m = margin_of(float(ch["value"]), ch["op"], ch["target"])
+                        ch["margin"] = m
+                    else:
+                        complete = False
+                ch.setdefault("graded", graded_from_margin(m if isinstance(m, (int, float)) else float("nan")))
+            t["graded"] = float(np.mean([ch["graded"] for ch in t["checks"]])) if t["checks"] else 0.0
+            t.setdefault("graded_per_seed", [t["graded"]])
+        rep["graded"] = (iqm([t["graded"] for t in rep["tasks"]]) if rep["tasks"] else 0.0) if complete else None
+        rep["graded_ci95"] = None
+        for tier in ("core", "hard"):
+            v = [t["graded"] for t in rep["tasks"] if tiers.get(t["task"]) == tier]
+            rep[f"{tier}_graded"] = float(np.mean(v)) if v and complete else None
+        rep["profile"] = performance_profile([ch.get("margin", float("nan")) for t in rep["tasks"] for ch in t["checks"] if isinstance(ch.get("margin"), (int, float))])
+        rep["rescored"] = True
+        f.write_text(json.dumps(rep, indent=2), encoding="utf-8")
+        n += 1
+    console.print(f"rescored {n} of {len(files)} result files")
 
 
 @main.command()

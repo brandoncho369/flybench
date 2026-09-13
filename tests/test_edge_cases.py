@@ -414,9 +414,35 @@ def test_validate_submission():
     bad = dict(good, params={"gain": 50}); assert any("gain" in e for e in validate_submission(bad))
     bad = dict(good, seeds=99); assert any("seeds" in e for e in validate_submission(bad))
     bad = dict(good, connectome="secret"); assert any("connectome" in e for e in validate_submission(bad))
-    ok = dict(good, params={"gain": 0.45, "extra": {"b_mv": 2, "tau_a_ms": 200}}, simulator="flybench.models.adaptive_lif:AdaptiveLIFSimulator")
+    ok = dict(good, params={"gain": 0.45, "extra": {"b_mv": 2, "tau_a_ms": 200}}, simulator="flybench.models.adaptive_lif:AdaptiveLIFSimulator",
+              division="open", n_free_parameters=0, fit_data="none, literature constants")
     assert validate_submission(ok) == []
     assert validate_submission("nope") == ["config must be a mapping"]
+
+
+def test_submission_divisions_and_fit_data():
+    from flybench.evaluate import validate_submission, holdout_gap
+    good = {"label": "x", "connectome": "flywire783", "seeds": 3, "params": {"gain": 0.42}, "simulator": "flybench.sim:LIFSimulator"}
+    # closed by default: reference LIF, gain only; the free-parameter fields are filled in
+    cfg = dict(good); assert validate_submission(cfg) == [] and cfg["n_free_parameters"] == 1 and "fit_data" in cfg
+    # changing anything but gain is not closed
+    bad = dict(good, params={"gain": 0.42, "tau_m_ms": 30}); assert any("division" in e for e in validate_submission(bad))
+    bad = dict(good, simulator="flybench.models.adaptive_lif:AdaptiveLIFSimulator"); assert any("division" in e for e in validate_submission(bad))
+    # open needs both disclosures
+    bad = dict(good, division="open"); errs = validate_submission(bad)
+    assert any("n_free_parameters" in e for e in errs) and any("fit_data" in e for e in errs)
+    bad = dict(good, division="open", n_free_parameters=-1, fit_data="x"); assert any("non-negative" in e for e in validate_submission(bad))
+    bad = dict(good, division="open", n_free_parameters=True, fit_data="x"); assert any("n_free_parameters" in e for e in validate_submission(bad))
+    bad = dict(good, division="nope"); assert any("division" in e for e in validate_submission(bad))
+    # fitting on the benchmark is not eligible
+    for fit in ("tuned on sugar_to_proboscis", "fit to flybench core tier", "grid search on the hold-out set"):
+        bad = dict(good, division="open", n_free_parameters=2, fit_data=fit)
+        assert any("not eligible" in e for e in validate_submission(bad)), fit
+    ok = dict(good, division="open", n_free_parameters=2, fit_data="Turner 2021 resting-state FC (figshare)")
+    assert validate_submission(ok) == []
+    # hold-out gap arithmetic
+    assert holdout_gap(0.9, {"score": 0.6}) == pytest.approx(0.3)
+    assert holdout_gap(0.9, {"score": None}) is None and holdout_gap(None, {"score": 0.5}) is None and holdout_gap(0.9, None) is None
 
 
 def test_evaluate_on_toy(tmp_path):
@@ -424,7 +450,10 @@ def test_evaluate_on_toy(tmp_path):
     cfg = tmp_path / "s.yaml"
     cfg.write_text("label: toy eval\nnote: n\nconnectome: toy\nseeds: 1\nparams:\n  gain: 1.0\nsimulator: flybench.sim:LIFSimulator\n")
     r = evaluate(cfg, out=tmp_path / "r.json", comment=tmp_path / "c.md", cache=tmp_path / "cache")
-    assert r["verified"] is True and r["label"] == "toy eval" and (tmp_path / "c.md").read_text(encoding="utf-8").startswith("### flybench evaluation")
+    md = (tmp_path / "c.md").read_text(encoding="utf-8")
+    assert r["verified"] is True and r["label"] == "toy eval" and md.startswith("### flybench evaluation")
+    assert r["division"] == "closed" and r["n_free_parameters"] == 1 and r["public_score"] == r["score"]
+    assert r["controls"] == ["rewired"] and r["specificity"] is not None and "specificity" in md and "closed division" in md
     from flybench.validate import validate_report
     assert validate_report(json.loads((tmp_path / "r.json").read_text())) == []
 

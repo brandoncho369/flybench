@@ -87,3 +87,23 @@ flybench verify results/x.json --mark     # same, and writes verified: true on s
 ```
 
 Branch protection on the default branch should require the `ci` check and one review. The `leaderboard` workflow needs a `FLY_EXPLORER_TOKEN` secret (fine-grained PAT, contents: write on fly-explorer) to trigger the website rebuild; without it the site is updated by running `scripts/leaderboard-snapshot.py` there by hand.
+
+
+## Negative controls, divisions and the hold-out gap
+
+- Run `--controls rewired` (or `all`) before proposing a task: a positive task that the shuffled
+  brain also passes is not measuring the wiring. Null tasks ("X must not fire") are expected to
+  pass on shuffled wiring and are noted, not flagged. See docs/CONTROLS.md.
+- Submissions declare `division: closed` (reference LIF, gain only) or `open`, and open ones must
+  give `n_free_parameters` and `fit_data`. `fit_data` that names a benchmark task, the benchmark,
+  or the hold-out set is rejected: fit on recordings or literature values, then evaluate.
+- CI reports `gap = public − hold-out`. Nobody sees the hold-out thresholds; keep it that way.
+
+## Graded scores and recording-match checks
+
+Every check gets a graded score from its margin (docs/SCORING.md); nothing to do for threshold
+checks. A check that compares to a published recording adds `observed: {mean, sd, n, source}`
+(sd may be `unknown`), optionally `k` (pass width in z, default 2) and `ceiling` (the animal's own
+rate). The lint requires `sd` and `source`. Prefer checks with a reported spread; a mean without one
+falls back to the threshold rule and says so. Run with `--seeds 3` or more before proposing; the
+leaderboard shows the CI, and a single-seed run shows none.

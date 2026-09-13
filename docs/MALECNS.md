@@ -21,8 +21,11 @@ flybench run -c malecns --config configs/malecns_minecraft.yaml --seeds 3 -o res
 | looming (LPLC2, LC4) | same names | same names | named directly |
 | DA1 projection neurons | `DA1_(l\|v\|ad)PN` | same names | named directly |
 | all descending neurons | `super_class: descending` | `super_class: descending_neuron` | regex `^descending` |
-| **sugar GRNs** | `sub_class: sugar/water` (129) | labellar bristle `LB3a–d` (77) | connectivity, below |
-| **bitter GRNs** | `sub_class: bitter` (65) | labellar bristle `LB1a–d` (38) | connectivity, below |
+| **sugar GRNs** | `sub_class: sugar/water` (129) | labellar bristle `LB3b–c` (34) | receptor lines, Cell 2026 (below) |
+| **water GRNs** | labels `water` | `LB3a` (17) | receptor lines, Cell 2026 |
+| **high-salt GRNs** | — | `LB3d` (26) | receptor lines, Cell 2026 |
+| **bitter GRNs** | `sub_class: bitter` (65) | labellar bristle `LB1a–d` (38) | receptor lines, Cell 2026 |
+| **amino-acid GRNs** | — | `LB1e` | receptor lines, Cell 2026 |
 
 MaleCNS does not label gustatory neurons by taste modality; it groups labellar bristle GRNs
 anatomically as `LB1a … LB4b`. It does, however, carry Shiu et al. 2022 (eLife, "Taste quality
@@ -47,14 +50,30 @@ out of both stimuli. Pharyngeal and taste-peg GRNs are excluded on both datasets
 This is an inference from wiring, not a label the annotators gave, so it is stated here rather
 than hidden in a selector.
 
-**Update (September 2026).** The MaleCNS companion paper on taste (*The complete gustatory
+**Resolved (September 2026).** The MaleCNS companion paper on taste (*The complete gustatory
 connectome of adult Drosophila*, Cell 2026; bioRxiv 10.1101/2025.08.25.671814) classified
-labellar GRNs by modality using receptor driver lines and reports **LB1a–e as bitter and
-LB3a–d as sugar/appetitive** — the same split as the wiring inference above, arrived at
-independently. Two edges to reconcile against their table before changing selectors: they
-flag LB3d as high-salt avoidance (so it may belong out of the sugar set) and LB1e as bitter
-(it is currently excluded from ours because its outputs were mixed). Until that is checked,
-the selectors stay as they are; the agreement on the core of the split is the point.
+labellar GRNs by receptor driver line, which is a measurement rather than an inference:
+
+| type | modality (Cell 2026) | driver | flybench set |
+|---|---|---|---|
+| LB1a–d | bitter, aversive | Gr66a-class | bitter |
+| LB1e | mild aversion to amino acids (glutamate); glutamatergic | — | amino-acid (not bitter) |
+| LB2 | unresolved, clusters with aversive types | none matched | excluded |
+| LB3a | water | ppk28 | water |
+| LB3b | sweet | Gr64f | sugar |
+| LB3c | sweet + low salt | Ir56b | sugar |
+| LB3d | high salt, aversive | Ir7c, ppk23 | high-salt (not sugar) |
+| LB4 | proposed appetitive, receptor unknown | — | excluded |
+
+So the sugar set is now `^LB3[bc]$` (34 neurons), water is `LB3a`, and LB3d and LB1e each get
+their own set. The wiring table above is unchanged and still consistent: LB3a and LB3d synapse on
+the Shiu 2022 second-order neurons because those cells (Clavicle, Fudog, Phantom, Zorro) respond
+to water as well as sugar (Shiu et al. 2024), so wiring onto them never distinguished sugar from
+water; the receptor lines do. Two caveats the paper itself raises: LB3a and LB3b reconstructions
+had segmentation problems, so the male sugar/water counts carry extra uncertainty, and with 34
+rather than 77 sugar GRNs the male sugar pathway is driven by fewer cells than before — the
+results below (run with the 77-cell set) will be rerun; expect sugar → MN9 to need more drive,
+not less.
 
 ## Results: the reference model on the male CNS (3 seeds each)
 

@@ -71,6 +71,27 @@ def lint_task(task: dict, source: str = "<task>") -> list[str]:
             errs.append(f"check {i}: needs `basis` — a citation for the threshold, or 'convention: <why this number>'")
         if chk.get("cond") not in conds:
             errs.append(f"check {i}: cond {chk.get('cond')!r} is not a condition")
+        # recording-match checks: observed {mean, sd|'unknown', n, source}; ceiling in (0, 1]; k > 0
+        obs = chk.get("observed")
+        if obs is not None:
+            if not isinstance(obs, dict) or "mean" not in obs or "source" not in obs:
+                errs.append(f"check {i}: observed must be a mapping with mean, sd (number or 'unknown'), n, source")
+            else:
+                if not isinstance(obs["mean"], (int, float)):
+                    errs.append(f"check {i}: observed.mean must be a number")
+                sd = obs.get("sd", None)
+                if sd is None:
+                    errs.append(f"check {i}: observed.sd is required (a number, or 'unknown' when the paper gives none)")
+                elif sd != "unknown" and (not isinstance(sd, (int, float)) or sd < 0):
+                    errs.append(f"check {i}: observed.sd must be a non-negative number or 'unknown'")
+                if "n" in obs and (not isinstance(obs["n"], int) or obs["n"] < 1):
+                    errs.append(f"check {i}: observed.n must be a positive integer")
+                if not str(obs.get("source", "")).strip():
+                    errs.append(f"check {i}: observed.source must cite the recording")
+        if "ceiling" in chk and (not isinstance(chk["ceiling"], (int, float)) or not 0 < chk["ceiling"] <= 1):
+            errs.append(f"check {i}: ceiling must be a number in (0, 1]")
+        if "k" in chk and (not isinstance(chk["k"], (int, float)) or chk["k"] <= 0):
+            errs.append(f"check {i}: k (z-score pass width) must be a positive number")
         if typ == "ratio" and chk.get("over") not in conds:
             errs.append(f"check {i}: over {chk.get('over')!r} is not a condition")
         # network-level metrics ignore readouts; readout metrics default to the task's first readout (runtime does the same)

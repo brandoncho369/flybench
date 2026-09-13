@@ -24,7 +24,7 @@ conditions:
   sugar_other_fly:
     weight_jitter: 0.25
     stimuli:
-      - {name: sugar_grn, select: {any: [{sub_class: "sugar/water"}, {all_of: [{labels_regex: "sugar"}, {super_class: sensory}, {not: {labels_regex: "bitter"}}]}, {all_of: [{sub_class: "labellar bristle"}, {cell_type_regex: "^LB3[a-d]$"}]}]}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
+      - {name: sugar_grn, select: {any: [{sub_class: "sugar/water"}, {all_of: [{labels_regex: "sugar"}, {super_class: sensory}, {not: {labels_regex: "bitter"}}]}, {all_of: [{sub_class: "labellar bristle"}, {cell_type_regex: "^LB3[bc]$"}]}]}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
   loom_other_fly:
     weight_jitter: 0.25
     stimuli:

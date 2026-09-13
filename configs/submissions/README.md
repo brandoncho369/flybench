@@ -10,4 +10,12 @@ seeds: 3
 params:                       # any LIFParams field; unlisted ones keep the Shiu 2024 defaults
   gain: 0.42
 simulator: flybench.sim:LIFSimulator   # built-in simulators only, in CI; custom code is verified by hand
+division: closed              # closed = reference LIF, only gain changed. Anything else is `open` and needs:
+# n_free_parameters: 3        #   how many constants were fitted (0 if every value is from the literature)
+# fit_data: "..."             #   what they were fitted on. Fitting on benchmark tasks makes a submission ineligible.
+# controls: rewired           # negative-control wiring CI also scores (rewired | random | signflip | all | none)
 ```
+
+CI also runs the unpublished hold-out tasks and reports the **gap** (public − hold-out score) and the
+**specificity** (real − shuffled-wiring score). Both appear on the leaderboard; a large gap on an
+open-division model means the search found the tests, not the fly.

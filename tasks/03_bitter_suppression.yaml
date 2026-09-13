@@ -4,8 +4,14 @@ description: >
   Co-activating bitter GRNs with sugar GRNs should reduce MN9 output relative
   to sugar alone. Flies reject sucrose laced with quinine; the connectome
   should show why (bitter-driven inhibition onto the sugar pathway).
+  Scope note: bitter suppression in the fly has two components. Bitter compounds also inhibit
+  sugar transduction inside the sensillum itself (French et al. 2015, J Neurosci 35:3990:
+  optogenetically driven sugar-cell responses are not reduced by strychnine, so the peripheral
+  effect acts on transduction, upstream of any synapse). A connectome model can only show the
+  central component, so this task tests whether central inhibition alone suffices to reduce MN9;
+  a partial reduction is the expected biological answer, not a defect.
 circuit: taste
-citation: Shiu et al. 2024 (Nature) Fig. 3; Jaeger et al. 2018
+citation: Shiu et al. 2024 (Nature) Fig. 3; Jaeger et al. 2018; French et al. 2015 (J Neurosci 35:3990)
 duration_ms: 1000
 window: [250, 800]
 readout:
@@ -14,14 +20,14 @@ conditions:
   sugar:
     stimuli:
       - name: sugar_grn
-        select: {any: [{sub_class: "sugar/water"}, {all_of: [{labels_regex: "sugar"}, {super_class: sensory}, {not: {labels_regex: "bitter"}}]}, {all_of: [{sub_class: "labellar bristle"}, {cell_type_regex: "^LB3[a-d]$"}]}]}
+        select: {any: [{sub_class: "sugar/water"}, {all_of: [{labels_regex: "sugar"}, {super_class: sensory}, {not: {labels_regex: "bitter"}}]}, {all_of: [{sub_class: "labellar bristle"}, {cell_type_regex: "^LB3[bc]$"}]}]}
         rate_hz: 100
         t_start_ms: 200
         t_end_ms: 800
   sugar_plus_bitter:
     stimuli:
       - name: sugar_grn
-        select: {any: [{sub_class: "sugar/water"}, {all_of: [{labels_regex: "sugar"}, {super_class: sensory}, {not: {labels_regex: "bitter"}}]}, {all_of: [{sub_class: "labellar bristle"}, {cell_type_regex: "^LB3[a-d]$"}]}]}
+        select: {any: [{sub_class: "sugar/water"}, {all_of: [{labels_regex: "sugar"}, {super_class: sensory}, {not: {labels_regex: "bitter"}}]}, {all_of: [{sub_class: "labellar bristle"}, {cell_type_regex: "^LB3[bc]$"}]}]}
         rate_hz: 100
         t_start_ms: 200
         t_end_ms: 800
