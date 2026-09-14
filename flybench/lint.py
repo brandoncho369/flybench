@@ -54,6 +54,10 @@ def lint_task(task: dict, source: str = "<task>") -> list[str]:
                 errs.append(f"{cname}: stimulus {i} window [{t0}, {t1}] is empty or outside the run")
             if float(s.get("rate_hz", 100)) <= 0:
                 errs.append(f"{cname}: stimulus {i} rate_hz must be > 0")
+    stim_names = {st.get("name") for cond in conds.values() for st in (cond.get("stimuli") or []) if isinstance(cond, dict)}
+    for name in task.get("requires_stimuli", []) or []:
+        if name not in stim_names:
+            errs.append(f"requires_stimuli: {name!r} is not a stimulus name in any condition")
     for name in task.get("requires_readouts", []) or []:
         if name not in readouts:
             errs.append(f"requires_readouts: {name!r} is not a defined readout")

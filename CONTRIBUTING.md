@@ -107,3 +107,9 @@ checks. A check that compares to a published recording adds `observed: {mean, sd
 rate). The lint requires `sd` and `source`. Prefer checks with a reported spread; a mean without one
 falls back to the threshold rule and says so. Run with `--seeds 3` or more before proposing; the
 leaderboard shows the CI, and a single-seed run shows none.
+
+## Proposing a task: RFC first
+
+Copy docs/rfcs/TEMPLATE.md, fill in the behaviour, the stimulus with provenance tags, the checks,
+and the predictions **before** running anything, and open it with the YAML. docs/rfcs/16 is the
+worked example.

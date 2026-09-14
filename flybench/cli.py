@@ -172,12 +172,14 @@ def diff(a, b):
 
 @main.command()
 @click.argument("results", nargs=-1, type=click.Path(exists=True))
-def rescore(results):
+@click.option("--force", is_flag=True, help="recompute run-level graded, CI and tier scores from stored per-seed data even if present")
+def rescore(results, force):
     """Fill in graded scores (and the profile) on result files written before graded scoring existed,
-    from the stored values and margins; nothing is re-simulated. Files that already have them are left alone."""
+    from the stored values and margins; nothing is re-simulated. Files that already have them are left
+    alone unless --force, which recomputes the run-level statistics from the stored per-seed task scores."""
     import re
     from .bench import margin_of
-    from .scoring import graded_from_margin, iqm, performance_profile
+    from .scoring import graded_from_margin, iqm, performance_profile, run_score, stratified_bootstrap_ci
     tiers = {t["name"]: t.get("tier", "core") for t in load_tasks()}
     op_re = re.compile(r"\s(>=|<=|>|<|==)\s([-+]?\d*\.?\d+(?:[eE][-+]?\d+)?)")
     files = []
@@ -187,7 +189,20 @@ def rescore(results):
     n = 0
     for f in files:
         rep = json.loads(f.read_text(encoding="utf-8"))
-        if "graded" in rep:
+        if "graded" in rep and not force:
+            continue
+        if "graded" in rep and force:
+            per = [t.get("graded_per_seed") or [t["graded"]] for t in rep["tasks"]]
+            for t, ps in zip(rep["tasks"], per):
+                t["graded"] = float(np.mean(ps))
+            rep["graded"] = run_score(per) if per else 0.0
+            ci = stratified_bootstrap_ci(per, seed=int(rep.get("params", {}).get("seed", 0)))
+            rep["graded_ci95"] = list(ci) if ci else None
+            for tier in ("core", "hard"):
+                v = [t["graded"] for t in rep["tasks"] if tiers.get(t["task"]) == tier]
+                rep[f"{tier}_graded"] = float(np.mean(v)) if v else None
+            f.write_text(json.dumps(rep, indent=2), encoding="utf-8")
+            n += 1
             continue
         complete = True
         for t in rep["tasks"]:

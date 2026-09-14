@@ -1,0 +1,41 @@
+name: pn_transfer_function
+title: The antennal-lobe output saturates the way the recording says
+tier: hard
+circuit: olfaction
+description: >
+  Olsen, Bhandawat & Wilson 2010 (Neuron 66:287) recorded ORN → PN transfer in four glomeruli:
+  PN = Rmax·ORN^1.5 / (ORN^1.5 + σ^1.5), Rmax 163–170 spikes/s, σ 11.8–16.3 spikes/s. So a
+  projection neuron never exceeds ~170 Hz and its input–output curve is compressive: from the fit,
+  ORN input at 10 / 30 / 100 Hz gives PN ≈ 62 / 126 / 158 Hz. This task drives the DA1 ORNs at those
+  three rates and checks the ceiling, the ordering, the compression and the dynamic range, not the
+  absolute rates (which depend on the global gain). Recording-match task; pre-registered in
+  docs/rfcs/17. The dynamic-range check was added after the first run (dated in the RFC): a model
+  whose PNs are already saturated at 10 Hz input passes the ratio checks vacuously, so the task
+  also requires the 10 Hz response to be clearly smaller than the 100 Hz one.
+  Provenance: rates and fit MEASURED; using DA1 for glomeruli the paper did not fit is a CONVENTION
+  (Schlief & Wilson 2007 show the same shape for DA1).
+citation: "Olsen, Bhandawat & Wilson 2010 (Neuron 66:287); Schlief & Wilson 2007 (Nat Neurosci 10:623)"
+duration_ms: 800
+window: [250, 700]
+readouts:
+  da1_pn: {select: {cell_type_regex: "^DA1_(l|v|ad)PN$"}}
+conditions:
+  orn10:
+    stimuli:
+      - {name: da1_orn, select: {cell_type: ORN_DA1}, rate_hz: 10, t_start_ms: 200, t_end_ms: 700}
+  orn30:
+    stimuli:
+      - {name: da1_orn, select: {cell_type: ORN_DA1}, rate_hz: 30, t_start_ms: 200, t_end_ms: 700}
+  orn100:
+    stimuli:
+      - {name: da1_orn, select: {cell_type: ORN_DA1}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
+checks:
+  - {type: rate, cond: orn100, readout: da1_pn, op: "<=", value: 170, observed: {mean: 166.5, sd: unknown, n: 4, source: "Olsen, Bhandawat & Wilson 2010: Rmax 163–170 spikes/s across DM4, DL5, VM7, DM1"}, basis: "Olsen et al. 2010: PN saturating rate Rmax = 163–170 spikes/s; measured"}
+  - {type: rate, cond: orn10, readout: da1_pn, op: ">=", value: 5, basis: "Olsen et al. 2010 fit: 10 Hz ORN input gives ~62 Hz PN output; convention: 5 Hz is the floor for 'responds at all'"}
+  - {type: ratio, cond: orn30, over: orn10, readout: da1_pn, op: ">", value: 1, basis: "Olsen et al. 2010: PN output is monotonic in ORN input"}
+  - {type: ratio, cond: orn100, over: orn30, readout: da1_pn, op: ">", value: 1, basis: "Olsen et al. 2010: PN output is monotonic in ORN input"}
+  - {type: ratio, cond: orn30, over: orn10, readout: da1_pn, op: "<", value: 3, basis: "Olsen et al. 2010 fit (σ ≈ 14, exponent 1.5): 30 Hz vs 10 Hz input gives a PN ratio of ~2.0; a linear neuron gives 3; convention: < 3 is 'compressive at all'"}
+  - {type: ratio, cond: orn100, over: orn30, readout: da1_pn, op: "<", value: 2, basis: "Olsen et al. 2010 fit: 100 Hz vs 30 Hz input gives a PN ratio of ~1.25 (near saturation); a linear neuron gives 3.3; convention: < 2"}
+  # dynamic range (amendment 2026-09-14, see RFC): the fit gives rate(10)/rate(100) = 62/158 = 0.39; a model
+  # saturated at every input gives ~0.9 and passes the two ratio checks above for the wrong reason
+  - {type: ratio, cond: orn10, over: orn100, readout: da1_pn, op: "<", value: 0.6, basis: "Olsen et al. 2010 fit: 10 Hz input gives 39% of the 100 Hz response; convention: < 0.6 is 'not saturated at the weakest input'. Added 2026-09-14 after the first run showed 379 Hz at 10 Hz input"}

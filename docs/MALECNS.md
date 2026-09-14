@@ -71,9 +71,9 @@ the Shiu 2022 second-order neurons because those cells (Clavicle, Fudog, Phantom
 to water as well as sugar (Shiu et al. 2024), so wiring onto them never distinguished sugar from
 water; the receptor lines do. Two caveats the paper itself raises: LB3a and LB3b reconstructions
 had segmentation problems, so the male sugar/water counts carry extra uncertainty, and with 34
-rather than 77 sugar GRNs the male sugar pathway is driven by fewer cells than before — the
-results below (run with the 77-cell set) will be rerun; expect sugar → MN9 to need more drive,
-not less.
+rather than 77 sugar GRNs the male sugar pathway is driven by fewer cells. Rerun 2026-09-14 at
+gain 0.65: sugar → MN9 **219 Hz**, up from 175 Hz with the 77-cell set — the receptor-line set is
+purer, not weaker. (The earlier guess here, that it would need more drive, was wrong.)
 
 ## Results: the reference model on the male CNS (3 seeds each)
 

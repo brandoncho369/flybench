@@ -39,6 +39,11 @@ specificity; `–` means no controls were run.
 - **`signflip` is a weak control for monosynaptic excitatory pathways** (LPLC2 → GF is one edge;
   after permuting signs it is still excitatory with high probability). It is the right control for
   anything that depends on inhibition: bitter suppression, return to rest, adaptation.
+- **Read `non_diagnostic`, not only `specificity`.** Specificity compares scores, and a model that
+  fails different checks than the shuffle can show specificity 0 while the task is perfectly
+  diagnostic (task 16 on the toy: the real brain fails "one spike", the shuffle fails "seen"; both
+  score 6/9). The flag asks the right question — did the shuffle *pass* the task — the number is a
+  summary.
 - A shuffled brain that "passes" everything at a given gain is the strongest possible statement
   that the gain is too high: at that setting any wiring fires.
 

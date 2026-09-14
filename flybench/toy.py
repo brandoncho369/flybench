@@ -30,6 +30,17 @@ POPS = [
     ("gf",           2, "descending", "",       "GF",         "Giant Fiber","ACH",  "giant fiber",      (0, 200, -20)),
     ("orn",        120, "sensory", "olfactory", "ORN",        "",           "ACH",  "olfactory",        (0, 420, 0)),
     ("pn",          60, "central", "",          "PN",         "",           "ACH",  "projection neuron",(0, 250, 40)),
+    # two named glomeruli with Codex-style names so the olfactory tasks (8, 17) have something to read:
+    # DA1 (driven by the tasks) and DM1 (a bystander that lateral inhibition should keep quiet)
+    ("orn_da1",     40, "sensory", "olfactory", "ORN_DA1",    "ORN_DA1",    "ACH",  "olfactory DA1",    (-30, 420, 10)),
+    ("orn_dm1",     40, "sensory", "olfactory", "ORN_DM1",    "ORN_DM1",    "ACH",  "olfactory DM1",    (30, 420, 10)),
+    ("pn_da1",       8, "central", "",          "DA1_lPN",    "DA1_lPN",    "ACH",  "DA1 projection",   (-30, 250, 50)),
+    ("pn_dm1",       8, "central", "",          "DM1_lPN",    "DM1_lPN",    "ACH",  "DM1 projection",   (30, 250, 50)),
+    ("orn_dm4",     40, "sensory", "olfactory", "ORN_DM4",    "ORN_DM4",    "ACH",  "olfactory DM4",    (60, 420, 10)),
+    ("orn_dl5",     40, "sensory", "olfactory", "ORN_DL5",    "ORN_DL5",    "ACH",  "olfactory DL5",    (-60, 420, 10)),
+    ("pn_dm4",       8, "central", "",          "DM4_lPN",    "DM4_lPN",    "ACH",  "DM4 projection",   (60, 250, 50)),
+    ("pn_dl5",       8, "central", "",          "DL5_lPN",    "DL5_lPN",    "ACH",  "DL5 projection",   (-60, 250, 50)),
+    ("ln_al",       20, "central", "",          "LN_AL",      "",           "GABA", "antennal lobe LN", (0, 260, 45)),
     ("lhn",         60, "central", "",          "LHN",        "",           "ACH",  "lateral horn",     (120, 220, 60)),
     ("bg_exc",    1000, "central", "",          "",           "",           "ACH",  "",                 (0, 200, 0)),
     ("bg_inh",     500, "central", "",          "",           "",           "GABA", "",                 (0, 200, 0)),
@@ -65,6 +76,13 @@ def build_toy_connectome(seed: int = 1) -> Connectome:
     # --- olfaction (present, just not benchmarked)
     connect("orn", "pn", 0.15, 5, 15)
     connect("pn", "lhn", 0.2, 5, 15)
+    # --- two glomeruli with lateral inhibition: each ORN set drives its own PNs; all ORNs drive the
+    #     GABAergic local neurons, which inhibit every PN (the antennal-lobe normalisation motif)
+    for g in ("da1", "dm1", "dm4", "dl5"):
+        connect(f"orn_{g}", f"pn_{g}", 0.8, 8, 16)     # strong convergence: ~110 ORNs per glomerulus in the fly
+        connect(f"orn_{g}", "ln_al", 0.3, 3, 6)
+        connect("ln_al", f"pn_{g}", 0.5, 3, 6)
+        connect(f"pn_{g}", "lhn", 0.2, 5, 15)
     # --- sparse random background, balanced so it does not run away
     connect("bg_exc", "bg_exc", 0.004, 5, 8)
     connect("bg_exc", "bg_inh", 0.008, 5, 8)

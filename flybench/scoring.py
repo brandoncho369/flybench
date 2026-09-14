@@ -102,10 +102,20 @@ def iqm(values: Sequence[float]) -> float:
     return float(mid.mean()) if mid.size else float(v.mean())
 
 
+def run_score(per_task_seeds: Sequence[Sequence[float]], task_stat=np.mean, run_stat=iqm) -> float:
+    """The run-level graded score: run_stat over tasks of task_stat over that task's seeds.
+    The point estimate and the bootstrap below use this same function, so the CI always brackets it."""
+    rows = [np.asarray([x for x in r if np.isfinite(x)], dtype=float) for r in per_task_seeds]
+    rows = [r for r in rows if r.size]
+    if not rows:
+        return float("nan")
+    return float(run_stat([float(task_stat(r)) for r in rows]))
+
+
 def stratified_bootstrap_ci(per_task_seeds: Sequence[Sequence[float]], n_boot: int = 1000, seed: int = 0,
-                            stat=iqm, level: float = 0.95) -> tuple[float, float] | None:
-    """CI on stat(mean over tasks of the per-task score), resampling seeds *within* each task.
-    Returns None when no task has more than one seed (there is nothing to resample)."""
+                            task_stat=np.mean, run_stat=iqm, level: float = 0.95) -> tuple[float, float] | None:
+    """CI on run_score(), resampling seeds *within* each task (stratified). Returns None when no task
+    has more than one seed (there is nothing to resample)."""
     rows = [np.asarray([x for x in r if np.isfinite(x)], dtype=float) for r in per_task_seeds]
     rows = [r for r in rows if r.size]
     if not rows or all(r.size < 2 for r in rows):
@@ -113,7 +123,7 @@ def stratified_bootstrap_ci(per_task_seeds: Sequence[Sequence[float]], n_boot: i
     rng = np.random.default_rng(seed)
     out = np.empty(n_boot)
     for b in range(n_boot):
-        out[b] = float(np.mean([stat(rng.choice(r, size=r.size, replace=True)) for r in rows]))
+        out[b] = run_score([rng.choice(r, size=r.size, replace=True) for r in rows], task_stat, run_stat)
     a = (1 - level) / 2
     lo, hi = np.percentile(out, [100 * a, 100 * (1 - a)])
     return float(lo), float(hi)

@@ -66,6 +66,11 @@ def test_iqm_and_bootstrap():
     assert stratified_bootstrap_ci([[0.5], [0.7]]) is None         # nothing to resample with one seed
     ci = stratified_bootstrap_ci([[0.4, 0.5, 0.6], [0.9, 0.9, 0.9]], n_boot=300, seed=1)
     assert ci is not None and ci[0] <= 0.7 <= ci[1] and ci[1] - ci[0] < 0.2
+    # the CI brackets the point estimate computed with the same statistic, also when tasks differ in spread
+    from flybench.scoring import run_score
+    rows = [[0.2, 0.9, 0.5], [0.95, 0.96, 0.97], [0.1, 0.1, 0.1], [0.6, 0.7, 0.8], [0.99, 0.99, 0.99]]
+    pt = run_score(rows); lo, hi = stratified_bootstrap_ci(rows, n_boot=500, seed=2)
+    assert lo <= pt <= hi
     a = stratified_bootstrap_ci([[0.4, 0.5, 0.6]], n_boot=100, seed=3)
     assert a == stratified_bootstrap_ci([[0.4, 0.5, 0.6]], n_boot=100, seed=3)   # seeded
 
@@ -99,8 +104,10 @@ def test_results_carry_graded_ci_profile_and_per_seed(toy):
     assert 0 <= rep["graded"] <= 1 and rep["graded_ci95"] and rep["graded_ci95"][0] <= rep["graded"] <= rep["graded_ci95"][1] + 1e-9
     assert set(rep["profile"]) == {"-1", "-0.5", "-0.25", "0", "0.25", "0.5", "1"}
     assert rep["profile"]["0"] == pytest.approx(np.mean([ch["passed"] for t in rep["tasks"] for ch in t["checks"]]))  # τ=0 is the pass rate
+    from flybench.scoring import run_score
+    assert rep["graded"] == pytest.approx(run_score([t["graded_per_seed"] for t in rep["tasks"]]))
     for t in rep["tasks"]:
-        assert t["graded"] == pytest.approx(np.mean([ch["graded"] for ch in t["checks"]]))
+        assert t["graded"] == pytest.approx(np.mean(t["graded_per_seed"]))      # same statistic the CI resamples
         assert len(t["graded_per_seed"]) == 3
         for ch in t["checks"]:
             assert len(ch["per_seed"]) == 3 and ch["op"] and np.isfinite(ch["target"])

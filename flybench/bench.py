@@ -39,7 +39,7 @@ import yaml
 
 from . import __version__
 from .connectome import Connectome
-from .scoring import grade_check, iqm, performance_profile, stratified_bootstrap_ci
+from .scoring import grade_check, iqm, performance_profile, run_score, stratified_bootstrap_ci
 from .sim import LIFParams, LIFSimulator, SimResult, Stimulus
 
 OPS = {">": operator.gt, ">=": operator.ge, "<": operator.lt, "<=": operator.le, "==": operator.eq}
@@ -165,6 +165,15 @@ def task_unavailable(task: dict, c: Connectome) -> str | None:
             return f"requires readout {name!r} which the task does not define"
         if c.select(spec["select"]).size == 0:
             return f"readout {name!r} matches no neurons on {c.name}"
+    # `requires_stimuli: [name, ...]`: every stimulus with that name (in any condition) must match
+    # at least one neuron here, e.g. a per-hemisphere stimulus on a dataset without side labels
+    for name in task.get("requires_stimuli", []) or []:
+        specs = [st for cond in task.get("conditions", {}).values() for st in cond.get("stimuli", []) if st.get("name") == name]
+        if not specs:
+            return f"requires stimulus {name!r} which no condition defines"
+        for st in specs:
+            if c.select(st["select"]).size == 0:
+                return f"stimulus {name!r} matches no neurons on {c.name}"
     return None
 
 
@@ -294,8 +303,10 @@ def _run_task_multiseed(task, c, params, verbose, simulator, seeds: int) -> Task
         notes.append("seed-sensitive: " + "; ".join(flaky))
     score = sum(ch.passed for ch in checks) / max(len(checks), 1)
     # graded score: the mean over checks of the graded score of the seed-mean value; per seed, the same on each seed
-    graded = float(np.mean([ch.graded for ch in checks])) if checks else 0.0
+    # task graded = mean over seeds of the per-seed graded score (the same statistic the run-level
+    # IQM and its bootstrap use); the per-check `graded` is the score of the seed-mean value
     graded_per_seed = [r.graded for r in runs]
+    graded = float(np.mean(graded_per_seed))
     if verbose:
         for cond, m in measurements.items():
             print(f"  {cond:>16}: readout {m['rate']:.2f} Hz (mean of {seeds} seeds), network {m['network_rate']:.3f} Hz, active {m['active_fraction']:.3%}")
@@ -345,7 +356,7 @@ def run_suite(c: Connectome, params: LIFParams, tasks: list[dict] | None = None,
     tasks = [t for t in tasks if t["name"] not in skipped]
     total = float(np.mean([r.score for r in results])) if results else 0.0
     # graded: IQM over tasks of the task graded score; CI by resampling seeds within each task
-    graded_total = iqm([r.graded for r in results]) if results else 0.0
+    graded_total = run_score([r.graded_per_seed for r in results]) if results else 0.0
     ci = stratified_bootstrap_ci([r.graded_per_seed for r in results], seed=params.seed) if results else None
     profile = performance_profile([ch.margin for r in results for ch in r.checks])
     tiers = {t["name"]: t.get("tier", "core") for t in tasks}
