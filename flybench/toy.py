@@ -40,6 +40,14 @@ POPS = [
     ("orn_dl5",     40, "sensory", "olfactory", "ORN_DL5",    "ORN_DL5",    "ACH",  "olfactory DL5",    (-60, 420, 10)),
     ("pn_dm4",       8, "central", "",          "DM4_lPN",    "DM4_lPN",    "ACH",  "DM4 projection",   (60, 250, 50)),
     ("pn_dl5",       8, "central", "",          "DL5_lPN",    "DL5_lPN",    "ACH",  "DL5 projection",   (-60, 250, 50)),
+    ("orn_dm2",     40, "sensory", "olfactory", "ORN_DM2",    "ORN_DM2",    "ACH",  "olfactory DM2",    (90, 420, 10)),
+    ("orn_dl1",     40, "sensory", "olfactory", "ORN_DL1",    "ORN_DL1",    "ACH",  "olfactory DL1",    (-90, 420, 10)),
+    ("orn_va1v",    40, "sensory", "olfactory", "ORN_VA1v",   "ORN_VA1v",   "ACH",  "olfactory VA1v",   (120, 420, 10)),
+    ("orn_dc1",     40, "sensory", "olfactory", "ORN_DC1",    "ORN_DC1",    "ACH",  "olfactory DC1",    (-120, 420, 10)),
+    ("pn_dm2",       8, "central", "",          "DM2_lPN",    "DM2_lPN",    "ACH",  "DM2 projection",   (90, 250, 50)),
+    ("pn_dl1",       8, "central", "",          "DL1_adPN",   "DL1_adPN",   "ACH",  "DL1 projection",   (-90, 250, 50)),
+    ("pn_va1v",      8, "central", "",          "VA1v_adPN",  "VA1v_adPN",  "ACH",  "VA1v projection",  (120, 250, 50)),
+    ("pn_dc1",       8, "central", "",          "DC1_adPN",   "DC1_adPN",   "ACH",  "DC1 projection",   (-120, 250, 50)),
     ("ln_al",       20, "central", "",          "LN_AL",      "",           "GABA", "antennal lobe LN", (0, 260, 45)),
     ("lhn",         60, "central", "",          "LHN",        "",           "ACH",  "lateral horn",     (120, 220, 60)),
     ("bg_exc",    1000, "central", "",          "",           "",           "ACH",  "",                 (0, 200, 0)),
@@ -78,7 +86,7 @@ def build_toy_connectome(seed: int = 1) -> Connectome:
     connect("pn", "lhn", 0.2, 5, 15)
     # --- two glomeruli with lateral inhibition: each ORN set drives its own PNs; all ORNs drive the
     #     GABAergic local neurons, which inhibit every PN (the antennal-lobe normalisation motif)
-    for g in ("da1", "dm1", "dm4", "dl5"):
+    for g in ("da1", "dm1", "dm4", "dl5", "dm2", "dl1", "va1v", "dc1"):
         connect(f"orn_{g}", f"pn_{g}", 0.8, 8, 16)     # strong convergence: ~110 ORNs per glomerulus in the fly
         connect(f"orn_{g}", "ln_al", 0.3, 3, 6)
         connect("ln_al", f"pn_{g}", 0.5, 3, 6)

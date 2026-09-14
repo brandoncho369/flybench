@@ -3,6 +3,32 @@
 Things the benchmark said that were not in a task's pre-registration, dated, so they can be cited
 or refuted later. Newest first.
 
+## 2026-09-14 — GF → muscle latency on MaleCNS 0.65 (task 19) and the ceiling gate on FlyWire 0.45
+
+- **The jump motor neuron fires 11.8 ms after the giant fiber's first spike, not 0.6 ms**, and the
+  flight motor neurons fire 1.2 ms *before* it. One GF spike through the model's chemical GF →
+  TTMn synapse is not enough; TTMn integrates ~5 GF spikes. In the fly the contact is a giant
+  electrical synapse and one spike suffices. The missing mechanism is a gap junction, and the
+  benchmark now says so with a number (RFC 19). Falsifiable prediction on record: treating that
+  one edge as electrical drops the latency under 1.5 ms and restores leg-before-wing order.
+- **The ceiling gate (RFC S1) removed the three vacuous passes** — tasks 16, 17, 18 on FlyWire
+  0.45 now score 4/9, 1/7, 1/9 (graded 0.27 [0.24, 0.32] over the three) — and touched nothing
+  else. Latencies across seeds vary by microseconds: the model's timing is set by the wiring,
+  not by the input noise.
+
+## 2026-09-14 — DA1 sparseness on FlyWire 0.45 (task 18, first run)
+
+- **Lifetime sparseness of the DA1 projection neurons across eight single-glomerulus odours is
+  0.0009** (measured: 0.90). They fire at 434 Hz to their own glomerulus and ~398 Hz to each of the
+  seven others. At the window gain the antennal lobe carries no channel identity: any glomerulus
+  drives every projection neuron to its ceiling.
+- **Three recording-match tasks, one pattern.** In 16 (azimuth invariance), 17 (compression) and
+  18 (cVA strongest) the secondary checks passed vacuously because the readout sat at its
+  refractory ceiling in every condition. Per-task patches (17's dynamic-range check) work but do
+  not scale; the honest statement is a suite-level rule: a check that compares conditions is only
+  reported as informative when the readout is below ceiling in at least one of them. To be
+  designed as a Phase 1 follow-up, not bolted on per task.
+
 ## 2026-09-14 — MaleCNS v1.0, gain 0.65 (Minecraft setting), 3 seeds, rewired control, receptor-line taste sets
 
 - **The corrected sugar set still conducts.** With LB3b–c only (34 neurons; LB3a water and LB3d

@@ -44,6 +44,7 @@ from .sim import LIFParams, LIFSimulator, SimResult, Stimulus
 
 OPS = {">": operator.gt, ">=": operator.ge, "<": operator.lt, "<=": operator.le, "==": operator.eq}
 EPS = 1e-3
+CEILING_FRACTION = 0.8   # a readout at ≥ 80 % of its refractory-limited rate is "at ceiling" (docs/rfcs/S1_ceiling_gate.md)
 TASK_DIR = Path(__file__).resolve().parent.parent / "tasks"
 
 
@@ -61,6 +62,7 @@ class CheckResult:
     per_seed: list[float] = field(default_factory=list)   # the value on each seed (multi-seed runs)
     op: str = ""                   # the check's comparison and target, so a result file can be re-scored
     target: float = float("nan")
+    saturated: bool = False        # comparison check whose every side sat at the refractory ceiling: failed, uninformative (RFC S1)
 
 
 def _graded_check(desc: str, value: float, passed: bool, chk: dict, per_seed: list[float] | None = None) -> CheckResult:
@@ -154,6 +156,31 @@ def _metric(res: SimResult, readout: np.ndarray, name: str, w0: float, w1: float
         m = (res.spike_times_ms >= w0) & (res.spike_times_ms < w1)
         return float(np.isin(res.spike_neurons[m], readout).sum() / readout.size)
     raise ValueError(f"unknown metric {name}")
+
+
+def first_spike_ms(res: SimResult, readout: np.ndarray, t0: float, t1: float) -> float:
+    """Median over the readout's neurons of each neuron's first spike time in [t0, t1); NaN if none spike."""
+    if readout.size == 0:
+        return float("nan")
+    m = (res.spike_times_ms >= t0) & (res.spike_times_ms < t1) & np.isin(res.spike_neurons, readout)
+    if not m.any():
+        return float("nan")
+    t, n = res.spike_times_ms[m], res.spike_neurons[m]
+    order = np.argsort(t, kind="stable")
+    _, first_idx = np.unique(n[order], return_index=True)
+    return float(np.median(t[order][first_idx]))
+
+
+def lifetime_sparseness(rates: "np.ndarray") -> float:
+    """Willmore & Tolhurst 2001 lifetime sparseness of one readout across N stimuli:
+    S = (1 − (Σr/N)² / (Σr²/N)) / (1 − 1/N). 1 = responds to one stimulus only, 0 = equally to all.
+    Undefined (NaN) when the readout is silent for every stimulus or N < 2."""
+    r = np.asarray(rates, dtype=float)
+    r = r[np.isfinite(r)]
+    n = r.size
+    if n < 2 or not (r > 0).any():
+        return float("nan")
+    return float((1.0 - (r.mean() ** 2) / np.mean(r ** 2)) / (1.0 - 1.0 / n))
 
 
 def task_unavailable(task: dict, c: Connectome) -> str | None:
@@ -250,19 +277,47 @@ def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False
         ridx = readouts.get(rname, np.empty(0, dtype=int))
         w = chk.get("window", window)
         per_readout = typ in ("rate", "ratio", "readout_active_fraction")
-        tag = f"[{chk['cond']}" + (f", {rname}" if (rname != "default" and per_readout) else "") + (f", {w[0]:g}-{w[1]:g}ms" if w != window else "") + "]"
+        tag = f"[{chk.get('cond', '')}" + (f", {rname}" if (rname != "default" and per_readout) else "") + (f", {w[0]:g}-{w[1]:g}ms" if w != window else "") + "]"
         if typ == "ratio":
             w2 = chk.get("over_window", w)
             a = _metric(results[chk["cond"]], ridx, "rate", *w)
             b = _metric(results[chk["over"]], ridx, "rate", *w2)
             val = (a + EPS) / (b + EPS)
             desc = f"rate{tag} / rate[{chk['over']}] {chk['op']} {target}"
+        elif typ == "latency":
+            # first-spike latency (ms) of the readout after the condition's stimulus onset, or, with
+            # `from`, after another readout's first spike (conduction time along a pathway)
+            res_c = results[chk["cond"]]
+            onsets = [float(st.get("t_start_ms", 0)) for st in task["conditions"][chk["cond"]].get("stimuli", [])]
+            t0 = min(onsets) if onsets else float(w[0])
+            to_t = first_spike_ms(res_c, ridx, t0, duration)
+            if "from" in chk:
+                from_t = first_spike_ms(res_c, readouts.get(chk["from"], np.empty(0, dtype=int)), t0, duration)
+                val = to_t - from_t
+                desc = f"latency[{chk['cond']}, {chk['from']} → {rname}] {chk['op']} {target} ms"
+            else:
+                val = to_t - t0
+                desc = f"latency[{chk['cond']}, {rname}] {chk['op']} {target} ms"
+        elif typ == "lifetime_sparseness":
+            # one readout's rate across a panel of conditions (an odour panel), Willmore & Tolhurst 2001
+            val = lifetime_sparseness([_metric(results[cn], ridx, "rate", *w) for cn in chk["conds"]])
+            desc = f"lifetime sparseness[{rname}, {len(chk['conds'])} stimuli] {chk['op']} {target}"
         else:
             val = _metric(results[chk["cond"]], ridx, typ, *w)
             unit = " Hz" if typ.endswith("rate") else (" spikes/neuron" if typ == "spikes_per_neuron" else "")
             desc = f"{typ.replace('_', ' ')}{tag} {chk['op']} {target}{unit}"
         passed = bool(not np.isnan(val) and op(val, target))
-        checks.append(_graded_check(desc, float(val), passed, chk))
+        cr = _graded_check(desc, float(val), passed, chk)
+        # RFC S1: a comparison between conditions that all sit at the refractory ceiling is not a pass
+        compared = [chk["cond"], chk["over"]] if typ == "ratio" else (list(chk["conds"]) if typ == "lifetime_sparseness" else [])
+        if compared:
+            ceiling_hz = CEILING_FRACTION * 1000.0 / max(float(getattr(params, "t_ref_ms", 2.2)), 1e-3)
+            key = f"rate[{rname}]"
+            rates = [measurements[cn].get(key, float("nan")) for cn in compared]
+            if rates and all(np.isfinite(x) and x >= ceiling_hz for x in rates):
+                cr.saturated, cr.passed, cr.graded, cr.margin = True, False, 0.0, -10.0   # margin −10: a fail at every τ of the profile
+                cr.description += "  [saturated: all compared conditions at ceiling]"
+        checks.append(cr)
 
     score = sum(ch.passed for ch in checks) / max(len(checks), 1)
     graded = float(np.mean([ch.graded for ch in checks])) if checks else 0.0
@@ -294,8 +349,13 @@ def _run_task_multiseed(task, c, params, verbose, simulator, seeds: int) -> Task
         # robust pass: the mean must satisfy the check AND every seed must. A reflex that fires on
         # 2 of 3 random draws is a coin flip, not a reproduced behaviour.
         passed = bool(np.isfinite(mean) and op(mean, target) and passes == seeds)
-        desc = f"{ch.description}  [{passes}/{seeds} seeds, sd {nstd(vals):.3g}]"
-        checks.append(_graded_check(desc, mean, passed, chk, per_seed=[float(v) for v in vals]))
+        sat = all(r.checks[i].saturated for r in runs)
+        base_desc = ch.description.replace("  [saturated: all compared conditions at ceiling]", "")
+        desc = f"{base_desc}  [{passes}/{seeds} seeds, sd {nstd(vals):.3g}]" + ("  [saturated: all compared conditions at ceiling]" if sat else "")
+        cr = _graded_check(desc, mean, passed, chk, per_seed=[float(v) for v in vals])
+        if sat:
+            cr.saturated, cr.passed, cr.graded, cr.margin = True, False, 0.0, -10.0
+        checks.append(cr)
     notes = list(dict.fromkeys(n for r in runs for n in r.notes))
     flaky = [f"check {i}: passes on {sum(r.checks[i].passed for r in runs)}/{seeds} seeds" for i in range(len(base.checks))
              if 0 < sum(r.checks[i].passed for r in runs) < seeds]

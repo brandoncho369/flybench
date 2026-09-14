@@ -1,0 +1,37 @@
+name: da1_sparseness
+title: One odour channel responds to one odour
+tier: hard
+circuit: olfaction
+description: >
+  Schlief & Wilson 2007 (Nat Neurosci 10:623) measured the lifetime sparseness of DA1 projection
+  neurons across an odour panel: S = 0.90 (Willmore & Tolhurst 2001 measure; 1 = one stimulus
+  only, 0 = all equally). Task 8 asks whether one odour recruits most PNs; this task asks the
+  other question — whether one PN responds to most odours. Recording-match task, pre-registered in
+  docs/rfcs/18. Odour panel (CONVENTION, see the RFC): eight single-glomerulus "odours", each the
+  ORNs of one glomerulus at 100 Hz — DA1 (cVA, the cognate channel), DM1, DM2, DM4, DL1, DL5,
+  VA1v, DC1. A dataset missing any of them skips the task rather than shrinking the panel.
+citation: "Schlief & Wilson 2007 (Nat Neurosci 10:623); Willmore & Tolhurst 2001 (sparseness measure)"
+duration_ms: 800
+window: [250, 700]
+requires_stimuli: [orn_da1, orn_dm1, orn_dm2, orn_dm4, orn_dl1, orn_dl5, orn_va1v, orn_dc1]
+readouts:
+  da1_pn: {select: {cell_type_regex: "^DA1_(l|v|ad)PN$"}}
+conditions:
+  cva:  {stimuli: [{name: orn_da1,  select: {cell_type: ORN_DA1},  rate_hz: 100, t_start_ms: 200, t_end_ms: 700}]}
+  dm1:  {stimuli: [{name: orn_dm1,  select: {cell_type: ORN_DM1},  rate_hz: 100, t_start_ms: 200, t_end_ms: 700}]}
+  dm2:  {stimuli: [{name: orn_dm2,  select: {cell_type: ORN_DM2},  rate_hz: 100, t_start_ms: 200, t_end_ms: 700}]}
+  dm4:  {stimuli: [{name: orn_dm4,  select: {cell_type: ORN_DM4},  rate_hz: 100, t_start_ms: 200, t_end_ms: 700}]}
+  dl1:  {stimuli: [{name: orn_dl1,  select: {cell_type: ORN_DL1},  rate_hz: 100, t_start_ms: 200, t_end_ms: 700}]}
+  dl5:  {stimuli: [{name: orn_dl5,  select: {cell_type: ORN_DL5},  rate_hz: 100, t_start_ms: 200, t_end_ms: 700}]}
+  va1v: {stimuli: [{name: orn_va1v, select: {cell_type: ORN_VA1v}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}]}
+  dc1:  {stimuli: [{name: orn_dc1,  select: {cell_type: ORN_DC1},  rate_hz: 100, t_start_ms: 200, t_end_ms: 700}]}
+checks:
+  - {type: lifetime_sparseness, conds: [cva, dm1, dm2, dm4, dl1, dl5, va1v, dc1], readout: da1_pn, op: ">=", value: 0.9, observed: {mean: 0.90, sd: unknown, source: "Schlief & Wilson 2007 (Nat Neurosci 10:623): lifetime sparseness of DA1 PNs across an odour panel = 0.90"}, basis: "Schlief & Wilson 2007: S = 0.90 for DA1 PNs; measured"}
+  - {type: rate, cond: cva, readout: da1_pn, op: ">=", value: 10, basis: "Olsen & Wilson 2008 (PN responses tens of Hz to cognate odour); convention: 10 Hz, same as task 8; a silent PN has undefined sparseness and must not pass by silence"}
+  - {type: ratio, cond: cva, over: dm1,  readout: da1_pn, op: ">", value: 1, basis: "Schlief & Wilson 2007: cVA is the DA1 channel's cognate odour; DA1 PN response to it exceeds every other odour in the panel"}
+  - {type: ratio, cond: cva, over: dm2,  readout: da1_pn, op: ">", value: 1, basis: "Schlief & Wilson 2007: cVA is the DA1 channel's cognate odour; DA1 PN response to it exceeds every other odour in the panel"}
+  - {type: ratio, cond: cva, over: dm4,  readout: da1_pn, op: ">", value: 1, basis: "Schlief & Wilson 2007: cVA is the DA1 channel's cognate odour; DA1 PN response to it exceeds every other odour in the panel"}
+  - {type: ratio, cond: cva, over: dl1,  readout: da1_pn, op: ">", value: 1, basis: "Schlief & Wilson 2007: cVA is the DA1 channel's cognate odour; DA1 PN response to it exceeds every other odour in the panel"}
+  - {type: ratio, cond: cva, over: dl5,  readout: da1_pn, op: ">", value: 1, basis: "Schlief & Wilson 2007: cVA is the DA1 channel's cognate odour; DA1 PN response to it exceeds every other odour in the panel"}
+  - {type: ratio, cond: cva, over: va1v, readout: da1_pn, op: ">", value: 1, basis: "Schlief & Wilson 2007: cVA is the DA1 channel's cognate odour; DA1 PN response to it exceeds every other odour in the panel"}
+  - {type: ratio, cond: cva, over: dc1,  readout: da1_pn, op: ">", value: 1, basis: "Schlief & Wilson 2007: cVA is the DA1 channel's cognate odour; DA1 PN response to it exceeds every other odour in the panel"}

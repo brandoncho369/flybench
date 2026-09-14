@@ -70,6 +70,8 @@ recording task without a published number and, for graded tasks, a reported spre
     10:623). A measured number for the sparse-coding task we already have.
 14. **DA1 adaptation is cell-type specific**: over a 10 s odour, DA1 lvPN output must not adapt,
     DA1 lPN output must (Taisz et al. 2023 Cell 186:2556). Rewrites task 7 with a sign.
+    **Blocked (2026-09-14):** FlyWire v783 types DA1 PNs as `DA1_lPN` / `DA1_vPN` only; no `lvPN`
+    type to contrast. Check MaleCNS typing; otherwise needs a root-id list from the paper.
 15. **GF flicker ceiling**: adapts after the first cycle at 0.5 Hz, no detectable response at 10 Hz
     (Mu et al. 2014 J Exp Biol 217:2121). A habituation task with a measured constant.
 16. **Whole-brain resting-state agreement**: region-level correlation matrix from the simulation vs

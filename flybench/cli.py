@@ -102,11 +102,14 @@ def run(connectome, config, gain, task_paths, out, label, cache, simulator, tier
     for t in report["tasks"]:
         def marg(ch):  # effect size: how far from the line, as a multiplier on the passing (+) or failing (-) side
             m = ch.get("margin")
-            if m is None or m != m:
+            if m is None or m != m or ch.get("saturated"):
                 return ""
             return f" [dim]{'+' if m >= 0 else '-'}{10 ** abs(m):.1f}x[/]"
         checks = "\n".join(("✓ " if ch["passed"] else "✗ ") + escape(f"{ch['description']}  [{ch['value']:.3g}]") + marg(ch) for ch in t["checks"])
         notes = list(t["notes"])
+        n_sat = sum(1 for ch in t["checks"] if ch.get("saturated"))
+        if n_sat:
+            notes.append(f"[yellow]{n_sat} comparison check(s) saturated: every compared condition at the refractory ceiling → counted as failed (RFC S1)[/]")
         if t.get("controls"):
             ctrl = ", ".join(f"{k} {v['score']:.0%}" for k, v in t["controls"].items())
             notes.append(f"controls: {ctrl} · specificity {t['specificity']:+.2f}" + ("  [red]NON-DIAGNOSTIC[/]" if t.get("non_diagnostic") else ""))
@@ -116,7 +119,7 @@ def run(connectome, config, gain, task_paths, out, label, cache, simulator, tier
     for name, why in report.get("skipped", {}).items():
         console.print(f"[dim]skipped {name}: {why}[/]")
     prof = report.get("profile") or {}
-    if prof:
+    if prof and report.get("n_tasks"):
         console.print("profile (checks with margin ≥ τ): " + "  ".join(f"τ={k}: {v:.0%}" for k, v in prof.items()))
     if report.get("controls"):
         nd = report.get("non_diagnostic") or []

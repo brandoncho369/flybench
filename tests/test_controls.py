@@ -31,7 +31,7 @@ def test_rewired_preserves_degrees_weights_and_signs(toy):
     assert (_row_signs(p.W) == _row_signs(toy.W)).all()
     tot_p = np.asarray(abs(p.W).sum(axis=1)).ravel()
     tot_t = np.asarray(abs(toy.W).sum(axis=1)).ravel()
-    assert np.allclose(tot_p, tot_t)
+    assert np.allclose(tot_p, tot_t, rtol=1e-4)      # float32 sums
     # in-degree as endpoint counts is preserved (each target keeps how many synapses land on it)
     assert (_in_endpoint_counts(p.W) <= _in_endpoint_counts(toy.W) + 0).sum() >= 0.9 * toy.n
     # but the wiring is different

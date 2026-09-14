@@ -1,0 +1,31 @@
+name: gf_to_muscle_latency
+title: The giant fiber reaches the jump muscle in under a millisecond
+tier: hard
+circuit: escape
+description: >
+  Augustin et al. 2019 (eNeuro) measured brain-stimulus-to-muscle latencies of 0.93 ms (TTM) and
+  1.44 ms (DLM), including a 0.35 ms neuromuscular delay, so GF → TTMn ≈ 0.6 ms: the synapse is
+  electrical. Engel & Wu 1996: a DLM response ≥ 3.0 ms is the non-GF pathway. This task measures
+  first-spike latency from the GF's first spike to TTMn and DLMn on a loom. MaleCNS only (needs the
+  nerve cord). Pre-registered in docs/rfcs/19: the reference model, with one 1.8 ms chemical delay
+  for every synapse, is expected to fail the TTMn latency by construction — the task names a
+  missing mechanism (gap junctions), not a wrong parameter. First run (RFC outcome): 11.8 ms,
+  because one GF spike through a summed chemical synapse cannot bring TTMn to threshold; the
+  electrical synapse in the fly makes a single spike sufficient. DLMn also fired before TTMn.
+citation: "Augustin et al. 2019 (eNeuro 6:ENEURO.0423-18.2019; ModelDB 245415); Engel & Wu 1996 (J Neurosci 16:3486); Tanouye & Wyman 1980"
+duration_ms: 600
+window: [200, 500]
+requires_readouts: [ttmn, dlmn]
+readouts:
+  gf:   {select: {any: [{cell_type: GF}, {cell_type: DNp01}, {hemibrain_type: "Giant Fiber"}]}}
+  ttmn: {select: {cell_type: TTMn}}
+  dlmn: {select: {cell_type_regex: "^DLMn"}}
+conditions:
+  loom:
+    stimuli:
+      - {name: looming_detectors, select: {any: [{cell_type: LPLC2}, {cell_type: LC4}, {hemibrain_type: LPLC2}, {hemibrain_type: LC4}]}, rate_hz: 150, t_start_ms: 200, t_end_ms: 500}
+checks:
+  - {type: spikes_per_neuron, cond: loom, readout: ttmn, op: ">=", value: 1, basis: "Tanouye & Wyman 1980; Allen et al. 2006: the GF drives TTMn on a loom (same check as task 15)"}
+  - {type: latency, cond: loom, readout: ttmn, from: gf, op: "<=", value: 1.5, observed: {mean: 0.58, sd: unknown, source: "Augustin et al. 2019: TTM 0.93 ms from brain stimulus to muscle, minus 0.35 ms neuromuscular delay"}, basis: "Augustin et al. 2019: GF → TTM ≈ 0.6 ms (electrical synapse); convention: 1.5 ms is the most lenient bound that still excludes a 1.8 ms chemical delay"}
+  - {type: latency, cond: loom, readout: dlmn, from: gf, op: "<=", value: 3.0, observed: {mean: 1.09, sd: unknown, source: "Augustin et al. 2019: DLM 1.44 ms minus 0.35 ms neuromuscular delay"}, basis: "Engel & Wu 1996: a DLM response ≥ 3.0 ms is the long-latency (non-GF) pathway; the GF pathway is ~1.1 ms"}
+  - {type: latency, cond: loom, readout: dlmn, from: ttmn, op: ">", value: 0, basis: "Augustin et al. 2019: DLM lags TTM by ~0.5 ms (TTM 0.93, DLM 1.44); the ordering, not the magnitude"}

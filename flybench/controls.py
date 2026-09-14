@@ -66,13 +66,15 @@ def rewire_degree_preserving(c: Connectome, seed: int = 0) -> Connectome:
     vals = W.data.copy()
     perm = rng.permutation(cols.size)
     cols = cols[perm]
-    # re-draw the few self-loops the permutation creates instead of dropping them
-    for _ in range(10):
+    # repair the few self-loops the permutation creates instead of dropping them: swap each one's
+    # target with a random other edge's target (a lone self-loop cannot be fixed by swapping among
+    # self-loops only, which is why this is not a permutation within the bad set)
+    for _ in range(20):
         bad = np.flatnonzero(rows == cols)
         if bad.size == 0:
             break
-        swap = rng.permutation(bad.size)
-        cols[bad] = cols[bad][swap]
+        other = rng.integers(0, cols.size, size=bad.size)
+        cols[bad], cols[other] = cols[other], cols[bad].copy()
     return _build(c, rows, cols, vals, "rewired")
 
 

@@ -113,7 +113,7 @@ def test_tasks_needing_neurons_the_dataset_lacks_are_skipped_not_failed(toy):
     rep = run_suite(toy, LIFParams(gain=1.0, seed=0), tasks)
     assert "looming_to_jump_muscle" in rep["skipped"]
     assert all(t["task"] != "looming_to_jump_muscle" for t in rep["tasks"])
-    assert rep["n_tasks"] == len(tasks) - 1
+    assert rep["n_tasks"] == len(tasks) - len(rep["skipped"]) and len(rep["skipped"]) == 2   # 15 and 19 need the nerve cord
     # a required readout that is not defined is a lint error, not a silent skip
     bad = dict(jump, requires_readouts=["nope"])
     assert task_unavailable(bad, toy).startswith("requires readout")
@@ -165,7 +165,7 @@ def test_task17_pn_transfer_function_on_toy(toy):
     # task 8 now has real glomeruli to read: DA1 fires, the three bystanders stay quiet
     sparse = next(t for t in load_tasks() if t["name"] == "olfactory_sparse_coding")
     r8 = run_task(sparse, toy, LIFParams(gain=1.0, seed=0))
-    assert r8.passed and r8.measurements["cva"]["readout_active_fraction[all_pn]"] == pytest.approx(0.25)
+    assert r8.passed and r8.measurements["cva"]["readout_active_fraction[all_pn]"] == pytest.approx(0.125)   # DA1 of 8 glomeruli
 
 
 def test_task17_dynamic_range_check_fails_a_saturated_model(toy):
@@ -178,5 +178,96 @@ def test_task17_dynamic_range_check_fails_a_saturated_model(toy):
     rates = {k: r.measurements[k]["rate[da1_pn]"] for k in ("orn10", "orn30", "orn100")}
     assert rates["orn10"] > 0.7 * rates["orn100"]                   # saturated at the weakest input
     by = {c.description.split("  [")[0]: c for c in r.checks}
-    assert by["rate[orn30, da1_pn] / rate[orn10] < 3.0"].passed      # the vacuous pass the RFC documents
-    assert not by["rate[orn10, da1_pn] / rate[orn100] < 0.6"].passed  # and the check that catches it
+    comp = by["rate[orn30, da1_pn] / rate[orn10] < 3.0"]
+    assert comp.value < 3 and comp.saturated and not comp.passed      # the vacuous pass RFC 17 documents, now caught by RFC S1
+    assert not by["rate[orn10, da1_pn] / rate[orn100] < 0.6"].passed  # and task 17's own dynamic-range check
+
+
+def test_lifetime_sparseness_metric():
+    from flybench.bench import lifetime_sparseness
+    assert lifetime_sparseness([10, 0, 0, 0]) == pytest.approx(1.0)          # one stimulus only
+    assert lifetime_sparseness([5, 5, 5, 5]) == pytest.approx(0.0)           # all equal
+    assert 0.3 < lifetime_sparseness([10, 3, 2, 1, 0, 0, 0, 0]) < 0.9
+    assert np.isnan(lifetime_sparseness([0, 0, 0]))                          # silent readout: undefined, not 1
+    assert np.isnan(lifetime_sparseness([5]))
+    assert lifetime_sparseness([10, float("nan"), 0, 0]) == pytest.approx(1.0)
+
+
+def test_task18_da1_sparseness_on_toy(toy):
+    from flybench.bench import task_unavailable
+    task = next(t for t in load_tasks() if t["name"] == "da1_sparseness")
+    assert task_unavailable(task, toy) is None
+    r = run_task(task, toy, LIFParams(gain=1.0, seed=0))
+    assert len(r.checks) == 9 and len(r.stimulus_sizes) == 8
+    by = {c.description.split("  [")[0]: c for c in r.checks}
+    s = by["lifetime sparseness[da1_pn, 8 stimuli] >= 0.9"]
+    assert s.passed and s.value > 0.95 and np.isnan(s.z) and "Schlief" in s.basis   # toy: wired only through inhibition
+    assert r.passed
+    # lint: a panel entry that is not a condition, or a panel of one, is rejected
+    bad = copy.deepcopy(task); bad["checks"][0]["conds"] = ["cva", "nope"]
+    assert any("nope" in e for e in lint_task(bad))
+    bad = copy.deepcopy(task); bad["checks"][0]["conds"] = ["cva"]
+    assert any("at least 2" in e for e in lint_task(bad))
+    # a dataset missing one panel glomerulus skips rather than inflating S
+    from flybench.connectome import Connectome
+    ann = toy.annotations.copy(); ann.loc[ann["cell_type"] == "ORN_DC1", "cell_type"] = "ORN_gone"
+    partial = Connectome(root_ids=toy.root_ids, W=toy.W, positions=toy.positions, annotations=ann, name="partial", meta=toy.meta)
+    assert "orn_dc1" in (task_unavailable(task, partial) or "")
+
+
+def test_rfc_s1_ceiling_gate_fails_saturated_comparisons(toy):
+    """A ratio or sparseness check whose every compared condition sits at the refractory ceiling is
+    marked saturated and counted as failed (docs/rfcs/S1_ceiling_gate.md)."""
+    task = copy.deepcopy(next(t for t in load_tasks() if t["name"] == "pn_transfer_function"))
+    for cond in task["conditions"].values():
+        for st in cond["stimuli"]:
+            st["rate_hz"] *= 30                                      # every input rate pins the toy PNs
+    r = run_task(task, toy, LIFParams(gain=1.0, seed=0))
+    ratios = [c for c in r.checks if c.description.startswith("rate[orn")]
+    sat = [c for c in ratios if c.saturated]
+    assert sat and all((not c.passed) and c.graded == 0.0 and c.margin == -10.0 and "saturated" in c.description for c in sat)
+    # the ceiling check itself is an absolute-rate check: untouched by the gate, and it fails on its own
+    ceiling = next(c for c in r.checks if "<= 170.0 Hz" in c.description)
+    assert not ceiling.saturated and not ceiling.passed
+    # multi-seed: saturated on every seed → saturated; description carries both tags once
+    r3 = run_task(task, toy, LIFParams(gain=1.0, seed=0), seeds=2)
+    s3 = [c for c in r3.checks if c.saturated]
+    assert s3 and all(c.description.count("saturated") == 1 and "2/2 seeds" in c.description or "0/2 seeds" in c.description or "1/2 seeds" in c.description for c in s3)
+    # a comparison against a silent condition is never saturated (baseline is not at ceiling)
+    sugar = next(t for t in load_tasks() if t["name"] == "sugar_to_proboscis")
+    rs = run_task(sugar, toy, LIFParams(gain=1.0, seed=0))
+    assert not any(c.saturated for c in rs.checks)
+    # unsaturated inputs: the same task at its real rates has no saturated checks on the toy
+    plain = next(t for t in load_tasks() if t["name"] == "pn_transfer_function")
+    assert not any(c.saturated for c in run_task(plain, toy, LIFParams(gain=1.0, seed=0)).checks)
+
+
+def test_latency_metric_and_task19_skips_without_a_nerve_cord(toy):
+    from flybench.bench import first_spike_ms, task_unavailable
+    from flybench.sim import LIFSimulator, Stimulus
+    loom = toy.select({"any": [{"cell_type": "LPLC2"}, {"cell_type": "LC4"}]}); gf = toy.select("GF")
+    res = LIFSimulator(toy, LIFParams(seed=0)).run(400, [Stimulus(loom, 150, 100, 300)])
+    t_loom, t_gf = first_spike_ms(res, loom, 100, 400), first_spike_ms(res, gf, 100, 400)
+    assert 100 <= t_loom < t_gf < 200                               # detectors first, GF after one synaptic delay
+    assert t_gf - t_loom >= toy_delay(LIFParams()) - 1e-6           # never faster than the model's own delay
+    assert np.isnan(first_spike_ms(res, gf, 0, 100))                # silent before the loom
+    assert np.isnan(first_spike_ms(res, np.empty(0, dtype=int), 0, 400))
+    # a latency check through the task machinery, on the toy's own loom → GF hop
+    task = {"name": "t", "title": "t", "citation": "test", "duration_ms": 400, "window": [100, 300], "circuit": "escape",
+            "readouts": {"gf": {"select": "GF"}, "det": {"select": {"any": [{"cell_type": "LPLC2"}, {"cell_type": "LC4"}]}}},
+            "conditions": {"loom": {"stimuli": [{"name": "d", "select": {"any": [{"cell_type": "LPLC2"}, {"cell_type": "LC4"}]}, "rate_hz": 150, "t_start_ms": 100, "t_end_ms": 300}]}},
+            "checks": [{"type": "latency", "cond": "loom", "readout": "gf", "op": "<", "value": 50, "basis": "convention: test"},
+                       {"type": "latency", "cond": "loom", "readout": "gf", "from": "det", "op": ">=", "value": 1.8, "basis": "convention: one chemical delay"}]}
+    assert lint_task(task) == []
+    r = run_task(task, toy, LIFParams(seed=0))
+    assert r.checks[0].passed and 0 < r.checks[0].value < 50 and r.checks[1].passed
+    assert r.checks[1].description.startswith("latency[loom, det → gf]")
+    bad = dict(task, checks=[dict(task["checks"][1], **{"from": "nope"})])
+    assert any("from" in e for e in lint_task(bad))
+    # task 19 needs the nerve cord: skipped on the toy, not failed
+    t19 = next(t for t in load_tasks() if t["name"] == "gf_to_muscle_latency")
+    assert task_unavailable(t19, toy) and "ttmn" in task_unavailable(t19, toy)
+
+
+def toy_delay(p):
+    return p.delay_ms

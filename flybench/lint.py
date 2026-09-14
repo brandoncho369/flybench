@@ -8,7 +8,7 @@ import yaml
 
 from .bench import OPS
 
-METRICS = {"rate", "network_rate", "active_fraction", "readout_active_fraction", "ratio", "spikes_per_neuron"}
+METRICS = {"rate", "network_rate", "active_fraction", "readout_active_fraction", "ratio", "spikes_per_neuron", "lifetime_sparseness", "latency"}
 CIRCUITS = {"stability", "taste", "escape", "olfaction", "physiology", "robustness"}
 REQUIRED = {"name", "title", "conditions", "checks"}
 TIERS = {"core", "hard"}
@@ -73,7 +73,15 @@ def lint_task(task: dict, source: str = "<task>") -> list[str]:
             errs.append(f"check {i}: missing value")
         if not str(chk.get("basis", "")).strip():
             errs.append(f"check {i}: needs `basis` — a citation for the threshold, or 'convention: <why this number>'")
-        if chk.get("cond") not in conds:
+        if typ == "lifetime_sparseness":
+            panel = chk.get("conds")
+            if not isinstance(panel, list) or len(panel) < 2:
+                errs.append(f"check {i}: lifetime_sparseness needs `conds`, a list of at least 2 conditions")
+            else:
+                for cn in panel:
+                    if cn not in conds:
+                        errs.append(f"check {i}: conds entry {cn!r} is not a condition")
+        elif chk.get("cond") not in conds:
             errs.append(f"check {i}: cond {chk.get('cond')!r} is not a condition")
         # recording-match checks: observed {mean, sd|'unknown', n, source}; ceiling in (0, 1]; k > 0
         obs = chk.get("observed")
@@ -99,7 +107,9 @@ def lint_task(task: dict, source: str = "<task>") -> list[str]:
         if typ == "ratio" and chk.get("over") not in conds:
             errs.append(f"check {i}: over {chk.get('over')!r} is not a condition")
         # network-level metrics ignore readouts; readout metrics default to the task's first readout (runtime does the same)
-        if typ in ("rate", "ratio", "readout_active_fraction") and "readout" in chk and chk["readout"] not in readouts:
+        if typ == "latency" and "from" in chk and chk["from"] not in readouts:
+            errs.append(f"check {i}: latency `from` {chk['from']!r} is not a defined readout")
+        if typ in ("rate", "ratio", "readout_active_fraction", "lifetime_sparseness", "latency") and "readout" in chk and chk["readout"] not in readouts:
             errs.append(f"check {i}: readout {chk['readout']!r} not defined")
         for key in ("window", "over_window"):
             if key in chk:
