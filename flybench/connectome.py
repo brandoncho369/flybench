@@ -192,7 +192,13 @@ def load_connectome(name_or_path: str | Path = "toy", cache: Path | str = DEFAUL
         return Connectome.load(p)
     cached = Path(cache) / str(name_or_path)
     if (cached / "W.npz").exists():
-        return Connectome.load(cached)
+        c = Connectome.load(cached)
+        if str(name_or_path) != "toy":
+            return c
+        # the toy is code, not data: a cache built from an older toy.py must not survive an edit
+        from .toy import TOY_VERSION
+        if c.meta.get("toy_version") == TOY_VERSION:
+            return c
     if str(name_or_path) == "toy":
         from .toy import build_toy_connectome
 

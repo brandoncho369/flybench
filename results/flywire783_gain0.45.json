@@ -4,24 +4,24 @@
   "seeds": 3,
   "verified": false,
   "core_score": 1.0,
-  "hard_score": 0.656060606060606,
+  "hard_score": 0.534589947089947,
   "core_by_circuit": 1.0,
-  "hard_by_circuit": 0.6763888888888889,
-  "graded": 0.7746863801883686,
+  "hard_by_circuit": 0.578505291005291,
+  "graded": 0.7288094394830121,
   "graded_ci95": [
-    0.7683907769408584,
-    0.7817508287679227
+    0.7191588355842838,
+    0.7395060367337313
   ],
   "core_graded": 0.9474488931829368,
-  "hard_graded": 0.6822370319368294,
+  "hard_graded": 0.5728567429636503,
   "profile": {
-    "-1": 0.8870967741935484,
-    "-0.5": 0.8709677419354839,
-    "-0.25": 0.8064516129032258,
-    "0": 0.7580645161290323,
-    "0.25": 0.6774193548387096,
-    "0.5": 0.5967741935483871,
-    "1": 0.5806451612903226
+    "-1": 0.7222222222222222,
+    "-0.5": 0.7083333333333334,
+    "-0.25": 0.6527777777777778,
+    "0": 0.6111111111111112,
+    "0.25": 0.5555555555555556,
+    "0.5": 0.5138888888888888,
+    "1": 0.5138888888888888
   },
   "circuits": {
     "stability": "stability",
@@ -39,15 +39,18 @@
     "physiological_rates": "physiology",
     "wiring_robustness": "robustness",
     "gf_azimuth_invariance": "escape",
-    "pn_transfer_function": "olfaction"
+    "pn_transfer_function": "olfaction",
+    "da1_sparseness": "olfaction"
   },
   "skipped": {
-    "looming_to_jump_muscle": "readout 'ttmn' matches no neurons on flywire783"
+    "looming_to_jump_muscle": "readout 'ttmn' matches no neurons on flywire783",
+    "gf_to_muscle_latency": "readout 'ttmn' matches no neurons on flywire783",
+    "taste_modalities": "stimulus 'water_grn' matches no neurons on flywire783"
   },
   "controls": [
     "rewired"
   ],
-  "specificity": 0.24375000000000002,
+  "specificity": 0.18646125116713352,
   "non_diagnostic": [],
   "tier": [
     "core",
@@ -77,9 +80,9 @@
     "extra": {}
   },
   "simulator": "flybench.sim.LIFSimulator",
-  "score": 0.7635416666666667,
+  "score": 0.6714752567693744,
   "passed": 7,
-  "n_tasks": 16,
+  "n_tasks": 17,
   "tasks": [
     {
       "task": "stability",
@@ -103,7 +106,8 @@
             0.0
           ],
           "op": "<",
-          "target": 0.5
+          "target": 0.5,
+          "saturated": false
         },
         {
           "description": "active fraction[baseline] < 0.01  [3/3 seeds, sd 0]",
@@ -121,7 +125,8 @@
             0.0
           ],
           "op": "<",
-          "target": 0.01
+          "target": 0.01,
+          "saturated": false
         }
       ],
       "measurements": {
@@ -136,7 +141,7 @@
       },
       "readout_size": 139255,
       "stimulus_sizes": {},
-      "seconds": 3.1147167682647705,
+      "seconds": 5.518364667892456,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -177,7 +182,8 @@
             389.09090909090907
           ],
           "op": ">",
-          "target": 5.0
+          "target": 5.0,
+          "saturated": false
         },
         {
           "description": "rate[sugar] / rate[baseline] > 5.0  [3/3 seeds, sd 1.64e+04]",
@@ -195,7 +201,8 @@
             389091.90909090906
           ],
           "op": ">",
-          "target": 5.0
+          "target": 5.0,
+          "saturated": false
         },
         {
           "description": "active fraction[sugar] < 0.1  [3/3 seeds, sd 0.00064]",
@@ -213,7 +220,8 @@
             0.08747980323866289
           ],
           "op": "<",
-          "target": 0.1
+          "target": 0.1,
+          "saturated": false
         }
       ],
       "measurements": {
@@ -238,7 +246,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 21.870154857635498,
+      "seconds": 75.59418964385986,
       "notes": [],
       "graded": 0.8547046867837924,
       "graded_per_seed": [
@@ -277,7 +285,8 @@
             389.09090909090907
           ],
           "op": ">",
-          "target": 5.0
+          "target": 5.0,
+          "saturated": false
         },
         {
           "description": "rate[sugar_plus_bitter] / rate[sugar] < 0.5  [3/3 seeds, sd 0.00719]",
@@ -295,7 +304,8 @@
             2.5700868525805195e-06
           ],
           "op": "<",
-          "target": 0.5
+          "target": 0.5,
+          "saturated": false
         }
       ],
       "measurements": {
@@ -321,7 +331,7 @@
         "sugar_grn": 129,
         "bitter_grn": 65
       },
-      "seconds": 26.756255626678467,
+      "seconds": 93.24969625473022,
       "notes": [],
       "graded": 0.9997156432785514,
       "graded_per_seed": [
@@ -360,7 +370,8 @@
             435.71428571428567
           ],
           "op": ">",
-          "target": 5.0
+          "target": 5.0,
+          "saturated": false
         },
         {
           "description": "rate[loom] / rate[baseline] > 5.0  [3/3 seeds, sd 0]",
@@ -378,7 +389,8 @@
             435715.2857142856
           ],
           "op": ">",
-          "target": 5.0
+          "target": 5.0,
+          "saturated": false
         },
         {
           "description": "active fraction[loom] < 0.1  [3/3 seeds, sd 0.00149]",
@@ -396,7 +408,8 @@
             0.06962048041362967
           ],
           "op": "<",
-          "target": 0.1
+          "target": 0.1,
+          "saturated": false
         }
       ],
       "measurements": {
@@ -421,7 +434,7 @@
       "stimulus_sizes": {
         "looming_detectors": 314
       },
-      "seconds": 10.956189155578613,
+      "seconds": 33.63750338554382,
       "notes": [],
       "graded": 0.8878267508943137,
       "graded_per_seed": [
@@ -460,7 +473,8 @@
             0.0
           ],
           "op": "<",
-          "target": 2.0
+          "target": 2.0,
+          "saturated": false
         },
         {
           "description": "active fraction[bitter] < 0.1  [3/3 seeds, sd 3.39e-06]",
@@ -478,7 +492,8 @@
             0.0006534774334853327
           ],
           "op": "<",
-          "target": 0.1
+          "target": 0.1,
+          "saturated": false
         }
       ],
       "measurements": {
@@ -495,7 +510,7 @@
       "stimulus_sizes": {
         "bitter_grn": 65
       },
-      "seconds": 9.503559350967407,
+      "seconds": 30.917709827423096,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -536,7 +551,8 @@
             215.45454545454544
           ],
           "op": ">",
-          "target": 5.0
+          "target": 5.0,
+          "saturated": false
         },
         {
           "description": "rate[weak] > 1.0 Hz  [0/3 seeds, sd 0]",
@@ -554,7 +570,8 @@
             0.0
           ],
           "op": ">",
-          "target": 1.0
+          "target": 1.0,
+          "saturated": false
         },
         {
           "description": "rate[strong] > 5.0 Hz  [3/3 seeds, sd 16.4]",
@@ -572,7 +589,8 @@
             389.09090909090907
           ],
           "op": ">",
-          "target": 5.0
+          "target": 5.0,
+          "saturated": false
         },
         {
           "description": "rate[weak] / rate[strong] < 0.6  [3/3 seeds, sd 9.82e-08]",
@@ -590,7 +608,8 @@
             2.5700868525805195e-06
           ],
           "op": "<",
-          "target": 0.6
+          "target": 0.6,
+          "saturated": false
         },
         {
           "description": "rate[strong] < 300.0 Hz  [0/3 seeds, sd 16.4]",
@@ -608,7 +627,8 @@
             389.09090909090907
           ],
           "op": "<",
-          "target": 300.0
+          "target": 300.0,
+          "saturated": false
         }
       ],
       "measurements": {
@@ -641,7 +661,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 35.11130452156067,
+      "seconds": 117.90106153488159,
       "notes": [
         "seed-sensitive: check 0: passes on 1/3 seeds"
       ],
@@ -682,15 +702,16 @@
             367.14285714285717
           ],
           "op": ">",
-          "target": 5.0
+          "target": 5.0,
+          "saturated": false
         },
         {
-          "description": "rate[two_pulses, 950-1300ms] / rate[two_pulses] < 0.7  [0/3 seeds, sd 0.0703]",
+          "description": "rate[two_pulses, 950-1300ms] / rate[two_pulses] < 0.7  [0/3 seeds, sd 0.0703]  [saturated: all compared conditions at ceiling]",
           "value": 1.1042167037882773,
           "passed": false,
-          "margin": -0.19795627253103823,
+          "margin": -10.0,
           "basis": "Duerr & Quinn 1982; Paranjpe et al. 2012 (PER habituates with repeated sucrose); convention: second response < 70% of the first",
-          "graded": 0.2866679742479222,
+          "graded": 0.0,
           "z": NaN,
           "ceiling": null,
           "capped": false,
@@ -700,7 +721,8 @@
             1.1789878393327333
           ],
           "op": "<",
-          "target": 0.7
+          "target": 0.7,
+          "saturated": true
         }
       ],
       "measurements": {
@@ -718,13 +740,13 @@
         "pulse1": 129,
         "pulse2": 129
       },
-      "seconds": 27.02709460258484,
+      "seconds": 121.69649696350098,
       "notes": [],
-      "graded": 0.6440333502546775,
+      "graded": 0.49991747242872503,
       "graded_per_seed": [
-        0.6621573892364161,
-        0.6397170839453185,
-        0.630225577582298
+        0.49993103739462086,
+        0.4999140968776845,
+        0.4999072830138698
       ],
       "controls": {
         "rewired": {
@@ -757,7 +779,8 @@
             434.24836601307186
           ],
           "op": ">",
-          "target": 10.0
+          "target": 10.0,
+          "saturated": false
         },
         {
           "description": "rate[cva, da1_pn] / rate[baseline] > 5.0  [3/3 seeds, sd 185]",
@@ -775,7 +798,8 @@
             434249.36601307185
           ],
           "op": ">",
-          "target": 5.0
+          "target": 5.0,
+          "saturated": false
         },
         {
           "description": "readout active fraction[cva, all_pn] < 0.3  [0/3 seeds, sd 0.00165]",
@@ -793,7 +817,8 @@
             0.8356643356643356
           ],
           "op": "<",
-          "target": 0.3
+          "target": 0.3,
+          "saturated": false
         },
         {
           "description": "active fraction[cva] < 0.05  [0/3 seeds, sd 8e-05]",
@@ -811,7 +836,8 @@
             0.08100965854008833
           ],
           "op": "<",
-          "target": 0.05
+          "target": 0.05,
+          "saturated": false
         }
       ],
       "measurements": {
@@ -840,7 +866,7 @@
       "stimulus_sizes": {
         "da1_orn": 127
       },
-      "seconds": 16.179296255111694,
+      "seconds": 50.14953827857971,
       "notes": [],
       "graded": 0.5972129056390362,
       "graded_per_seed": [
@@ -879,7 +905,8 @@
             389.09090909090907
           ],
           "op": ">",
-          "target": 5.0
+          "target": 5.0,
+          "saturated": false
         },
         {
           "description": "rate[sugar, gf] < 2.0 Hz  [3/3 seeds, sd 0]",
@@ -897,7 +924,8 @@
             0.0
           ],
           "op": "<",
-          "target": 2.0
+          "target": 2.0,
+          "saturated": false
         },
         {
           "description": "rate[loom, gf] > 5.0 Hz  [3/3 seeds, sd 6.34]",
@@ -915,7 +943,8 @@
             229.99999999999997
           ],
           "op": ">",
-          "target": 5.0
+          "target": 5.0,
+          "saturated": false
         },
         {
           "description": "rate[loom, mn9] < 2.0 Hz  [3/3 seeds, sd 0]",
@@ -933,7 +962,8 @@
             0.0
           ],
           "op": "<",
-          "target": 2.0
+          "target": 2.0,
+          "saturated": false
         }
       ],
       "measurements": {
@@ -963,7 +993,7 @@
         "sugar_grn": 129,
         "looming_detectors": 314
       },
-      "seconds": 25.942299604415894,
+      "seconds": 85.78078174591064,
       "notes": [],
       "graded": 0.9998342392767291,
       "graded_per_seed": [
@@ -1002,7 +1032,8 @@
             435.71428571428567
           ],
           "op": ">",
-          "target": 5.0
+          "target": 5.0,
+          "saturated": false
         },
         {
           "description": "rate[loom, dnp] > 5.0 Hz  [3/3 seeds, sd 5.97]",
@@ -1020,7 +1051,8 @@
             205.35714285714283
           ],
           "op": ">",
-          "target": 5.0
+          "target": 5.0,
+          "saturated": false
         },
         {
           "description": "readout active fraction[loom, all_dn] < 0.15  [0/3 seeds, sd 0.00253]",
@@ -1038,7 +1070,8 @@
             0.30344827586206896
           ],
           "op": "<",
-          "target": 0.15
+          "target": 0.15,
+          "saturated": false
         }
       ],
       "measurements": {
@@ -1071,7 +1104,7 @@
       "stimulus_sizes": {
         "looming_detectors": 314
       },
-      "seconds": 11.065311193466187,
+      "seconds": 34.21419930458069,
       "notes": [],
       "graded": 0.7312563216480612,
       "graded_per_seed": [
@@ -1110,7 +1143,8 @@
             0.0
           ],
           "op": "<",
-          "target": 5.0
+          "target": 5.0,
+          "saturated": false
         },
         {
           "description": "rate[flash, lplc2] < 20.0 Hz  [3/3 seeds, sd 0]",
@@ -1128,7 +1162,8 @@
             0.0
           ],
           "op": "<",
-          "target": 20.0
+          "target": 20.0,
+          "saturated": false
         },
         {
           "description": "active fraction[flash] < 0.3  [3/3 seeds, sd 0.000185]",
@@ -1146,7 +1181,8 @@
             0.11104807726832071
           ],
           "op": "<",
-          "target": 0.3
+          "target": 0.3,
+          "saturated": false
         }
       ],
       "measurements": {
@@ -1165,7 +1201,7 @@
       "stimulus_sizes": {
         "photoreceptors": 11153
       },
-      "seconds": 8.685369729995728,
+      "seconds": 26.285345315933228,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -1206,7 +1242,8 @@
             380.0
           ],
           "op": ">",
-          "target": 5.0
+          "target": 5.0,
+          "saturated": false
         },
         {
           "description": "rate[sugar, 1700-2000ms] < 5.0 Hz  [0/3 seeds, sd 1.57]",
@@ -1224,7 +1261,8 @@
             356.6666666666667
           ],
           "op": "<",
-          "target": 5.0
+          "target": 5.0,
+          "saturated": false
         },
         {
           "description": "network rate[sugar, 1700-2000ms] < 0.5 Hz  [0/3 seeds, sd 0.000938]",
@@ -1242,7 +1280,8 @@
             10.850980814572786
           ],
           "op": "<",
-          "target": 0.5
+          "target": 0.5,
+          "saturated": false
         },
         {
           "description": "active fraction[sugar, 1700-2000ms] < 0.01  [0/3 seeds, sd 4.48e-05]",
@@ -1260,7 +1299,8 @@
             0.07712469929266454
           ],
           "op": "<",
-          "target": 0.01
+          "target": 0.01,
+          "saturated": false
         }
       ],
       "measurements": {
@@ -1277,7 +1317,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 39.054033517837524,
+      "seconds": 213.041894197464,
       "notes": [],
       "graded": 0.2546784676665634,
       "graded_per_seed": [
@@ -1316,7 +1356,8 @@
             129.0
           ],
           "op": ">=",
-          "target": 1.0
+          "target": 1.0,
+          "saturated": false
         },
         {
           "description": "spikes per neuron[loom, 200-500ms] <= 1.0 spikes/neuron  [0/3 seeds, sd 0]",
@@ -1334,7 +1375,8 @@
             129.0
           ],
           "op": "<=",
-          "target": 1.0
+          "target": 1.0,
+          "saturated": false
         },
         {
           "description": "spikes per neuron[loom, 0-200ms] < 1.0 spikes/neuron  [3/3 seeds, sd 0]",
@@ -1352,7 +1394,8 @@
             0.0
           ],
           "op": "<",
-          "target": 1.0
+          "target": 1.0,
+          "saturated": false
         },
         {
           "description": "rate[sugar, mn9] > 5.0 Hz  [3/3 seeds, sd 19.3]",
@@ -1370,7 +1413,8 @@
             342.0
           ],
           "op": ">",
-          "target": 5.0
+          "target": 5.0,
+          "saturated": false
         },
         {
           "description": "rate[sugar, mn9] < 150.0 Hz  [0/3 seeds, sd 19.3]",
@@ -1388,7 +1432,8 @@
             342.0
           ],
           "op": "<",
-          "target": 150.0
+          "target": 150.0,
+          "saturated": false
         }
       ],
       "measurements": {
@@ -1418,7 +1463,7 @@
         "looming_detectors": 314,
         "sugar_grn": 129
       },
-      "seconds": 22.75497555732727,
+      "seconds": 63.6208336353302,
       "notes": [],
       "graded": 0.6296693765754758,
       "graded_per_seed": [
@@ -1457,7 +1502,8 @@
             0.0
           ],
           "op": "<",
-          "target": 0.5
+          "target": 0.5,
+          "saturated": false
         },
         {
           "description": "rate[sugar_other_fly, mn9] > 5.0 Hz  [2/3 seeds, sd 152]",
@@ -1475,7 +1521,8 @@
             338.5416666666667
           ],
           "op": ">",
-          "target": 5.0
+          "target": 5.0,
+          "saturated": false
         },
         {
           "description": "active fraction[sugar_other_fly] < 0.1  [3/3 seeds, sd 0.0419]",
@@ -1493,7 +1540,8 @@
             0.08773114071308032
           ],
           "op": "<",
-          "target": 0.1
+          "target": 0.1,
+          "saturated": false
         },
         {
           "description": "rate[loom_other_fly, gf, 220-500ms] > 5.0 Hz  [3/3 seeds, sd 0.842]",
@@ -1511,7 +1559,8 @@
             435.71428571428567
           ],
           "op": ">",
-          "target": 5.0
+          "target": 5.0,
+          "saturated": false
         },
         {
           "description": "active fraction[loom_other_fly, 220-500ms] < 0.1  [3/3 seeds, sd 0.0242]",
@@ -1529,7 +1578,8 @@
             0.03703278158773473
           ],
           "op": "<",
-          "target": 0.1
+          "target": 0.1,
+          "saturated": false
         }
       ],
       "measurements": {
@@ -1569,7 +1619,7 @@
         "sugar_grn": 129,
         "looming_detectors": 314
       },
-      "seconds": 26.86938452720642,
+      "seconds": 78.69971489906311,
       "notes": [
         "seed-sensitive: check 1: passes on 2/3 seeds"
       ],
@@ -1592,7 +1642,7 @@
       "task": "gf_azimuth_invariance",
       "title": "The giant fiber fires once, wherever the loom comes from",
       "passed": false,
-      "score": 0.6666666666666666,
+      "score": 0.4444444444444444,
       "checks": [
         {
           "description": "spikes per neuron[left] >= 1.0 spikes/neuron  [3/3 seeds, sd 0.471]",
@@ -1610,7 +1660,8 @@
             127.0
           ],
           "op": ">=",
-          "target": 1.0
+          "target": 1.0,
+          "saturated": false
         },
         {
           "description": "spikes per neuron[right] >= 1.0 spikes/neuron  [3/3 seeds, sd 1.47]",
@@ -1628,7 +1679,8 @@
             121.5
           ],
           "op": ">=",
-          "target": 1.0
+          "target": 1.0,
+          "saturated": false
         },
         {
           "description": "spikes per neuron[frontal] >= 1.0 spikes/neuron  [3/3 seeds, sd 0.236]",
@@ -1646,7 +1698,8 @@
             129.0
           ],
           "op": ">=",
-          "target": 1.0
+          "target": 1.0,
+          "saturated": false
         },
         {
           "description": "spikes per neuron[left] <= 1.0 spikes/neuron  [0/3 seeds, sd 0.471]",
@@ -1664,7 +1717,8 @@
             127.0
           ],
           "op": "<=",
-          "target": 1.0
+          "target": 1.0,
+          "saturated": false
         },
         {
           "description": "spikes per neuron[right] <= 1.0 spikes/neuron  [0/3 seeds, sd 1.47]",
@@ -1682,7 +1736,8 @@
             121.5
           ],
           "op": "<=",
-          "target": 1.0
+          "target": 1.0,
+          "saturated": false
         },
         {
           "description": "spikes per neuron[frontal] <= 1.0 spikes/neuron  [0/3 seeds, sd 0.236]",
@@ -1700,7 +1755,8 @@
             129.0
           ],
           "op": "<=",
-          "target": 1.0
+          "target": 1.0,
+          "saturated": false
         },
         {
           "description": "spikes per neuron[frontal, 0-200ms] < 1.0 spikes/neuron  [3/3 seeds, sd 0]",
@@ -1718,15 +1774,16 @@
             0.0
           ],
           "op": "<",
-          "target": 1.0
+          "target": 1.0,
+          "saturated": false
         },
         {
-          "description": "rate[left, gf] / rate[right] < 3.0  [3/3 seeds, sd 0.00928]",
+          "description": "rate[left, gf] / rate[right] < 3.0  [0/3 seeds, sd 0.00928]  [saturated: all compared conditions at ceiling]",
           "value": 1.0556685300550388,
-          "passed": true,
-          "margin": 0.4535936794820892,
+          "passed": false,
+          "margin": -10.0,
           "basis": "J Exp Biol 2023 226:jeb244790: no directional-selectivity index across \u221245\u00b0/0\u00b0/+45\u00b0 exceeded 0.5 (n = 10); DSI < 0.5 \u21d4 ratio < 3",
-          "graded": 0.8898172829061415,
+          "graded": 0.0,
           "z": NaN,
           "ceiling": null,
           "capped": false,
@@ -1736,15 +1793,16 @@
             1.0452673779406307
           ],
           "op": "<",
-          "target": 3.0
+          "target": 3.0,
+          "saturated": true
         },
         {
-          "description": "rate[right, gf] / rate[left] < 3.0  [3/3 seeds, sd 0.00831]",
+          "description": "rate[right, gf] / rate[left] < 3.0  [0/3 seeds, sd 0.00831]  [saturated: all compared conditions at ceiling]",
           "value": 0.9473400406342325,
-          "passed": true,
-          "margin": 0.5006153609708962,
+          "passed": false,
+          "margin": -10.0,
           "basis": "J Exp Biol 2023 226:jeb244790: no directional-selectivity index across \u221245\u00b0/0\u00b0/+45\u00b0 exceeded 0.5 (n = 10); DSI < 0.5 \u21d4 ratio < 3",
-          "graded": 0.9093248395569193,
+          "graded": 0.0,
           "z": NaN,
           "ceiling": null,
           "capped": false,
@@ -1754,7 +1812,8 @@
             0.9566930156857897
           ],
           "op": "<",
-          "target": 3.0
+          "target": 3.0,
+          "saturated": true
         }
       ],
       "measurements": {
@@ -1788,13 +1847,13 @@
         "loom_left": 162,
         "loom_right": 152
       },
-      "seconds": 22.059941053390503,
+      "seconds": 65.54009461402893,
       "notes": [],
-      "graded": 0.6443480943225354,
+      "graded": 0.44444433333344446,
       "graded_per_seed": [
-        0.6443560148220814,
-        0.6443066538681239,
-        0.6443816142774007
+        0.44444433333344446,
+        0.44444433333344446,
+        0.44444433333344446
       ],
       "controls": {
         "rewired": {
@@ -1802,14 +1861,14 @@
           "passed": false
         }
       },
-      "specificity": 0.0,
+      "specificity": -0.2222222222222222,
       "non_diagnostic": false
     },
     {
       "task": "pn_transfer_function",
       "title": "The antennal-lobe output saturates the way the recording says",
       "passed": false,
-      "score": 0.8333333333333334,
+      "score": 0.14285714285714285,
       "checks": [
         {
           "description": "rate[orn100, da1_pn] <= 170.0 Hz  [0/3 seeds, sd 0.185]",
@@ -1827,7 +1886,8 @@
             434.24836601307186
           ],
           "op": "<=",
-          "target": 170.0
+          "target": 170.0,
+          "saturated": false
         },
         {
           "description": "rate[orn10, da1_pn] >= 5.0 Hz  [3/3 seeds, sd 19.8]",
@@ -1845,12 +1905,13 @@
             380.52287581699346
           ],
           "op": ">=",
-          "target": 5.0
+          "target": 5.0,
+          "saturated": false
         },
         {
-          "description": "rate[orn30, da1_pn] / rate[orn10] > 1.0  [3/3 seeds, sd 0.0581]",
+          "description": "rate[orn30, da1_pn] / rate[orn10] > 1.0  [1/3 seeds, sd 0.0581]",
           "value": 1.1108066589239185,
-          "passed": true,
+          "passed": false,
           "margin": 0.045638474539909844,
           "basis": "Olsen et al. 2010: PN output is monotonic in ORN input",
           "graded": 0.5523506715682791,
@@ -1863,15 +1924,16 @@
             1.1047747160678194
           ],
           "op": ">",
-          "target": 1.0
+          "target": 1.0,
+          "saturated": false
         },
         {
-          "description": "rate[orn100, da1_pn] / rate[orn30] > 1.0  [3/3 seeds, sd 0.000791]",
+          "description": "rate[orn100, da1_pn] / rate[orn30] > 1.0  [0/3 seeds, sd 0.000791]  [saturated: all compared conditions at ceiling]",
           "value": 1.034021639727704,
-          "passed": true,
-          "margin": 0.01452962765153249,
+          "passed": false,
+          "margin": -10.0,
           "basis": "Olsen et al. 2010: PN output is monotonic in ORN input",
-          "graded": 0.5167216137384223,
+          "graded": 0.0,
           "z": NaN,
           "ceiling": null,
           "capped": false,
@@ -1881,12 +1943,13 @@
             1.0329601206017032
           ],
           "op": ">",
-          "target": 1.0
+          "target": 1.0,
+          "saturated": true
         },
         {
-          "description": "rate[orn30, da1_pn] / rate[orn10] < 3.0  [3/3 seeds, sd 0.0581]",
+          "description": "rate[orn30, da1_pn] / rate[orn10] < 3.0  [1/3 seeds, sd 0.0581]",
           "value": 1.1108066589239185,
-          "passed": true,
+          "passed": false,
           "margin": 0.4314827801797526,
           "basis": "Olsen et al. 2010 fit (\u03c3 \u2248 14, exponent 1.5): 30 Hz vs 10 Hz input gives a PN ratio of ~2.0; a linear neuron gives 3; convention: < 3 is 'compressive at all'",
           "graded": 0.8794308654213898,
@@ -1899,15 +1962,16 @@
             1.1047747160678194
           ],
           "op": "<",
-          "target": 3.0
+          "target": 3.0,
+          "saturated": false
         },
         {
-          "description": "rate[orn100, da1_pn] / rate[orn30] < 2.0  [3/3 seeds, sd 0.000791]",
+          "description": "rate[orn100, da1_pn] / rate[orn30] < 2.0  [0/3 seeds, sd 0.000791]  [saturated: all compared conditions at ceiling]",
           "value": 1.034021639727704,
-          "passed": true,
-          "margin": 0.2865003680124487,
+          "passed": false,
+          "margin": -10.0,
           "basis": "Olsen et al. 2010 fit: 100 Hz vs 30 Hz input gives a PN ratio of ~1.25 (near saturation); a linear neuron gives 3.3; convention: < 2",
-          "graded": 0.7890790276702749,
+          "graded": 0.0,
           "z": NaN,
           "ceiling": null,
           "capped": false,
@@ -1917,7 +1981,27 @@
             1.0329601206017032
           ],
           "op": "<",
-          "target": 2.0
+          "target": 2.0,
+          "saturated": true
+        },
+        {
+          "description": "rate[orn10, da1_pn] / rate[orn100] < 0.6  [0/3 seeds, sd 0.0452]",
+          "value": 0.8729904740856963,
+          "passed": false,
+          "margin": -0.1628582544048717,
+          "basis": "Olsen et al. 2010 fit: 10 Hz input gives 39% of the 100 Hz response; convention: < 0.6 is 'not saturated at the weakest input'. Added 2026-09-14 after the first run showed 379 Hz at 10 Hz input",
+          "graded": 0.32082348463155885,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.816075077370758,
+            0.9266167101901254,
+            0.8762796346962055
+          ],
+          "op": "<",
+          "target": 0.6,
+          "saturated": false
         }
       ],
       "measurements": {
@@ -1950,23 +2034,297 @@
       "stimulus_sizes": {
         "da1_orn": 127
       },
-      "seconds": 31.379741430282593,
-      "notes": [],
-      "graded": 0.6448771545443401,
+      "seconds": 98.89263105392456,
+      "notes": [
+        "seed-sensitive: check 2: passes on 1/3 seeds; check 4: passes on 1/3 seeds"
+      ],
+      "graded": 0.2475181023799713,
       "graded_per_seed": [
-        0.6479308845482428,
-        0.6419364316911153,
-        0.6447641473936624
+        0.41894757030022334,
+        0.16178984198546284,
+        0.1618168948542277
       ],
       "controls": {
         "rewired": {
-          "score": 0.5,
+          "score": 0.42857142857142855,
           "passed": false
         }
       },
-      "specificity": 0.33333333333333337,
+      "specificity": -0.2857142857142857,
+      "non_diagnostic": false
+    },
+    {
+      "task": "da1_sparseness",
+      "title": "One odour channel responds to one odour",
+      "passed": false,
+      "score": 0.1111111111111111,
+      "checks": [
+        {
+          "description": "lifetime sparseness[da1_pn, 8 stimuli] >= 0.9  [0/3 seeds, sd 4.42e-06]  [saturated: all compared conditions at ceiling]",
+          "value": 0.0009073801746590993,
+          "passed": false,
+          "margin": -10.0,
+          "basis": "Schlief & Wilson 2007: S = 0.90 for DA1 PNs; measured",
+          "graded": 0.0,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.0009019633039578169,
+            0.0009127884845605243,
+            0.0009073887354589567
+          ],
+          "op": ">=",
+          "target": 0.9,
+          "saturated": true
+        },
+        {
+          "description": "rate[cva, da1_pn] >= 10.0 Hz  [3/3 seeds, sd 0.185]",
+          "value": 434.37908496732024,
+          "passed": true,
+          "margin": 1.6378689061250933,
+          "basis": "Olsen & Wilson 2008 (PN responses tens of Hz to cognate odour); convention: 10 Hz, same as task 8; a silent PN has undefined sparseness and must not pass by silence",
+          "graded": 0.9994702974301766,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            434.24836601307186,
+            434.640522875817,
+            434.24836601307186
+          ],
+          "op": ">=",
+          "target": 10.0,
+          "saturated": false
+        },
+        {
+          "description": "rate[cva, da1_pn] / rate[dm1] > 1.0  [0/3 seeds, sd 0.000594]  [saturated: all compared conditions at ceiling]",
+          "value": 1.0860660752576357,
+          "passed": false,
+          "margin": -10.0,
+          "basis": "Schlief & Wilson 2007: cVA is the DA1 channel's cognate odour; DA1 PN response to it exceeds every other odour in the panel",
+          "graded": 0.0,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            1.0852660397630824,
+            1.0862461091856468,
+            1.0866860768241782
+          ],
+          "op": ">",
+          "target": 1.0,
+          "saturated": true
+        },
+        {
+          "description": "rate[cva, da1_pn] / rate[dm2] > 1.0  [0/3 seeds, sd 0.000357]  [saturated: all compared conditions at ceiling]",
+          "value": 1.0865394984657522,
+          "passed": false,
+          "margin": -10.0,
+          "basis": "Schlief & Wilson 2007: cVA is the DA1 channel's cognate odour; DA1 PN response to it exceeds every other odour in the panel",
+          "graded": 0.0,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            1.0863307192838447,
+            1.0862461091856468,
+            1.0870416669277645
+          ],
+          "op": ">",
+          "target": 1.0,
+          "saturated": true
+        },
+        {
+          "description": "rate[cva, da1_pn] / rate[dm4] > 1.0  [0/3 seeds, sd 0.000405]  [saturated: all compared conditions at ceiling]",
+          "value": 1.0853563365024863,
+          "passed": false,
+          "margin": -10.0,
+          "basis": "Schlief & Wilson 2007: cVA is the DA1 channel's cognate odour; DA1 PN response to it exceeds every other odour in the panel",
+          "graded": 0.0,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            1.0849116101979692,
+            1.0858913595464073,
+            1.0852660397630824
+          ],
+          "op": ">",
+          "target": 1.0,
+          "saturated": true
+        },
+        {
+          "description": "rate[cva, da1_pn] / rate[dl1] > 1.0  [0/3 seeds, sd 0.000462]  [saturated: all compared conditions at ceiling]",
+          "value": 1.0859474975495567,
+          "passed": false,
+          "margin": -10.0,
+          "basis": "Schlief & Wilson 2007: cVA is the DA1 channel's cognate odour; DA1 PN response to it exceeds every other odour in the panel",
+          "graded": 0.0,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            1.0856207009809271,
+            1.0866010906868158,
+            1.0856207009809271
+          ],
+          "op": ">",
+          "target": 1.0,
+          "saturated": true
+        },
+        {
+          "description": "rate[cva, da1_pn] / rate[dl5] > 1.0  [0/3 seeds, sd 0.000576]  [saturated: all compared conditions at ceiling]",
+          "value": 1.0857111044874346,
+          "passed": false,
+          "margin": -10.0,
+          "basis": "Schlief & Wilson 2007: cVA is the DA1 channel's cognate odour; DA1 PN response to it exceeds every other odour in the panel",
+          "graded": 0.0,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            1.0859755940786875,
+            1.0862461091856468,
+            1.0849116101979692
+          ],
+          "op": ">",
+          "target": 1.0,
+          "saturated": true
+        },
+        {
+          "description": "rate[cva, da1_pn] / rate[va1v] > 1.0  [0/3 seeds, sd 0.000406]  [saturated: all compared conditions at ceiling]",
+          "value": 1.0871317241297416,
+          "passed": false,
+          "margin": -10.0,
+          "basis": "Schlief & Wilson 2007: cVA is the DA1 channel's cognate odour; DA1 PN response to it exceeds every other odour in the panel",
+          "graded": 0.0,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            1.0870416669277645,
+            1.087667428637282,
+            1.0866860768241782
+          ],
+          "op": ">",
+          "target": 1.0,
+          "saturated": true
+        },
+        {
+          "description": "rate[cva, da1_pn] / rate[dc1] > 1.0  [0/3 seeds, sd 0.000356]  [saturated: all compared conditions at ceiling]",
+          "value": 1.0861843434830911,
+          "passed": false,
+          "margin": -10.0,
+          "basis": "Schlief & Wilson 2007: cVA is the DA1 channel's cognate odour; DA1 PN response to it exceeds every other odour in the panel",
+          "graded": 0.0,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            1.0859755940786875,
+            1.0858913595464073,
+            1.0866860768241782
+          ],
+          "op": ">",
+          "target": 1.0,
+          "saturated": true
+        }
+      ],
+      "measurements": {
+        "cva": {
+          "rate": 434.37908496732024,
+          "network_rate": 10.124884138743605,
+          "active_fraction": 0.08102641437171616,
+          "spikes": 803810.0,
+          "rate[da1_pn]": 434.37908496732024,
+          "readout_active_fraction[da1_pn]": 1.0
+        },
+        "dm1": {
+          "rate": 399.95642701525054,
+          "network_rate": 10.105936750725089,
+          "active_fraction": 0.0803920864600912,
+          "spikes": 804251.6666666666,
+          "rate[da1_pn]": 399.95642701525054,
+          "readout_active_fraction[da1_pn]": 1.0
+        },
+        "dm2": {
+          "rate": 399.7821350762527,
+          "network_rate": 10.136629178817968,
+          "active_fraction": 0.08246023482101182,
+          "spikes": 801934.3333333334,
+          "rate[da1_pn]": 399.7821350762527,
+          "readout_active_fraction[da1_pn]": 1.0
+        },
+        "dm4": {
+          "rate": 400.2178649237473,
+          "network_rate": 10.043530586706773,
+          "active_fraction": 0.08033224420427752,
+          "spikes": 797065.6666666666,
+          "rate[da1_pn]": 400.2178649237473,
+          "readout_active_fraction[da1_pn]": 1.0
+        },
+        "dl1": {
+          "rate": 400.0,
+          "network_rate": 10.06810580642759,
+          "active_fraction": 0.08224240900985004,
+          "spikes": 798258.3333333334,
+          "rate[da1_pn]": 400.0,
+          "readout_active_fraction[da1_pn]": 1.0
+        },
+        "dl5": {
+          "rate": 400.08714596949886,
+          "network_rate": 10.023785301944075,
+          "active_fraction": 0.08049022775962562,
+          "spikes": 794449.3333333334,
+          "rate[da1_pn]": 400.08714596949886,
+          "readout_active_fraction[da1_pn]": 1.0
+        },
+        "va1v": {
+          "rate": 399.56427015250534,
+          "network_rate": 10.05715866309741,
+          "active_fraction": 0.08132562565078454,
+          "spikes": 793688.0,
+          "rate[da1_pn]": 399.56427015250534,
+          "readout_active_fraction[da1_pn]": 1.0
+        },
+        "dc1": {
+          "rate": 399.912854030501,
+          "network_rate": 10.031844059060317,
+          "active_fraction": 0.08034421265544026,
+          "spikes": 797597.3333333334,
+          "rate[da1_pn]": 399.912854030501,
+          "readout_active_fraction[da1_pn]": 1.0
+        }
+      },
+      "readout_size": 17,
+      "stimulus_sizes": {
+        "orn_da1": 127,
+        "orn_dm1": 68,
+        "orn_dm2": 54,
+        "orn_dm4": 40,
+        "orn_dl1": 69,
+        "orn_dl5": 42,
+        "orn_va1v": 94,
+        "orn_dc1": 39
+      },
+      "seconds": 289.1489510536194,
+      "notes": [],
+      "graded": 0.11105225523809181,
+      "graded_per_seed": [
+        0.11105221984948979,
+        0.11105232601529581,
+        0.11105221984948979
+      ],
+      "controls": {
+        "rewired": {
+          "score": 0.0,
+          "passed": false
+        }
+      },
+      "specificity": 0.1111111111111111,
       "non_diagnostic": false
     }
   ],
-  "label": "LIF gain 0.45 (3 seeds)"
+  "label": "gain0.45"
 }

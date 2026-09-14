@@ -94,7 +94,8 @@ numbers (figure-only in Ache 2019 / Klapoetke 2017).
 
 19. **Taste modality family on MN9**: water (LB3a) → PER; amino-acid (LB1e) and high-salt (LB3d)
     → MN9 suppressed. Same machinery as tasks 2–3, three new modalities, names from the Cell 2026
-    gustatory paper (Cameron 2010 for ppk28/water).
+    gustatory paper (Cameron 2010 for ppk28/water). **Started 2026-09-14: task 20 covers water and
+    high salt (docs/rfcs/20); amino acids (LB1e) wait for a behavioural citation with a number.**
 20. **LC → DN action matrix**: LC4/LC6/LPLC1/LPLC2 → takeoff DNs; LC16 → MDN (backward walking),
     never TTMn; LC10 → not escape (Klapoetke 2017 eLife 21022; Wu 2020 eLife 57685). One matrix
     task; off-diagonal leaks are the signal.

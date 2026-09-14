@@ -37,7 +37,7 @@ DEFAULT_SETS = {
     "bitter GRNs":    {"any": [{"sub_class": "bitter"}, {"all_of": [{"labels_regex": "bitter"}, {"super_class": "sensory"}]}, {"all_of": [{"sub_class": "labellar bristle"}, {"cell_type_regex": "^LB1[a-d]$"}]}]},
     "water GRNs":     {"any": [{"all_of": [{"labels_regex": "water"}, {"super_class": "sensory"}]}, {"all_of": [{"sub_class": "labellar bristle"}, {"cell_type": "LB3a"}]}]},
     # MaleCNS-only modalities, from the Cell 2026 gustatory connectome (receptor driver lines)
-    "high-salt GRNs": {"all_of": [{"sub_class": "labellar bristle"}, {"cell_type": "LB3d"}]},
+    "high-salt GRNs": {"any": [{"all_of": [{"labels_regex": "high salt"}, {"super_class": "sensory"}]}, {"all_of": [{"sub_class": "labellar bristle"}, {"cell_type": "LB3d"}]}]},
     "amino-acid GRNs (LB1e)": {"all_of": [{"sub_class": "labellar bristle"}, {"cell_type": "LB1e"}]},
     "looming (LPLC2/LC4)": {"any": [{"cell_type": "LPLC2"}, {"cell_type": "LC4"}, {"hemibrain_type": "LPLC2"}, {"hemibrain_type": "LC4"}]},
     "olfactory RNs":  {"any": [{"class": "olfactory"}, {"cell_type": "ORN"}, {"labels_regex": "ORN"}]},

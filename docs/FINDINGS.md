@@ -71,3 +71,34 @@ or refuted later. Newest first.
   1.000. A pinned neuron is constant, not monotonic.
 - GF at 1.0 is *below* ceiling for unilateral looms (23–26 spikes vs 42 frontal), so task 16's
   invariance is informative there and still holds.
+
+## 2026-09-14 — task 20 (taste modalities) written, toy passes
+
+Pre-registered in docs/rfcs/20_taste_modalities.md: predicted **skipped** on FlyWire v783 (no
+high-salt type or label), **2/4 on MaleCNS 0.65** (water reaches MN9, but so does high salt, and
+no suppression — the task-05 failure again), rewired 1/4 (null check only). Toy: 4/4, rewired
+1/4, specificity +0.75. The toy had to be changed to pass (water drive topped up, salt wired into
+the bitter inhibitory pool — INFERRED, documented in toy.py) and the change was made additively so
+every older population's random draws are bit-identical; task 17's toy numbers did not move.
+Side finding: a stale toy cache silently served a 2,004-neuron toy after toy.py had grown to
+2,428; `load_connectome("toy")` now rebuilds when `TOY_VERSION` differs.
+
+## 2026-09-14 — task 20 real-brain runs: every prediction held; high salt → MN9 is seed-bistable
+
+FlyWire v783 0.45: **skipped** as predicted (v783 types all 122 labellar GRNs as bare `LB3`; no
+water or salt label exists). MaleCNS 0.65: **2/4** as predicted — water → MN9 96 Hz (pass), sugar
+219 Hz (pass), high salt → MN9 183 Hz (null check fails), sugar + high salt / sugar = 1.04 (no
+suppression). Rewired 0.25, specificity +0.25. Full table in docs/rfcs/20_taste_modalities.md.
+
+Two things not predicted. (1) The high-salt response is *bistable across seeds*: 273 / 0.9 / 275 Hz
+from the same 26 neurons at the same rate, and on the quiet seed sugar alone also halves. At 0.65
+whether the labellar circuit ignites MN9 depends on spike-time coincidences, not on which GRN class
+is driven. (2) Water drives one MN9 and not the other (readout_active_fraction 0.5 on every seed)
+from a bilateral 9 L / 8 R water set. Neither is a task failure; both are written down as leads.
+
+Housekeeping from the same rerun: the committed result files predated the RFC S1 ceiling gate, so
+this rerun is the first to apply it to the real brains — measured values are bit-identical to the
+previous run (deterministic seeds), but saturated comparison checks on tasks 07, 16, 17 now grade 0.
+FlyWire graded 0.775 → 0.729 (17 tasks), MaleCNS 0.741 → 0.711 (20 tasks). Also: `flybench run`
+now saves the report *before* rendering the console table; a cp1252 console that cannot encode "✓"
+crashed the print and threw away a finished 40-minute run.

@@ -12,7 +12,7 @@ def toy():
 
 
 def test_toy_shape(toy):
-    assert toy.n == 2408
+    assert toy.n == 2428
     assert toy.W.shape == (toy.n, toy.n)
     assert (toy.W.diagonal() == 0).all()
     # GABA rows are negative, ACh rows positive
@@ -25,7 +25,7 @@ def test_selectors(toy):
     assert len(select(ann, {"cell_type": "MN9"})) == 2
     assert len(select(ann, "MN9")) == 2
     assert len(select(ann, {"labels_regex": "sugar"})) == 40
-    assert len(select(ann, {"all_of": [{"labels_regex": "GRN"}, {"not": {"labels_regex": "bitter"}}]})) == 60
+    assert len(select(ann, {"all_of": [{"labels_regex": "GRN"}, {"not": {"labels_regex": "bitter"}}]})) == 80   # sugar 40 + water 20 + high salt 20
     assert len(select(ann, {"any": [{"cell_type": "LPLC2"}, {"cell_type": "LC4"}]})) == 110
     assert len(select(ann, {"all": True})) == toy.n
     assert len(select(ann, {"nonexistent_column": "x"})) == 0

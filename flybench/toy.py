@@ -52,7 +52,13 @@ POPS = [
     ("lhn",         60, "central", "",          "LHN",        "",           "ACH",  "lateral horn",     (120, 220, 60)),
     ("bg_exc",    1000, "central", "",          "",           "",           "ACH",  "",                 (0, 200, 0)),
     ("bg_inh",     500, "central", "",          "",           "",           "GABA", "",                 (0, 200, 0)),
+    # appended last (and wired last) so the random draws of every older population are unchanged
+    ("grn_salt",    20, "sensory", "gustatory", "GRN_salt",   "",           "ACH",  "high salt GRN",    (80, 380, 80)),
 ]
+
+
+# Bump when POPS or the wiring change: load_connectome("toy") rebuilds a cache whose version differs.
+TOY_VERSION = "2026-09-14-salt3"
 
 
 def build_toy_connectome(seed: int = 1) -> Connectome:
@@ -99,6 +105,13 @@ def build_toy_connectome(seed: int = 1) -> Connectome:
     connect("lhn", "bg_exc", 0.05, 5, 8)
     connect("taste_in", "bg_exc", 0.03, 5, 8)
 
+    # --- added 2026-09-14 for task 20, after every older draw so the older populations are bit-identical:
+    #     water gets a second helping of taste_in synapses (duplicates sum) so that 20 water cells carry
+    #     about the drive of 40 sugar cells and water alone can reach MN9; high salt: INFERRED — the
+    #     second-order salt circuit is not mapped; the toy sends it into the same inhibitory pool as bitter
+    #     (Jaeger et al. 2018 put part of high-salt aversion in the bitter GRNs themselves)
+    connect("grn_water", "taste_in", 0.4, 4, 10)
+    connect("grn_salt", "bitter_in", 0.5, 4, 10)
     pre = np.concatenate(rows); post = np.concatenate(cols); syn = np.concatenate(vals).astype(np.float32)
     keep = pre != post
     pre, post, syn = pre[keep], post[keep], syn[keep]
@@ -135,5 +148,5 @@ def build_toy_connectome(seed: int = 1) -> Connectome:
 
     return Connectome(
         root_ids=root_ids, W=W, positions=positions, annotations=ann, name="toy",
-        meta={"source": "synthetic", "n": n, "n_edges": int(W.nnz), "note": "hand-wired; proves nothing about biology"},
+        meta={"source": "synthetic", "toy_version": TOY_VERSION, "n": n, "n_edges": int(W.nnz), "note": "hand-wired; proves nothing about biology"},
     )

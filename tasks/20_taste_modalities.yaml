@@ -1,0 +1,59 @@
+name: taste_modalities
+title: Water extends, high salt does not, high salt suppresses sugar
+tier: hard
+description: >
+  The labellum carries four gustatory channels and one proboscis motor neuron has to read them
+  with the right sign. Water GRNs (ppk28, LB3a) drive proboscis extension in thirsty flies
+  (Cameron et al. 2010; Chen & Dahanukar 2017); high-salt GRNs (Ir7c / ppk23, LB3d) do not, and
+  high salt added to sucrose suppresses the extension (Zhang et al. 2013; Jaeger et al. 2018).
+  Task 03 tests the bitter channel; this task tests the other three the export has carried since
+  Phase 0. Scope note: Jaeger et al. put part of high-salt aversion in bitter GRNs, which this task
+  does not drive, so a weak suppression means "LB3d-driven central suppression alone is not
+  enough", not "the fly has none". Check 2 is a null check (a dead network passes it).
+  Pre-registered predictions and the outcome: docs/rfcs/20_taste_modalities.md.
+circuit: taste
+citation: Cameron et al. 2010 (Nature 465:91); Chen & Dahanukar 2017 (Cell Rep 18:1140); Zhang et al. 2013 (Science 340:1334); Jaeger et al. 2018 (eLife 7:e37167)
+duration_ms: 1000
+window: [250, 800]
+requires_stimuli: [water_grn, high_salt_grn]
+readout:
+  select: {any: [{cell_type: MN9}, {cell_type: CB0701}, {hemibrain_type: MN9}, {all_of: [{labels_regex: "\\bMN9\\b"}, {super_class: motor}]}]}
+conditions:
+  sugar:
+    stimuli:
+      - name: sugar_grn
+        select: {any: [{sub_class: "sugar/water"}, {all_of: [{labels_regex: "sugar"}, {super_class: sensory}, {not: {labels_regex: "bitter"}}]}, {all_of: [{sub_class: "labellar bristle"}, {cell_type_regex: "^LB3[bc]$"}]}]}
+        rate_hz: 100
+        t_start_ms: 200
+        t_end_ms: 800
+  water:
+    stimuli:
+      - name: water_grn
+        select: {any: [{all_of: [{labels_regex: "water"}, {super_class: sensory}]}, {all_of: [{sub_class: "labellar bristle"}, {cell_type: LB3a}]}]}
+        rate_hz: 100
+        t_start_ms: 200
+        t_end_ms: 800
+  high_salt:
+    stimuli:
+      - name: high_salt_grn
+        select: {any: [{all_of: [{labels_regex: "high salt"}, {super_class: sensory}]}, {all_of: [{sub_class: "labellar bristle"}, {cell_type: LB3d}]}]}
+        rate_hz: 100
+        t_start_ms: 200
+        t_end_ms: 800
+  sugar_plus_high_salt:
+    stimuli:
+      - name: sugar_grn
+        select: {any: [{sub_class: "sugar/water"}, {all_of: [{labels_regex: "sugar"}, {super_class: sensory}, {not: {labels_regex: "bitter"}}]}, {all_of: [{sub_class: "labellar bristle"}, {cell_type_regex: "^LB3[bc]$"}]}]}
+        rate_hz: 100
+        t_start_ms: 200
+        t_end_ms: 800
+      - name: high_salt_grn
+        select: {any: [{all_of: [{labels_regex: "high salt"}, {super_class: sensory}]}, {all_of: [{sub_class: "labellar bristle"}, {cell_type: LB3d}]}]}
+        rate_hz: 100
+        t_start_ms: 200
+        t_end_ms: 800
+checks:
+  - {type: rate, cond: water, op: ">", value: 5, basis: "Cameron et al. 2010: ppk28 water GRNs are necessary and sufficient for proboscis extension to water; 5 Hz is the task-02 convention for an unambiguous response"}
+  - {type: rate, cond: high_salt, op: "<", value: 5, basis: "null check. Zhang et al. 2013; Jaeger et al. 2018: high salt is aversive and does not elicit extension; 5 Hz mirrors check 1 so the two are the same question with opposite signs"}
+  - {type: ratio, cond: sugar_plus_high_salt, over: sugar, op: "<", value: 0.5, basis: "Jaeger et al. 2018 Fig. 1: 500 mM NaCl reduces PER to 100 mM sucrose to a fraction of the sucrose-alone rate (fraction depends on hunger state, sd unknown); 0.5 is the task-03 convention for the smallest suppression worth the name"}
+  - {type: rate, cond: sugar, op: ">", value: 5, basis: "sanity, same convention as task 02 (5 Hz): check 3 is only a ratio of real numbers if sugar alone drives MN9"}

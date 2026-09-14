@@ -94,6 +94,7 @@ def run(connectome, config, gain, task_paths, out, label, cache, simulator, tier
     report = run_suite(c, params, tasks, verbose=verbose, simulator=resolve_simulator(simulator), seeds=seeds,
                        controls=parse_controls(controls))
     report["label"] = label or (Path(config).stem if config else f"gain{params.gain}")
+    saved = save_report(report, out) if out else None  # save before rendering: a console encoding error must not lose a 40-minute run
 
     ci = report.get("graded_ci95")
     ci_s = f" [{ci[0]:.2f}, {ci[1]:.2f}]" if ci else ""
@@ -121,13 +122,12 @@ def run(connectome, config, gain, task_paths, out, label, cache, simulator, tier
     prof = report.get("profile") or {}
     if prof and report.get("n_tasks"):
         console.print("profile (checks with margin ≥ τ): " + "  ".join(f"τ={k}: {v:.0%}" for k, v in prof.items()))
-    if report.get("controls"):
+    if report.get("controls") and report.get("specificity") is not None:
         nd = report.get("non_diagnostic") or []
         console.print(f"specificity (mean over tasks, real − best shuffled): {report['specificity']:+.2f}"
                       + (f" · non-diagnostic: {', '.join(nd)}" if nd else " · every passing task fails on shuffled wiring"))
     if out:
-        p = save_report(report, out)
-        console.print(f"report → {p}")
+        console.print(f"report → {saved}")
 
 
 @main.command()
