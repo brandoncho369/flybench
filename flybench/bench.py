@@ -88,7 +88,10 @@ def margin_of(value: float, op: str, target: float) -> float:
     """Effect size for a check: how far the measurement sits from the line, in decades, sign = pass side."""
     if not np.isfinite(value):
         return float("nan")
-    v, t = max(abs(value), EPS), max(abs(target), EPS)
+    # a value on the other side of zero from the target (a negative rank correlation against a
+    # positive threshold) is as far from the line as a zero response, not |value| away from it
+    wrong_side = (target > 0 and value <= 0) or (target < 0 and value >= 0)
+    v, t = (EPS if wrong_side else max(abs(value), EPS)), max(abs(target), EPS)
     m = float(np.log10(v / t))
     return m if op in (">", ">=") else -m
 
@@ -165,7 +168,8 @@ def _stimuli(c: Connectome, spec_list: list[dict], sizes: dict[str, int]) -> lis
         sizes[name] = int(neurons.size)
         out.append(Stimulus(neurons=neurons, rate_hz=float(s.get("rate_hz", 100.0)),
                             t_start_ms=float(s.get("t_start_ms", 0.0)),
-                            t_end_ms=float(s.get("t_end_ms", float("inf"))), name=name))
+                            t_end_ms=float(s.get("t_end_ms", float("inf"))), name=name,
+                            rate_end_hz=None if s.get("rate_end_hz") is None else float(s["rate_end_hz"])))
     return out
 
 
@@ -212,6 +216,52 @@ def first_spike_ms(res: SimResult, readout: np.ndarray, t0: float, t1: float) ->
     order = np.argsort(t, kind="stable")
     _, first_idx = np.unique(n[order], return_index=True)
     return float(np.median(t[order][first_idx]))
+
+
+def first_spikes_per_neuron(res: SimResult, readout: np.ndarray, t0: float, t1: float) -> np.ndarray:
+    """Each readout neuron's first spike time in [t0, t1), NaN for a neuron that never fires there."""
+    out = np.full(readout.size, np.nan)
+    if readout.size == 0:
+        return out
+    m = (res.spike_times_ms >= t0) & (res.spike_times_ms < t1) & np.isin(res.spike_neurons, readout)
+    if not m.any():
+        return out
+    t, n = res.spike_times_ms[m], res.spike_neurons[m]
+    order = np.argsort(t, kind="stable")
+    first_n, first_idx = np.unique(n[order], return_index=True)
+    lookup = {int(nid): i for i, nid in enumerate(readout)}
+    out[[lookup[int(x)] for x in first_n]] = t[order][first_idx]
+    return out
+
+
+MIN_RANK_N = 10   # a recruitment order needs at least this many neurons (docs/PLAN.md: >= 10 MNs per leg)
+RANK_ATTRIBUTES = ("input_synapses",)
+
+
+def recruitment_order(first_ms: np.ndarray, attribute: np.ndarray) -> float:
+    """Spearman rho between a per-neuron attribute (MN size) and recruitment time: the Henneman
+    size principle is rho > 0 (smaller neurons fire first). A neuron that never fires is ranked
+    last (tied), as an unrecruited unit is in a ramp. NaN with fewer than MIN_RANK_N neurons or
+    fewer than two recruited: an order over nothing is not a fail with a number, it is undefined."""
+    from scipy.stats import spearmanr
+    t = np.asarray(first_ms, dtype=float)
+    a = np.asarray(attribute, dtype=float)
+    if t.size < MIN_RANK_N or np.isfinite(t).sum() < 2 or np.unique(a).size < 2:
+        return float("nan")
+    t = np.where(np.isfinite(t), t, np.inf)
+    rho = spearmanr(a, t).statistic
+    return float(rho) if np.isfinite(rho) else float("nan")
+
+
+def recruitment_spread(first_ms: np.ndarray) -> float:
+    """Interquartile range (ms) of the recruited neurons' first-spike times: a graded recruitment
+    spreads over the ramp, a single ignition collapses to ~0. NaN with fewer than four recruited."""
+    t = np.asarray(first_ms, dtype=float)
+    t = t[np.isfinite(t)]
+    if t.size < 4:
+        return float("nan")
+    q25, q75 = np.percentile(t, [25, 75])
+    return float(q75 - q25)
 
 
 def lifetime_sparseness(rates: "np.ndarray") -> float:
@@ -324,12 +374,13 @@ def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False
                   f"active {m['active_fraction']:.3%} {extra}")
 
     checks: list[CheckResult] = []
+    input_synapses: np.ndarray | None = None
     for chk in task.get("checks", []):
         typ = chk["type"]; op = OPS[chk["op"]]; target = float(chk["value"])
         rname = chk.get("readout", default_readout)
         ridx = readouts.get(rname, np.empty(0, dtype=int))
         w = chk.get("window", window)
-        per_readout = typ in ("rate", "ratio", "readout_active_fraction") or "cell" in chk   # a matrix cell always names its readout
+        per_readout = typ in ("rate", "ratio", "readout_active_fraction", "rank_order", "recruitment_spread") or "cell" in chk   # a matrix cell always names its readout
         tag = f"[{chk.get('cond', '')}" + (f", {rname}" if (rname != "default" and per_readout) else "") + (f", {w[0]:g}-{w[1]:g}ms" if w != window else "") + "]"
         if typ == "ratio":
             w2 = chk.get("over_window", w)
@@ -355,6 +406,19 @@ def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False
             # one readout's rate across a panel of conditions (an odour panel), Willmore & Tolhurst 2001
             val = lifetime_sparseness([_metric(results[cn], ridx, "rate", *w) for cn in chk["conds"]])
             desc = f"lifetime sparseness[{rname}, {len(chk['conds'])} stimuli] {chk['op']} {target}"
+        elif typ == "rank_order":
+            # recruitment order: Spearman rho between a per-neuron attribute and first-spike time in the window
+            by = chk.get("by", "input_synapses")
+            if by not in RANK_ATTRIBUTES:
+                raise ValueError(f"rank_order `by` must be one of {RANK_ATTRIBUTES}, not {by!r}")
+            if input_synapses is None:
+                # MN "size" = total input synapse count (Lesser et al. 2024: r = 0.94 with dendritic surface area)
+                input_synapses = np.asarray(abs(c.W).sum(axis=0)).ravel()
+            val = recruitment_order(first_spikes_per_neuron(results[chk["cond"]], ridx, *w), input_synapses[ridx])
+            desc = f"rank order{tag} rho({by.replace('_', ' ')}, recruitment time) {chk['op']} {target}"
+        elif typ == "recruitment_spread":
+            val = recruitment_spread(first_spikes_per_neuron(results[chk["cond"]], ridx, *w))
+            desc = f"recruitment spread{tag} {chk['op']} {target} ms"
         else:
             val = _metric(results[chk["cond"]], ridx, typ, *w)
             unit = " Hz" if typ.endswith("rate") else (" spikes/neuron" if typ == "spikes_per_neuron" else "")

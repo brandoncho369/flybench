@@ -1,0 +1,42 @@
+name: leg_mn_size_principle
+title: A ramping common drive recruits the front-leg motor neurons smallest first
+tier: hard
+circuit: locomotion
+description: >
+  Henneman's size principle in the fly leg: the tibia flexor motor neurons are recruited in order
+  of size, slow (smallest) first, fast (largest) last, as drive and force rise (Azevedo et al.
+  2020). The wiring says the opposite would happen on drive alone: every premotor neuron
+  distributes its synapses onto a muscle's MNs in proportion to MN size, so "if MN recruitment
+  were dictated entirely by the magnitude of premotor input ... a common input [would] first
+  recruit the largest, fastest MNs", and "the intrinsic electrical properties of the largest MNs
+  must compensate" (Lesser, Azevedo et al. 2024). This task ramps the front-left leg's excitatory
+  central premotor pool from 0 to 100 Hz over one second and scores the Spearman correlation
+  between each MN's size (its total input synapse count, r = 0.94 with surface area in Lesser
+  2024) and its first-spike time: the size principle is a positive correlation. A model of
+  uniform point neurons is predicted to fail it, largest first; that failure is the finding the
+  task exists to record, and a model that passes has to have put something real in the MNs.
+  MaleCNS only (the leg MNs live in the nerve cord); on FlyWire it is not applicable. The
+  wing steering MNs are not scored: MaleCNS reproduces Lesser 2024's leg/wing contrast per
+  premotor neuron (median rho(weight, size) 0.41 leg vs 0.10 wing) but pooled excitatory drive
+  scales with size in both (0.99 / 0.95), so no model could pass a wing null under a common ramp.
+  Pre-registered predictions and outcome: docs/rfcs/23_leg_mn_size_principle.md.
+citation: "Azevedo et al. 2020 (eLife 9:e56754); Lesser, Azevedo et al. 2024 (Nature 631:369); Henneman 1957 (Science 126:1345); Henneman, Somjen & Carpenter 1965 (J Neurophysiol 28:560)"
+dataset_only: [malecns, toy]
+duration_ms: 1200
+window: [200, 1200]
+requires_readouts: [leg_t1l]
+requires_stimuli: [premotor]
+readouts:
+  # the front-left leg's motor pool: MaleCNS sub_class "fl" + side "L" (the toy mirrors both columns)
+  leg_t1l: {select: &leg {all_of: [{super_class: vnc_motor}, {sub_class: fl}, {side_regex: "^(left|l)$"}, {cell_type_regex: "(flexor|extensor|rotator|reductor|depressor|levator|promotor|remotor|Tergotr|Sternotrochanter|ltm|^Ta |^Ti |^Tr |^Fe ) ?MN$"}]}}
+conditions:
+  ramp:
+    stimuli:
+      # the common drive (Henneman 1965; convention): every excitatory central neuron presynaptic to the pool
+      # (an edge of >= 3 synapses, Lesser 2024's premotor threshold), not the afferents and not other MNs,
+      # ramped linearly 0 -> 100 Hz over 1 s (100 Hz is the task-02 drive; the ramp shape is a convention)
+      - {name: premotor, select: {all_of: [{upstream_of: *leg, min_synapses: 3}, {nt_type: ACH}, {not: {super_class_regex: "motor|sensory"}}]}, rate_hz: 0, rate_end_hz: 100, t_start_ms: 200, t_end_ms: 1200}
+checks:
+  - {type: rank_order, cond: ramp, readout: leg_t1l, by: input_synapses, op: ">", value: 0.5, basis: "Azevedo et al. 2020: tibia flexor MNs are recruited smallest (slow) first, largest (fast) last, the Henneman 1957 size principle; size = total input synapse count (Lesser et al. 2024: r = 0.94 with MN surface area; convention); rho > 0.5 is the task-16 DSI < 0.5 rule applied to a rank correlation (convention)"}
+  - {type: readout_active_fraction, cond: ramp, readout: leg_t1l, op: ">=", value: 0.8, basis: "convention: the ramp must recruit the pool (Azevedo et al. 2020: all three flexor MNs are active at high force) so that the order is measured over the pool and not over a handful of cells; 0.8 leaves room for MNs with no premotor input in the reconstruction"}
+  - {type: recruitment_spread, cond: ramp, readout: leg_t1l, op: ">", value: 50, basis: "Azevedo et al. 2020: slow, intermediate and fast MNs have distinct force thresholds, i.e. distinct recruitment times on a ramp; an interquartile range above 50 ms (5 % of the ramp) separates graded recruitment from a single all-at-once ignition (convention)"}

@@ -13,7 +13,8 @@ Two kinds of check:
 **Threshold checks** (every check written before September 2026): `graded = 1 / (1 + 10^(−2·margin))`.
 On the line → 0.5; 3.2× on the passing side → 0.91; 3.2× on the failing side → 0.09; ten times
 either way → 0.99 / 0.01. The pass flag is the threshold comparison, as before, and always agrees
-with `graded > 0.5`.
+with `graded > 0.5`. A value on the wrong side of zero from its target (a rank correlation of −0.9
+against `> 0.5`) counts as a zero response, not as 0.9: margin −2.7, graded 0.00.
 
 **Recording-match checks** (from Phase 2 on) carry the measurement they are compared to:
 

@@ -48,11 +48,13 @@ Use `--seeds 3` (or more). Single-seed results are accepted but a maintainer wil
 
 ## 2. Add a task
 
-One YAML file in `tasks/`, copied from an existing one. It needs a readout (or several named readouts), one or more stimulus conditions, checks with an operator and threshold, a `citation` to published fly behaviour, a `tier` (`core` if the reference LIF model passes it — it becomes a regression test — `hard` if it does not — it becomes a target), and a `circuit` (`taste`, `escape`, `olfaction`, `stability`, `physiology`, `robustness`, or propose a new one) so that seven tasks on one pathway count once in the by-circuit score. **Every check needs a `basis`**: either a citation for the number, or `convention: <why this number>` when it is a judgement call. The lint refuses a task without one; a threshold nobody can trace is how a benchmark quietly becomes an opinion. A condition may carry `weight_jitter: 0.25` to run it on a perturbed copy of the connectome (every synapse count multiplied by lognormal noise) — a stand-in for a different individual. Then:
+One YAML file in `tasks/`, copied from an existing one. It needs a readout (or several named readouts), one or more stimulus conditions, checks with an operator and threshold, a `citation` to published fly behaviour, a `tier` (`core` if the reference LIF model passes it — it becomes a regression test — `hard` if it does not — it becomes a target), and a `circuit` (`taste`, `escape`, `olfaction`, `stability`, `physiology`, `robustness`, `courtship`, `locomotion`, or propose a new one) so that seven tasks on one pathway count once in the by-circuit score. **Every check needs a `basis`**: either a citation for the number, or `convention: <why this number>` when it is a judgement call. The lint refuses a task without one; a threshold nobody can trace is how a benchmark quietly becomes an opinion. A condition may carry `weight_jitter: 0.25` to run it on a perturbed copy of the connectome (every synapse count multiplied by lognormal noise) — a stand-in for a different individual. Then:
 
 ```bash
 flybench lint tasks/your_task.yaml
 flybench select -c flywire783 '<your selector>'      # confirm it matches the neurons you mean
+                                                     # (annotation columns, regexes, any/all_of/not, and
+                                                     #  `{upstream_of: <selector>, min_synapses: 3}` on the graph)
 flybench run -t tasks/your_task.yaml                 # on the toy — wire the toy if needed so CI covers it
 flybench run -c flywire783 -t tasks/your_task.yaml   # on the real brain
 ```
@@ -67,7 +69,7 @@ The benchmark doesn't care how you simulate, only what fires. A simulator is any
 def run(self, duration_ms: float, stimuli: list[Stimulus]) -> SimResult: ...
 ```
 
-(`Stimulus` has `.neurons`, `.rate_hz`, `.t_start_ms`, `.t_end_ms`; `SimResult` is `flybench.sim.SimResult`, spike times + neuron ids.) Put it under `submissions/<your-name>/` with a `README` and a `requirements.txt`, and run
+(`Stimulus` has `.neurons`, `.rate_hz`, `.t_start_ms`, `.t_end_ms`, and `.rate_end_hz` for a linear ramp — honour `.rate_at(t)` if you read the rate yourself; `SimResult` is `flybench.sim.SimResult`, spike times + neuron ids.) Put it under `submissions/<your-name>/` with a `README` and a `requirements.txt`, and run
 
 ```bash
 flybench run -c flywire783 --simulator submissions.yourname.model:MySim --seeds 3 --label "yourname adaptive-LIF v1" -o results/yourname-adaptive-lif-v1.json

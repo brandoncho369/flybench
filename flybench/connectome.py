@@ -75,7 +75,7 @@ class Connectome:
         return idx[idx >= 0]
 
     def select(self, spec: dict | str | list) -> np.ndarray:
-        return select(self.annotations, spec)
+        return select(self.annotations, spec, W=self.W)
 
     # ---- persistence -------------------------------------------------
     def save(self, path: Path | str) -> Path:
@@ -117,7 +117,7 @@ def _has_parquet() -> bool:
 # Selection
 # ---------------------------------------------------------------------------
 
-def select(ann: pd.DataFrame, spec: dict | str | list) -> np.ndarray:
+def select(ann: pd.DataFrame, spec: dict | str | list, W: sp.csr_matrix | None = None) -> np.ndarray:
     """Return neuron indices matching a selector spec.
 
     Spec grammar (YAML-friendly):
@@ -128,17 +128,19 @@ def select(ann: pd.DataFrame, spec: dict | str | list) -> np.ndarray:
         {hemibrain_type: ["LC4", "LPLC2"]}          -> isin
         {labels_regex: "sugar"}                     -> case-insensitive regex
         {any: [spec, spec]}  /  {all_of: [spec, ...]}  /  {not: spec}
+        {upstream_of: spec, min_synapses: 3}        -> presynaptic partners of the spec's neurons
+                                                       (an edge of ≥ min_synapses, default 1; needs W)
         "MN9"                                       -> shorthand for cell_type
     """
     if isinstance(spec, str):
         spec = {"cell_type": spec}
     if isinstance(spec, list):
         spec = {"any": spec}
-    mask = _mask(ann, spec)
+    mask = _mask(ann, spec, W)
     return np.flatnonzero(mask)
 
 
-def _mask(ann: pd.DataFrame, spec: dict | str | list) -> np.ndarray:
+def _mask(ann: pd.DataFrame, spec: dict | str | list, W: sp.csr_matrix | None = None) -> np.ndarray:
     n = len(ann)
     if isinstance(spec, str):          # shorthand works at any nesting depth
         spec = {"cell_type": spec}
@@ -153,13 +155,26 @@ def _mask(ann: pd.DataFrame, spec: dict | str | list) -> np.ndarray:
         elif key == "any":
             m = np.zeros(n, dtype=bool)
             for s in val:
-                m |= _mask(ann, s)
+                m |= _mask(ann, s, W)
         elif key == "all_of":
             m = np.ones(n, dtype=bool)
             for s in val:
-                m &= _mask(ann, s)
+                m &= _mask(ann, s, W)
         elif key == "not":
-            m = ~_mask(ann, val)
+            m = ~_mask(ann, val, W)
+        elif key == "min_synapses":
+            continue                   # a parameter of `upstream_of`, consumed there
+        elif key == "upstream_of":
+            # the graph, not the annotations: every neuron with an edge of ≥ min_synapses onto a
+            # target, whatever its sign (an inhibitory premotor neuron is still a premotor neuron)
+            if W is None:
+                raise ValueError("selector `upstream_of` needs a connectome (W), not annotations alone")
+            targets = np.flatnonzero(_mask(ann, val, W))
+            min_syn = float(spec.get("min_synapses", 1))
+            m = np.zeros(n, dtype=bool)
+            if targets.size:
+                sub = abs(W[:, targets]).tocsr()
+                m = (sub.max(axis=1).toarray().ravel() >= min_syn) if sub.nnz else m
         elif key == "root_ids":
             m = ann["root_id"].astype(np.int64).isin([int(v) for v in val]).to_numpy()
         elif key.endswith("_regex"):

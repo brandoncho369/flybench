@@ -71,11 +71,18 @@ POPS = [
     ("mn_i1",        2, "vnc_motor", "",        "i1 MN",      "",           "ACH",  "song wing MN",     (80, 70, -70)),
     ("mn_b1",        2, "vnc_motor", "",        "b1 MN",      "",           "ACH",  "song wing MN",     (80, 70, -70)),
     ("mn_leg",      20, "vnc_motor", "",        "Ti flexor MN", "",         "ACH",  "leg MN",           (0, 40, -80)),
+    # task 23 (leg MN size principle): a front-leg (sub_class "fl") motor pool of graded size, its excitatory
+    # central premotor pool, and the afferents that give the big MNs their extra input synapses
+    ("leg_premotor", 60, "vnc_intrinsic", "",   "leg_premotor_toy", "",     "ACH",  "leg premotor",     (40, 60, -60)),
+    ("leg_afferent", 60, "vnc_sensory", "",     "leg_afferent_toy", "",     "ACH",  "leg proprioceptor", (60, 30, -90)),
+    ("mn_t1",       24, "vnc_motor", "",        "Ti extensor MN", "",       "ACH",  "T1 leg MN",        (120, 40, -80)),   # x = 120: the mirrored half lands cleanly on the left
 ]
+
+SUB_CLASS = {"mn_t1": "fl"}   # Codex-style `sub_class` (fl/ml/hl = front/mid/hind leg); "" elsewhere
 
 
 # Bump when POPS or the wiring change: load_connectome("toy") rebuilds a cache whose version differs.
-TOY_VERSION = "2026-09-14-song1"
+TOY_VERSION = "2026-09-15-size2"
 
 
 def build_toy_connectome(seed: int = 1) -> Connectome:
@@ -141,6 +148,19 @@ def build_toy_connectome(seed: int = 1) -> Connectome:
     connect("pip10", "tn1", 1.0, 150, 250)   # one descending cell must drive TN1 alone: a big contact, like the real pIP10 -> dPR1 (~280 per pair)
     for mn in ("mn_hg1", "mn_ps1", "mn_i1", "mn_b1"):
         connect("tn1", mn, 0.8, 8, 16)      # ~300 synapses per MN from 40 premotor cells, the toy's loom -> GF scale
+    # --- added 2026-09-15 for task 23 (MODELED, and explicitly not the fly's route to a pass): 12 MNs per side
+    #     ranked by "size" k = 0..11. The premotor pool's contact on MN k falls with k (12 - k synapses per
+    #     edge) while the afferents' contact rises steeply (2 + 4k), so total input (size) grows with k
+    #     and a ramp on the premotor pool recruits the smallest MN first. The real fly gets that order from
+    #     MN intrinsic properties on top of size-proportional wiring (Lesser et al. 2024); a uniform LIF
+    #     cannot, so the toy buys it with wiring. It proves the checks are computable and passable, no more.
+    t1 = idx["mn_t1"]
+    for side in (t1[: t1.size // 2], t1[t1.size // 2:]):   # the first half is mirrored to the left in the position step below
+        for k, mn in enumerate(side):
+            for pre_pop, per_edge, p_conn in (("leg_premotor", 12 - k, 0.5), ("leg_afferent", 2 + 4 * k, 0.5)):
+                a = idx[pre_pop]
+                m = rng.random(a.size) < p_conn
+                rows.append(a[m]); cols.append(np.full(m.sum(), mn)); vals.append(np.full(m.sum(), per_edge))
     pre = np.concatenate(rows); post = np.concatenate(cols); syn = np.concatenate(vals).astype(np.float32)
     keep = pre != post
     pre, post, syn = pre[keep], post[keep], syn[keep]
@@ -173,6 +193,10 @@ def build_toy_connectome(seed: int = 1) -> Connectome:
         ann[col] = arr
     side = np.where(positions[:, 0] < 0, "left", "right")
     ann["side"] = side
+    sub_class = np.full(n, "", dtype=object)
+    for name, sc in SUB_CLASS.items():
+        sub_class[idx[name]] = sc
+    ann["sub_class"] = sub_class
     ann["population"] = np.concatenate([[name] * size for name, size in zip(names, sizes)])
 
     return Connectome(

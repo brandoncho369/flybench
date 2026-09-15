@@ -12,7 +12,7 @@ def toy():
 
 
 def test_toy_shape(toy):
-    assert toy.n == 2706
+    assert toy.n == 2850
     assert toy.W.shape == (toy.n, toy.n)
     assert (toy.W.diagonal() == 0).all()
     # GABA rows are negative, ACh rows positive

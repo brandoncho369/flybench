@@ -111,7 +111,11 @@ numbers (figure-only in Ache 2019 / Klapoetke 2017).
     translation better than HS (Nat Neurosci 2025, s41593-025-01948-9).
 23. **Leg MN recruitment order** (size principle): premotor → MN weight scales with MN size; ramping
     drive recruits in size order; wing steering MNs show no such order (Azevedo et al. 2024 Nature).
-    Pure VNC graph + LIF; MaleCNS only.
+    Pure VNC graph + LIF; MaleCNS only. **Started 2026-09-15: task 23 (docs/rfcs/23), `rank_order` and
+    `recruitment_spread` checks, `rate_end_hz` ramp stimuli, `upstream_of` graph selector; front-left leg
+    (57 MNs), excitatory central premotor pool (664 cells). Wing not scored: pooled drive scales with size
+    in the wing too (per-preMN it does not — a finding, docs/FINDINGS.md). Pre-registered as an
+    expected fail for any uniform point model, per Lesser 2024's own inference.**
 24. **Grooming somatotopy**: bristle MNs (BM-Ant, BM-InOm, …) → hemilineage 23b / aBN1/2 / aDN;
     eye-bristle drive must not produce antennal-grooming output (Eichler/Seeds 2025 eLife 108044;
     Hampel 2015, 2020).

@@ -142,3 +142,40 @@ explorer now shows distinctly from "not run yet". MaleCNS 0.65: **7/8**, rewired
 Housekeeping: a `courtship` circuit was added for the per-pathway weighting, which moved the
 MaleCNS hard-by-circuit score 0.618 → 0.661 (graded 0.720 → 0.729); the 21 older tasks are
 bit-identical.
+
+## 2026-09-15 — task 23 (leg MN size principle, MaleCNS-only): largest first as pre-registered; the small half is inhibition-silenced; the shuffle beats the brain
+
+First task pre-registered as an expected fail for the reference model (docs/rfcs/23). Lesser,
+Azevedo et al. 2024 showed that leg premotor synapses scale with MN size and inferred that "a
+common input [would] first recruit the largest, fastest MNs" unless MN intrinsic properties
+compensate; Azevedo et al. 2020 showed the fly recruits smallest first. The task ramps the
+front-left leg's 664 excitatory central premotor neurons (a new `upstream_of` graph selector and
+`rate_end_hz` ramp) 0 → 100 Hz over 1 s and scores Spearman ρ between MN size (input synapse
+count) and first-spike time. MaleCNS 0.65: **0/3**, ρ = **−0.76** (largest first, predicted
+−0.9), rewired 1/3, specificity **−0.33**.
+
+- **The ramp silences the small half of the pool.** 28 of 57 MNs — the 28 smallest — never
+  fire (predicted 0.95 recruited; measured 0.47). In MaleCNS the inhibitory share of a leg MN's
+  input falls with size (ρ = −0.62: 58 % inhibitory below 500 synapses, 40 % above 5,000), and
+  for 20 of the 28 smallest the inhibitory input exceeds the excitatory-pool input outright.
+  When the cord ignites (~300 ms, 12 % of the CNS active), the inhibitory premotors fire with it
+  and the small MNs' net drive goes negative. A common excitatory drive on this wiring does not
+  recruit big-first, it recruits *only* big. The size principle needs the inhibition onto the
+  small MNs to be patterned with the movement, not just intrinsic compensation.
+- **First negative specificity in the benchmark.** Degree-preserving rewiring keeps in-degree
+  but scrambles the size-structured inhibition, so 81 % of the pool is recruited on the shuffle
+  (check 2 passes there, fails on the brain); order is still big-first (ρ = −0.93). The real
+  wiring is what fails the check. Recorded as the correct reading, not as a bug.
+- **The leg/wing contrast of Lesser 2024 is in MaleCNS, per premotor neuron, not per pool.**
+  Median ρ(premotor weight, target size) is 0.41 in the leg (78 % positive, n = 345 preMNs with
+  ≥ 4 targets) vs 0.10 in the wing steering MNs (52 %, n = 235). Pooled excitatory drive scales
+  with size in both (0.99 / 0.95), which is why the task does not score a wing null: no model
+  could pass it under a common ramp.
+- Check 3 (recruitment spread > 50 ms): 173 / 38 / 131 ms — graded recruitment among the MNs
+  that do fire on two seeds, one burst on the third; fails by the every-seed rule.
+
+Housekeeping: a value on the wrong side of zero from its target (ρ = −0.8 against > 0.5) used to
+grade by |value| (margin +0.2, graded 0.7 for a fail); it now counts as a zero response (margin
+−2.7, graded 0.0). No archived check had a negative value, so no old number moved. New
+`locomotion` circuit; hard-by-circuit 0.661 → 0.567, graded 0.729 → 0.720; 22 older tasks
+bit-identical. FlyWire rerun: bit-identical, records task 23 as not applicable.

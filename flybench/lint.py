@@ -6,11 +6,12 @@ from pathlib import Path
 
 import yaml
 
-from .bench import KNOWN_DATASETS, MATRIX_SIGNS, MATRIX_UNSCORED, OPS, expand_checks
+from .bench import KNOWN_DATASETS, MATRIX_SIGNS, MATRIX_UNSCORED, OPS, RANK_ATTRIBUTES, expand_checks
 
-METRICS = {"rate", "network_rate", "active_fraction", "readout_active_fraction", "ratio", "spikes_per_neuron", "lifetime_sparseness", "latency"}
+METRICS = {"rate", "network_rate", "active_fraction", "readout_active_fraction", "ratio", "spikes_per_neuron", "lifetime_sparseness", "latency",
+           "rank_order", "recruitment_spread"}
 CELL_METRICS = {"rate", "readout_active_fraction", "spikes_per_neuron"}   # what a matrix cell may measure
-CIRCUITS = {"stability", "taste", "escape", "olfaction", "physiology", "robustness", "courtship"}
+CIRCUITS = {"stability", "taste", "escape", "olfaction", "physiology", "robustness", "courtship", "locomotion"}
 REQUIRED = {"name", "title", "conditions", "checks"}
 TIERS = {"core", "hard"}
 
@@ -53,8 +54,11 @@ def lint_task(task: dict, source: str = "<task>") -> list[str]:
             t0, t1 = float(s.get("t_start_ms", 0)), float(s.get("t_end_ms", duration))
             if t0 >= t1 or t0 < 0 or t0 >= duration:
                 errs.append(f"{cname}: stimulus {i} window [{t0}, {t1}] is empty or outside the run")
-            if float(s.get("rate_hz", 100)) <= 0:
+            rate, rate_end = float(s.get("rate_hz", 100)), s.get("rate_end_hz")
+            if rate_end is None and rate <= 0:
                 errs.append(f"{cname}: stimulus {i} rate_hz must be > 0")
+            if rate_end is not None and (not isinstance(rate_end, (int, float)) or rate < 0 or rate_end < 0 or rate_end == rate):
+                errs.append(f"{cname}: stimulus {i} rate_end_hz must be a rate >= 0 different from rate_hz (a ramp), with rate_hz >= 0")
     stim_names = {st.get("name") for cond in conds.values() for st in (cond.get("stimuli") or []) if isinstance(cond, dict)}
     for name in task.get("requires_stimuli", []) or []:
         if name not in stim_names:
@@ -157,8 +161,10 @@ def lint_task(task: dict, source: str = "<task>") -> list[str]:
         # network-level metrics ignore readouts; readout metrics default to the task's first readout (runtime does the same)
         if typ == "latency" and "from" in chk and chk["from"] not in readouts:
             errs.append(f"check {i}: latency `from` {chk['from']!r} is not a defined readout")
-        if typ in ("rate", "ratio", "readout_active_fraction", "lifetime_sparseness", "latency") and "readout" in chk and chk["readout"] not in readouts:
+        if typ in ("rate", "ratio", "readout_active_fraction", "lifetime_sparseness", "latency", "rank_order", "recruitment_spread") and "readout" in chk and chk["readout"] not in readouts:
             errs.append(f"check {i}: readout {chk['readout']!r} not defined")
+        if typ == "rank_order" and chk.get("by", "input_synapses") not in RANK_ATTRIBUTES:
+            errs.append(f"check {i}: rank_order `by` must be one of {RANK_ATTRIBUTES}")
         for key in ("window", "over_window"):
             if key in chk:
                 w = chk[key]

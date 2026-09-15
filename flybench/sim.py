@@ -51,13 +51,21 @@ class LIFParams:
 
 @dataclass
 class Stimulus:
-    """Poisson spike drive applied directly to a set of neurons."""
+    """Poisson spike drive applied directly to a set of neurons. With `rate_end_hz` the rate ramps
+    linearly from `rate_hz` at t_start to `rate_end_hz` at t_end (a Henneman-style common drive)."""
 
     neurons: np.ndarray
     rate_hz: float
     t_start_ms: float = 0.0
     t_end_ms: float = float("inf")
     name: str = ""
+    rate_end_hz: float | None = None
+
+    def rate_at(self, t_ms: float) -> float:
+        if self.rate_end_hz is None or not np.isfinite(self.t_end_ms) or self.t_end_ms <= self.t_start_ms:
+            return self.rate_hz
+        f = min(max((t_ms - self.t_start_ms) / (self.t_end_ms - self.t_start_ms), 0.0), 1.0)
+        return self.rate_hz + (self.rate_end_hz - self.rate_hz) * f
 
 
 @dataclass
@@ -157,11 +165,14 @@ class LIFSimulator:
         n_steps = int(round(duration_ms / p.dt_ms))
         times: list[np.ndarray] = []
         ids: list[np.ndarray] = []
-        stim = [(np.asarray(s.neurons, dtype=np.int32), s.rate_hz * p.dt_ms / 1000.0, s.t_start_ms, s.t_end_ms) for s in stimuli if len(s.neurons)]
+        per_ms = p.dt_ms / 1000.0
+        stim = [(np.asarray(s.neurons, dtype=np.int32), s.rate_hz * per_ms, s.t_start_ms, s.t_end_ms, s) for s in stimuli if len(s.neurons)]
         for _ in range(n_steps):
             forced_parts = []
-            for neurons, prob, t0, t1 in stim:
+            for neurons, prob, t0, t1, s in stim:
                 if t0 <= self.t < t1:
+                    if s.rate_end_hz is not None:
+                        prob = s.rate_at(self.t) * per_ms
                     forced_parts.append(neurons[self.rng.random(neurons.size) < prob])
             forced = np.concatenate(forced_parts) if forced_parts else None
             fired = self.step(forced)

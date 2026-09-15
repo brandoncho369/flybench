@@ -23,6 +23,8 @@ def test_margin_is_signed_decades():
     assert margin_of(0.01, "<", 0.1) == pytest.approx(1.0)  # for '<', smaller is better
     assert margin_of(1.0, "<", 0.1) == pytest.approx(-1.0)
     assert margin_of(0.0, ">", 5) < -3                      # zero response is far on the failing side, finite
+    assert margin_of(-0.9, ">", 0.5) < -2                   # a negative correlation against a positive threshold: far on the failing side, not +0.26
+    assert margin_of(-0.9, "<", 0.5) > 2
     assert np.isnan(margin_of(float("nan"), ">", 5))
 
 
@@ -353,3 +355,90 @@ def test_task22_dataset_only_skips_elsewhere_lints_and_a_broken_toy_fails_the_le
     rb = run_task(t22, broken, LIFParams(seed=1))
     assert not rb.checks[3].passed and rb.checks[3].value >= 2
     assert all(ch.passed for k, ch in enumerate(rb.checks) if k != 3)
+
+
+def test_recruitment_metrics_on_known_vectors():
+    from flybench.bench import MIN_RANK_N, first_spikes_per_neuron, recruitment_order, recruitment_spread
+    from flybench.sim import SimResult
+    # Henneman order: size ranks 0..11, the smallest fires first -> rho = +1; reversed -> -1
+    size = np.arange(12, dtype=float) * 100 + 7
+    t = 200 + np.arange(12) * 50.0
+    assert recruitment_order(t, size) == pytest.approx(1.0)
+    assert recruitment_order(t[::-1], size) == pytest.approx(-1.0)
+    # unrecruited neurons rank last (tied): the biggest three never firing keeps the order positive
+    t2 = t.copy(); t2[-3:] = np.nan
+    assert recruitment_order(t2, size) > 0.9
+    # undefined, not a fail with a number: too few neurons, fewer than two recruited, all sizes equal
+    assert np.isnan(recruitment_order(t[:MIN_RANK_N - 1], size[:MIN_RANK_N - 1]))
+    assert np.isnan(recruitment_order(np.where(np.arange(12) == 0, 300.0, np.nan), size))
+    assert np.isnan(recruitment_order(t, np.ones(12)))
+    # spread: IQR of the recruited first-spike times, NaN below four recruited
+    assert recruitment_spread(t) == pytest.approx(np.percentile(t, 75) - np.percentile(t, 25))
+    assert np.isnan(recruitment_spread(np.array([1.0, 2.0, 3.0, np.nan])))
+    # first spikes per neuron, in readout order, from a spike train (neuron 5 fires twice, neuron 9 never)
+    res = SimResult(spike_times_ms=np.array([300.0, 250.0, 260.0, 100.0], dtype=np.float32), spike_neurons=np.array([5, 7, 5, 9], dtype=np.int32), duration_ms=1000, n=20)
+    fs = first_spikes_per_neuron(res, np.array([9, 5, 7]), 200, 1000)
+    assert np.isnan(fs[0]) and fs[1] == 260.0 and fs[2] == 250.0
+
+
+def test_ramp_stimulus_rises_linearly(toy):
+    from flybench.sim import LIFSimulator, Stimulus
+    s = Stimulus(neurons=np.arange(5), rate_hz=0.0, t_start_ms=200, t_end_ms=1200, rate_end_hz=100.0)
+    assert s.rate_at(100) == 0.0 and s.rate_at(200) == 0.0 and s.rate_at(700) == pytest.approx(50.0) and s.rate_at(1200) == 100.0 and s.rate_at(5000) == 100.0
+    assert Stimulus(neurons=np.arange(5), rate_hz=30.0).rate_at(999) == 30.0     # no ramp: constant
+    # driven neurons fire more in the last fifth of the ramp than in the first fifth
+    grn = toy.select("GRN_sugar")
+    res = LIFSimulator(toy, LIFParams(seed=3, gain=0.01)).run(1200, [Stimulus(neurons=grn, rate_hz=0.0, t_start_ms=200, t_end_ms=1200, rate_end_hz=100.0)])
+    early, late = res.rate_hz(grn, 200, 400), res.rate_hz(grn, 1000, 1200)
+    assert early < 25 and late > 75 and late > 4 * early
+
+
+def test_upstream_of_selector(toy):
+    from flybench.connectome import select
+    mn9 = toy.select("MN9")
+    pre = toy.select({"upstream_of": "MN9"})
+    W = abs(toy.W)[:, mn9]
+    assert set(pre) == set(np.flatnonzero(np.asarray(W.sum(axis=1)).ravel() > 0))
+    strong = toy.select({"upstream_of": "MN9", "min_synapses": 8})
+    assert 0 < strong.size < pre.size and set(strong) <= set(pre)
+    assert set(strong) == set(np.flatnonzero(W.max(axis=1).toarray().ravel() >= 8))
+    assert toy.select({"all_of": [{"upstream_of": "MN9"}, {"nt_type": "GABA"}]}).size == toy.select({"all_of": [{"upstream_of": "MN9"}, "bitter_ln"]}).size
+    assert toy.select({"upstream_of": {"cell_type": "no_such_type"}}).size == 0
+    with pytest.raises(ValueError):
+        select(toy.annotations, {"upstream_of": "MN9"})      # the graph is needed, annotations alone will not do
+
+
+def test_task23_size_principle_passes_on_toy_and_fails_on_size_proportional_wiring(toy):
+    import scipy.sparse as sp
+    from flybench.bench import task_unavailable
+    from flybench.connectome import Connectome
+    t23 = next(t for t in load_tasks() if t["name"] == "leg_mn_size_principle")
+    raw = yaml.safe_load((TASK_DIR / "23_leg_mn_size_principle.yaml").read_text(encoding="utf-8"))
+    assert lint_task(raw) == [] and t23["dataset_only"] == ["malecns", "toy"]
+    assert task_unavailable(t23, toy) is None
+    leg = toy.select(t23["readouts"]["leg_t1l"]["select"])
+    pool = toy.select(t23["conditions"]["ramp"]["stimuli"][0]["select"])
+    assert leg.size == 12 and pool.size == 60                      # one front leg; the excitatory central premotor pool, no afferents
+    assert set(toy.annotations.iloc[pool].cell_type) == {"leg_premotor_toy"}
+    r = run_task(t23, toy, LIFParams(seed=1))
+    assert r.passed and r.score == 1.0
+    assert r.checks[0].description.startswith("rank order[ramp, leg_t1l]") and r.checks[0].value > 0.9
+    assert r.checks[2].value > 50
+    # lint: rank_order must name a known attribute; a ramp needs rate_end_hz != rate_hz
+    bad = copy.deepcopy(raw); bad["checks"][0]["by"] = "soma_volume"
+    assert any("rank_order `by`" in e for e in lint_task(bad))
+    bad = copy.deepcopy(raw); bad["conditions"]["ramp"]["stimuli"][0]["rate_end_hz"] = 0
+    assert any("rate_end_hz" in e for e in lint_task(bad))
+    # the Lesser 2024 wiring: premotor contact proportional to MN size. Under a uniform LIF the largest
+    # MN is recruited first (rho -> -1) and only the order check fails; the pool still recruits, graded
+    W = toy.W.tolil()
+    size = np.asarray(abs(toy.W).sum(axis=0)).ravel()[leg]
+    for j, s in zip(leg, size):
+        for i in pool:
+            if W[i, j] != 0:
+                W[i, j] = max(1.0, round(12.0 * s / size.max()))
+    broken = Connectome(root_ids=toy.root_ids, W=sp.csr_matrix(W, dtype=np.float32), positions=toy.positions,
+                        annotations=toy.annotations, name="toy", meta=dict(toy.meta))
+    rb = run_task(t23, broken, LIFParams(seed=1))
+    assert not rb.checks[0].passed and rb.checks[0].value < -0.5
+    assert rb.checks[1].passed and rb.checks[2].passed

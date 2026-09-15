@@ -4,24 +4,24 @@
   "seeds": 3,
   "verified": false,
   "core_score": 0.5666666666666667,
-  "hard_score": 0.6479925303454716,
+  "hard_score": 0.6119929453262787,
   "core_by_circuit": 0.6851851851851851,
-  "hard_by_circuit": 0.661113315696649,
-  "graded": 0.7292428414059675,
+  "hard_by_circuit": 0.5666685563114134,
+  "graded": 0.7202888032414466,
   "graded_ci95": [
-    0.7131971973791894,
-    0.7417524544003238
+    0.7023329050414526,
+    0.731879114147866
   ],
   "core_graded": 0.7293883288241452,
-  "hard_graded": 0.6838101496612126,
+  "hard_graded": 0.6639311850603061,
   "profile": {
-    "-1": 0.8636363636363636,
-    "-0.5": 0.8181818181818182,
-    "-0.25": 0.7727272727272727,
-    "0": 0.7,
-    "0.25": 0.6454545454545455,
-    "0.5": 0.5454545454545454,
-    "1": 0.5272727272727272
+    "-1": 0.8584070796460177,
+    "-0.5": 0.8141592920353983,
+    "-0.25": 0.7699115044247787,
+    "0": 0.6902654867256637,
+    "0.25": 0.6371681415929203,
+    "0.5": 0.5309734513274337,
+    "1": 0.5132743362831859
   },
   "circuits": {
     "stability": "stability",
@@ -45,13 +45,14 @@
     "gf_to_muscle_latency": "escape",
     "taste_modalities": "taste",
     "lc_dn_matrix": "escape",
-    "courtship_song_chain": "courtship"
+    "courtship_song_chain": "courtship",
+    "leg_mn_size_principle": "locomotion"
   },
   "skipped": {},
   "controls": [
     "rewired"
   ],
-  "specificity": 0.19885461760461762,
+  "specificity": 0.17571601104209802,
   "non_diagnostic": [],
   "tier": [
     "core",
@@ -81,9 +82,9 @@
     "extra": {}
   },
   "simulator": "flybench.sim.LIFSimulator",
-  "score": 0.6295093795093796,
+  "score": 0.6021394064872326,
   "passed": 2,
-  "n_tasks": 22,
+  "n_tasks": 23,
   "tasks": [
     {
       "task": "stability",
@@ -142,7 +143,7 @@
       },
       "readout_size": 176422,
       "stimulus_sizes": {},
-      "seconds": 4.3665337562561035,
+      "seconds": 4.639591455459595,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -247,7 +248,7 @@
       "stimulus_sizes": {
         "sugar_grn": 34
       },
-      "seconds": 29.5220685005188,
+      "seconds": 32.57288932800293,
       "notes": [],
       "graded": 0.8089651361434211,
       "graded_per_seed": [
@@ -332,7 +333,7 @@
         "sugar_grn": 34,
         "bitter_grn": 38
       },
-      "seconds": 39.195261001586914,
+      "seconds": 43.64528512954712,
       "notes": [
         "seed-sensitive: check 1: passes on 2/3 seeds"
       ],
@@ -437,7 +438,7 @@
       "stimulus_sizes": {
         "looming_detectors": 311
       },
-      "seconds": 15.350999116897583,
+      "seconds": 15.540700435638428,
       "notes": [],
       "graded": 0.8051451865640634,
       "graded_per_seed": [
@@ -513,7 +514,7 @@
       "stimulus_sizes": {
         "bitter_grn": 38
       },
-      "seconds": 23.6639621257782,
+      "seconds": 24.709599018096924,
       "notes": [],
       "graded": 0.2181450726470243,
       "graded_per_seed": [
@@ -662,7 +663,7 @@
       "stimulus_sizes": {
         "sugar_grn": 34
       },
-      "seconds": 47.05982041358948,
+      "seconds": 45.28938698768616,
       "notes": [],
       "graded": 0.7309693490418252,
       "graded_per_seed": [
@@ -739,7 +740,7 @@
         "pulse1": 34,
         "pulse2": 34
       },
-      "seconds": 30.416637182235718,
+      "seconds": 68.47906422615051,
       "notes": [
         "seed-sensitive: check 1: passes on 1/3 seeds"
       ],
@@ -867,7 +868,7 @@
       "stimulus_sizes": {
         "da1_orn": 204
       },
-      "seconds": 21.973012447357178,
+      "seconds": 39.802929401397705,
       "notes": [],
       "graded": 0.5651033738467466,
       "graded_per_seed": [
@@ -994,7 +995,7 @@
         "sugar_grn": 34,
         "looming_detectors": 311
       },
-      "seconds": 35.053277254104614,
+      "seconds": 132.89135193824768,
       "notes": [],
       "graded": 0.7504511567475568,
       "graded_per_seed": [
@@ -1105,7 +1106,7 @@
       "stimulus_sizes": {
         "looming_detectors": 311
       },
-      "seconds": 15.454858303070068,
+      "seconds": 42.99532985687256,
       "notes": [],
       "graded": 0.7101134909332251,
       "graded_per_seed": [
@@ -1202,7 +1203,7 @@
       "stimulus_sizes": {
         "photoreceptors": 6091
       },
-      "seconds": 14.268372297286987,
+      "seconds": 38.12821698188782,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -1318,7 +1319,7 @@
       "stimulus_sizes": {
         "sugar_grn": 34
       },
-      "seconds": 48.84901738166809,
+      "seconds": 242.1705720424652,
       "notes": [
         "seed-sensitive: check 1: passes on 1/3 seeds"
       ],
@@ -1466,7 +1467,7 @@
         "looming_detectors": 311,
         "sugar_grn": 34
       },
-      "seconds": 29.336071491241455,
+      "seconds": 94.57091307640076,
       "notes": [
         "seed-sensitive: check 4: passes on 1/3 seeds"
       ],
@@ -1624,7 +1625,7 @@
         "sugar_grn": 34,
         "looming_detectors": 311
       },
-      "seconds": 37.66828775405884,
+      "seconds": 114.55142450332642,
       "notes": [],
       "graded": 0.7620381749956531,
       "graded_per_seed": [
@@ -1805,7 +1806,7 @@
         "looming_detectors": 311,
         "sugar_grn": 34
       },
-      "seconds": 35.056418895721436,
+      "seconds": 109.5998432636261,
       "notes": [],
       "graded": 0.8340723314300736,
       "graded_per_seed": [
@@ -2031,7 +2032,7 @@
         "loom_left": 165,
         "loom_right": 146
       },
-      "seconds": 30.897592306137085,
+      "seconds": 73.94789958000183,
       "notes": [],
       "graded": 0.6439541396510844,
       "graded_per_seed": [
@@ -2218,7 +2219,7 @@
       "stimulus_sizes": {
         "da1_orn": 204
       },
-      "seconds": 43.94633865356445,
+      "seconds": 137.70155954360962,
       "notes": [],
       "graded": 0.4520267386128507,
       "graded_per_seed": [
@@ -2490,7 +2491,7 @@
         "orn_va1v": 130,
         "orn_dc1": 32
       },
-      "seconds": 118.94847130775452,
+      "seconds": 277.1978921890259,
       "notes": [],
       "graded": 0.6359820785267859,
       "graded_per_seed": [
@@ -2608,7 +2609,7 @@
       "stimulus_sizes": {
         "looming_detectors": 311
       },
-      "seconds": 10.300056219100952,
+      "seconds": 27.15684747695923,
       "notes": [],
       "graded": 0.5226351469055932,
       "graded_per_seed": [
@@ -2748,7 +2749,7 @@
         "water_grn": 17,
         "high_salt_grn": 26
       },
-      "seconds": 74.50824284553528,
+      "seconds": 244.11133646965027,
       "notes": [
         "seed-sensitive: check 1: passes on 1/3 seeds"
       ],
@@ -3173,7 +3174,7 @@
         "lc16": 182,
         "lc10a": 275
       },
-      "seconds": 59.28997468948364,
+      "seconds": 179.52414727210999,
       "notes": [],
       "graded": 0.8602371981313907,
       "graded_per_seed": [
@@ -3405,7 +3406,7 @@
         "pip10_left": 1,
         "pip10_right": 1
       },
-      "seconds": 42.898032665252686,
+      "seconds": 134.95758843421936,
       "notes": [],
       "graded": 0.81884908886498,
       "graded_per_seed": [
@@ -3420,6 +3421,103 @@
         }
       },
       "specificity": 0.5,
+      "non_diagnostic": false
+    },
+    {
+      "task": "leg_mn_size_principle",
+      "title": "A ramping common drive recruits the front-leg motor neurons smallest first",
+      "passed": false,
+      "score": 0.0,
+      "checks": [
+        {
+          "description": "rank order[ramp, leg_t1l] rho(input synapses, recruitment time) > 0.5  [0/3 seeds, sd 0.0721]",
+          "value": -0.759132947399274,
+          "passed": false,
+          "margin": -2.6989700043360187,
+          "basis": "Azevedo et al. 2020: tibia flexor MNs are recruited smallest (slow) first, largest (fast) last, the Henneman 1957 size principle; size = total input synapse count (Lesser et al. 2024: r = 0.94 with MN surface area; convention); rho > 0.5 is the task-16 DSI < 0.5 rule applied to a rank correlation (convention)",
+          "graded": 3.999984000064e-06,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            -0.8076667892543838,
+            -0.6572508429380446,
+            -0.8124812100053936
+          ],
+          "op": ">",
+          "target": 0.5,
+          "saturated": false
+        },
+        {
+          "description": "readout active fraction[ramp, leg_t1l] >= 0.8  [0/3 seeds, sd 0.0248]",
+          "value": 0.47368421052631576,
+          "passed": false,
+          "margin": -0.2276010785054477,
+          "basis": "convention: the ramp must recruit the pool (Azevedo et al. 2020: all three flexor MNs are active at high force) so that the order is measured over the pool and not over a handful of cells; 0.8 leaves room for MNs with no premotor input in the reconstruction",
+          "graded": 0.2595821048583515,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.49122807017543857,
+            0.43859649122807015,
+            0.49122807017543857
+          ],
+          "op": ">=",
+          "target": 0.8,
+          "saturated": false
+        },
+        {
+          "description": "recruitment spread[ramp, leg_t1l] > 50.0 ms  [2/3 seeds, sd 56.7]",
+          "value": 113.76666005452473,
+          "passed": false,
+          "margin": 0.35704500398167277,
+          "basis": "Azevedo et al. 2020: slow, intermediate and fast MNs have distinct force thresholds, i.e. distinct recruitment times on a ramp; an interquartile range above 50 ms (5 % of the ramp) separates graded recruitment from a single all-at-once ignition (convention)",
+          "graded": 0.8381128144055107,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            173.27499389648438,
+            37.5,
+            130.52498626708984
+          ],
+          "op": ">",
+          "target": 50.0,
+          "saturated": false
+        }
+      ],
+      "measurements": {
+        "ramp": {
+          "rate": 60.29824561403509,
+          "network_rate": 13.108663696515551,
+          "active_fraction": 0.12355224027237721,
+          "spikes": 2312955.0,
+          "rate[leg_t1l]": 60.29824561403509,
+          "readout_active_fraction[leg_t1l]": 0.47368421052631576
+        }
+      },
+      "readout_size": 57,
+      "stimulus_sizes": {
+        "premotor": 664
+      },
+      "seconds": 107.50067138671875,
+      "notes": [
+        "seed-sensitive: check 2: passes on 2/3 seeds"
+      ],
+      "graded": 0.3259887868448971,
+      "graded_per_seed": [
+        0.3989808053890258,
+        0.19703742812800196,
+        0.3819481270176635
+      ],
+      "controls": {
+        "rewired": {
+          "score": 0.3333333333333333,
+          "passed": false
+        }
+      },
+      "specificity": -0.3333333333333333,
       "non_diagnostic": false
     }
   ],
