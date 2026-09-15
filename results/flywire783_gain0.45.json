@@ -4,24 +4,24 @@
   "seeds": 3,
   "verified": false,
   "core_score": 1.0,
-  "hard_score": 0.5290608465608465,
+  "hard_score": 0.5350570436507937,
   "core_by_circuit": 1.0,
-  "hard_by_circuit": 0.5316869803476947,
-  "graded": 0.7098812096933675,
+  "hard_by_circuit": 0.5450325963718821,
+  "graded": 0.689812662417008,
   "graded_ci95": [
-    0.7009828731822396,
-    0.7199353075424078
+    0.6819575802233626,
+    0.6997378359771401
   ],
   "core_graded": 0.9474488931829368,
-  "hard_graded": 0.5675416396469392,
+  "hard_graded": 0.5626407365223438,
   "profile": {
-    "-1": 0.7244897959183674,
-    "-0.5": 0.7040816326530612,
-    "-0.25": 0.6632653061224489,
-    "0": 0.6326530612244898,
-    "0.25": 0.5612244897959183,
-    "0.5": 0.5306122448979592,
-    "1": 0.5102040816326531
+    "-1": 0.7452830188679245,
+    "-0.5": 0.7264150943396226,
+    "-0.25": 0.660377358490566,
+    "0": 0.6320754716981132,
+    "0.25": 0.5377358490566038,
+    "0.5": 0.49056603773584906,
+    "1": 0.4716981132075472
   },
   "circuits": {
     "stability": "stability",
@@ -43,7 +43,8 @@
     "da1_sparseness": "olfaction",
     "lc_dn_matrix": "escape",
     "optic_flow_rotation": "optic_flow",
-    "antennal_grooming_vs_backward": "grooming"
+    "antennal_grooming_vs_backward": "grooming",
+    "mb_sparseness_apl": "olfaction"
   },
   "skipped": {
     "looming_to_jump_muscle": "readout 'ttmn' matches no neurons on flywire783",
@@ -55,7 +56,7 @@
   "controls": [
     "rewired"
   ],
-  "specificity": 0.17932539682539686,
+  "specificity": 0.18269085411942557,
   "non_diagnostic": [],
   "tier": [
     "core",
@@ -85,9 +86,9 @@
     "extra": {}
   },
   "simulator": "flybench.sim.LIFSimulator",
-  "score": 0.646795634920635,
+  "score": 0.6457577475434618,
   "passed": 7,
-  "n_tasks": 20,
+  "n_tasks": 21,
   "tasks": [
     {
       "task": "stability",
@@ -146,7 +147,7 @@
       },
       "readout_size": 139255,
       "stimulus_sizes": {},
-      "seconds": 4.146296977996826,
+      "seconds": 10.029772281646729,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -251,7 +252,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 34.191752672195435,
+      "seconds": 73.43906569480896,
       "notes": [],
       "graded": 0.8547046867837924,
       "graded_per_seed": [
@@ -336,7 +337,7 @@
         "sugar_grn": 129,
         "bitter_grn": 65
       },
-      "seconds": 42.91584277153015,
+      "seconds": 91.86118030548096,
       "notes": [],
       "graded": 0.9997156432785514,
       "graded_per_seed": [
@@ -439,7 +440,7 @@
       "stimulus_sizes": {
         "looming_detectors": 314
       },
-      "seconds": 17.812037467956543,
+      "seconds": 36.9619255065918,
       "notes": [],
       "graded": 0.8878267508943137,
       "graded_per_seed": [
@@ -515,7 +516,7 @@
       "stimulus_sizes": {
         "bitter_grn": 65
       },
-      "seconds": 14.534340858459473,
+      "seconds": 34.95354247093201,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -666,7 +667,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 49.346476793289185,
+      "seconds": 110.51618766784668,
       "notes": [
         "seed-sensitive: check 0: passes on 1/3 seeds"
       ],
@@ -745,7 +746,7 @@
         "pulse1": 129,
         "pulse2": 129
       },
-      "seconds": 36.73888325691223,
+      "seconds": 84.19330835342407,
       "notes": [],
       "graded": 0.49991747242872503,
       "graded_per_seed": [
@@ -871,7 +872,7 @@
       "stimulus_sizes": {
         "da1_orn": 127
       },
-      "seconds": 22.909924507141113,
+      "seconds": 50.08182191848755,
       "notes": [],
       "graded": 0.5972129056390362,
       "graded_per_seed": [
@@ -998,7 +999,7 @@
         "sugar_grn": 129,
         "looming_detectors": 314
       },
-      "seconds": 49.62807846069336,
+      "seconds": 94.40647077560425,
       "notes": [],
       "graded": 0.9998342392767291,
       "graded_per_seed": [
@@ -1109,7 +1110,7 @@
       "stimulus_sizes": {
         "looming_detectors": 314
       },
-      "seconds": 17.22069787979126,
+      "seconds": 33.70186376571655,
       "notes": [],
       "graded": 0.7312563216480612,
       "graded_per_seed": [
@@ -1206,7 +1207,7 @@
       "stimulus_sizes": {
         "photoreceptors": 11153
       },
-      "seconds": 12.241559982299805,
+      "seconds": 38.66221046447754,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -1322,7 +1323,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 54.18279242515564,
+      "seconds": 124.69938397407532,
       "notes": [],
       "graded": 0.2546784676665634,
       "graded_per_seed": [
@@ -1468,7 +1469,7 @@
         "looming_detectors": 314,
         "sugar_grn": 129
       },
-      "seconds": 30.61300563812256,
+      "seconds": 68.34849786758423,
       "notes": [],
       "graded": 0.6296693765754758,
       "graded_per_seed": [
@@ -1624,7 +1625,7 @@
         "sugar_grn": 129,
         "looming_detectors": 314
       },
-      "seconds": 41.53407430648804,
+      "seconds": 98.61263108253479,
       "notes": [
         "seed-sensitive: check 1: passes on 2/3 seeds"
       ],
@@ -1852,7 +1853,7 @@
         "loom_left": 162,
         "loom_right": 152
       },
-      "seconds": 30.43199324607849,
+      "seconds": 72.80631232261658,
       "notes": [],
       "graded": 0.44444433333344446,
       "graded_per_seed": [
@@ -2039,7 +2040,7 @@
       "stimulus_sizes": {
         "da1_orn": 127
       },
-      "seconds": 43.98982882499695,
+      "seconds": 96.55384683609009,
       "notes": [
         "seed-sensitive: check 2: passes on 1/3 seeds; check 4: passes on 1/3 seeds"
       ],
@@ -2313,7 +2314,7 @@
         "orn_va1v": 94,
         "orn_dc1": 39
       },
-      "seconds": 117.42052268981934,
+      "seconds": 241.73327922821045,
       "notes": [],
       "graded": 0.11105225523809181,
       "graded_per_seed": [
@@ -2736,7 +2737,7 @@
         "lc16": 152,
         "lc10a": 237
       },
-      "seconds": 59.049644947052,
+      "seconds": 130.43962931632996,
       "notes": [
         "seed-sensitive: check 7: passes on 1/3 seeds"
       ],
@@ -2933,7 +2934,7 @@
         "hs_right": 3,
         "h2_left": 1
       },
-      "seconds": 51.97078990936279,
+      "seconds": 121.65985059738159,
       "notes": [],
       "graded": 0.7768232357694264,
       "graded_per_seed": [
@@ -3060,7 +3061,7 @@
         "jo_ce": 433,
         "jo_f": 205
       },
-      "seconds": 31.171515226364136,
+      "seconds": 68.65636563301086,
       "notes": [
         "seed-sensitive: check 1: passes on 2/3 seeds"
       ],
@@ -3077,6 +3078,363 @@
         }
       },
       "specificity": -0.25,
+      "non_diagnostic": false
+    },
+    {
+      "task": "mb_sparseness_apl",
+      "title": "Kenyon cell odour responses are sparse, and less sparse without APL",
+      "passed": false,
+      "score": 0.625,
+      "checks": [
+        {
+          "description": "readout active fraction[cva, kc] < 0.2  [0/3 seeds, sd 9.11e-05]",
+          "value": 0.6019573755714377,
+          "passed": false,
+          "margin": -0.478535744415268,
+          "basis": "Honegger et al. 2011: an odour activates ~5 % of Kenyon cells (population imaging); Turner et al. 2008: ~6 %; 0.2 is a convention loosened for a model whose odour is one whole glomerulus at 100 Hz",
+          "graded": 0.09941526871571232,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.6020861502800849,
+            0.6018929882171141,
+            0.6018929882171141
+          ],
+          "op": "<",
+          "target": 0.2,
+          "saturated": false
+        },
+        {
+          "description": "readout active fraction[dm4, kc] < 0.2  [0/3 seeds, sd 9.11e-05]",
+          "value": 0.6006052411306421,
+          "passed": false,
+          "margin": -0.47755912204943934,
+          "basis": "Honegger et al. 2011: an odour activates ~5 % of Kenyon cells (population imaging); Turner et al. 2008: ~6 %; 0.2 is a convention loosened for a model whose odour is one whole glomerulus at 100 Hz",
+          "graded": 0.09981866550095721,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.6007340158392892,
+            0.6005408537763184,
+            0.6005408537763184
+          ],
+          "op": "<",
+          "target": 0.2,
+          "saturated": false
+        },
+        {
+          "description": "readout active fraction[va1v, kc] < 0.2  [0/3 seeds, sd 0.000158]",
+          "value": 0.606722039791385,
+          "passed": false,
+          "margin": -0.4819597757526676,
+          "basis": "Honegger et al. 2011: an odour activates ~5 % of Kenyon cells (population imaging); Turner et al. 2008: ~6 %; 0.2 is a convention loosened for a model whose odour is one whole glomerulus at 100 Hz",
+          "graded": 0.0980123983485379,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.606722039791385,
+            0.6065288777284141,
+            0.6069152018543558
+          ],
+          "op": "<",
+          "target": 0.2,
+          "saturated": false
+        },
+        {
+          "description": "readout active fraction[cva_apl_off, kc] / readout active fraction[cva] > 1.0  [3/3 seeds, sd 0.000131]",
+          "value": 1.4740226706978243,
+          "passed": true,
+          "margin": 0.16850416309104554,
+          "basis": "Lin et al. 2014: blocking APL output increases KC odour responses and the fraction of responding KCs (population sparseness falls); > 1 is the task-18 convention for a direction",
+          "graded": 0.6848152994410833,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            1.474028218131131,
+            1.4741800929585218,
+            1.4738597010038201
+          ],
+          "op": ">",
+          "target": 1.0,
+          "saturated": false
+        },
+        {
+          "description": "readout active fraction[dm4_apl_off, kc] / readout active fraction[dm4] > 1.0  [3/3 seeds, sd 0.000344]",
+          "value": 1.4760513253413177,
+          "passed": true,
+          "margin": 0.16910145906220675,
+          "basis": "Lin et al. 2014: blocking APL output increases KC odour responses and the fraction of responding KCs (population sparseness falls); > 1 is the task-18 convention for a direction",
+          "graded": 0.6854087067016718,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            1.4757354076509939,
+            1.4765303963133758,
+            1.475888172059584
+          ],
+          "op": ">",
+          "target": 1.0,
+          "saturated": false
+        },
+        {
+          "description": "readout active fraction[va1v_apl_off, kc] / readout active fraction[va1v] > 1.0  [3/3 seeds, sd 0.000557]",
+          "value": 1.4637375507090615,
+          "passed": true,
+          "margin": 0.16546321436130745,
+          "basis": "Lin et al. 2014: blocking APL output increases KC odour responses and the fraction of responding KCs (population sparseness falls); > 1 is the task-18 convention for a direction",
+          "graded": 0.6817848172671155,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            1.464055264532161,
+            1.4642028095716075,
+            1.4629545780234159
+          ],
+          "op": ">",
+          "target": 1.0,
+          "saturated": false
+        },
+        {
+          "description": "population sparseness[cva, kc] / population sparseness[cva_apl_off] > 1.0  [3/3 seeds, sd 0.000338]",
+          "value": 1.8926357168984331,
+          "passed": true,
+          "margin": 0.27706703162614965,
+          "basis": "Lin et al. 2014: APL block decreases the population sparseness of KC odour responses (Willmore & Tolhurst 2001 sparseness across KCs); > 1 is the task-18 convention for a direction",
+          "graded": 0.7817580243403808,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            1.8931074423781669,
+            1.892465531190601,
+            1.8923341771265312
+          ],
+          "op": ">",
+          "target": 1.0,
+          "saturated": false
+        },
+        {
+          "description": "population sparseness[dm4, kc] / population sparseness[dm4_apl_off] > 1.0  [3/3 seeds, sd 0.000304]",
+          "value": 1.8940033641084186,
+          "passed": true,
+          "margin": 0.27738074605713064,
+          "basis": "Lin et al. 2014: APL block decreases the population sparseness of KC odour responses (Willmore & Tolhurst 2001 sparseness across KCs); > 1 is the task-18 convention for a direction",
+          "graded": 0.7820044091852231,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            1.8938981934501413,
+            1.8944167339193818,
+            1.8936951649557328
+          ],
+          "op": ">",
+          "target": 1.0,
+          "saturated": false
+        }
+      ],
+      "measurements": {
+        "cva": {
+          "rate": 46.80458437962784,
+          "network_rate": 9.421880722415713,
+          "active_fraction": 0.08212272449822268,
+          "spikes": 951347.0,
+          "rate[kc]": 46.80458437962784,
+          "readout_active_fraction[kc]": 0.6019573755714377,
+          "rate[apl]": 419.0,
+          "readout_active_fraction[apl]": 1.0
+        },
+        "cva_apl_off": {
+          "rate": 97.53151760994142,
+          "network_rate": 11.482613430995896,
+          "active_fraction": 0.09352387107584408,
+          "spikes": 1157145.0,
+          "rate[kc]": 97.53151760994142,
+          "readout_active_fraction[kc]": 0.8877728414139464,
+          "rate[apl]": 419.0,
+          "readout_active_fraction[apl]": 1.0
+        },
+        "dm1": {
+          "rate": 46.84501963814307,
+          "network_rate": 9.429478295213817,
+          "active_fraction": 0.08168467918566659,
+          "spikes": 951757.6666666666,
+          "rate[kc]": 46.84501963814307,
+          "readout_active_fraction[kc]": 0.6005408537763184,
+          "rate[apl]": 420.0,
+          "readout_active_fraction[apl]": 1.0
+        },
+        "dm1_apl_off": {
+          "rate": 97.78365848947266,
+          "network_rate": 11.49412229363398,
+          "active_fraction": 0.09327492729165919,
+          "spikes": 1157889.0,
+          "rate[kc]": 97.78365848947266,
+          "readout_active_fraction[kc]": 0.8871933552250338,
+          "rate[apl]": 420.0,
+          "readout_active_fraction[apl]": 1.0
+        },
+        "dm2": {
+          "rate": 46.71933552250338,
+          "network_rate": 9.378851746795448,
+          "active_fraction": 0.08345840364798392,
+          "spikes": 950610.3333333334,
+          "rate[kc]": 46.71933552250338,
+          "readout_active_fraction[kc]": 0.6018929882171141,
+          "rate[apl]": 417.6666666666667,
+          "readout_active_fraction[apl]": 1.0
+        },
+        "dm2_apl_off": {
+          "rate": 96.83510398557723,
+          "network_rate": 11.341064952784459,
+          "active_fraction": 0.09307146362189268,
+          "spikes": 1147179.6666666667,
+          "rate[kc]": 96.83510398557723,
+          "readout_active_fraction[kc]": 0.8875152919966519,
+          "rate[apl]": 417.6666666666667,
+          "readout_active_fraction[apl]": 1.0
+        },
+        "dm4": {
+          "rate": 46.53351361792544,
+          "network_rate": 9.325979916938948,
+          "active_fraction": 0.08149318396706282,
+          "spikes": 944679.6666666666,
+          "rate[kc]": 46.53351361792544,
+          "readout_active_fraction[kc]": 0.6006052411306421,
+          "rate[apl]": 416.3333333333333,
+          "readout_active_fraction[apl]": 1.0
+        },
+        "dm4_apl_off": {
+          "rate": 97.03521988281501,
+          "network_rate": 11.376879346043829,
+          "active_fraction": 0.09296374756142807,
+          "spikes": 1149765.3333333333,
+          "rate[kc]": 97.03521988281501,
+          "readout_active_fraction[kc]": 0.8870001931620631,
+          "rate[apl]": 416.3333333333333,
+          "readout_active_fraction[apl]": 1.0
+        },
+        "dl1": {
+          "rate": 46.25729186787715,
+          "network_rate": 9.328727873325912,
+          "active_fraction": 0.08357808815961126,
+          "spikes": 946913.0,
+          "rate[kc]": 46.25729186787715,
+          "readout_active_fraction[kc]": 0.6004120790676711,
+          "rate[apl]": 417.6666666666667,
+          "readout_active_fraction[apl]": 1.0
+        },
+        "dl1_apl_off": {
+          "rate": 96.83317236494753,
+          "network_rate": 11.3391117015547,
+          "active_fraction": 0.09323662824793844,
+          "spikes": 1147073.0,
+          "rate[kc]": 96.83317236494753,
+          "readout_active_fraction[kc]": 0.8872577425793575,
+          "rate[apl]": 417.6666666666667,
+          "readout_active_fraction[apl]": 1.0
+        },
+        "dl5": {
+          "rate": 46.29077329212543,
+          "network_rate": 9.286962766148433,
+          "active_fraction": 0.08169425394659675,
+          "spikes": 942052.3333333334,
+          "rate[kc]": 46.29077329212543,
+          "readout_active_fraction[kc]": 0.6005408537763184,
+          "rate[apl]": 415.0,
+          "readout_active_fraction[apl]": 1.0
+        },
+        "dl5_apl_off": {
+          "rate": 96.61644453029425,
+          "network_rate": 11.335971179969599,
+          "active_fraction": 0.09308582576328799,
+          "spikes": 1146785.0,
+          "rate[kc]": 96.61644453029425,
+          "readout_active_fraction[kc]": 0.8872577425793574,
+          "rate[apl]": 415.0,
+          "readout_active_fraction[apl]": 1.0
+        },
+        "va1v": {
+          "rate": 46.92743545167729,
+          "network_rate": 9.275568800641508,
+          "active_fraction": 0.08209639390566466,
+          "spikes": 941364.6666666666,
+          "rate[kc]": 46.92743545167729,
+          "readout_active_fraction[kc]": 0.606722039791385,
+          "rate[apl]": 411.6666666666667,
+          "readout_active_fraction[apl]": 1.0
+        },
+        "va1v_apl_off": {
+          "rate": 96.99414075075656,
+          "network_rate": 11.337254197934245,
+          "active_fraction": 0.0935047215539837,
+          "spikes": 1147171.0,
+          "rate[kc]": 96.99414075075656,
+          "readout_active_fraction[kc]": 0.8885454896658297,
+          "rate[apl]": 411.6666666666667,
+          "readout_active_fraction[apl]": 1.0
+        },
+        "dc1": {
+          "rate": 46.59712832399717,
+          "network_rate": 9.332012016324967,
+          "active_fraction": 0.08164159276148074,
+          "spikes": 945156.6666666666,
+          "rate[kc]": 46.59712832399717,
+          "readout_active_fraction[kc]": 0.600412079067671,
+          "rate[apl]": 418.6666666666667,
+          "readout_active_fraction[apl]": 1.0
+        },
+        "dc1_apl_off": {
+          "rate": 97.36565578520378,
+          "network_rate": 11.408859047550656,
+          "active_fraction": 0.09304273933910212,
+          "spikes": 1151848.0,
+          "rate[kc]": 97.36565578520378,
+          "readout_active_fraction[kc]": 0.8870001931620629,
+          "rate[apl]": 418.6666666666667,
+          "readout_active_fraction[apl]": 1.0
+        }
+      },
+      "readout_size": 5177,
+      "stimulus_sizes": {
+        "orn_da1": 127,
+        "silence[cva_apl_off]": 2,
+        "orn_dm1": 68,
+        "silence[dm1_apl_off]": 2,
+        "orn_dm2": 54,
+        "silence[dm2_apl_off]": 2,
+        "orn_dm4": 40,
+        "silence[dm4_apl_off]": 2,
+        "orn_dl1": 69,
+        "silence[dl1_apl_off]": 2,
+        "orn_dl5": 42,
+        "silence[dl5_apl_off]": 2,
+        "orn_va1v": 94,
+        "silence[va1v_apl_off]": 2,
+        "orn_dc1": 39,
+        "silence[dc1_apl_off]": 2
+      },
+      "seconds": 317.8290195465088,
+      "notes": [],
+      "graded": 0.4891271896534126,
+      "graded_per_seed": [
+        0.48912629226908133,
+        0.48918499335519805,
+        0.48907028333595853
+      ],
+      "controls": {
+        "rewired": {
+          "score": 0.375,
+          "passed": false
+        }
+      },
+      "specificity": 0.25,
       "non_diagnostic": false
     }
   ],

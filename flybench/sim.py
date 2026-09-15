@@ -100,6 +100,11 @@ class SimResult:
 
 
 class LIFSimulator:
+    # what this simulator can do beyond "run a connectome" (CONTRIBUTING.md §3). A task may list
+    # `requires_capabilities`; a simulator that does not declare them skips the task, not fails it.
+    #   can_silence: the task may hand it a connectome with some neurons' outgoing weights zeroed
+    capabilities: frozenset = frozenset({"can_silence"})
+
     def __init__(self, connectome: Connectome, params: LIFParams | None = None):
         self.c = connectome
         self.p = params or LIFParams()

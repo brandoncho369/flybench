@@ -6,10 +6,11 @@ from pathlib import Path
 
 import yaml
 
-from .bench import KNOWN_DATASETS, MATRIX_SIGNS, MATRIX_UNSCORED, OPS, RANK_ATTRIBUTES, expand_checks
+from .bench import KNOWN_CAPABILITIES, KNOWN_DATASETS, MATRIX_SIGNS, MATRIX_UNSCORED, OPS, RANK_ATTRIBUTES, expand_checks
 
 METRICS = {"rate", "network_rate", "active_fraction", "readout_active_fraction", "ratio", "spikes_per_neuron", "lifetime_sparseness", "latency",
-           "rank_order", "recruitment_spread"}
+           "rank_order", "recruitment_spread", "population_sparseness"}
+RATIO_METRICS = {"rate", "readout_active_fraction", "spikes_per_neuron", "population_sparseness"}
 CELL_METRICS = {"rate", "readout_active_fraction", "spikes_per_neuron"}   # what a matrix cell may measure
 CIRCUITS = {"stability", "taste", "escape", "olfaction", "physiology", "robustness", "courtship", "locomotion", "optic_flow", "grooming"}
 REQUIRED = {"name", "title", "conditions", "checks"}
@@ -44,7 +45,16 @@ def lint_task(task: dict, source: str = "<task>") -> list[str]:
     if not isinstance(conds, dict) or not conds:
         errs.append("conditions must be a non-empty mapping")
         return errs
+    needs_silence = any(isinstance(cond, dict) and cond.get("silence") is not None for cond in conds.values())
+    caps = task.get("requires_capabilities", []) or []
+    for cap in caps:
+        if cap not in KNOWN_CAPABILITIES:
+            errs.append(f"requires_capabilities: {cap!r} is not a known capability {KNOWN_CAPABILITIES}")
+    if needs_silence and "can_silence" not in caps:
+        errs.append("a condition silences neurons: add `requires_capabilities: [can_silence]` so simulators that cannot do it skip the task")
     for cname, cond in conds.items():
+        if cond.get("silence") is not None and not isinstance(cond["silence"], (dict, str, list)):
+            errs.append(f"{cname}: silence must be a selector")
         jit = cond.get("weight_jitter", 0)
         if not (isinstance(jit, (int, float)) and 0 <= jit <= 1):
             errs.append(f"{cname}: weight_jitter must be a number in [0, 1] (lognormal sigma)")
@@ -158,10 +168,12 @@ def lint_task(task: dict, source: str = "<task>") -> list[str]:
             errs.append(f"check {i}: k (z-score pass width) must be a positive number")
         if typ == "ratio" and chk.get("over") not in conds:
             errs.append(f"check {i}: over {chk.get('over')!r} is not a condition")
+        if typ == "ratio" and chk.get("metric", "rate") not in RATIO_METRICS:
+            errs.append(f"check {i}: ratio metric must be one of {sorted(RATIO_METRICS)}")
         # network-level metrics ignore readouts; readout metrics default to the task's first readout (runtime does the same)
         if typ == "latency" and "from" in chk and chk["from"] not in readouts:
             errs.append(f"check {i}: latency `from` {chk['from']!r} is not a defined readout")
-        if typ in ("rate", "ratio", "readout_active_fraction", "lifetime_sparseness", "latency", "rank_order", "recruitment_spread") and "readout" in chk and chk["readout"] not in readouts:
+        if typ in ("rate", "ratio", "readout_active_fraction", "lifetime_sparseness", "latency", "rank_order", "recruitment_spread", "population_sparseness") and "readout" in chk and chk["readout"] not in readouts:
             errs.append(f"check {i}: readout {chk['readout']!r} not defined")
         if typ == "rank_order" and chk.get("by", "input_synapses") not in RANK_ATTRIBUTES:
             errs.append(f"check {i}: rank_order `by` must be one of {RANK_ATTRIBUTES}")

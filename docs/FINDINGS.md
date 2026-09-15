@@ -234,3 +234,30 @@ rewired 1/4, specificity −0.25; **MaleCNS 1/4**, rewired 1/4. Runs took 12 and
 
 Housekeeping: new `grooming` circuit; FlyWire graded 0.733 → 0.710, MaleCNS 0.709 → 0.698; the
 24 older tasks are bit-identical on both.
+
+## 2026-09-15 — task 26 (MB sparseness with APL, first silencing task): the APL loop works on both brains; sparseness does not, for task 18's reason
+
+Lin 2014's APL result as task 26 (docs/rfcs/26), with the first condition-level `silence:` (outgoing
+synapses zeroed, the in silico shibire) and the first `requires_capabilities: [can_silence]` —
+simulators declare capabilities and skip what they cannot do. Eight odours × {intact, APL off}
+over every KC (5,177 / 4,064). **5/8 on both brains**, rewired 3/8 (the three nulls), specificity
++0.25. FlyWire exactly as pre-registered; MaleCNS predicted 0–2/8.
+
+- **APL's normalisation is in the wiring and the uniform LIF reproduces it**: silencing APL takes
+  the responding fraction from 60 % → 89 % of KCs on FlyWire (KC rate 47 → 98 Hz) and 85 % →
+  99.7 % on MaleCNS (148 → 310 Hz), and halves / thirds the population sparseness. APL sits at
+  its ceiling (419 Hz) driven by the population, as Lin 2014 describe. Three seeds agree to four
+  decimals: a 5,000-cell readout averages the noise out.
+- **Sparseness itself fails on both** (60 % / 85 % active for one glomerulus, the fly's 5 %): the
+  model's antennal lobe broadcasts (task 18: one glomerulus → 84 % of PNs), so every KC sees most
+  of its PN input. A model with antennal-lobe lateral inhibition is the one that could pass 1–3;
+  APL alone cannot rescue a broadcast.
+- MaleCNS's shuffle passed the nulls too: random wiring did not deliver an ORN drive to 4,000 KCs
+  at 0.65, unlike to single descending neurons (RFC 21). The "random wiring conducts at 0.65"
+  floor is target-size-dependent.
+
+Housekeeping: `ratio` checks take a `metric` (rate, readout_active_fraction, spikes_per_neuron,
+population_sparseness); new `population_sparseness` metric (Willmore–Tolhurst across neurons);
+inter-odour correlation deliberately not scored (single-glomerulus odours give disjoint KC sets by
+construction — verified on the toy). FlyWire graded 0.710 → 0.690, MaleCNS 0.698 → 0.689; 25
+older tasks bit-identical on both.

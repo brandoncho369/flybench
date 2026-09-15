@@ -202,6 +202,14 @@ def _metric(res: SimResult, readout: np.ndarray, name: str, w0: float, w1: float
             return float("nan")
         m = (res.spike_times_ms >= w0) & (res.spike_times_ms < w1)
         return float(np.isin(res.spike_neurons[m], readout).sum() / readout.size)
+    if name == "population_sparseness":
+        # Willmore & Tolhurst 2001 sparseness of one condition's response *across the readout's
+        # neurons* (lifetime_sparseness is the same formula across conditions): 1 = one neuron
+        # carries all the spikes, 0 = every neuron fires equally; NaN if the readout is silent
+        if readout.size < 2:
+            return float("nan")
+        m = (res.spike_times_ms >= w0) & (res.spike_times_ms < w1)
+        return lifetime_sparseness(np.bincount(res.spike_neurons[m], minlength=res.n)[readout])
     raise ValueError(f"unknown metric {name}")
 
 
@@ -279,15 +287,31 @@ def lifetime_sparseness(rates: "np.ndarray") -> float:
 KNOWN_DATASETS = ("toy", "flywire783", "malecns")   # names `dataset_only` may list (connectome.name)
 
 
-def task_unavailable(task: dict, c: Connectome) -> str | None:
+KNOWN_CAPABILITIES = ("can_silence",)   # what `requires_capabilities` may list; simulators declare theirs in `.capabilities`
+
+
+def simulator_capabilities(simulator: Any) -> frozenset:
+    return frozenset(getattr(simulator, "capabilities", ()) or ())
+
+
+def task_unavailable(task: dict, c: Connectome, simulator: Any = None) -> str | None:
     """A task may declare `requires_readouts: [name, ...]`; if any of those readouts matches no
     neuron on this connectome, the task cannot be run here and is skipped (not failed).
     `dataset_only: [name, ...]` declares the task defined on those connectomes alone (a sexually
     dimorphic circuit, say): elsewhere it is "not applicable" — skipped before any selector runs,
-    and the reason says so, because "matches no neurons" would be the wrong story."""
+    and the reason says so, because "matches no neurons" would be the wrong story.
+    `requires_capabilities: [can_silence, ...]` names what the simulator must declare (its
+    `.capabilities`); a simulator without them skips the task."""
     only = task.get("dataset_only")
     if only and c.name not in list(only):
         return f"not applicable: {task['name']} is defined on {'/'.join(only)} only (this is {c.name})"
+    needed = set(task.get("requires_capabilities", []) or [])
+    if needed and simulator is not None:
+        have = simulator_capabilities(simulator)
+        missing = sorted(needed - have)
+        if missing:
+            sname = getattr(simulator, "__name__", type(simulator).__name__)
+            return f"simulator {sname} does not declare capability {', '.join(missing)}"
     for name in task.get("requires_readouts", []) or []:
         spec = task.get("readouts", {}).get(name) or (task.get("readout") if name == "default" else None)
         if spec is None:
@@ -304,6 +328,21 @@ def task_unavailable(task: dict, c: Connectome) -> str | None:
             if c.select(st["select"]).size == 0:
                 return f"stimulus {name!r} matches no neurons on {c.name}"
     return None
+
+
+def silence_neurons(c: Connectome, neurons: np.ndarray) -> Connectome:
+    """Same neurons, the selected ones' outgoing synapses zeroed: the neuron is still there and
+    still receives input (so its own readout stays defined), it just no longer talks — the in
+    silico analogue of blocking transmitter release (shibire / TNT), not of ablation."""
+    W = c.W.copy().tocsr()
+    idx = np.asarray(neurons, dtype=int)
+    if idx.size:
+        mask = np.zeros(c.n, dtype=bool); mask[idx] = True
+        rows = np.repeat(np.arange(c.n), np.diff(W.indptr))
+        W.data[mask[rows]] = 0.0
+        W.eliminate_zeros()
+    return Connectome(root_ids=c.root_ids, W=W, positions=c.positions, annotations=c.annotations, name=c.name,
+                      meta={**c.meta, "silenced": int(idx.size)})
 
 
 def perturb_weights(c: Connectome, sigma: float, seed: int) -> Connectome:
@@ -339,6 +378,7 @@ def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False
     window = task.get("window", [0, duration])
     sim = simulator(c, params)
     jittered: dict[float, Any] = {}
+    silenced: dict[tuple, Any] = {}      # (jitter, sorted silenced indices) -> simulator on the silenced wiring
 
     results: dict[str, SimResult] = {}
     measurements: dict[str, dict[str, float]] = {}
@@ -349,12 +389,24 @@ def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False
             if s.neurons.size == 0:
                 notes.append(f"{cond_name}: stimulus {s.name!r} matched 0 neurons")
         jit = float(cond.get("weight_jitter", 0.0))
-        if jit > 0:
+        if jit > 0 and jit not in jittered:
             # "a different individual": every synapse count scaled by an independent lognormal factor
             # (sigma = jit, in log units), same wiring diagram. Seeded so conditions are comparable.
-            if jit not in jittered:
-                jittered[jit] = simulator(perturb_weights(c, jit, params.seed), params)
-            res: SimResult = jittered[jit].run(duration, stims)
+            jittered[jit] = simulator(perturb_weights(c, jit, params.seed), params)
+        if cond.get("silence") is not None:
+            # `silence: <selector>`: those neurons' outgoing synapses are zeroed for this condition
+            # (silence_neurons); the task must list `requires_capabilities: [can_silence]`
+            sil = c.select(cond["silence"])
+            stim_sizes[f"silence[{cond_name}]"] = int(sil.size)
+            if sil.size == 0:
+                notes.append(f"{cond_name}: silence selector matched 0 neurons")
+            key = (jit, tuple(sil.tolist()))
+            if key not in silenced:
+                base = perturb_weights(c, jit, params.seed) if jit > 0 else c
+                silenced[key] = simulator(silence_neurons(base, sil), params)
+            res: SimResult = silenced[key].run(duration, stims)
+        elif jit > 0:
+            res = jittered[jit].run(duration, stims)
         else:
             res = sim.run(duration, stims)
         results[cond_name] = res
@@ -380,14 +432,16 @@ def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False
         rname = chk.get("readout", default_readout)
         ridx = readouts.get(rname, np.empty(0, dtype=int))
         w = chk.get("window", window)
-        per_readout = typ in ("rate", "ratio", "readout_active_fraction", "rank_order", "recruitment_spread") or "cell" in chk   # a matrix cell always names its readout
+        per_readout = typ in ("rate", "ratio", "readout_active_fraction", "rank_order", "recruitment_spread", "population_sparseness") or "cell" in chk   # a matrix cell always names its readout
         tag = f"[{chk.get('cond', '')}" + (f", {rname}" if (rname != "default" and per_readout) else "") + (f", {w[0]:g}-{w[1]:g}ms" if w != window else "") + "]"
         if typ == "ratio":
             w2 = chk.get("over_window", w)
-            a = _metric(results[chk["cond"]], ridx, "rate", *w)
-            b = _metric(results[chk["over"]], ridx, "rate", *w2)
+            metric = chk.get("metric", "rate")        # rate (default), readout_active_fraction or spikes_per_neuron
+            a = _metric(results[chk["cond"]], ridx, metric, *w)
+            b = _metric(results[chk["over"]], ridx, metric, *w2)
             val = (a + EPS) / (b + EPS)
-            desc = f"rate{tag} / rate[{chk['over']}] {chk['op']} {target}"
+            mname = metric.replace("_", " ")
+            desc = f"{mname}{tag} / {mname}[{chk['over']}] {chk['op']} {target}"
         elif typ == "latency":
             # first-spike latency (ms) of the readout after the condition's stimulus onset, or, with
             # `from`, after another readout's first spike (conduction time along a pathway)
@@ -426,7 +480,7 @@ def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False
         passed = bool(not np.isnan(val) and op(val, target))
         cr = _graded_check(desc, float(val), passed, chk)
         # RFC S1: a comparison between conditions that all sit at the refractory ceiling is not a pass
-        compared = [chk["cond"], chk["over"]] if typ == "ratio" else (list(chk["conds"]) if typ == "lifetime_sparseness" else [])
+        compared = [chk["cond"], chk["over"]] if (typ == "ratio" and chk.get("metric", "rate") == "rate") else (list(chk["conds"]) if typ == "lifetime_sparseness" else [])
         if compared:
             ceiling_hz = CEILING_FRACTION * 1000.0 / max(float(getattr(params, "t_ref_ms", 2.2)), 1e-3)
             key = f"rate[{rname}]"
@@ -529,10 +583,11 @@ def run_suite(c: Connectome, params: LIFParams, tasks: list[dict] | None = None,
     skipped: dict[str, str] = {}
     runnable: list[dict] = []
     for task in tasks:
-        why = task_unavailable(task, c)
+        why = task_unavailable(task, c, simulator)
         if why:
             # a task that needs neurons this dataset does not have (e.g. VNC motor neurons on a
-            # brain-only connectome) is not run and not scored, rather than failed
+            # brain-only connectome), or a capability this simulator does not declare, is not run
+            # and not scored, rather than failed
             skipped[task["name"]] = why
             if verbose:
                 print(f"[{task['name']}] skipped: {why}")

@@ -492,3 +492,47 @@ def test_task25_grooming_passes_on_toy_and_a_jo_ce_to_mdn_edge_fails_the_null(to
     rb = run_task(t25, broken, LIFParams(seed=1))
     assert not rb.checks[3].passed and rb.checks[3].value >= 2
     assert all(ch.passed for k, ch in enumerate(rb.checks) if k != 3)
+
+
+def test_silencing_capability_and_task26_on_toy(toy):
+    import scipy.sparse as sp
+    from flybench.bench import run_suite, silence_neurons, task_unavailable
+    from flybench.connectome import Connectome
+    from flybench.sim import LIFSimulator
+    # silence_neurons: outgoing synapses gone, incoming untouched, everything else bit-identical
+    apl = toy.select("APL")
+    s = silence_neurons(toy, apl)
+    assert abs(s.W[apl]).sum() == 0 and abs(s.W[:, apl]).sum() == abs(toy.W[:, apl]).sum() and s.meta["silenced"] == 2
+    keep = np.ones(toy.n, dtype=bool); keep[apl] = False
+    assert (toy.W[keep].toarray() == s.W[keep].toarray()).all()
+    t26 = next(t for t in load_tasks() if t["name"] == "mb_sparseness_apl")
+    raw = yaml.safe_load((TASK_DIR / "26_mb_sparseness_apl.yaml").read_text(encoding="utf-8"))
+    assert lint_task(raw) == [] and raw["requires_capabilities"] == ["can_silence"]
+    # a task that silences without declaring the capability is a lint error
+    bad = copy.deepcopy(raw); bad.pop("requires_capabilities")
+    assert any("can_silence" in e for e in lint_task(bad))
+    bad = copy.deepcopy(raw); bad["requires_capabilities"] = ["can_fly"]
+    assert any("can_fly" in e for e in lint_task(bad))
+    # the reference LIF declares it; a simulator that does not is skipped, not failed
+    assert "can_silence" in LIFSimulator.capabilities and task_unavailable(t26, toy, LIFSimulator) is None
+    class Mute:
+        capabilities = frozenset()
+    why = task_unavailable(t26, toy, Mute)
+    assert why and "Mute" in why and "can_silence" in why
+    rep = run_suite(toy, LIFParams(seed=1), [t26], simulator=LIFSimulator)
+    assert rep["n_tasks"] == 1 and rep["tasks"][0]["passed"]
+    r = run_task(t26, toy, LIFParams(seed=1))
+    assert r.score == 1.0 and r.stimulus_sizes["silence[cva_apl_off]"] == 2
+    assert r.checks[3].description.startswith("readout active fraction[cva_apl_off, kc] / readout active fraction[cva] >")
+    assert r.checks[6].description.startswith("population sparseness[cva, kc] / population sparseness[cva_apl_off] >")
+    # cut APL -> KC: silencing APL then changes nothing, every ratio sits at 1 and fails; the intact
+    # network is no longer sparse either
+    W = toy.W.tolil(); kc = toy.select({"cell_type_regex": "^KC"})
+    for i in apl:
+        for j in kc:
+            W[i, j] = 0.0
+    broken = Connectome(root_ids=toy.root_ids, W=sp.csr_matrix(W, dtype=np.float32), positions=toy.positions,
+                        annotations=toy.annotations, name="toy", meta=dict(toy.meta))
+    rb = run_task(t26, broken, LIFParams(seed=1))
+    assert all(not ch.passed and abs(ch.value - 1.0) < 1e-6 for ch in rb.checks[3:])
+    assert not rb.checks[0].passed and rb.checks[0].value > 0.2

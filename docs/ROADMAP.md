@@ -125,7 +125,10 @@ numbers (figure-only in Ache 2019 / Klapoetke 2017).
     aDN1/aDN2 (DNg62/DNge078), JO-F → MDN, JO-C/E ↛ MDN (Hampel 2020). The bristle version (BM-Ant vs
     BM-InOm → aBN2, Eichler 2025) waits for BM-* types to be annotated in v783 / MaleCNS.**
 25. **Mushroom body sparseness with APL**: KC responses sparse and decorrelated; removing APL
-    lowers sparseness and raises inter-odour correlation (Lin et al. 2014 Nat Neurosci). Threshold
+    lowers sparseness and raises inter-odour correlation (Lin et al. 2014 Nat Neurosci). **Started
+    2026-09-15: task 26 (docs/rfcs/26); first use of condition-level `silence:` and
+    `requires_capabilities: [can_silence]` (item 40's capability declarations); inter-odour correlation not
+    scored — single-glomerulus odours give disjoint KC sets by construction.** Threshold
     as a relative change; the absolute KC fraction is figure-only.
 26. **CO2 pathway specificity**: ORNv → PNv_bi → LH^PD5c1^; PNm1 is CO2-only, so DA1/DM1 drive must
     not activate it (bioRxiv 2026.01.05.697655; Suh 2004; Lin 2013). Names are hemibrain-style;

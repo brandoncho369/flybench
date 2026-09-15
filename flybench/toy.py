@@ -90,13 +90,17 @@ POPS = [
     ("jo_f",        30, "sensory", "mechanosensory", "JO-F_toy",  "",       "ACH",  "JO-F",             (30, 290, -50)),
     ("abn1",        10, "central", "",          "aBN1_toy",  "",           "ACH",  "antennal grooming BN", (20, 240, -30)),
     ("adn",          2, "descending", "",       "DNg62",     "DNg62",      "ACH",  "aDN1",             (100, 190, -40)),
+    # task 26 (mushroom body sparseness with APL): Kenyon cells sampling the eight toy glomeruli, and the
+    # GABAergic APL that reads the whole KC population and inhibits all of it
+    ("kc",         400, "central", "",          "KC_toy",    "",           "ACH",  "Kenyon cell",      (60, 230, 70)),
+    ("apl",          2, "central", "",          "APL",       "APL",        "GABA", "APL",              (60, 235, 60)),
 ]
 
 SUB_CLASS = {"mn_t1": "fl"}   # Codex-style `sub_class` (fl/ml/hl = front/mid/hind leg); "" elsewhere
 
 
 # Bump when POPS or the wiring change: load_connectome("toy") rebuilds a cache whose version differs.
-TOY_VERSION = "2026-09-15-groom2"
+TOY_VERSION = "2026-09-15-mb3"
 
 
 def build_toy_connectome(seed: int = 1) -> Connectome:
@@ -196,6 +200,16 @@ def build_toy_connectome(seed: int = 1) -> Connectome:
     connect("jo_f", "abn1", 0.5, 4, 10)
     connect("abn1", "adn", 0.8, 8, 16)
     connect("jo_f", "mdn", 0.5, 6, 12)
+    # --- added 2026-09-15 for task 26 (MODELED): each KC samples four random PNs from the eight named glomeruli
+    #     (two to eight of them) with contacts of graded strength; a single strong contact is about at threshold. Every KC drives APL and APL inhibits every KC (~28 synapses each way, the FlyWire v783
+    #     mean per KC), so population activity feeds back on itself.
+    pn_all = np.concatenate([idx[f"pn_{g}"] for g in ("da1", "dm1", "dm4", "dl5", "dm2", "dl1", "va1v", "dc1")])
+    for k in idx["kc"]:
+        n_in = int(rng.integers(2, 9))       # 2-8 PN inputs: the well-connected KCs are the generalists APL has to hold down
+        src = rng.choice(pn_all, size=n_in, replace=False)
+        rows.append(src); cols.append(np.full(n_in, k)); vals.append(rng.integers(10, 21, size=n_in))
+    connect("kc", "apl", 1.0, 26, 30)
+    connect("apl", "kc", 1.0, 26, 30)
     pre = np.concatenate(rows); post = np.concatenate(cols); syn = np.concatenate(vals).astype(np.float32)
     keep = pre != post
     pre, post, syn = pre[keep], post[keep], syn[keep]
