@@ -121,7 +121,9 @@ numbers (figure-only in Ache 2019 / Klapoetke 2017).
     expected fail for any uniform point model, per Lesser 2024's own inference.**
 24. **Grooming somatotopy**: bristle MNs (BM-Ant, BM-InOm, …) → hemilineage 23b / aBN1/2 / aDN;
     eye-bristle drive must not produce antennal-grooming output (Eichler/Seeds 2025 eLife 108044;
-    Hampel 2015, 2020).
+    Hampel 2015, 2020). **Started 2026-09-15 as the JON version — task 25 (docs/rfcs/25): JO-C/E and JO-F →
+    aDN1/aDN2 (DNg62/DNge078), JO-F → MDN, JO-C/E ↛ MDN (Hampel 2020). The bristle version (BM-Ant vs
+    BM-InOm → aBN2, Eichler 2025) waits for BM-* types to be annotated in v783 / MaleCNS.**
 25. **Mushroom body sparseness with APL**: KC responses sparse and decorrelated; removing APL
     lowers sparseness and raises inter-odour correlation (Lin et al. 2014 Nat Neurosci). Threshold
     as a relative change; the absolute KC fraction is figure-only.

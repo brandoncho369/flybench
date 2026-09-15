@@ -84,13 +84,19 @@ POPS = [
     ("h2",           2, "visual_projection", "", "H2",        "H2",         "ACH",  "H2 heterolateral", (100, 150, 10)),
     ("bips",         2, "central", "",          "bIPS_toy",  "",           "GABA", "bIPS",             (100, 200, -10)),
     ("dnp15",        2, "descending", "",       "DNp15",     "DNp15",      "ACH",  "DNp15 / DNHS1",    (100, 195, -25)),
+    # task 25 (antennal grooming vs backward walking): two Johnston's-organ populations, the aBN1 relay and
+    # the antennal-grooming descending pair; JO-F also reaches the toy's MDN, JO-C/E does not
+    ("jo_ce",       60, "sensory", "mechanosensory", "JO-CE_toy", "",       "ACH",  "JO-C/E",           (30, 300, -40)),
+    ("jo_f",        30, "sensory", "mechanosensory", "JO-F_toy",  "",       "ACH",  "JO-F",             (30, 290, -50)),
+    ("abn1",        10, "central", "",          "aBN1_toy",  "",           "ACH",  "antennal grooming BN", (20, 240, -30)),
+    ("adn",          2, "descending", "",       "DNg62",     "DNg62",      "ACH",  "aDN1",             (100, 190, -40)),
 ]
 
 SUB_CLASS = {"mn_t1": "fl"}   # Codex-style `sub_class` (fl/ml/hl = front/mid/hind leg); "" elsewhere
 
 
 # Bump when POPS or the wiring change: load_connectome("toy") rebuilds a cache whose version differs.
-TOY_VERSION = "2026-09-15-flow2"
+TOY_VERSION = "2026-09-15-groom2"
 
 
 def build_toy_connectome(seed: int = 1) -> Connectome:
@@ -184,6 +190,12 @@ def build_toy_connectome(seed: int = 1) -> Connectome:
         edge(idx["h2"][other], idx["dnp15"][me], 40)   # the contralateral H2 (right-eye back-to-front) joins HS_L on DNp15_L
         edge(idx["h2"][other], idx["bips"][me], 10)
         edge(idx["bips"][me], idx["dnp15"][other], 60)  # GABA: bIPS_L → DNp15_R, enough to halve it
+    # --- added 2026-09-15 for task 25 (MODELED): JO-C/E and JO-F both reach aDN through aBN1 (Hampel 2015's
+    #     circuit); JO-F alone also contacts the moonwalker DN, so the JO-C/E -> MDN null passes trivially
+    connect("jo_ce", "abn1", 0.5, 4, 10)
+    connect("jo_f", "abn1", 0.5, 4, 10)
+    connect("abn1", "adn", 0.8, 8, 16)
+    connect("jo_f", "mdn", 0.5, 6, 12)
     pre = np.concatenate(rows); post = np.concatenate(cols); syn = np.concatenate(vals).astype(np.float32)
     keep = pre != post
     pre, post, syn = pre[keep], post[keep], syn[keep]

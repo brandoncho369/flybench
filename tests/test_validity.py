@@ -469,3 +469,26 @@ def test_task24_optic_flow_passes_on_toy_and_fails_without_bips(toy):
     rb = run_task(t24, broken, LIFParams(seed=1))
     assert not rb.checks[4].passed and rb.checks[4].value > 0.8
     assert all(ch.passed for k, ch in enumerate(rb.checks) if k not in (3, 4))
+
+
+def test_task25_grooming_passes_on_toy_and_a_jo_ce_to_mdn_edge_fails_the_null(toy):
+    import scipy.sparse as sp
+    from flybench.bench import task_unavailable
+    from flybench.connectome import Connectome
+    t25 = next(t for t in load_tasks() if t["name"] == "antennal_grooming_vs_backward")
+    raw = yaml.safe_load((TASK_DIR / "25_antennal_grooming_vs_backward.yaml").read_text(encoding="utf-8"))
+    assert lint_task(raw) == [] and task_unavailable(t25, toy) is None
+    jo_ce = toy.select(t25["conditions"]["jo_ce"]["stimuli"][0]["select"]); jo_f = toy.select(t25["conditions"]["jo_f"]["stimuli"][0]["select"])
+    assert jo_ce.size == 60 and jo_f.size == 30 and not set(jo_ce) & set(jo_f)
+    r = run_task(t25, toy, LIFParams(seed=1))
+    assert r.passed and r.score == 1.0
+    assert r.checks[3].description.startswith("rate[jo_ce, mdn] <") and r.checks[3].value == 0.0
+    W = toy.W.tolil(); mdn = toy.select("MDN")
+    for i in jo_ce[:20]:
+        for j in mdn:
+            W[i, j] = 8.0
+    broken = Connectome(root_ids=toy.root_ids, W=sp.csr_matrix(W, dtype=np.float32), positions=toy.positions,
+                        annotations=toy.annotations, name="toy", meta=dict(toy.meta))
+    rb = run_task(t25, broken, LIFParams(seed=1))
+    assert not rb.checks[3].passed and rb.checks[3].value >= 2
+    assert all(ch.passed for k, ch in enumerate(rb.checks) if k != 3)

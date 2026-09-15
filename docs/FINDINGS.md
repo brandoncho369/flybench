@@ -209,3 +209,28 @@ halves DNp15 (0.52); bIPS prefers symmetric flow 9×. MaleCNS 0.65: **3/6**, rew
 
 Housekeeping: new `optic_flow` circuit; FlyWire graded 0.728 → 0.733, MaleCNS 0.720 → 0.709;
 23 older tasks bit-identical on both.
+
+## 2026-09-15 — task 25 (antennal grooming vs backward walking): the feeding-restraint DN DSOG1 shuts the grooming command; FlyWire 0/4
+
+Hampel 2020's JON split (JO-C/E and JO-F → antennal grooming via aBN1 → aDN1/aDN2; JO-F alone →
+backward walking, MDN by the authors' hypothesis; JO-C/E ↛ MDN) as task 25 (docs/rfcs/25), the
+JON stand-in for the roadmap's bristle somatotopy, which waits for BM-* annotations. Pre-registered
+3/4 on both brains (ignition passes the positives, fails the null). Measured: **FlyWire 0/4**,
+rewired 1/4, specificity −0.25; **MaleCNS 1/4**, rewired 1/4. Runs took 12 and 6 minutes with
+`--jobs 6` (previously ~45 each).
+
+- **DNg98 = DSOG1 (Pool et al. 2014, GABAergic feeding-restraint DN) makes 597 / 948 inhibitory
+  synapses onto the four antennal-grooming DNs** — 3–5× their largest excitatory input — and is
+  recruited by every ignition (not by JONs: 0 direct contacts). On FlyWire inhibition onto the aDNs
+  outweighs excitation 7:1 under a 433-cell antennal drive and the grooming command is silent.
+  On MaleCNS JO-C/E's relay SAD093 is strong enough to overpower it (aDN 402 Hz, ceiling) and
+  JO-F's is not (0 Hz). The wiring for grooming is all there; the model's brain-wide state
+  recruits a real gate on top of it.
+- **MDN is inhibition-dominated in every condition** (AOTU019, LAL, LT51), and fires only where
+  one excitatory input punches through — under JO-C/E, the null, on both brains. The two-hop
+  synapse counts (JO-F 4× JO-C/E on FlyWire) predicted nothing.
+- Second task where the shuffle beats the brain (after 23): random wiring does not deliver DSOG1
+  onto the aDNs.
+
+Housekeeping: new `grooming` circuit; FlyWire graded 0.733 → 0.710, MaleCNS 0.709 → 0.698; the
+24 older tasks are bit-identical on both.

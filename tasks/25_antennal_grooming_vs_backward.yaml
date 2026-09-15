@@ -1,0 +1,36 @@
+name: antennal_grooming_vs_backward
+title: Antennal JO-C/E and JO-F both reach the grooming command neurons; only JO-F reaches the moonwalker DN
+tier: hard
+circuit: grooming
+description: >
+  Johnston's organ neurons (JONs) in the antenna drive antennal grooming through a command
+  circuit — the brain interneuron aBN1 and the descending pair aDN1/aDN2 (Hampel et al. 2015).
+  Hampel et al. 2020 split the JONs by subpopulation: optogenetic activation of JO-C/E or of
+  JO-F elicits antennal grooming, but only JO-F also elicits backward locomotion (5–8× control),
+  which the authors attribute to the moonwalker descending neurons (MDN; Bidaye et al. 2014); JO-C/E
+  activation gives grooming and wing flapping, no backward walking. This task drives each JON
+  population at the task-02 100 Hz and reads aDN1/aDN2 (DNg62, DNge078 — Hampel 2015's names are
+  the MaleCNS synonyms; the same types on FlyWire v783) and MDN. Two positive checks, one
+  positive check whose readout is inferred from behaviour (JO-F → MDN), and one null: JO-C/E must
+  not fire MDN. Neither JON population makes a direct synapse on MDN in either connectome; JO-F's
+  route is two-hop (via DNge132/DNae007 on FlyWire, GNG583/pIP1 on MaleCNS) and JO-C/E's is
+  four times weaker on FlyWire and three times stronger on MaleCNS (via pIP1), so the null is
+  the check with the prediction at risk. The roadmap's bristle version (BM-Ant vs BM-InOm,
+  Eichler et al. 2025) waits for those types to be annotated in the datasets. Pre-registered
+  predictions and outcome: docs/rfcs/25_antennal_grooming_vs_backward.md.
+citation: "Hampel et al. 2020 (eLife 9:e59976); Hampel et al. 2015 (eLife 4:e08758); Bidaye et al. 2014 (Science 344:97, MDN); Sen et al. 2017 (Curr Biol 27:766)"
+duration_ms: 900
+window: [200, 700]
+requires_stimuli: [jo_ce, jo_f]
+requires_readouts: [adn, mdn]
+readouts:
+  adn: {select: {cell_type: [DNg62, DNge078]}}
+  mdn: {select: {any: [{cell_type: MDN}, {hemibrain_type: MDN}]}}
+conditions:
+  jo_ce: {stimuli: [{name: jo_ce, select: {cell_type_regex: "^JO-(C|E)"}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}]}
+  jo_f:  {stimuli: [{name: jo_f,  select: {cell_type_regex: "^JO-F"},     rate_hz: 100, t_start_ms: 200, t_end_ms: 700}]}
+checks:
+  - {type: rate, cond: jo_ce, readout: adn, op: ">", value: 5, basis: "Hampel et al. 2015, 2020: JO-C/E activation elicits antennal grooming through aBN1 → aDN1/aDN2; 5 Hz is the task-02 convention for a response"}
+  - {type: rate, cond: jo_f, readout: adn, op: ">", value: 5, basis: "Hampel et al. 2020: JO-F activation also elicits antennal grooming; 5 Hz task-02 convention"}
+  - {type: rate, cond: jo_f, readout: mdn, op: ">", value: 5, basis: "Hampel et al. 2020: JO-F activation elicits backward locomotion (5–8× control), which the authors attribute to MDN (Bidaye et al. 2014: MDN activation drives backward walking) — the readout is inferred from behaviour, not recorded; 5 Hz task-02 convention"}
+  - {type: rate, cond: jo_ce, readout: mdn, op: "<", value: 2, basis: "null check. Hampel et al. 2020: JO-C/E activation gives grooming and wing flapping, no backward locomotion (inferred from behaviour); 2 Hz is the task-05 convention for silence"}

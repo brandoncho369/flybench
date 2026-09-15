@@ -4,24 +4,24 @@
   "seeds": 3,
   "verified": false,
   "core_score": 1.0,
-  "hard_score": 0.5668509070294784,
+  "hard_score": 0.5290608465608465,
   "core_by_circuit": 1.0,
-  "hard_by_circuit": 0.6203014770723104,
-  "graded": 0.7332105138338832,
+  "hard_by_circuit": 0.5316869803476947,
+  "graded": 0.7098812096933675,
   "graded_ci95": [
-    0.723675857924382,
-    0.7446812250972891
+    0.7009828731822396,
+    0.7199353075424078
   ],
   "core_graded": 0.9474488931829368,
-  "hard_graded": 0.5981070590412906,
+  "hard_graded": 0.5675416396469392,
   "profile": {
-    "-1": 0.7340425531914894,
-    "-0.5": 0.723404255319149,
-    "-0.25": 0.6808510638297872,
-    "0": 0.648936170212766,
-    "0.25": 0.5851063829787234,
-    "0.5": 0.5531914893617021,
-    "1": 0.5319148936170213
+    "-1": 0.7244897959183674,
+    "-0.5": 0.7040816326530612,
+    "-0.25": 0.6632653061224489,
+    "0": 0.6326530612244898,
+    "0.25": 0.5612244897959183,
+    "0.5": 0.5306122448979592,
+    "1": 0.5102040816326531
   },
   "circuits": {
     "stability": "stability",
@@ -42,7 +42,8 @@
     "pn_transfer_function": "olfaction",
     "da1_sparseness": "olfaction",
     "lc_dn_matrix": "escape",
-    "optic_flow_rotation": "optic_flow"
+    "optic_flow_rotation": "optic_flow",
+    "antennal_grooming_vs_backward": "grooming"
   },
   "skipped": {
     "looming_to_jump_muscle": "readout 'ttmn' matches no neurons on flywire783",
@@ -54,7 +55,7 @@
   "controls": [
     "rewired"
   ],
-  "specificity": 0.201921470342523,
+  "specificity": 0.17932539682539686,
   "non_diagnostic": [],
   "tier": [
     "core",
@@ -84,9 +85,9 @@
     "extra": {}
   },
   "simulator": "flybench.sim.LIFSimulator",
-  "score": 0.6808375104427736,
+  "score": 0.646795634920635,
   "passed": 7,
-  "n_tasks": 19,
+  "n_tasks": 20,
   "tasks": [
     {
       "task": "stability",
@@ -145,7 +146,7 @@
       },
       "readout_size": 139255,
       "stimulus_sizes": {},
-      "seconds": 5.504780530929565,
+      "seconds": 4.146296977996826,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -250,7 +251,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 79.20193076133728,
+      "seconds": 34.191752672195435,
       "notes": [],
       "graded": 0.8547046867837924,
       "graded_per_seed": [
@@ -335,7 +336,7 @@
         "sugar_grn": 129,
         "bitter_grn": 65
       },
-      "seconds": 98.46107888221741,
+      "seconds": 42.91584277153015,
       "notes": [],
       "graded": 0.9997156432785514,
       "graded_per_seed": [
@@ -438,7 +439,7 @@
       "stimulus_sizes": {
         "looming_detectors": 314
       },
-      "seconds": 34.53606939315796,
+      "seconds": 17.812037467956543,
       "notes": [],
       "graded": 0.8878267508943137,
       "graded_per_seed": [
@@ -514,7 +515,7 @@
       "stimulus_sizes": {
         "bitter_grn": 65
       },
-      "seconds": 29.662102699279785,
+      "seconds": 14.534340858459473,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -665,7 +666,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 123.13904738426208,
+      "seconds": 49.346476793289185,
       "notes": [
         "seed-sensitive: check 0: passes on 1/3 seeds"
       ],
@@ -744,7 +745,7 @@
         "pulse1": 129,
         "pulse2": 129
       },
-      "seconds": 120.43670344352722,
+      "seconds": 36.73888325691223,
       "notes": [],
       "graded": 0.49991747242872503,
       "graded_per_seed": [
@@ -870,7 +871,7 @@
       "stimulus_sizes": {
         "da1_orn": 127
       },
-      "seconds": 56.36519932746887,
+      "seconds": 22.909924507141113,
       "notes": [],
       "graded": 0.5972129056390362,
       "graded_per_seed": [
@@ -997,7 +998,7 @@
         "sugar_grn": 129,
         "looming_detectors": 314
       },
-      "seconds": 87.67864871025085,
+      "seconds": 49.62807846069336,
       "notes": [],
       "graded": 0.9998342392767291,
       "graded_per_seed": [
@@ -1108,7 +1109,7 @@
       "stimulus_sizes": {
         "looming_detectors": 314
       },
-      "seconds": 11.641513109207153,
+      "seconds": 17.22069787979126,
       "notes": [],
       "graded": 0.7312563216480612,
       "graded_per_seed": [
@@ -1205,7 +1206,7 @@
       "stimulus_sizes": {
         "photoreceptors": 11153
       },
-      "seconds": 8.477276802062988,
+      "seconds": 12.241559982299805,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -1321,7 +1322,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 40.582189321517944,
+      "seconds": 54.18279242515564,
       "notes": [],
       "graded": 0.2546784676665634,
       "graded_per_seed": [
@@ -1467,7 +1468,7 @@
         "looming_detectors": 314,
         "sugar_grn": 129
       },
-      "seconds": 21.62487506866455,
+      "seconds": 30.61300563812256,
       "notes": [],
       "graded": 0.6296693765754758,
       "graded_per_seed": [
@@ -1623,7 +1624,7 @@
         "sugar_grn": 129,
         "looming_detectors": 314
       },
-      "seconds": 26.012317419052124,
+      "seconds": 41.53407430648804,
       "notes": [
         "seed-sensitive: check 1: passes on 2/3 seeds"
       ],
@@ -1851,7 +1852,7 @@
         "loom_left": 162,
         "loom_right": 152
       },
-      "seconds": 21.655929803848267,
+      "seconds": 30.43199324607849,
       "notes": [],
       "graded": 0.44444433333344446,
       "graded_per_seed": [
@@ -2038,7 +2039,7 @@
       "stimulus_sizes": {
         "da1_orn": 127
       },
-      "seconds": 30.40336847305298,
+      "seconds": 43.98982882499695,
       "notes": [
         "seed-sensitive: check 2: passes on 1/3 seeds; check 4: passes on 1/3 seeds"
       ],
@@ -2312,7 +2313,7 @@
         "orn_va1v": 94,
         "orn_dc1": 39
       },
-      "seconds": 83.71858191490173,
+      "seconds": 117.42052268981934,
       "notes": [],
       "graded": 0.11105225523809181,
       "graded_per_seed": [
@@ -2735,7 +2736,7 @@
         "lc16": 152,
         "lc10a": 237
       },
-      "seconds": 41.59171772003174,
+      "seconds": 59.049644947052,
       "notes": [
         "seed-sensitive: check 7: passes on 1/3 seeds"
       ],
@@ -2932,7 +2933,7 @@
         "hs_right": 3,
         "h2_left": 1
       },
-      "seconds": 40.26231575012207,
+      "seconds": 51.97078990936279,
       "notes": [],
       "graded": 0.7768232357694264,
       "graded_per_seed": [
@@ -2947,6 +2948,135 @@
         }
       },
       "specificity": 0.6666666666666667,
+      "non_diagnostic": false
+    },
+    {
+      "task": "antennal_grooming_vs_backward",
+      "title": "Antennal JO-C/E and JO-F both reach the grooming command neurons; only JO-F reaches the moonwalker DN",
+      "passed": false,
+      "score": 0.0,
+      "checks": [
+        {
+          "description": "rate[jo_ce, adn] > 5.0 Hz  [0/3 seeds, sd 0]",
+          "value": 0.0,
+          "passed": false,
+          "margin": -3.6989700043360187,
+          "basis": "Hampel et al. 2015, 2020: JO-C/E activation elicits antennal grooming through aBN1 \u2192 aDN1/aDN2; 5 Hz is the task-02 convention for a response",
+          "graded": 3.999999840000007e-08,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "op": ">",
+          "target": 5.0,
+          "saturated": false
+        },
+        {
+          "description": "rate[jo_f, adn] > 5.0 Hz  [2/3 seeds, sd 0.943]",
+          "value": 5.333333333333333,
+          "passed": false,
+          "margin": 0.028028723600243534,
+          "basis": "Hampel et al. 2020: JO-F activation also elicits antennal grooming; 5 Hz task-02 convention",
+          "graded": 0.5322245322245323,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            6.0,
+            4.0,
+            6.0
+          ],
+          "op": ">",
+          "target": 5.0,
+          "saturated": false
+        },
+        {
+          "description": "rate[jo_f, mdn] > 5.0 Hz  [0/3 seeds, sd 0]",
+          "value": 0.0,
+          "passed": false,
+          "margin": -3.6989700043360187,
+          "basis": "Hampel et al. 2020: JO-F activation elicits backward locomotion (5\u20138\u00d7 control), which the authors attribute to MDN (Bidaye et al. 2014: MDN activation drives backward walking) \u2014 the readout is inferred from behaviour, not recorded; 5 Hz task-02 convention",
+          "graded": 3.999999840000007e-08,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "op": ">",
+          "target": 5.0,
+          "saturated": false
+        },
+        {
+          "description": "rate[jo_ce, mdn] < 2.0 Hz  [0/3 seeds, sd 2.72]",
+          "value": 11.333333333333334,
+          "passed": false,
+          "margin": -0.7533276666586115,
+          "basis": "null check. Hampel et al. 2020: JO-C/E activation gives grooming and wing flapping, no backward locomotion (inferred from behaviour); 2 Hz is the task-05 convention for silence",
+          "graded": 0.030201342281879193,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            10.5,
+            8.5,
+            15.0
+          ],
+          "op": "<",
+          "target": 2.0,
+          "saturated": false
+        }
+      ],
+      "measurements": {
+        "jo_ce": {
+          "rate": 0.0,
+          "network_rate": 4.967797685301545,
+          "active_fraction": 0.08959103802376935,
+          "spikes": 640999.6666666666,
+          "rate[adn]": 0.0,
+          "readout_active_fraction[adn]": 0.0,
+          "rate[mdn]": 11.333333333333334,
+          "readout_active_fraction[mdn]": 1.0
+        },
+        "jo_f": {
+          "rate": 5.333333333333333,
+          "network_rate": 4.2162172513255065,
+          "active_fraction": 0.08943784184888633,
+          "spikes": 599986.6666666666,
+          "rate[adn]": 5.333333333333333,
+          "readout_active_fraction[adn]": 0.5,
+          "rate[mdn]": 0.0,
+          "readout_active_fraction[mdn]": 0.0
+        }
+      },
+      "readout_size": 4,
+      "stimulus_sizes": {
+        "jo_ce": 433,
+        "jo_f": 205
+      },
+      "seconds": 31.171515226364136,
+      "notes": [
+        "seed-sensitive: check 1: passes on 2/3 seeds"
+      ],
+      "graded": 0.13962576812602087,
+      "graded_per_seed": [
+        0.15629373883631587,
+        0.11067574970811597,
+        0.1519078158336308
+      ],
+      "controls": {
+        "rewired": {
+          "score": 0.25,
+          "passed": false
+        }
+      },
+      "specificity": -0.25,
       "non_diagnostic": false
     }
   ],
