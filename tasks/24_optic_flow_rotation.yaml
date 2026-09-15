@@ -1,0 +1,57 @@
+name: optic_flow_rotation
+title: DNp15 prefers yaw rotation to forward translation, and bIPS prefers the reverse
+tier: hard
+circuit: optic_flow
+description: >
+  The lobula plate's horizontal-system cells (HSN/HSE/HSS) respond to front-to-back motion on
+  their own eye and H2 to back-to-front motion on its eye, projecting across the midline. Both
+  converge on the descending neuron DNp15 (DNHS1), which responds to yaw rotation (Suver et al.
+  2016), and on the bilateral GABAergic bIPS, which inhibits the contralateral DNp15 (Nat
+  Neurosci 2025: "a competitive disinhibitory network for robust optic flow processing").
+  That paper's result: DNp15 is more selective for rotational than translational optic flow
+  than HS is, and bIPS responds most to binocular symmetric (translational) flow and subtracts
+  it at DNp15. The model has no eyes, so optic flow is the set of tangential cells it would
+  drive (INFERRED from the cells' known preferred directions): a right yaw turn = left HS +
+  right H2, forward translation = both HS, each at the task-02 100 Hz. Checks: DNp15 responds
+  to yaw on the correct side and not the other (a null), prefers rotation to translation, is
+  suppressed by the contralateral symmetric component, and bIPS prefers symmetric flow. The
+  rotation/translation comparisons are subject to the RFC S1 ceiling gate. bIPS is CB0268 on
+  FlyWire v783 (the Chiappe lab's own label) and PS321 on MaleCNS (INFERRED homologue: same
+  HS/H2 inputs, same crossed inhibition of DNp15). Pre-registered predictions and outcome:
+  docs/rfcs/24_optic_flow_rotation.md.
+citation: "Nat Neurosci 2025 (doi 10.1038/s41593-025-01948-9, A competitive disinhibitory network for robust optic flow processing in Drosophila); Suver et al. 2016 (J Neurosci 36:11768); Schnell et al. 2010 (J Neurophysiol 103:1646, HS tuning); Krapp et al. 2001 (J Neurophysiol 85:724, H2)"
+duration_ms: 900
+window: [200, 700]
+requires_stimuli: [hs_left, hs_right, h2_left, h2_right]
+requires_readouts: [dnp15_left, dnp15_right, bips]
+readouts:
+  dnp15_left:  {select: {all_of: [{any: [{cell_type: DNp15}, {hemibrain_type: DNp15}]}, {side_regex: "^(left|l)$"}]}}
+  dnp15_right: {select: {all_of: [{any: [{cell_type: DNp15}, {hemibrain_type: DNp15}]}, {side_regex: "^(right|r)$"}]}}
+  # bIPS: FlyWire v783 CB0268 (labelled "bIPS (bilateral Inferior Posterior Slope neuron)" by the paper's lab), MaleCNS PS321 (inferred), toy bIPS_toy
+  bips:        {select: {any: [{cell_type: CB0268}, {cell_type: PS321}, {cell_type: bIPS_toy}]}}
+conditions:
+  # HS_L: front-to-back motion on the left eye (progressive), the monocular reference
+  ftb_left:
+    stimuli:
+      - {name: hs_left,  select: {all_of: [{cell_type_regex: "^HS[NES]$"}, {side_regex: "^(left|l)$"}]},  rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
+  # a right yaw turn: the left eye sees front-to-back (HS_L), the right eye back-to-front (H2 with its dendrite on the right)
+  yaw_right:
+    stimuli:
+      - {name: hs_left,  select: {all_of: [{cell_type_regex: "^HS[NES]$"}, {side_regex: "^(left|l)$"}]},  rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
+      - {name: h2_right, select: {all_of: [{cell_type: H2}, {side_regex: "^(right|r)$"}]},                rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
+  yaw_left:
+    stimuli:
+      - {name: hs_right, select: {all_of: [{cell_type_regex: "^HS[NES]$"}, {side_regex: "^(right|r)$"}]}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
+      - {name: h2_left,  select: {all_of: [{cell_type: H2}, {side_regex: "^(left|l)$"}]},                 rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
+  # forward translation: front-to-back on both eyes (binocular symmetric)
+  forward:
+    stimuli:
+      - {name: hs_left,  select: {all_of: [{cell_type_regex: "^HS[NES]$"}, {side_regex: "^(left|l)$"}]},  rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
+      - {name: hs_right, select: {all_of: [{cell_type_regex: "^HS[NES]$"}, {side_regex: "^(right|r)$"}]}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
+checks:
+  - {type: rate, cond: yaw_right, readout: dnp15_left, op: ">", value: 5, basis: "Suver et al. 2016: DNHS1 (DNp15) responds to yaw rotation; Nat Neurosci 2025: HS and H2 converge on DNp15 (240 + 206 synapses onto the left cell in FlyWire v783); 5 Hz is the task-02 convention for a response"}
+  - {type: rate, cond: yaw_left, readout: dnp15_right, op: ">", value: 5, basis: "Suver et al. 2016: DNHS1 responds to yaw rotation; the mirror of the check above"}
+  - {type: rate, cond: yaw_right, readout: dnp15_right, op: "<", value: 2, basis: "null check. Suver et al. 2016: DNHS1 is direction-selective, depolarised by yaw in one direction and hyperpolarised by the other; the right DNp15 gets no HS/H2 input from a right turn and is inhibited by the left bIPS; 2 Hz is the task-05 convention for silence"}
+  - {type: ratio, cond: yaw_right, over: forward, readout: dnp15_left, op: ">", value: 1, basis: "Nat Neurosci 2025 Fig. 1e: DNp15 shows enhanced selectivity to rotational over translational-like optic flow (calcium imaging, n = 7 ROIs / 6 flies); > 1 is the task-18 convention for a preference (the paper reports z-scored calcium, not a rate ratio)"}
+  - {type: ratio, cond: forward, over: ftb_left, readout: dnp15_left, op: "<", value: 0.8, basis: "Nat Neurosci 2025: bIPS responds to binocular symmetric flow and suppresses it at DNp15, so adding the contralateral front-to-back component must reduce DNp15 below its monocular response; 0.8 asks for 20 % suppression so that 'no effect' does not pass on noise (convention)"}
+  - {type: ratio, cond: forward, over: yaw_right, readout: bips, op: ">", value: 1, basis: "Nat Neurosci 2025: bIPS 'was most active with binocular symmetric horizontal stimuli' (n = 9 ROIs / 7 flies); > 1 is the task-18 convention for a preference"}

@@ -4,24 +4,24 @@
   "seeds": 3,
   "verified": false,
   "core_score": 0.5666666666666667,
-  "hard_score": 0.6119929453262787,
+  "hard_score": 0.6060985797827904,
   "core_by_circuit": 0.6851851851851851,
-  "hard_by_circuit": 0.5666685563114134,
-  "graded": 0.7202888032414466,
+  "hard_by_circuit": 0.5583349867724867,
+  "graded": 0.7089436512168517,
   "graded_ci95": [
-    0.7023329050414526,
-    0.731879114147866
+    0.6905263583408066,
+    0.7212234793689765
   ],
   "core_graded": 0.7293883288241452,
-  "hard_graded": 0.6639311850603061,
+  "hard_graded": 0.6597320163174643,
   "profile": {
-    "-1": 0.8584070796460177,
-    "-0.5": 0.8141592920353983,
-    "-0.25": 0.7699115044247787,
-    "0": 0.6902654867256637,
-    "0.25": 0.6371681415929203,
-    "0.5": 0.5309734513274337,
-    "1": 0.5132743362831859
+    "-1": 0.8571428571428571,
+    "-0.5": 0.8151260504201681,
+    "-0.25": 0.7647058823529411,
+    "0": 0.680672268907563,
+    "0.25": 0.6302521008403361,
+    "0.5": 0.5210084033613446,
+    "1": 0.5042016806722689
   },
   "circuits": {
     "stability": "stability",
@@ -46,13 +46,14 @@
     "taste_modalities": "taste",
     "lc_dn_matrix": "escape",
     "courtship_song_chain": "courtship",
-    "leg_mn_size_principle": "locomotion"
+    "leg_mn_size_principle": "locomotion",
+    "optic_flow_rotation": "optic_flow"
   },
   "skipped": {},
   "controls": [
     "rewired"
   ],
-  "specificity": 0.17571601104209802,
+  "specificity": 0.18228339947089947,
   "non_diagnostic": [],
   "tier": [
     "core",
@@ -82,9 +83,9 @@
     "extra": {}
   },
   "simulator": "flybench.sim.LIFSimulator",
-  "score": 0.6021394064872326,
+  "score": 0.5978835978835978,
   "passed": 2,
-  "n_tasks": 23,
+  "n_tasks": 24,
   "tasks": [
     {
       "task": "stability",
@@ -143,7 +144,7 @@
       },
       "readout_size": 176422,
       "stimulus_sizes": {},
-      "seconds": 4.639591455459595,
+      "seconds": 10.1590256690979,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -248,7 +249,7 @@
       "stimulus_sizes": {
         "sugar_grn": 34
       },
-      "seconds": 32.57288932800293,
+      "seconds": 99.43670725822449,
       "notes": [],
       "graded": 0.8089651361434211,
       "graded_per_seed": [
@@ -333,7 +334,7 @@
         "sugar_grn": 34,
         "bitter_grn": 38
       },
-      "seconds": 43.64528512954712,
+      "seconds": 156.95363926887512,
       "notes": [
         "seed-sensitive: check 1: passes on 2/3 seeds"
       ],
@@ -438,7 +439,7 @@
       "stimulus_sizes": {
         "looming_detectors": 311
       },
-      "seconds": 15.540700435638428,
+      "seconds": 44.287097692489624,
       "notes": [],
       "graded": 0.8051451865640634,
       "graded_per_seed": [
@@ -514,7 +515,7 @@
       "stimulus_sizes": {
         "bitter_grn": 38
       },
-      "seconds": 24.709599018096924,
+      "seconds": 83.33726525306702,
       "notes": [],
       "graded": 0.2181450726470243,
       "graded_per_seed": [
@@ -663,7 +664,7 @@
       "stimulus_sizes": {
         "sugar_grn": 34
       },
-      "seconds": 45.28938698768616,
+      "seconds": 158.70596885681152,
       "notes": [],
       "graded": 0.7309693490418252,
       "graded_per_seed": [
@@ -740,7 +741,7 @@
         "pulse1": 34,
         "pulse2": 34
       },
-      "seconds": 68.47906422615051,
+      "seconds": 130.5677421092987,
       "notes": [
         "seed-sensitive: check 1: passes on 1/3 seeds"
       ],
@@ -868,7 +869,7 @@
       "stimulus_sizes": {
         "da1_orn": 204
       },
-      "seconds": 39.802929401397705,
+      "seconds": 24.597170114517212,
       "notes": [],
       "graded": 0.5651033738467466,
       "graded_per_seed": [
@@ -995,7 +996,7 @@
         "sugar_grn": 34,
         "looming_detectors": 311
       },
-      "seconds": 132.89135193824768,
+      "seconds": 33.906073808670044,
       "notes": [],
       "graded": 0.7504511567475568,
       "graded_per_seed": [
@@ -1106,7 +1107,7 @@
       "stimulus_sizes": {
         "looming_detectors": 311
       },
-      "seconds": 42.99532985687256,
+      "seconds": 14.893718719482422,
       "notes": [],
       "graded": 0.7101134909332251,
       "graded_per_seed": [
@@ -1203,7 +1204,7 @@
       "stimulus_sizes": {
         "photoreceptors": 6091
       },
-      "seconds": 38.12821698188782,
+      "seconds": 12.044319868087769,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -1319,7 +1320,7 @@
       "stimulus_sizes": {
         "sugar_grn": 34
       },
-      "seconds": 242.1705720424652,
+      "seconds": 50.76143002510071,
       "notes": [
         "seed-sensitive: check 1: passes on 1/3 seeds"
       ],
@@ -1467,7 +1468,7 @@
         "looming_detectors": 311,
         "sugar_grn": 34
       },
-      "seconds": 94.57091307640076,
+      "seconds": 28.199270248413086,
       "notes": [
         "seed-sensitive: check 4: passes on 1/3 seeds"
       ],
@@ -1625,7 +1626,7 @@
         "sugar_grn": 34,
         "looming_detectors": 311
       },
-      "seconds": 114.55142450332642,
+      "seconds": 35.5659544467926,
       "notes": [],
       "graded": 0.7620381749956531,
       "graded_per_seed": [
@@ -1806,7 +1807,7 @@
         "looming_detectors": 311,
         "sugar_grn": 34
       },
-      "seconds": 109.5998432636261,
+      "seconds": 33.89468288421631,
       "notes": [],
       "graded": 0.8340723314300736,
       "graded_per_seed": [
@@ -2032,7 +2033,7 @@
         "loom_left": 165,
         "loom_right": 146
       },
-      "seconds": 73.94789958000183,
+      "seconds": 29.669479608535767,
       "notes": [],
       "graded": 0.6439541396510844,
       "graded_per_seed": [
@@ -2219,7 +2220,7 @@
       "stimulus_sizes": {
         "da1_orn": 204
       },
-      "seconds": 137.70155954360962,
+      "seconds": 42.37514090538025,
       "notes": [],
       "graded": 0.4520267386128507,
       "graded_per_seed": [
@@ -2491,7 +2492,7 @@
         "orn_va1v": 130,
         "orn_dc1": 32
       },
-      "seconds": 277.1978921890259,
+      "seconds": 321.7419581413269,
       "notes": [],
       "graded": 0.6359820785267859,
       "graded_per_seed": [
@@ -2609,7 +2610,7 @@
       "stimulus_sizes": {
         "looming_detectors": 311
       },
-      "seconds": 27.15684747695923,
+      "seconds": 29.76357889175415,
       "notes": [],
       "graded": 0.5226351469055932,
       "graded_per_seed": [
@@ -2749,7 +2750,7 @@
         "water_grn": 17,
         "high_salt_grn": 26
       },
-      "seconds": 244.11133646965027,
+      "seconds": 255.36356687545776,
       "notes": [
         "seed-sensitive: check 1: passes on 1/3 seeds"
       ],
@@ -3174,7 +3175,7 @@
         "lc16": 182,
         "lc10a": 275
       },
-      "seconds": 179.52414727210999,
+      "seconds": 171.3783576488495,
       "notes": [],
       "graded": 0.8602371981313907,
       "graded_per_seed": [
@@ -3406,7 +3407,7 @@
         "pip10_left": 1,
         "pip10_right": 1
       },
-      "seconds": 134.95758843421936,
+      "seconds": 139.93688201904297,
       "notes": [],
       "graded": 0.81884908886498,
       "graded_per_seed": [
@@ -3501,7 +3502,7 @@
       "stimulus_sizes": {
         "premotor": 664
       },
-      "seconds": 107.50067138671875,
+      "seconds": 110.28179574012756,
       "notes": [
         "seed-sensitive: check 2: passes on 2/3 seeds"
       ],
@@ -3518,6 +3519,203 @@
         }
       },
       "specificity": -0.3333333333333333,
+      "non_diagnostic": false
+    },
+    {
+      "task": "optic_flow_rotation",
+      "title": "DNp15 prefers yaw rotation to forward translation, and bIPS prefers the reverse",
+      "passed": false,
+      "score": 0.5,
+      "checks": [
+        {
+          "description": "rate[yaw_right, dnp15_left] > 5.0 Hz  [3/3 seeds, sd 4.9]",
+          "value": 14.0,
+          "passed": true,
+          "margin": 0.4471580313422192,
+          "basis": "Suver et al. 2016: DNHS1 (DNp15) responds to yaw rotation; Nat Neurosci 2025: HS and H2 converge on DNp15 (240 + 206 synapses onto the left cell in FlyWire v783); 5 Hz is the task-02 convention for a response",
+          "graded": 0.8868778280542986,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            14.0,
+            8.0,
+            20.0
+          ],
+          "op": ">",
+          "target": 5.0,
+          "saturated": false
+        },
+        {
+          "description": "rate[yaw_left, dnp15_right] > 5.0 Hz  [3/3 seeds, sd 8.49]",
+          "value": 322.0,
+          "passed": true,
+          "margin": 1.808885867359812,
+          "basis": "Suver et al. 2016: DNHS1 responds to yaw rotation; the mirror of the check above",
+          "graded": 0.999758940882662,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            328.0,
+            328.0,
+            310.0
+          ],
+          "op": ">",
+          "target": 5.0,
+          "saturated": false
+        },
+        {
+          "description": "rate[yaw_right, dnp15_right] < 2.0 Hz  [0/3 seeds, sd 16.3]",
+          "value": 292.0,
+          "passed": false,
+          "margin": -2.164352855784437,
+          "basis": "null check. Suver et al. 2016: DNHS1 is direction-selective, depolarised by yaw in one direction and hyperpolarised by the other; the right DNp15 gets no HS/H2 input from a right turn and is inhibited by the left bIPS; 2 Hz is the task-05 convention for silence",
+          "graded": 4.6910916170192794e-05,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            312.0,
+            292.0,
+            272.0
+          ],
+          "op": "<",
+          "target": 2.0,
+          "saturated": false
+        },
+        {
+          "description": "rate[yaw_right, dnp15_left] / rate[forward] > 1.0  [0/3 seeds, sd 0.124]",
+          "value": 0.3723365845909384,
+          "passed": false,
+          "margin": -0.42906428931111085,
+          "basis": "Nat Neurosci 2025 Fig. 1e: DNp15 shows enhanced selectivity to rotational over translational-like optic flow (calcium imaging, n = 7 ROIs / 6 flies); > 1 is the task-18 convention for a preference (the paper reports z-scored calcium, not a rate ratio)",
+          "graded": 0.12175507443460268,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.3684376726928239,
+            0.2222438265603733,
+            0.526328254519618
+          ],
+          "op": ">",
+          "target": 1.0,
+          "saturated": false
+        },
+        {
+          "description": "rate[forward, dnp15_left] / rate[ftb_left] < 0.8  [2/3 seeds, sd 0.777]",
+          "value": 1.013211398739184,
+          "passed": false,
+          "margin": -0.10261008001452751,
+          "basis": "Nat Neurosci 2025: bIPS responds to binocular symmetric flow and suppresses it at DNp15, so adding the contralateral front-to-back component must reduce DNp15 below its monocular response; 0.8 asks for 20 % suppression so that 'no effect' does not pass on noise (convention)",
+          "graded": 0.38401597386599584,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            2.111049386145214,
+            0.42857823121153316,
+            0.5000065788608044
+          ],
+          "op": "<",
+          "target": 0.8,
+          "saturated": false
+        },
+        {
+          "description": "rate[forward, bips] / rate[yaw_right] > 1.0  [3/3 seeds, sd 10.2]",
+          "value": 17.965769025109548,
+          "passed": true,
+          "margin": 1.2544458119227078,
+          "basis": "Nat Neurosci 2025: bIPS 'was most active with binocular symmetric horizontal stimuli' (n = 9 ROIs / 7 flies); > 1 is the task-18 convention for a preference",
+          "graded": 0.9969113768065745,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            17.99575106223444,
+            5.416298641779853,
+            30.485257371314344
+          ],
+          "op": ">",
+          "target": 1.0,
+          "saturated": false
+        }
+      ],
+      "measurements": {
+        "ftb_left": {
+          "rate": 59.333333333333336,
+          "network_rate": 3.0377239422143116,
+          "active_fraction": 0.03929404118156088,
+          "spikes": 442149.0,
+          "rate[dnp15_left]": 59.333333333333336,
+          "readout_active_fraction[dnp15_left]": 1.0,
+          "rate[dnp15_right]": 70.66666666666667,
+          "readout_active_fraction[dnp15_right]": 0.3333333333333333,
+          "rate[bips]": 18.0,
+          "readout_active_fraction[bips]": 0.5
+        },
+        "yaw_right": {
+          "rate": 14.0,
+          "network_rate": 11.819655900813581,
+          "active_fraction": 0.11757603926947886,
+          "spikes": 1564740.6666666667,
+          "rate[dnp15_left]": 14.0,
+          "readout_active_fraction[dnp15_left]": 1.0,
+          "rate[dnp15_right]": 292.0,
+          "readout_active_fraction[dnp15_right]": 1.0,
+          "rate[bips]": 6.0,
+          "readout_active_fraction[bips]": 0.5
+        },
+        "yaw_left": {
+          "rate": 0.0,
+          "network_rate": 12.00190830319726,
+          "active_fraction": 0.11853396968632031,
+          "spikes": 1582699.0,
+          "rate[dnp15_left]": 0.0,
+          "readout_active_fraction[dnp15_left]": 0.0,
+          "rate[dnp15_right]": 322.0,
+          "readout_active_fraction[dnp15_right]": 1.0,
+          "rate[bips]": 2.6666666666666665,
+          "readout_active_fraction[bips]": 0.6666666666666666
+        },
+        "forward": {
+          "rate": 37.333333333333336,
+          "network_rate": 0.005040943495331271,
+          "active_fraction": 0.00018327268330102444,
+          "spikes": 446.3333333333333,
+          "rate[dnp15_left]": 37.333333333333336,
+          "readout_active_fraction[dnp15_left]": 1.0,
+          "rate[dnp15_right]": 52.666666666666664,
+          "readout_active_fraction[dnp15_right]": 1.0,
+          "rate[bips]": 66.0,
+          "readout_active_fraction[bips]": 1.0
+        }
+      },
+      "readout_size": 1,
+      "stimulus_sizes": {
+        "hs_left": 3,
+        "h2_right": 1,
+        "hs_right": 3,
+        "h2_left": 1
+      },
+      "seconds": 166.3158142566681,
+      "notes": [
+        "seed-sensitive: check 4: passes on 2/3 seeds"
+      ],
+      "graded": 0.5841469789463085,
+      "graded_per_seed": [
+        0.5214509269292827,
+        0.585003478921717,
+        0.6459865309879257
+      ],
+      "controls": {
+        "rewired": {
+          "score": 0.16666666666666666,
+          "passed": false
+        }
+      },
+      "specificity": 0.33333333333333337,
       "non_diagnostic": false
     }
   ],

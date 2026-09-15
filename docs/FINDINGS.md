@@ -179,3 +179,33 @@ grade by |value| (margin +0.2, graded 0.7 for a fail); it now counts as a zero r
 −2.7, graded 0.0). No archived check had a negative value, so no old number moved. New
 `locomotion` circuit; hard-by-circuit 0.661 → 0.567, graded 0.729 → 0.720; 22 older tasks
 bit-identical. FlyWire rerun: bit-identical, records task 23 as not applicable.
+
+## 2026-09-15 — task 24 (optic-flow rotation vs translation): the wiring does the paper's arithmetic; one H2 lights 8.6 % of the brain at 0.45
+
+The Nat Neurosci 2025 H2-HS network (HS + H2 → DNp15 and → the GABAergic bIPS, which inhibits the
+other DNp15; docs/rfcs/24) on FlyWire 0.45: **5/6**, rewired 1/6, specificity +0.67, four of
+the five passes within a factor of two of the pre-registered steady-state estimates. DNp15
+prefers a yaw turn to forward translation 6×; adding the contralateral eye's symmetric component
+halves DNp15 (0.52); bIPS prefers symmetric flow 9×. MaleCNS 0.65: **3/6**, rewired 1/6.
+
+- **A single H2 at 100 Hz activates 8.6 % of the FlyWire brain at gain 0.45** — the first
+  whole-brain event at the gain where the core reflexes are clean (an LC type at 150 Hz: 0.2 %;
+  HS_L alone: 0.4 %). H2 carries ~5,000 output synapses per cell, five times an HS cell. The one
+  failed check is the lateral null: the wrong-side DNp15 fires at 51 Hz from that event, via
+  PS100/PS235, not through anything in the paper's diagram. The whole-network-event finding
+  (RFCs 20–23) now has a gain-0.45 example, and it is cell-type-specific.
+- **H2 silences bIPS through the paper's own middle layer** (uLPTCrn CB2473, H2rn CB3740,
+  PS099a): bIPS_L 62 Hz under HS alone → 16 Hz with H2 → 0 under H2 alone. The "competitive
+  disinhibition" of the title is visible in a uniform LIF, and it is why the bIPS symmetric
+  preference is 9× rather than the 1.6× direct drive gives.
+- **On MaleCNS the ignition is lateralised: the right DNp15 wins every turn.** yaw_right →
+  DNp15_R 312 Hz / DNp15_L 14; yaw_left → 322 / 0. DNp15's largest input in the male brain is
+  GNG494 (513 synapses onto the right cell, 293 onto the left), not HS, and the left DNp15 is
+  inhibited by WED203/PS100 during the event. Whether this asymmetry is in the animal or in the
+  reconstruction is a question for the annotators; the female brain's asymmetry is 2.6× in the
+  other direction (yaw_right → 198 Hz, yaw_left → 77 Hz) from a 15 % wiring difference.
+- The bIPS homologue on MaleCNS (PS321, by motif) behaves as on FlyWire: driven by HS, silenced
+  by the H2 ignition.
+
+Housekeeping: new `optic_flow` circuit; FlyWire graded 0.728 → 0.733, MaleCNS 0.720 → 0.709;
+23 older tasks bit-identical on both.

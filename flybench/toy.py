@@ -76,13 +76,21 @@ POPS = [
     ("leg_premotor", 60, "vnc_intrinsic", "",   "leg_premotor_toy", "",     "ACH",  "leg premotor",     (40, 60, -60)),
     ("leg_afferent", 60, "vnc_sensory", "",     "leg_afferent_toy", "",     "ACH",  "leg proprioceptor", (60, 30, -90)),
     ("mn_t1",       24, "vnc_motor", "",        "Ti extensor MN", "",       "ACH",  "T1 leg MN",        (120, 40, -80)),   # x = 120: the mirrored half lands cleanly on the left
+    # task 24 (optic-flow rotation vs translation): the H2-HS network of Nat Neurosci 2025 — three HS cells and
+    # one H2 per side, the bilateral GABAergic bIPS, and DNp15; x = 100 so the first half mirrors cleanly left
+    ("hsn",          2, "visual_projection", "", "HSN",       "HSN",        "ACH",  "horizontal system", (100, 160, 20)),
+    ("hse",          2, "visual_projection", "", "HSE",       "HSE",        "ACH",  "horizontal system", (100, 160, 10)),
+    ("hss",          2, "visual_projection", "", "HSS",       "HSS",        "ACH",  "horizontal system", (100, 160, 0)),
+    ("h2",           2, "visual_projection", "", "H2",        "H2",         "ACH",  "H2 heterolateral", (100, 150, 10)),
+    ("bips",         2, "central", "",          "bIPS_toy",  "",           "GABA", "bIPS",             (100, 200, -10)),
+    ("dnp15",        2, "descending", "",       "DNp15",     "DNp15",      "ACH",  "DNp15 / DNHS1",    (100, 195, -25)),
 ]
 
 SUB_CLASS = {"mn_t1": "fl"}   # Codex-style `sub_class` (fl/ml/hl = front/mid/hind leg); "" elsewhere
 
 
 # Bump when POPS or the wiring change: load_connectome("toy") rebuilds a cache whose version differs.
-TOY_VERSION = "2026-09-15-size2"
+TOY_VERSION = "2026-09-15-flow2"
 
 
 def build_toy_connectome(seed: int = 1) -> Connectome:
@@ -161,6 +169,21 @@ def build_toy_connectome(seed: int = 1) -> Connectome:
                 a = idx[pre_pop]
                 m = rng.random(a.size) < p_conn
                 rows.append(a[m]); cols.append(np.full(m.sum(), mn)); vals.append(np.full(m.sum(), per_edge))
+    # --- added 2026-09-15 for task 24 (MODELED: the FlyWire v783 motif, HS_L and H2_R converge on DNp15_L and on
+    #     bIPS_L, and bIPS_L inhibits the *other* DNp15; contact sizes set so DNp15 sits well below its ceiling
+    #     and the contralateral bIPS can pull it under threshold). Sides by index half: the first cell of each pair
+    #     is mirrored to the left in the position step below.
+    def edge(pre_cells, post_cell, syn):
+        for p in np.atleast_1d(pre_cells):
+            rows.append(np.array([p])); cols.append(np.array([post_cell])); vals.append(np.array([syn]))
+    L, R = 0, 1
+    for me, other in ((L, R), (R, L)):
+        hs_me = np.array([idx["hsn"][me], idx["hse"][me], idx["hss"][me]])
+        edge(hs_me, idx["dnp15"][me], 26)        # 3 × 26 synapses: a few tens of Hz at gain 1, well under the ceiling
+        edge(hs_me, idx["bips"][me], 22)
+        edge(idx["h2"][other], idx["dnp15"][me], 40)   # the contralateral H2 (right-eye back-to-front) joins HS_L on DNp15_L
+        edge(idx["h2"][other], idx["bips"][me], 10)
+        edge(idx["bips"][me], idx["dnp15"][other], 60)  # GABA: bIPS_L → DNp15_R, enough to halve it
     pre = np.concatenate(rows); post = np.concatenate(cols); syn = np.concatenate(vals).astype(np.float32)
     keep = pre != post
     pre, post, syn = pre[keep], post[keep], syn[keep]

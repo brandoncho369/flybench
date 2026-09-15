@@ -108,7 +108,10 @@ numbers (figure-only in Ache 2019 / Klapoetke 2017).
     field; P1 = pC1 ∩ pMP-e lineage (86 cells); scores reachability, MN class, either-wing symmetry, and a
     leg-MN null — never rhythm.**
 22. **Optic-flow rotation vs translation**: HS/H2/VS → DNp15/bIPS; DNp15 discriminates rotation from
-    translation better than HS (Nat Neurosci 2025, s41593-025-01948-9).
+    translation better than HS (Nat Neurosci 2025, s41593-025-01948-9). **Started 2026-09-15: task 24
+    (docs/rfcs/24): HS/H2 as the flow proxies (inferred mapping), DNp15 L/R and bIPS (FlyWire CB0268 by the
+    paper's own label; MaleCNS PS321 by motif) as readouts; yaw response + lateral null, rotation preference,
+    contralateral suppression, bIPS symmetric preference. VS/pitch/roll left out.**
 23. **Leg MN recruitment order** (size principle): premotor → MN weight scales with MN size; ramping
     drive recruits in size order; wing steering MNs show no such order (Azevedo et al. 2024 Nature).
     Pure VNC graph + LIF; MaleCNS only. **Started 2026-09-15: task 23 (docs/rfcs/23), `rank_order` and

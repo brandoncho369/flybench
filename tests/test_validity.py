@@ -442,3 +442,30 @@ def test_task23_size_principle_passes_on_toy_and_fails_on_size_proportional_wiri
     rb = run_task(t23, broken, LIFParams(seed=1))
     assert not rb.checks[0].passed and rb.checks[0].value < -0.5
     assert rb.checks[1].passed and rb.checks[2].passed
+
+
+def test_task24_optic_flow_passes_on_toy_and_fails_without_bips(toy):
+    import scipy.sparse as sp
+    from flybench.bench import task_unavailable
+    from flybench.connectome import Connectome
+    t24 = next(t for t in load_tasks() if t["name"] == "optic_flow_rotation")
+    raw = yaml.safe_load((TASK_DIR / "24_optic_flow_rotation.yaml").read_text(encoding="utf-8"))
+    assert lint_task(raw) == [] and task_unavailable(t24, toy) is None
+    assert toy.select(t24["readouts"]["bips"]["select"]).size == 2
+    hs_l = toy.select(t24["conditions"]["ftb_left"]["stimuli"][0]["select"])
+    assert hs_l.size == 3 and set(toy.annotations.iloc[hs_l].side) == {"left"}
+    r = run_task(t24, toy, LIFParams(seed=1))
+    assert r.passed and r.score == 1.0
+    assert r.checks[2].description.startswith("rate[yaw_right, dnp15_right] <") and r.checks[2].value == 0.0
+    assert r.checks[4].description.startswith("rate[forward, dnp15_left] / rate[ftb_left] <") and r.checks[4].value < 0.8
+    # cut bIPS -> DNp15: the contralateral symmetric component no longer suppresses DNp15 (check 5 fails,
+    # ratio ~ 1); the yaw responses, the null and the bIPS preference are untouched
+    W = toy.W.tolil(); bips = toy.select("bIPS_toy"); dn = toy.select("DNp15")
+    for i in bips:
+        for j in dn:
+            W[i, j] = 0.0
+    broken = Connectome(root_ids=toy.root_ids, W=sp.csr_matrix(W, dtype=np.float32), positions=toy.positions,
+                        annotations=toy.annotations, name="toy", meta=dict(toy.meta))
+    rb = run_task(t24, broken, LIFParams(seed=1))
+    assert not rb.checks[4].passed and rb.checks[4].value > 0.8
+    assert all(ch.passed for k, ch in enumerate(rb.checks) if k not in (3, 4))
