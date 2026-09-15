@@ -226,9 +226,18 @@ def lifetime_sparseness(rates: "np.ndarray") -> float:
     return float((1.0 - (r.mean() ** 2) / np.mean(r ** 2)) / (1.0 - 1.0 / n))
 
 
+KNOWN_DATASETS = ("toy", "flywire783", "malecns")   # names `dataset_only` may list (connectome.name)
+
+
 def task_unavailable(task: dict, c: Connectome) -> str | None:
     """A task may declare `requires_readouts: [name, ...]`; if any of those readouts matches no
-    neuron on this connectome, the task cannot be run here and is skipped (not failed)."""
+    neuron on this connectome, the task cannot be run here and is skipped (not failed).
+    `dataset_only: [name, ...]` declares the task defined on those connectomes alone (a sexually
+    dimorphic circuit, say): elsewhere it is "not applicable" — skipped before any selector runs,
+    and the reason says so, because "matches no neurons" would be the wrong story."""
+    only = task.get("dataset_only")
+    if only and c.name not in list(only):
+        return f"not applicable: {task['name']} is defined on {'/'.join(only)} only (this is {c.name})"
     for name in task.get("requires_readouts", []) or []:
         spec = task.get("readouts", {}).get(name) or (task.get("readout") if name == "default" else None)
         if spec is None:

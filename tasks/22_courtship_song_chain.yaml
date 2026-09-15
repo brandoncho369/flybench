@@ -1,0 +1,47 @@
+name: courtship_song_chain
+title: P1 drives pIP10 drives the song wing motor neurons, on either wing, not the legs
+tier: hard
+circuit: courtship
+description: >
+  The male song command chain (von Philipsborn et al. 2011): the male-specific P1 cluster (the
+  pMP-e / pMP4 lineage) → the descending neuron pIP10 → thoracic song premotor neurons (dPR1,
+  vPR6, TN1; Lillvis et al. 2024) → the wing motor neurons that make song (hg1–4, ps1, b1, i1,
+  i2, iii1, iii3; O'Sullivan et al. 2018). P1 or pIP10 activation elicits song; one pIP10 is
+  enough and a unilateral pIP10 sings with either wing, no side bias (von Philipsborn 2011).
+  pIP10 activation gives wing extension, not walking (Cande et al. 2018), so the leg motor pool
+  is the null readout. MaleCNS only — P1 and pIP10 are male-specific and the chain needs the
+  nerve cord; on a female or brain-only dataset this task is not applicable (`dataset_only`),
+  which is a different statement from "matches no neurons". Nothing here scores song rhythm.
+  Pre-registered predictions and outcome: docs/rfcs/22_courtship_song_chain.md.
+citation: "von Philipsborn et al. 2011 (Neuron 69:509); Lillvis et al. 2024 (Curr Biol); O'Sullivan et al. 2018 (Curr Biol 28:2705); Cande et al. 2018 (eLife 7:e34275); Cachero et al. 2010 (Curr Biol 20:1589); Yu et al. 2010 (Curr Biol 20:1602)"
+dataset_only: [malecns, toy]
+duration_ms: 800
+window: [200, 700]
+requires_stimuli: [p1, pip10_left, pip10_right]
+requires_readouts: [pip10, song_mn, song_mn_left, leg_mn]
+readouts:
+  pip10:         {select: {any: [{cell_type: pIP10}, {hemibrain_type: pIP10}]}}
+  song_mn:       {select: {cell_type_regex: "^(hg[1-4]|ps1|b1|i1|i2|iii1|iii3) MN$"}}
+  song_mn_left:  {select: {all_of: [{cell_type_regex: "^(hg[1-4]|ps1|b1|i1|i2|iii1|iii3) MN$"}, {side_regex: "^(left|l)$"}]}}
+  song_mn_right: {select: {all_of: [{cell_type_regex: "^(hg[1-4]|ps1|b1|i1|i2|iii1|iii3) MN$"}, {side_regex: "^(right|r)$"}]}}
+  leg_mn:        {select: {all_of: [{super_class: vnc_motor}, {cell_type_regex: "(flexor|extensor|rotator|reductor|depressor|levator|promotor|remotor|Tergotr|Sternotrochanter|ltm|^Ta |^Ti |^Tr |^Fe ) ?MN$"}]}}
+conditions:
+  p1:
+    stimuli:
+      # P1 = pC1 types the MaleCNS annotators tag with the pMP-e (Cachero 2010) / pMP4 (Yu 2010) lineage; the toy names its P1 pC1_toy
+      - {name: p1, select: {any: [{all_of: [{cell_type_regex: "^pC1"}, {synonyms_regex: "pMP-e"}]}, {cell_type: pC1_toy}]}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
+  pip10_left:
+    stimuli:
+      - {name: pip10_left, select: {all_of: [{any: [{cell_type: pIP10}, {hemibrain_type: pIP10}]}, {side_regex: "^(left|l)$"}]}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
+  pip10_right:
+    stimuli:
+      - {name: pip10_right, select: {all_of: [{any: [{cell_type: pIP10}, {hemibrain_type: pIP10}]}, {side_regex: "^(right|r)$"}]}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
+checks:
+  - {type: rate, cond: p1, readout: pip10, op: ">", value: 5, basis: "von Philipsborn et al. 2011: P1 activation elicits song via pIP10 (1,444 P1 → pIP10 synapses in MaleCNS); 5 Hz is the task-02 convention for a response"}
+  - {type: rate, cond: p1, readout: song_mn, op: ">", value: 5, basis: "von Philipsborn et al. 2011: P1 activation elicits pulse song; O'Sullivan et al. 2018: these ten wing MN types produce it; 5 Hz task-02 convention"}
+  - {type: readout_active_fraction, cond: p1, readout: song_mn, op: ">", value: 0.5, basis: "convention: song recruits several wing muscles (O'Sullivan et al. 2018), so at least half of the ten song MN types must fire; the exact set per song mode is not a single number"}
+  - {type: rate, cond: pip10_left, readout: leg_mn, op: "<", value: 2, basis: "null check. Cande et al. 2018; von Philipsborn et al. 2011: pIP10 activation gives wing extension and song, not walking (inferred from behaviour); 2 Hz is the task-05 convention for silence"}
+  - {type: rate, cond: pip10_left, readout: song_mn, op: ">", value: 5, basis: "von Philipsborn et al. 2011: unilateral pIP10 activation is sufficient for song (10/13 flies); 5 Hz task-02 convention"}
+  - {type: rate, cond: pip10_right, readout: song_mn, op: ">", value: 5, basis: "von Philipsborn et al. 2011: unilateral pIP10 activation is sufficient for song (10/13 flies); 5 Hz task-02 convention"}
+  - {type: ratio, cond: pip10_left, over: pip10_right, readout: song_mn_left, op: "<", value: 3, basis: "von Philipsborn et al. 2011: unilateral pIP10 flies sang with either wing, no ipsilateral/contralateral bias; ratio < 3 is the task-16 DSI < 0.5 rule (inferred: the left wing's MNs get similar drive from either pIP10)"}
+  - {type: ratio, cond: pip10_right, over: pip10_left, readout: song_mn_left, op: "<", value: 3, basis: "von Philipsborn et al. 2011: unilateral pIP10 flies sang with either wing, no ipsilateral/contralateral bias; ratio < 3 is the task-16 DSI < 0.5 rule (inferred: the left wing's MNs get similar drive from either pIP10)"}

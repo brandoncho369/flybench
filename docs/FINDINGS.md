@@ -122,3 +122,23 @@ them null. FlyWire 0.45 scored 11/16 and **tied its rewired control (specificity
   conducts). A null-heavy task's control is not a constant.
 
 Unscored: LC6 → GF fires on both datasets with no direct synapse; LPLC1 → DNp11 fires on both.
+
+## 2026-09-15 — task 22 (courtship song chain, MaleCNS-only): 7/8 as pre-registered; one pIP10 lights 12 % of the CNS
+
+First `dataset_only` task (docs/rfcs/22): P1 (pC1 ∩ pMP-e lineage, 86 cells) → pIP10 → song
+premotor → the ten song wing MNs, MaleCNS only; FlyWire records it as **not applicable**, which the
+explorer now shows distinctly from "not run yet". MaleCNS 0.65: **7/8**, rewired 3/8, specificity
++0.50 — every prediction held, including the one fail (pIP10 → leg MNs 16 Hz, the null).
+
+- A unilateral pIP10 drives the left wing's MNs at 0.93× and the right's at 1.08× of what the
+  other pIP10 does: the wiring reproduces von Philipsborn 2011's either-wing, no-bias result.
+  Wing choice must be made downstream of, or beside, pIP10.
+- **A single pIP10 at 100 Hz activates 11.8 % of the male CNS** — the same fraction as 86 P1 cells
+  or a full sugar drive. At 0.65 any drive that reaches a descending neuron is a whole-CNS event;
+  the leg-MN leak is that event (via IN18B009 / IN18B029), not a song pathway.
+- The undriven pIP10 fires at ~60 Hz when its partner is driven (weak direct contacts, 6 and 12
+  synapses; two-hop via ANXXX152 / AVLP718m; the rest is recurrence).
+
+Housekeeping: a `courtship` circuit was added for the per-pathway weighting, which moved the
+MaleCNS hard-by-circuit score 0.618 → 0.661 (graded 0.720 → 0.729); the 21 older tasks are
+bit-identical.

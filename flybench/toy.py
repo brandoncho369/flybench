@@ -62,11 +62,20 @@ POPS = [
     ("mdn",          4, "descending", "",       "MDN",        "MDN",        "ACH",  "moonwalker",       (0, 180, -30)),
     ("dnp02",        2, "descending", "",       "DNp02",      "DNp02",      "ACH",  "backward takeoff", (-20, 200, -20)),
     ("dnp11",        2, "descending", "",       "DNp11",      "DNp11",      "ACH",  "forward takeoff",  (20, 200, -20)),
+    # task 22 (courtship song chain): P1 -> pIP10 -> TN1 -> song wing MNs, plus a leg-MN pool that must stay quiet
+    ("p1",          40, "central", "",          "pC1_toy",    "",           "ACH",  "P1 pMP-e",         (30, 230, 30)),
+    ("pip10",        2, "descending", "",       "pIP10",      "pIP10",      "ACH",  "song descending",  (80, 190, -25)),   # x = 80: the mirrored half lands on the left, so the pair is one per side
+    ("tn1",         40, "vnc_intrinsic", "",    "TN1a_toy",   "",           "ACH",  "song premotor",    (0, 100, -60)),
+    ("mn_hg1",       2, "vnc_motor", "",        "hg1 MN",     "",           "ACH",  "song wing MN",     (80, 80, -70)),
+    ("mn_ps1",       2, "vnc_motor", "",        "ps1 MN",     "",           "ACH",  "song wing MN",     (80, 80, -70)),
+    ("mn_i1",        2, "vnc_motor", "",        "i1 MN",      "",           "ACH",  "song wing MN",     (80, 70, -70)),
+    ("mn_b1",        2, "vnc_motor", "",        "b1 MN",      "",           "ACH",  "song wing MN",     (80, 70, -70)),
+    ("mn_leg",      20, "vnc_motor", "",        "Ti flexor MN", "",         "ACH",  "leg MN",           (0, 40, -80)),
 ]
 
 
 # Bump when POPS or the wiring change: load_connectome("toy") rebuilds a cache whose version differs.
-TOY_VERSION = "2026-09-14-lcdn1"
+TOY_VERSION = "2026-09-14-song1"
 
 
 def build_toy_connectome(seed: int = 1) -> Connectome:
@@ -126,6 +135,12 @@ def build_toy_connectome(seed: int = 1) -> Connectome:
     connect("lc16", "mdn", 0.6, 3, 8)
     connect("lc4", "dnp02", 0.6, 3, 8)
     connect("lc4", "dnp11", 0.6, 3, 8)
+    # --- added 2026-09-14 for task 22 (MODELED): P1 -> pIP10 -> TN1 -> the four song MN pairs, both sides;
+    #     the leg MN pool gets nothing, so the "not the legs" null passes trivially
+    connect("p1", "pip10", 0.5, 4, 10)
+    connect("pip10", "tn1", 1.0, 150, 250)   # one descending cell must drive TN1 alone: a big contact, like the real pIP10 -> dPR1 (~280 per pair)
+    for mn in ("mn_hg1", "mn_ps1", "mn_i1", "mn_b1"):
+        connect("tn1", mn, 0.8, 8, 16)      # ~300 synapses per MN from 40 premotor cells, the toy's loom -> GF scale
     pre = np.concatenate(rows); post = np.concatenate(cols); syn = np.concatenate(vals).astype(np.float32)
     keep = pre != post
     pre, post, syn = pre[keep], post[keep], syn[keep]

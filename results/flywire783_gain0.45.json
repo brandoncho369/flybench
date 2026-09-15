@@ -46,7 +46,8 @@
   "skipped": {
     "looming_to_jump_muscle": "readout 'ttmn' matches no neurons on flywire783",
     "gf_to_muscle_latency": "readout 'ttmn' matches no neurons on flywire783",
-    "taste_modalities": "stimulus 'water_grn' matches no neurons on flywire783"
+    "taste_modalities": "stimulus 'water_grn' matches no neurons on flywire783",
+    "courtship_song_chain": "not applicable: courtship_song_chain is defined on malecns/toy only (this is flywire783)"
   },
   "controls": [
     "rewired"
@@ -142,7 +143,7 @@
       },
       "readout_size": 139255,
       "stimulus_sizes": {},
-      "seconds": 6.035527944564819,
+      "seconds": 3.1404788494110107,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -247,7 +248,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 79.90938425064087,
+      "seconds": 22.535377740859985,
       "notes": [],
       "graded": 0.8547046867837924,
       "graded_per_seed": [
@@ -332,7 +333,7 @@
         "sugar_grn": 129,
         "bitter_grn": 65
       },
-      "seconds": 93.78263640403748,
+      "seconds": 26.603153705596924,
       "notes": [],
       "graded": 0.9997156432785514,
       "graded_per_seed": [
@@ -435,7 +436,7 @@
       "stimulus_sizes": {
         "looming_detectors": 314
       },
-      "seconds": 35.683435916900635,
+      "seconds": 11.372158765792847,
       "notes": [],
       "graded": 0.8878267508943137,
       "graded_per_seed": [
@@ -511,7 +512,7 @@
       "stimulus_sizes": {
         "bitter_grn": 65
       },
-      "seconds": 29.077933311462402,
+      "seconds": 9.539062023162842,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -662,7 +663,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 119.76768946647644,
+      "seconds": 36.74250841140747,
       "notes": [
         "seed-sensitive: check 0: passes on 1/3 seeds"
       ],
@@ -741,7 +742,7 @@
         "pulse1": 129,
         "pulse2": 129
       },
-      "seconds": 125.80720210075378,
+      "seconds": 25.803282737731934,
       "notes": [],
       "graded": 0.49991747242872503,
       "graded_per_seed": [
@@ -867,7 +868,7 @@
       "stimulus_sizes": {
         "da1_orn": 127
       },
-      "seconds": 50.37282109260559,
+      "seconds": 15.669265985488892,
       "notes": [],
       "graded": 0.5972129056390362,
       "graded_per_seed": [
@@ -994,7 +995,7 @@
         "sugar_grn": 129,
         "looming_detectors": 314
       },
-      "seconds": 88.91667938232422,
+      "seconds": 26.429826021194458,
       "notes": [],
       "graded": 0.9998342392767291,
       "graded_per_seed": [
@@ -1105,7 +1106,7 @@
       "stimulus_sizes": {
         "looming_detectors": 314
       },
-      "seconds": 34.07160782814026,
+      "seconds": 10.8912034034729,
       "notes": [],
       "graded": 0.7312563216480612,
       "graded_per_seed": [
@@ -1202,7 +1203,7 @@
       "stimulus_sizes": {
         "photoreceptors": 11153
       },
-      "seconds": 27.242612600326538,
+      "seconds": 8.491394758224487,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -1318,7 +1319,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 217.75509309768677,
+      "seconds": 41.49782085418701,
       "notes": [],
       "graded": 0.2546784676665634,
       "graded_per_seed": [
@@ -1464,7 +1465,7 @@
         "looming_detectors": 314,
         "sugar_grn": 129
       },
-      "seconds": 64.25856447219849,
+      "seconds": 22.634775400161743,
       "notes": [],
       "graded": 0.6296693765754758,
       "graded_per_seed": [
@@ -1620,7 +1621,7 @@
         "sugar_grn": 129,
         "looming_detectors": 314
       },
-      "seconds": 79.87614512443542,
+      "seconds": 27.277158737182617,
       "notes": [
         "seed-sensitive: check 1: passes on 2/3 seeds"
       ],
@@ -1848,7 +1849,7 @@
         "loom_left": 162,
         "loom_right": 152
       },
-      "seconds": 66.69843339920044,
+      "seconds": 22.33482027053833,
       "notes": [],
       "graded": 0.44444433333344446,
       "graded_per_seed": [
@@ -2035,7 +2036,7 @@
       "stimulus_sizes": {
         "da1_orn": 127
       },
-      "seconds": 107.16935515403748,
+      "seconds": 31.553890466690063,
       "notes": [
         "seed-sensitive: check 2: passes on 1/3 seeds; check 4: passes on 1/3 seeds"
       ],
@@ -2309,7 +2310,7 @@
         "orn_va1v": 94,
         "orn_dc1": 39
       },
-      "seconds": 298.65091371536255,
+      "seconds": 86.48927783966064,
       "notes": [],
       "graded": 0.11105225523809181,
       "graded_per_seed": [
@@ -2546,7 +2547,7 @@
           "value": 0.0,
           "passed": false,
           "margin": -3.0,
-          "basis": "Sen et al. 2017: LC16 \u2192 MDN excitatory feed-forward circuit mediates visually evoked retreat",
+          "basis": "Sen et al. 2017: LC16 \u2192 MDN excitatory feed-forward circuit mediates visually evoked retreat (polysynaptic: no direct LC16 \u2192 MDN synapse in FlyWire v783 or MaleCNS v1.0, see RFC 21 outcome)",
           "graded": 9.99999000001e-07,
           "z": NaN,
           "ceiling": null,
@@ -2732,7 +2733,7 @@
         "lc16": 152,
         "lc10a": 237
       },
-      "seconds": 133.25462985038757,
+      "seconds": 41.56902623176575,
       "notes": [
         "seed-sensitive: check 7: passes on 1/3 seeds"
       ],
@@ -2752,5 +2753,5 @@
       "non_diagnostic": false
     }
   ],
-  "label": "gain0.45"
+  "label": "LIF gain 0.45 (3 seeds)"
 }

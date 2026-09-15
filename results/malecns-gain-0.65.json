@@ -4,24 +4,24 @@
   "seeds": 3,
   "verified": false,
   "core_score": 0.5666666666666667,
-  "hard_score": 0.6338045634920635,
+  "hard_score": 0.6479925303454716,
   "core_by_circuit": 0.6851851851851851,
-  "hard_by_circuit": 0.6183359788359788,
-  "graded": 0.7202888032414466,
+  "hard_by_circuit": 0.661113315696649,
+  "graded": 0.7292428414059675,
   "graded_ci95": [
-    0.7023740556896304,
-    0.7329404474470406
+    0.7131971973791894,
+    0.7417524544003238
   ],
   "core_graded": 0.7293883288241452,
-  "hard_graded": 0.6753702159609771,
+  "hard_graded": 0.6838101496612126,
   "profile": {
-    "-1": 0.8529411764705882,
-    "-0.5": 0.8137254901960784,
-    "-0.25": 0.7647058823529411,
-    "0": 0.6862745098039216,
-    "0.25": 0.6372549019607843,
-    "0.5": 0.5392156862745098,
-    "1": 0.5294117647058824
+    "-1": 0.8636363636363636,
+    "-0.5": 0.8181818181818182,
+    "-0.25": 0.7727272727272727,
+    "0": 0.7,
+    "0.25": 0.6454545454545455,
+    "0.5": 0.5454545454545454,
+    "1": 0.5272727272727272
   },
   "circuits": {
     "stability": "stability",
@@ -44,13 +44,14 @@
     "da1_sparseness": "olfaction",
     "gf_to_muscle_latency": "escape",
     "taste_modalities": "taste",
-    "lc_dn_matrix": "escape"
+    "lc_dn_matrix": "escape",
+    "courtship_song_chain": "courtship"
   },
   "skipped": {},
   "controls": [
     "rewired"
   ],
-  "specificity": 0.1845143613000756,
+  "specificity": 0.19885461760461762,
   "non_diagnostic": [],
   "tier": [
     "core",
@@ -80,9 +81,9 @@
     "extra": {}
   },
   "simulator": "flybench.sim.LIFSimulator",
-  "score": 0.6178193499622071,
+  "score": 0.6295093795093796,
   "passed": 2,
-  "n_tasks": 21,
+  "n_tasks": 22,
   "tasks": [
     {
       "task": "stability",
@@ -141,7 +142,7 @@
       },
       "readout_size": 176422,
       "stimulus_sizes": {},
-      "seconds": 10.223783731460571,
+      "seconds": 4.3665337562561035,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -246,7 +247,7 @@
       "stimulus_sizes": {
         "sugar_grn": 34
       },
-      "seconds": 96.52178001403809,
+      "seconds": 29.5220685005188,
       "notes": [],
       "graded": 0.8089651361434211,
       "graded_per_seed": [
@@ -331,7 +332,7 @@
         "sugar_grn": 34,
         "bitter_grn": 38
       },
-      "seconds": 151.87452602386475,
+      "seconds": 39.195261001586914,
       "notes": [
         "seed-sensitive: check 1: passes on 2/3 seeds"
       ],
@@ -436,7 +437,7 @@
       "stimulus_sizes": {
         "looming_detectors": 311
       },
-      "seconds": 43.336678981781006,
+      "seconds": 15.350999116897583,
       "notes": [],
       "graded": 0.8051451865640634,
       "graded_per_seed": [
@@ -512,7 +513,7 @@
       "stimulus_sizes": {
         "bitter_grn": 38
       },
-      "seconds": 83.0477979183197,
+      "seconds": 23.6639621257782,
       "notes": [],
       "graded": 0.2181450726470243,
       "graded_per_seed": [
@@ -661,7 +662,7 @@
       "stimulus_sizes": {
         "sugar_grn": 34
       },
-      "seconds": 161.74321722984314,
+      "seconds": 47.05982041358948,
       "notes": [],
       "graded": 0.7309693490418252,
       "graded_per_seed": [
@@ -738,7 +739,7 @@
         "pulse1": 34,
         "pulse2": 34
       },
-      "seconds": 131.72418999671936,
+      "seconds": 30.416637182235718,
       "notes": [
         "seed-sensitive: check 1: passes on 1/3 seeds"
       ],
@@ -866,7 +867,7 @@
       "stimulus_sizes": {
         "da1_orn": 204
       },
-      "seconds": 73.8242015838623,
+      "seconds": 21.973012447357178,
       "notes": [],
       "graded": 0.5651033738467466,
       "graded_per_seed": [
@@ -993,7 +994,7 @@
         "sugar_grn": 34,
         "looming_detectors": 311
       },
-      "seconds": 131.1343367099762,
+      "seconds": 35.053277254104614,
       "notes": [],
       "graded": 0.7504511567475568,
       "graded_per_seed": [
@@ -1104,7 +1105,7 @@
       "stimulus_sizes": {
         "looming_detectors": 311
       },
-      "seconds": 42.00394058227539,
+      "seconds": 15.454858303070068,
       "notes": [],
       "graded": 0.7101134909332251,
       "graded_per_seed": [
@@ -1201,7 +1202,7 @@
       "stimulus_sizes": {
         "photoreceptors": 6091
       },
-      "seconds": 35.57328701019287,
+      "seconds": 14.268372297286987,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -1317,7 +1318,7 @@
       "stimulus_sizes": {
         "sugar_grn": 34
       },
-      "seconds": 249.4496066570282,
+      "seconds": 48.84901738166809,
       "notes": [
         "seed-sensitive: check 1: passes on 1/3 seeds"
       ],
@@ -1465,7 +1466,7 @@
         "looming_detectors": 311,
         "sugar_grn": 34
       },
-      "seconds": 98.49280714988708,
+      "seconds": 29.336071491241455,
       "notes": [
         "seed-sensitive: check 4: passes on 1/3 seeds"
       ],
@@ -1623,7 +1624,7 @@
         "sugar_grn": 34,
         "looming_detectors": 311
       },
-      "seconds": 123.47040224075317,
+      "seconds": 37.66828775405884,
       "notes": [],
       "graded": 0.7620381749956531,
       "graded_per_seed": [
@@ -1804,7 +1805,7 @@
         "looming_detectors": 311,
         "sugar_grn": 34
       },
-      "seconds": 112.25698947906494,
+      "seconds": 35.056418895721436,
       "notes": [],
       "graded": 0.8340723314300736,
       "graded_per_seed": [
@@ -2030,7 +2031,7 @@
         "loom_left": 165,
         "loom_right": 146
       },
-      "seconds": 95.98472833633423,
+      "seconds": 30.897592306137085,
       "notes": [],
       "graded": 0.6439541396510844,
       "graded_per_seed": [
@@ -2217,7 +2218,7 @@
       "stimulus_sizes": {
         "da1_orn": 204
       },
-      "seconds": 155.67024564743042,
+      "seconds": 43.94633865356445,
       "notes": [],
       "graded": 0.4520267386128507,
       "graded_per_seed": [
@@ -2489,7 +2490,7 @@
         "orn_va1v": 130,
         "orn_dc1": 32
       },
-      "seconds": 406.4449214935303,
+      "seconds": 118.94847130775452,
       "notes": [],
       "graded": 0.6359820785267859,
       "graded_per_seed": [
@@ -2607,7 +2608,7 @@
       "stimulus_sizes": {
         "looming_detectors": 311
       },
-      "seconds": 29.719764471054077,
+      "seconds": 10.300056219100952,
       "notes": [],
       "graded": 0.5226351469055932,
       "graded_per_seed": [
@@ -2747,7 +2748,7 @@
         "water_grn": 17,
         "high_salt_grn": 26
       },
-      "seconds": 263.1715807914734,
+      "seconds": 74.50824284553528,
       "notes": [
         "seed-sensitive: check 1: passes on 1/3 seeds"
       ],
@@ -2986,7 +2987,7 @@
           "value": 1.3333333333333333,
           "passed": true,
           "margin": 0.12493873660829993,
-          "basis": "Sen et al. 2017: LC16 \u2192 MDN excitatory feed-forward circuit mediates visually evoked retreat",
+          "basis": "Sen et al. 2017: LC16 \u2192 MDN excitatory feed-forward circuit mediates visually evoked retreat (polysynaptic: no direct LC16 \u2192 MDN synapse in FlyWire v783 or MaleCNS v1.0, see RFC 21 outcome)",
           "graded": 0.64,
           "z": NaN,
           "ceiling": null,
@@ -3172,7 +3173,7 @@
         "lc16": 182,
         "lc10a": 275
       },
-      "seconds": 173.8325207233429,
+      "seconds": 59.28997468948364,
       "notes": [],
       "graded": 0.8602371981313907,
       "graded_per_seed": [
@@ -3188,7 +3189,239 @@
       },
       "specificity": 0.4375,
       "non_diagnostic": false
+    },
+    {
+      "task": "courtship_song_chain",
+      "title": "P1 drives pIP10 drives the song wing motor neurons, on either wing, not the legs",
+      "passed": false,
+      "score": 0.875,
+      "checks": [
+        {
+          "description": "rate[p1, pip10] > 5.0 Hz  [3/3 seeds, sd 1.7]",
+          "value": 72.33333333333333,
+          "passed": true,
+          "margin": 1.1603684747928482,
+          "basis": "von Philipsborn et al. 2011: P1 activation elicits song via pIP10 (1,444 P1 \u2192 pIP10 synapses in MaleCNS); 5 Hz is the task-02 convention for a response",
+          "graded": 0.9952445365008243,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            73.0,
+            70.0,
+            74.0
+          ],
+          "op": ">",
+          "target": 5.0,
+          "saturated": false
+        },
+        {
+          "description": "rate[p1, song_mn] > 5.0 Hz  [3/3 seeds, sd 1.52]",
+          "value": 67.46666666666667,
+          "passed": true,
+          "margin": 1.1301192491120804,
+          "basis": "von Philipsborn et al. 2011: P1 activation elicits pulse song; O'Sullivan et al. 2018: these ten wing MN types produce it; 5 Hz task-02 convention",
+          "graded": 0.9945376098911504,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            69.0,
+            68.0,
+            65.4
+          ],
+          "op": ">",
+          "target": 5.0,
+          "saturated": false
+        },
+        {
+          "description": "readout active fraction[p1, song_mn] > 0.5  [3/3 seeds, sd 0.0236]",
+          "value": 0.8833333333333333,
+          "passed": true,
+          "margin": 0.24715461488112658,
+          "basis": "convention: song recruits several wing muscles (O'Sullivan et al. 2018), so at least half of the ten song MN types must fire; the exact set per song mode is not a single number",
+          "graded": 0.7573469937988676,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.9,
+            0.85,
+            0.9
+          ],
+          "op": ">",
+          "target": 0.5,
+          "saturated": false
+        },
+        {
+          "description": "rate[pip10_left, leg_mn] < 2.0 Hz  [0/3 seeds, sd 0.528]",
+          "value": 16.19636363636364,
+          "passed": false,
+          "margin": -0.9083875232037756,
+          "basis": "null check. Cande et al. 2018; von Philipsborn et al. 2011: pIP10 activation gives wing extension and song, not walking (inferred from behaviour); 2 Hz is the task-05 convention for silence",
+          "graded": 0.015019401591291942,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            16.80727272727273,
+            16.26181818181818,
+            15.52
+          ],
+          "op": "<",
+          "target": 2.0,
+          "saturated": false
+        },
+        {
+          "description": "rate[pip10_left, song_mn] > 5.0 Hz  [3/3 seeds, sd 0.759]",
+          "value": 70.86666666666667,
+          "passed": true,
+          "margin": 1.1514720011315969,
+          "basis": "von Philipsborn et al. 2011: unilateral pIP10 activation is sufficient for song (10/13 flies); 5 Hz task-02 convention",
+          "graded": 0.9950466451918556,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            71.5,
+            71.3,
+            69.8
+          ],
+          "op": ">",
+          "target": 5.0,
+          "saturated": false
+        },
+        {
+          "description": "rate[pip10_right, song_mn] > 5.0 Hz  [3/3 seeds, sd 1.11]",
+          "value": 76.66666666666667,
+          "passed": true,
+          "margin": 1.1856365769619117,
+          "basis": "von Philipsborn et al. 2011: unilateral pIP10 activation is sufficient for song (10/13 flies); 5 Hz task-02 convention",
+          "graded": 0.9957647058823529,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            75.2,
+            77.9,
+            76.9
+          ],
+          "op": ">",
+          "target": 5.0,
+          "saturated": false
+        },
+        {
+          "description": "rate[pip10_left, song_mn_left] / rate[pip10_right] < 3.0  [3/3 seeds, sd 0.0163]",
+          "value": 0.9234243599443367,
+          "passed": true,
+          "margin": 0.511719927660419,
+          "basis": "von Philipsborn et al. 2011: unilateral pIP10 flies sang with either wing, no ipsilateral/contralateral bias; ratio < 3 is the task-16 DSI < 0.5 rule (inferred: the left wing's MNs get similar drive from either pIP10)",
+          "graded": 0.9134540316346604,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.9460234939844603,
+            0.9162022876775464,
+            0.9080472981710033
+          ],
+          "op": "<",
+          "target": 3.0,
+          "saturated": false
+        },
+        {
+          "description": "rate[pip10_right, song_mn_left] / rate[pip10_left] < 3.0  [3/3 seeds, sd 0.019]",
+          "value": 1.0832608137520745,
+          "passed": true,
+          "margin": 0.44238822160645225,
+          "basis": "von Philipsborn et al. 2011: unilateral pIP10 flies sang with either wing, no ipsilateral/contralateral bias; ratio < 3 is the task-16 DSI < 0.5 rule (inferred: the left wing's MNs get similar drive from either pIP10)",
+          "graded": 0.8846553007765307,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            1.0570562003573523,
+            1.0914620203960306,
+            1.1012642205028402
+          ],
+          "op": "<",
+          "target": 3.0,
+          "saturated": false
+        }
+      ],
+      "measurements": {
+        "p1": {
+          "rate": 72.33333333333333,
+          "network_rate": 11.64834695597299,
+          "active_fraction": 0.11784055654434632,
+          "spikes": 1283310.3333333333,
+          "rate[pip10]": 72.33333333333333,
+          "readout_active_fraction[pip10]": 1.0,
+          "rate[song_mn]": 67.46666666666667,
+          "readout_active_fraction[song_mn]": 0.8833333333333333,
+          "rate[song_mn_left]": 68.53333333333333,
+          "readout_active_fraction[song_mn_left]": 0.9666666666666667,
+          "rate[song_mn_right]": 66.39999999999999,
+          "readout_active_fraction[song_mn_right]": 0.8000000000000002,
+          "rate[leg_mn]": 16.203636363636363,
+          "readout_active_fraction[leg_mn]": 0.29696969696969694
+        },
+        "pip10_left": {
+          "rate": 64.0,
+          "network_rate": 10.640762867820717,
+          "active_fraction": 0.11775553313456749,
+          "spikes": 1191321.0,
+          "rate[pip10]": 64.0,
+          "readout_active_fraction[pip10]": 1.0,
+          "rate[song_mn]": 70.86666666666667,
+          "readout_active_fraction[song_mn]": 0.8833333333333333,
+          "rate[song_mn_left]": 65.13333333333333,
+          "readout_active_fraction[song_mn_left]": 0.9666666666666667,
+          "rate[song_mn_right]": 76.60000000000001,
+          "readout_active_fraction[song_mn_right]": 0.8000000000000002,
+          "rate[leg_mn]": 16.19636363636364,
+          "readout_active_fraction[leg_mn]": 0.2836363636363637
+        },
+        "pip10_right": {
+          "rate": 69.0,
+          "network_rate": 10.678415012488992,
+          "active_fraction": 0.11867378596017882,
+          "spikes": 1190493.6666666667,
+          "rate[pip10]": 69.0,
+          "readout_active_fraction[pip10]": 0.5,
+          "rate[song_mn]": 76.66666666666667,
+          "readout_active_fraction[song_mn]": 0.8666666666666667,
+          "rate[song_mn_left]": 70.53333333333333,
+          "readout_active_fraction[song_mn_left]": 0.9333333333333332,
+          "rate[song_mn_right]": 82.8,
+          "readout_active_fraction[song_mn_right]": 0.8000000000000002,
+          "rate[leg_mn]": 17.25090909090909,
+          "readout_active_fraction[leg_mn]": 0.30666666666666664
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "p1": 86,
+        "pip10_left": 1,
+        "pip10_right": 1
+      },
+      "seconds": 42.898032665252686,
+      "notes": [],
+      "graded": 0.81884908886498,
+      "graded_per_seed": [
+        0.8197582360307527,
+        0.8170219519010915,
+        0.8197670786630957
+      ],
+      "controls": {
+        "rewired": {
+          "score": 0.375,
+          "passed": false
+        }
+      },
+      "specificity": 0.5,
+      "non_diagnostic": false
     }
   ],
-  "label": "gain0.65"
+  "label": "MaleCNS gain 0.65 (Minecraft demo)"
 }

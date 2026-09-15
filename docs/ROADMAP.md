@@ -104,7 +104,9 @@ numbers (figure-only in Ache 2019 / Klapoetke 2017).
     within ≤5 synapses, unilateral, no leg MNs; the same drive must fail on FlyWire because the
     dimorphic types are absent (Cell 2026 sexual-dimorphism paper; von Philipsborn 2011). Score
     reachability, laterality and MN class, never song rhythm. This is the first task that can pass
-    on one dataset and must fail on the other.
+    on one dataset and must fail on the other. **Started 2026-09-14: task 22 (docs/rfcs/22), `dataset_only:`
+    field; P1 = pC1 ∩ pMP-e lineage (86 cells); scores reachability, MN class, either-wing symmetry, and a
+    leg-MN null — never rhythm.**
 22. **Optic-flow rotation vs translation**: HS/H2/VS → DNp15/bIPS; DNp15 discriminates rotation from
     translation better than HS (Nat Neurosci 2025, s41593-025-01948-9).
 23. **Leg MN recruitment order** (size principle): premotor → MN weight scales with MN size; ramping

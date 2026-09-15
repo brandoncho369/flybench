@@ -6,11 +6,11 @@ from pathlib import Path
 
 import yaml
 
-from .bench import MATRIX_SIGNS, MATRIX_UNSCORED, OPS, expand_checks
+from .bench import KNOWN_DATASETS, MATRIX_SIGNS, MATRIX_UNSCORED, OPS, expand_checks
 
 METRICS = {"rate", "network_rate", "active_fraction", "readout_active_fraction", "ratio", "spikes_per_neuron", "lifetime_sparseness", "latency"}
 CELL_METRICS = {"rate", "readout_active_fraction", "spikes_per_neuron"}   # what a matrix cell may measure
-CIRCUITS = {"stability", "taste", "escape", "olfaction", "physiology", "robustness"}
+CIRCUITS = {"stability", "taste", "escape", "olfaction", "physiology", "robustness", "courtship"}
 REQUIRED = {"name", "title", "conditions", "checks"}
 TIERS = {"core", "hard"}
 
@@ -62,6 +62,16 @@ def lint_task(task: dict, source: str = "<task>") -> list[str]:
     for name in task.get("requires_readouts", []) or []:
         if name not in readouts:
             errs.append(f"requires_readouts: {name!r} is not a defined readout")
+    only = task.get("dataset_only")
+    if only is not None:
+        if not isinstance(only, list) or not only or not all(isinstance(d, str) for d in only):
+            errs.append("dataset_only must be a non-empty list of connectome names")
+        else:
+            for d in only:
+                if d not in KNOWN_DATASETS:
+                    errs.append(f"dataset_only: {d!r} is not a known connectome name {KNOWN_DATASETS}")
+            if "toy" not in only:
+                errs.append("dataset_only must include 'toy': every task has to pass on the network wired to pass it")
     if not task["checks"]:
         errs.append("needs at least one check")
     # a matrix check: every cell must name a condition and a readout, carry a legal sign, and end up

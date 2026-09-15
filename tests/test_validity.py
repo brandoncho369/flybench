@@ -316,3 +316,40 @@ def test_task21_matrix_expands_lints_and_a_broken_toy_fails_the_leaking_cell(toy
     # multi-seed keeps the per-cell alignment
     rm = run_task(t21, toy, LIFParams(seed=1), seeds=2)
     assert len(rm.checks) == 16 and rm.passed
+
+
+def test_task22_dataset_only_skips_elsewhere_lints_and_a_broken_toy_fails_the_leg_null(toy):
+    import scipy.sparse as sp
+    from flybench.bench import task_unavailable
+    from flybench.connectome import Connectome
+    t22 = next(t for t in load_tasks() if t["name"] == "courtship_song_chain")
+    raw = yaml.safe_load((TASK_DIR / "22_courtship_song_chain.yaml").read_text(encoding="utf-8"))
+    assert lint_task(raw) == [] and t22["dataset_only"] == ["malecns", "toy"]
+    assert task_unavailable(t22, toy) is None
+    # the same network under another name is "not applicable" — before any selector is consulted
+    female = Connectome(root_ids=toy.root_ids, W=toy.W, positions=toy.positions, annotations=toy.annotations, name="flywire783", meta=dict(toy.meta))
+    why = task_unavailable(t22, female)
+    assert why and why.startswith("not applicable") and "malecns/toy" in why and "flywire783" in why
+    rep = run_suite(female, LIFParams(seed=1), [t22])
+    assert rep["n_tasks"] == 0 and rep["skipped"]["courtship_song_chain"].startswith("not applicable")
+    # lint: unknown dataset names, a list that leaves the toy out, a non-list
+    bad = copy.deepcopy(raw); bad["dataset_only"] = ["malecns", "toy", "hemibrain"]
+    assert any("hemibrain" in e for e in lint_task(bad))
+    bad = copy.deepcopy(raw); bad["dataset_only"] = ["malecns"]
+    assert any("must include 'toy'" in e for e in lint_task(bad))
+    bad = copy.deepcopy(raw); bad["dataset_only"] = "malecns"
+    assert any("non-empty list" in e for e in lint_task(bad))
+    # the toy passes; a toy with a pIP10 -> leg MN contact fails exactly the leg-MN null
+    r = run_task(t22, toy, LIFParams(seed=1))
+    assert r.passed and r.score == 1.0
+    assert r.checks[3].description.startswith("rate[pip10_left, leg_mn] <")
+    W = toy.W.tolil(); pip10 = toy.select("pIP10"); leg = toy.select({"all_of": [{"super_class": "vnc_motor"}, {"cell_type_regex": "flexor MN$"}]})
+    assert leg.size == 20
+    for i in pip10:
+        for j in leg:
+            W[i, j] = 200.0
+    broken = Connectome(root_ids=toy.root_ids, W=sp.csr_matrix(W, dtype=np.float32), positions=toy.positions,
+                        annotations=toy.annotations, name="toy", meta=dict(toy.meta))
+    rb = run_task(t22, broken, LIFParams(seed=1))
+    assert not rb.checks[3].passed and rb.checks[3].value >= 2
+    assert all(ch.passed for k, ch in enumerate(rb.checks) if k != 3)
