@@ -54,11 +54,19 @@ POPS = [
     ("bg_inh",     500, "central", "",          "",           "",           "GABA", "",                 (0, 200, 0)),
     # appended last (and wired last) so the random draws of every older population are unchanged
     ("grn_salt",    20, "sensory", "gustatory", "GRN_salt",   "",           "ACH",  "high salt GRN",    (80, 380, 80)),
+    # task 21 (LC -> DN matrix): four more LC types and three more descending readouts, appended after salt
+    ("lc6",         40, "visual_projection", "", "LC6",       "LC6",        "ACH",  "looming",          (-200, 120, 0)),
+    ("lplc1",       40, "visual_projection", "", "LPLC1",     "LPLC1",      "ACH",  "looming",          (200, 120, 0)),
+    ("lc16",        40, "visual_projection", "", "LC16",      "LC16",       "ACH",  "retreat",          (-200, 90, 0)),
+    ("lc10a",       40, "visual_projection", "", "LC10a",     "LC10a",      "ACH",  "courtship tracking", (200, 90, 0)),
+    ("mdn",          4, "descending", "",       "MDN",        "MDN",        "ACH",  "moonwalker",       (0, 180, -30)),
+    ("dnp02",        2, "descending", "",       "DNp02",      "DNp02",      "ACH",  "backward takeoff", (-20, 200, -20)),
+    ("dnp11",        2, "descending", "",       "DNp11",      "DNp11",      "ACH",  "forward takeoff",  (20, 200, -20)),
 ]
 
 
 # Bump when POPS or the wiring change: load_connectome("toy") rebuilds a cache whose version differs.
-TOY_VERSION = "2026-09-14-salt3"
+TOY_VERSION = "2026-09-14-lcdn1"
 
 
 def build_toy_connectome(seed: int = 1) -> Connectome:
@@ -112,6 +120,12 @@ def build_toy_connectome(seed: int = 1) -> Connectome:
     #     (Jaeger et al. 2018 put part of high-salt aversion in the bitter GRNs themselves)
     connect("grn_water", "taste_in", 0.4, 4, 10)
     connect("grn_salt", "bitter_in", 0.5, 4, 10)
+    # --- added 2026-09-14 for task 21 (MODELED: the toy proves the matrix can pass, nothing more):
+    #     LC16 -> MDN and LC4 -> DNp02 / DNp11 as direct contacts like the toy's loom -> GF;
+    #     LC6, LPLC1 and LC10a project nowhere, so the negatives pass trivially
+    connect("lc16", "mdn", 0.6, 3, 8)
+    connect("lc4", "dnp02", 0.6, 3, 8)
+    connect("lc4", "dnp11", 0.6, 3, 8)
     pre = np.concatenate(rows); post = np.concatenate(cols); syn = np.concatenate(vals).astype(np.float32)
     keep = pre != post
     pre, post, syn = pre[keep], post[keep], syn[keep]

@@ -271,3 +271,48 @@ def test_latency_metric_and_task19_skips_without_a_nerve_cord(toy):
 
 def toy_delay(p):
     return p.delay_ms
+
+
+def test_task21_matrix_expands_lints_and_a_broken_toy_fails_the_leaking_cell(toy):
+    import scipy.sparse as sp
+    from flybench.bench import expand_checks, task_unavailable
+    from flybench.connectome import Connectome
+    t21 = next(t for t in load_tasks() if t["name"] == "lc_dn_matrix")
+    raw = yaml.safe_load((TASK_DIR / "21_lc_dn_matrix.yaml").read_text(encoding="utf-8"))
+    assert lint_task(raw) == [] and task_unavailable(t21, toy) is None
+    # expansion: one check per scored cell, "+" -> ">=", "-" -> "<", "?" dropped, row-major order, cell tag kept
+    grid = raw["checks"][0]["expect"]
+    scored = [(c, r, v["sign"]) for c, row in grid.items() for r, v in row.items() if isinstance(v, dict)]
+    assert len(t21["checks"]) == len(scored) == 16
+    assert expand_checks(t21) is t21                                    # already expanded: returned as is
+    for chk, (cond, rname, sign) in zip(t21["checks"], scored):
+        assert (chk["cond"], chk["readout"], chk["op"]) == (cond, rname, ">=" if sign == "+" else "<")
+        assert chk["type"] == "spikes_per_neuron" and chk["value"] == 1 and chk["cell"][:2] == [cond, rname]
+        assert chk["basis"].strip()
+    # lint: a cell that names a missing readout / condition, a bad sign, or a grid with nothing scored
+    bad = copy.deepcopy(raw); bad["checks"][0]["expect"]["lc4"]["nope"] = "+"
+    assert any("readout 'nope'" in e for e in lint_task(bad))
+    bad = copy.deepcopy(raw); bad["checks"][0]["expect"]["lc99"] = {"gf": "+"}
+    assert any("lc99" in e for e in lint_task(bad))
+    bad = copy.deepcopy(raw); bad["checks"][0]["expect"]["lc4"]["gf"] = "x"
+    assert any("sign" in e for e in lint_task(bad))
+    bad = copy.deepcopy(raw); bad["checks"][0]["expect"] = {"lc4": {"gf": "?"}}
+    assert any("scores no cell" in e for e in lint_task(bad))
+    bad = copy.deepcopy(raw); bad["checks"][0].pop("basis"); bad["checks"][0]["expect"]["lc4"]["gf"] = "+"
+    assert any("needs `basis`" in e for e in lint_task(bad))
+    # the toy passes every cell; a toy with an LC16 -> GF edge fails exactly the LC16/GF cell
+    r = run_task(t21, toy, LIFParams(seed=1))
+    assert r.passed and r.score == 1.0
+    assert r.checks[8].description.startswith("spikes per neuron[lc16, gf] <")
+    W = toy.W.tolil(); lc16 = toy.select("LC16"); gf = toy.select("GF")
+    for i in lc16:
+        for j in gf:
+            W[i, j] = 6.0
+    broken = Connectome(root_ids=toy.root_ids, W=sp.csr_matrix(W, dtype=np.float32), positions=toy.positions,
+                        annotations=toy.annotations, name="broken-toy", meta=dict(toy.meta))
+    rb = run_task(t21, broken, LIFParams(seed=1))
+    assert not rb.checks[8].passed and rb.checks[8].value >= 1
+    assert sum(not ch.passed for ch in rb.checks) == 1
+    # multi-seed keeps the per-cell alignment
+    rm = run_task(t21, toy, LIFParams(seed=1), seeds=2)
+    assert len(rm.checks) == 16 and rm.passed

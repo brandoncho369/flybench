@@ -19,6 +19,14 @@ A task is a YAML file:
       - {type: ratio, cond: sugar, over: baseline, op: ">", value: 5}
       - {type: active_fraction, cond: sugar, op: "<", value: 0.2}
 
+A `matrix` check is sugar for one check per (condition, readout) cell with an expected sign:
+
+      - {type: matrix, metric: spikes_per_neuron, value: 1, basis: "...",
+         expect: {lc16: {mdn: "+", gf: "-"}, lc4: {gf: "+", mdn: {sign: "-", basis: "..."}}}}
+
+"+" expands to `op: ">="` (the readout must respond), "-" to `op: "<"` (a null check: it must
+stay silent), "?" is not scored. See expand_checks().
+
 Each check yields pass/fail plus the measured value; a task passes if every
 check passes. `score` is the fraction of checks passed, so partial credit
 shows up in the leaderboard.
@@ -105,10 +113,45 @@ class TaskResult:
     non_diagnostic: bool = False          # some control also passed: the task is not measuring the wiring
 
 
+MATRIX_SIGNS = {"+": ">=", "-": "<", "−": "<"}      # a cell's expected sign -> the op of its expanded check
+MATRIX_UNSCORED = {"?", ".", "", None}
+
+
+def expand_checks(task: dict) -> dict:
+    """Return the task with every `matrix` check replaced by its per-cell checks (a task without
+    one is returned as is). A cell is `expect[cond][readout]`: "+" -> `{type: metric, cond, readout,
+    op: ">=", value}`, "-" -> the same with `op: "<"`, "?" -> no check. A cell may be a mapping
+    `{sign, basis}` to carry its own citation; otherwise the matrix's `basis` is used. Cells are
+    emitted in the YAML's row-major order so results line up with the grid in the task file."""
+    if not any(ch.get("type") == "matrix" for ch in task.get("checks", []) or []):
+        return task
+    out: list[dict] = []
+    for ch in task["checks"]:
+        if ch.get("type") != "matrix":
+            out.append(ch)
+            continue
+        metric = ch.get("metric", "spikes_per_neuron")
+        for cond, row in (ch.get("expect") or {}).items():
+            for rname, cell in (row or {}).items():
+                sign, basis = (cell.get("sign"), cell.get("basis")) if isinstance(cell, dict) else (cell, None)
+                if sign in MATRIX_UNSCORED:
+                    continue
+                if sign not in MATRIX_SIGNS:
+                    raise ValueError(f"matrix cell {cond}/{rname}: sign must be '+', '-' or '?', not {sign!r}")
+                op = MATRIX_SIGNS[sign]
+                cell_chk = {"type": metric, "cond": cond, "readout": rname, "op": op, "value": ch["value"],
+                            "basis": basis or ch.get("basis", ""), "cell": [cond, rname, "+" if op == ">=" else "-"]}
+                for key in ("window", "observed", "ceiling", "k"):
+                    if key in ch:
+                        cell_chk[key] = ch[key]
+                out.append(cell_chk)
+    return {**task, "checks": out}
+
+
 def load_tasks(paths: list[Path] | None = None, tier: str = "all") -> list[dict]:
     """tier: 'core' (reflexes the reference LIF must pass), 'hard', or 'all'."""
     paths = paths or sorted(TASK_DIR.glob("*.yaml"))
-    tasks = [yaml.safe_load(Path(p).read_text(encoding="utf-8")) for p in paths]
+    tasks = [expand_checks(yaml.safe_load(Path(p).read_text(encoding="utf-8"))) for p in paths]
     if tier != "all":
         tasks = [t for t in tasks if t.get("tier", "core") == tier]
     return tasks
@@ -218,6 +261,7 @@ def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False
     """Run one task. With seeds > 1 every condition is simulated `seeds` times (seed, seed+1, ...);
     a check passes only if it holds on the mean AND on every individual seed, and the per-seed
     pass count is reported, so a knife-edge result cannot masquerade as a robust one."""
+    task = expand_checks(task)
     if seeds > 1:
         return _run_task_multiseed(task, c, params, verbose, simulator, seeds)
     t0 = time.time()
@@ -276,7 +320,7 @@ def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False
         rname = chk.get("readout", default_readout)
         ridx = readouts.get(rname, np.empty(0, dtype=int))
         w = chk.get("window", window)
-        per_readout = typ in ("rate", "ratio", "readout_active_fraction")
+        per_readout = typ in ("rate", "ratio", "readout_active_fraction") or "cell" in chk   # a matrix cell always names its readout
         tag = f"[{chk.get('cond', '')}" + (f", {rname}" if (rname != "default" and per_readout) else "") + (f", {w[0]:g}-{w[1]:g}ms" if w != window else "") + "]"
         if typ == "ratio":
             w2 = chk.get("over_window", w)

@@ -97,8 +97,9 @@ numbers (figure-only in Ache 2019 / Klapoetke 2017).
     gustatory paper (Cameron 2010 for ppk28/water). **Started 2026-09-14: task 20 covers water and
     high salt (docs/rfcs/20); amino acids (LB1e) wait for a behavioural citation with a number.**
 20. **LC → DN action matrix**: LC4/LC6/LPLC1/LPLC2 → takeoff DNs; LC16 → MDN (backward walking),
-    never TTMn; LC10 → not escape (Klapoetke 2017 eLife 21022; Wu 2020 eLife 57685). One matrix
-    task; off-diagonal leaks are the signal.
+    never TTMn; LC10 → not escape (Wu et al. 2016 eLife 5:e21022; Sen 2017; Dombrovski 2023; Morimoto et al. 2020 eLife 9:e57685). One matrix
+    task; off-diagonal leaks are the signal. **Started 2026-09-14: task 21 (docs/rfcs/21), `matrix`
+    check type in bench.py; LC6/LPLC1 → DN cells unscored until a DN target is published.**
 21. **Courtship command chain, MaleCNS-only**: P1/pC1 → pIP10 → wing MNs (hg1–4, ps1, b1, i1)
     within ≤5 synapses, unilateral, no leg MNs; the same drive must fail on FlyWire because the
     dimorphic types are absent (Cell 2026 sexual-dimorphism paper; von Philipsborn 2011). Score

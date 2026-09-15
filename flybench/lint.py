@@ -6,9 +6,10 @@ from pathlib import Path
 
 import yaml
 
-from .bench import OPS
+from .bench import MATRIX_SIGNS, MATRIX_UNSCORED, OPS, expand_checks
 
 METRICS = {"rate", "network_rate", "active_fraction", "readout_active_fraction", "ratio", "spikes_per_neuron", "lifetime_sparseness", "latency"}
+CELL_METRICS = {"rate", "readout_active_fraction", "spikes_per_neuron"}   # what a matrix cell may measure
 CIRCUITS = {"stability", "taste", "escape", "olfaction", "physiology", "robustness"}
 REQUIRED = {"name", "title", "conditions", "checks"}
 TIERS = {"core", "hard"}
@@ -63,6 +64,43 @@ def lint_task(task: dict, source: str = "<task>") -> list[str]:
             errs.append(f"requires_readouts: {name!r} is not a defined readout")
     if not task["checks"]:
         errs.append("needs at least one check")
+    # a matrix check: every cell must name a condition and a readout, carry a legal sign, and end up
+    # with a basis (its own or the matrix's); a grid that names nothing is a typo, not an empty task
+    for i, chk in enumerate(task["checks"]):
+        if chk.get("type") != "matrix":
+            continue
+        if chk.get("metric", "spikes_per_neuron") not in CELL_METRICS:
+            errs.append(f"check {i}: matrix metric must be one of {sorted(CELL_METRICS)}")
+        if "value" not in chk:
+            errs.append(f"check {i}: matrix needs `value` (the threshold every cell is held to)")
+        expect = chk.get("expect")
+        if not isinstance(expect, dict) or not expect:
+            errs.append(f"check {i}: matrix needs `expect`, a mapping condition -> {{readout: sign}}")
+            continue
+        scored = 0
+        for cond, row in expect.items():
+            if cond not in conds:
+                errs.append(f"check {i}: matrix row {cond!r} is not a condition")
+            if not isinstance(row, dict):
+                errs.append(f"check {i}: matrix row {cond!r} must map readouts to signs")
+                continue
+            for rname, cell in row.items():
+                if rname not in readouts:
+                    errs.append(f"check {i}: matrix cell {cond}/{rname}: readout {rname!r} not defined")
+                sign, basis = (cell.get("sign"), cell.get("basis")) if isinstance(cell, dict) else (cell, None)
+                if sign in MATRIX_UNSCORED:
+                    continue
+                if sign not in MATRIX_SIGNS:
+                    errs.append(f"check {i}: matrix cell {cond}/{rname}: sign {sign!r} must be '+', '-' or '?'")
+                    continue
+                scored += 1
+                if not str(basis or chk.get("basis", "")).strip():
+                    errs.append(f"check {i}: matrix cell {cond}/{rname}: needs `basis` (its own, or on the matrix)")
+        if scored == 0:
+            errs.append(f"check {i}: matrix scores no cell (every sign is '?')")
+    if any("matrix" in e for e in errs):
+        return errs
+    task = expand_checks(task)
     for i, chk in enumerate(task["checks"]):
         typ = chk.get("type")
         if typ not in METRICS:

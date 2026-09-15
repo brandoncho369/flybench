@@ -1,0 +1,71 @@
+name: lc_dn_matrix
+title: Each lobula columnar type drives its own descending neuron, and not the others
+tier: hard
+circuit: escape
+description: >
+  Optogenetic activation of single LC types evokes type-specific behaviours (Wu et al. 2016, 22
+  types screened): LC4, LC6, LPLC1, LPLC2 → takeoff; LC16 → backward walking; LC10 → neither.
+  The descending neurons behind two of those are known: LC4 and LPLC2 synapse onto the giant
+  fiber (von Reyn 2017; Klapoetke 2017; Ache 2019) and LC4 onto DNp02 / DNp11 (Dombrovski 2023);
+  LC16 drives the four moonwalker DNs (Sen 2017). This task drives each LC type at the task-04
+  loom rate and reads four DNs; the `matrix` check scores every cell with a citation: "+" the DN
+  must spike, "-" it must not (a null check). The off-diagonal is the point — task 04 already
+  tests the diagonal. Cells without a citation are "?" and not scored (LC6 and LPLC1 evoke
+  takeoff but their DN targets are not established). Pre-registered predictions and outcome:
+  docs/rfcs/21_lc_dn_matrix.md.
+citation: "Wu et al. 2016 (eLife 5:e21022); Sen et al. 2017 (Curr Biol 27:766); Dombrovski et al. 2023 (Nature 613:534); von Reyn et al. 2017 (Neuron 94:1190); Klapoetke et al. 2017 (Nature 551:237); Ribeiro et al. 2018 (Curr Biol 28:2211); Morimoto et al. 2020 (eLife 9:e57685)"
+duration_ms: 600
+window: [200, 500]
+requires_stimuli: [lc4, lplc2, lc6, lplc1, lc16, lc10a]
+requires_readouts: [gf, dnp02, dnp11, mdn]
+readouts:
+  gf:    {select: {any: [{cell_type: GF}, {cell_type: DNp01}, {hemibrain_type: "Giant Fiber"}, {all_of: [{labels_regex: "giant fib"}, {super_class: descending}]}]}}
+  dnp02: {select: {any: [{cell_type: DNp02}, {hemibrain_type: DNp02}]}}
+  dnp11: {select: {any: [{cell_type: DNp11}, {hemibrain_type: DNp11}]}}
+  mdn:   {select: {any: [{cell_type: MDN}, {hemibrain_type: MDN}]}}
+conditions:
+  # one LC type per condition, every one at the same drive (convention: the task-04 loom, 150 Hz for 300 ms)
+  lc4:   {stimuli: [{name: lc4,   select: {any: [{cell_type: LC4},   {hemibrain_type: LC4}]},   rate_hz: 150, t_start_ms: 200, t_end_ms: 500}]}
+  lplc2: {stimuli: [{name: lplc2, select: {any: [{cell_type: LPLC2}, {hemibrain_type: LPLC2}]}, rate_hz: 150, t_start_ms: 200, t_end_ms: 500}]}
+  lc6:   {stimuli: [{name: lc6,   select: {any: [{cell_type: LC6},   {hemibrain_type: LC6}]},   rate_hz: 150, t_start_ms: 200, t_end_ms: 500}]}
+  lplc1: {stimuli: [{name: lplc1, select: {any: [{cell_type: LPLC1}, {hemibrain_type: LPLC1}]}, rate_hz: 150, t_start_ms: 200, t_end_ms: 500}]}
+  lc16:  {stimuli: [{name: lc16,  select: {any: [{cell_type: LC16},  {hemibrain_type: LC16}]},  rate_hz: 150, t_start_ms: 200, t_end_ms: 500}]}
+  lc10a: {stimuli: [{name: lc10a, select: {any: [{cell_type: LC10a}, {hemibrain_type: LC10a}]}, rate_hz: 150, t_start_ms: 200, t_end_ms: 500}]}
+checks:
+  # "+": at least one spike per readout neuron in the stimulus window; "-": fewer than one (task-16 convention);
+  # "?": no citation for the cell, not scored. Rows are LC types, columns are descending neurons.
+  - type: matrix
+    metric: spikes_per_neuron
+    value: 1
+    basis: "convention: one spike per neuron in the window is the task-16 rule for 'the DN responded'; the sign of each cell carries its own citation"
+    expect:
+      lc4:
+        gf:    {sign: "+", basis: "von Reyn et al. 2017; Ache et al. 2019: LC4 synapses onto the giant fiber and drives its loom response"}
+        dnp02: {sign: "+", basis: "Dombrovski et al. 2023: LC4 → DNp02 direct synapses, a gradient that drives backward takeoffs"}
+        dnp11: {sign: "+", basis: "Dombrovski et al. 2023: LC4 → DNp11 direct synapses, a gradient that drives forward takeoffs"}
+        mdn:   {sign: "-", basis: "Wu et al. 2016: LC4 activation evokes takeoff, not backward walking; Sen et al. 2017: MDN is the retreat DN (inferred from behaviour, null check)"}
+      lplc2:
+        gf:    {sign: "+", basis: "Klapoetke et al. 2017; Ache et al. 2019: LPLC2 synapses onto the giant fiber"}
+        dnp02: "?"
+        dnp11: "?"
+        mdn:   {sign: "-", basis: "Wu et al. 2016: LPLC2 activation evokes takeoff, not backward walking (inferred from behaviour, null check)"}
+      lc6:
+        gf:    "?"
+        dnp02: "?"
+        dnp11: "?"
+        mdn:   {sign: "-", basis: "Wu et al. 2016: LC6 activation evokes takeoff, not backward walking (inferred from behaviour, null check)"}
+      lplc1:
+        gf:    "?"
+        dnp02: "?"
+        dnp11: "?"
+        mdn:   {sign: "-", basis: "Wu et al. 2016: LPLC1 activation evokes takeoff, not backward walking (inferred from behaviour, null check)"}
+      lc16:
+        gf:    {sign: "-", basis: "Wu et al. 2016: LC16 activation evokes backward walking, not takeoff; the GF is the takeoff DN (inferred from behaviour, null check)"}
+        dnp02: {sign: "-", basis: "Wu et al. 2016: LC16 evokes no takeoff; Dombrovski et al. 2023: DNp02 drives backward takeoff (inferred from behaviour, null check)"}
+        dnp11: {sign: "-", basis: "Wu et al. 2016: LC16 evokes no takeoff; Dombrovski et al. 2023: DNp11 drives forward takeoff (inferred from behaviour, null check)"}
+        mdn:   {sign: "+", basis: "Sen et al. 2017: LC16 → MDN excitatory feed-forward circuit mediates visually evoked retreat (polysynaptic: no direct LC16 → MDN synapse in FlyWire v783 or MaleCNS v1.0, see RFC 21 outcome)"}
+      lc10a:
+        gf:    {sign: "-", basis: "Wu et al. 2016: LC10 activation evokes neither takeoff nor retreat; Ribeiro et al. 2018: LC10a serves courtship pursuit (inferred from behaviour, null check)"}
+        dnp02: {sign: "-", basis: "Wu et al. 2016: LC10 activation evokes no takeoff (inferred from behaviour, null check)"}
+        dnp11: {sign: "-", basis: "Wu et al. 2016: LC10 activation evokes no takeoff (inferred from behaviour, null check)"}
+        mdn:   {sign: "-", basis: "Wu et al. 2016: LC10 activation evokes no backward walking (inferred from behaviour, null check)"}

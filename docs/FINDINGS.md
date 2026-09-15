@@ -102,3 +102,23 @@ previous run (deterministic seeds), but saturated comparison checks on tasks 07,
 FlyWire graded 0.775 → 0.729 (17 tasks), MaleCNS 0.741 → 0.711 (20 tasks). Also: `flybench run`
 now saves the report *before* rendering the console table; a cp1252 console that cannot encode "✓"
 crashed the print and threw away a finished 40-minute run.
+
+## 2026-09-14 — task 21 (LC → DN matrix): LC16 → MDN is not a synapse; leaks are two-hop and dataset-specific
+
+First `matrix` task (docs/rfcs/21): six LC types × four descending neurons, 16 scored cells, 11 of
+them null. FlyWire 0.45 scored 11/16 and **tied its rewired control (specificity 0.00)**; MaleCNS
+0.65 scored 14/16 with specificity +0.44. Both predictions were wrong (0.875 / 0.56 predicted).
+
+- **LC16 makes zero synapses onto MDN in either connectome**, and v783 has no excitatory two-hop
+  path either. Sen et al. 2017's "feed-forward circuit" has at least two interneurons in it. On
+  FlyWire LC16 at 150 Hz activates 0.2 % of the brain and MDN never fires; on MaleCNS a weak
+  LC16 → pIP1 → MDN route gives 4 Hz.
+- **The MDN leaks are specific paths, not diffuse spread.** LC4 → PVLP141 → MDN (both datasets)
+  carries the FlyWire leak; LPLC1 → PVLP201m → MDN exists only in MaleCNS and drives MDN at
+  133 Hz. If that path is real, LPLC1 should evoke retreat in males; Wu et al. 2016 report takeoff.
+- **LC10a leaks nowhere** on either dataset despite being the largest population driven. Leak
+  follows wiring, not drive size.
+- The rewired null floor is gain-dependent: 0.69 at 0.45 (silent), 0.44 at 0.65 (random wiring
+  conducts). A null-heavy task's control is not a constant.
+
+Unscored: LC6 → GF fires on both datasets with no direct synapse; LPLC1 → DNp11 fires on both.

@@ -4,24 +4,24 @@
   "seeds": 3,
   "verified": false,
   "core_score": 0.5666666666666667,
-  "hard_score": 0.6177248677248677,
+  "hard_score": 0.6338045634920635,
   "core_by_circuit": 0.6851851851851851,
-  "hard_by_circuit": 0.6119470899470899,
-  "graded": 0.7114211699512492,
+  "hard_by_circuit": 0.6183359788359788,
+  "graded": 0.7202888032414466,
   "graded_ci95": [
-    0.6901066374023541,
-    0.7246493305075055
+    0.7023740556896304,
+    0.7329404474470406
   ],
   "core_graded": 0.7293883288241452,
-  "hard_graded": 0.6630457504829494,
+  "hard_graded": 0.6753702159609771,
   "profile": {
-    "-1": 0.8372093023255814,
-    "-0.5": 0.7906976744186046,
-    "-0.25": 0.7325581395348837,
-    "0": 0.6511627906976745,
-    "0.25": 0.6046511627906976,
-    "0.5": 0.5,
-    "1": 0.4883720930232558
+    "-1": 0.8529411764705882,
+    "-0.5": 0.8137254901960784,
+    "-0.25": 0.7647058823529411,
+    "0": 0.6862745098039216,
+    "0.25": 0.6372549019607843,
+    "0.5": 0.5392156862745098,
+    "1": 0.5294117647058824
   },
   "circuits": {
     "stability": "stability",
@@ -43,13 +43,14 @@
     "pn_transfer_function": "olfaction",
     "da1_sparseness": "olfaction",
     "gf_to_muscle_latency": "escape",
-    "taste_modalities": "taste"
+    "taste_modalities": "taste",
+    "lc_dn_matrix": "escape"
   },
   "skipped": {},
   "controls": [
     "rewired"
   ],
-  "specificity": 0.1718650793650794,
+  "specificity": 0.1845143613000756,
   "non_diagnostic": [],
   "tier": [
     "core",
@@ -79,9 +80,9 @@
     "extra": {}
   },
   "simulator": "flybench.sim.LIFSimulator",
-  "score": 0.6049603174603175,
+  "score": 0.6178193499622071,
   "passed": 2,
-  "n_tasks": 20,
+  "n_tasks": 21,
   "tasks": [
     {
       "task": "stability",
@@ -140,7 +141,7 @@
       },
       "readout_size": 176422,
       "stimulus_sizes": {},
-      "seconds": 9.09426212310791,
+      "seconds": 10.223783731460571,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -245,7 +246,7 @@
       "stimulus_sizes": {
         "sugar_grn": 34
       },
-      "seconds": 91.5119411945343,
+      "seconds": 96.52178001403809,
       "notes": [],
       "graded": 0.8089651361434211,
       "graded_per_seed": [
@@ -330,7 +331,7 @@
         "sugar_grn": 34,
         "bitter_grn": 38
       },
-      "seconds": 144.78034734725952,
+      "seconds": 151.87452602386475,
       "notes": [
         "seed-sensitive: check 1: passes on 2/3 seeds"
       ],
@@ -435,7 +436,7 @@
       "stimulus_sizes": {
         "looming_detectors": 311
       },
-      "seconds": 44.63363432884216,
+      "seconds": 43.336678981781006,
       "notes": [],
       "graded": 0.8051451865640634,
       "graded_per_seed": [
@@ -511,7 +512,7 @@
       "stimulus_sizes": {
         "bitter_grn": 38
       },
-      "seconds": 77.44778943061829,
+      "seconds": 83.0477979183197,
       "notes": [],
       "graded": 0.2181450726470243,
       "graded_per_seed": [
@@ -660,7 +661,7 @@
       "stimulus_sizes": {
         "sugar_grn": 34
       },
-      "seconds": 155.9309422969818,
+      "seconds": 161.74321722984314,
       "notes": [],
       "graded": 0.7309693490418252,
       "graded_per_seed": [
@@ -737,7 +738,7 @@
         "pulse1": 34,
         "pulse2": 34
       },
-      "seconds": 127.04812598228455,
+      "seconds": 131.72418999671936,
       "notes": [
         "seed-sensitive: check 1: passes on 1/3 seeds"
       ],
@@ -865,7 +866,7 @@
       "stimulus_sizes": {
         "da1_orn": 204
       },
-      "seconds": 67.84333896636963,
+      "seconds": 73.8242015838623,
       "notes": [],
       "graded": 0.5651033738467466,
       "graded_per_seed": [
@@ -992,7 +993,7 @@
         "sugar_grn": 34,
         "looming_detectors": 311
       },
-      "seconds": 125.81221723556519,
+      "seconds": 131.1343367099762,
       "notes": [],
       "graded": 0.7504511567475568,
       "graded_per_seed": [
@@ -1103,7 +1104,7 @@
       "stimulus_sizes": {
         "looming_detectors": 311
       },
-      "seconds": 42.197269439697266,
+      "seconds": 42.00394058227539,
       "notes": [],
       "graded": 0.7101134909332251,
       "graded_per_seed": [
@@ -1200,7 +1201,7 @@
       "stimulus_sizes": {
         "photoreceptors": 6091
       },
-      "seconds": 33.15698957443237,
+      "seconds": 35.57328701019287,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -1316,7 +1317,7 @@
       "stimulus_sizes": {
         "sugar_grn": 34
       },
-      "seconds": 234.95422196388245,
+      "seconds": 249.4496066570282,
       "notes": [
         "seed-sensitive: check 1: passes on 1/3 seeds"
       ],
@@ -1464,7 +1465,7 @@
         "looming_detectors": 311,
         "sugar_grn": 34
       },
-      "seconds": 93.94179177284241,
+      "seconds": 98.49280714988708,
       "notes": [
         "seed-sensitive: check 4: passes on 1/3 seeds"
       ],
@@ -1622,7 +1623,7 @@
         "sugar_grn": 34,
         "looming_detectors": 311
       },
-      "seconds": 115.91361141204834,
+      "seconds": 123.47040224075317,
       "notes": [],
       "graded": 0.7620381749956531,
       "graded_per_seed": [
@@ -1803,7 +1804,7 @@
         "looming_detectors": 311,
         "sugar_grn": 34
       },
-      "seconds": 104.91479253768921,
+      "seconds": 112.25698947906494,
       "notes": [],
       "graded": 0.8340723314300736,
       "graded_per_seed": [
@@ -2029,7 +2030,7 @@
         "loom_left": 165,
         "loom_right": 146
       },
-      "seconds": 88.70662713050842,
+      "seconds": 95.98472833633423,
       "notes": [],
       "graded": 0.6439541396510844,
       "graded_per_seed": [
@@ -2216,7 +2217,7 @@
       "stimulus_sizes": {
         "da1_orn": 204
       },
-      "seconds": 144.98289942741394,
+      "seconds": 155.67024564743042,
       "notes": [],
       "graded": 0.4520267386128507,
       "graded_per_seed": [
@@ -2488,7 +2489,7 @@
         "orn_va1v": 130,
         "orn_dc1": 32
       },
-      "seconds": 373.92558121681213,
+      "seconds": 406.4449214935303,
       "notes": [],
       "graded": 0.6359820785267859,
       "graded_per_seed": [
@@ -2606,7 +2607,7 @@
       "stimulus_sizes": {
         "looming_detectors": 311
       },
-      "seconds": 27.9239182472229,
+      "seconds": 29.719764471054077,
       "notes": [],
       "graded": 0.5226351469055932,
       "graded_per_seed": [
@@ -2746,7 +2747,7 @@
         "water_grn": 17,
         "high_salt_grn": 26
       },
-      "seconds": 246.74001502990723,
+      "seconds": 263.1715807914734,
       "notes": [
         "seed-sensitive: check 1: passes on 1/3 seeds"
       ],
@@ -2763,6 +2764,429 @@
         }
       },
       "specificity": 0.25,
+      "non_diagnostic": false
+    },
+    {
+      "task": "lc_dn_matrix",
+      "title": "Each lobula columnar type drives its own descending neuron, and not the others",
+      "passed": false,
+      "score": 0.875,
+      "checks": [
+        {
+          "description": "spikes per neuron[lc4, gf] >= 1.0 spikes/neuron  [3/3 seeds, sd 2.27]",
+          "value": 50.5,
+          "passed": true,
+          "margin": 1.7032913781186614,
+          "basis": "von Reyn et al. 2017; Ache et al. 2019: LC4 synapses onto the giant fiber and drives its loom response",
+          "graded": 0.9996080352768251,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            53.5,
+            50.0,
+            48.0
+          ],
+          "op": ">=",
+          "target": 1.0,
+          "saturated": false
+        },
+        {
+          "description": "spikes per neuron[lc4, dnp02] >= 1.0 spikes/neuron  [3/3 seeds, sd 0]",
+          "value": 129.0,
+          "passed": true,
+          "margin": 2.110589710299249,
+          "basis": "Dombrovski et al. 2023: LC4 \u2192 DNp02 direct synapses, a gradient that drives backward takeoffs",
+          "graded": 0.9999399110683813,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            129.0,
+            129.0,
+            129.0
+          ],
+          "op": ">=",
+          "target": 1.0,
+          "saturated": false
+        },
+        {
+          "description": "spikes per neuron[lc4, dnp11] >= 1.0 spikes/neuron  [3/3 seeds, sd 1.25]",
+          "value": 82.83333333333333,
+          "passed": true,
+          "margin": 1.9182051383496885,
+          "basis": "Dombrovski et al. 2023: LC4 \u2192 DNp11 direct synapses, a gradient that drives forward takeoffs",
+          "graded": 0.9998542775607682,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            84.5,
+            82.5,
+            81.5
+          ],
+          "op": ">=",
+          "target": 1.0,
+          "saturated": false
+        },
+        {
+          "description": "spikes per neuron[lc4, mdn] < 1.0 spikes/neuron  [3/3 seeds, sd 0]",
+          "value": 0.0,
+          "passed": true,
+          "margin": 3.0,
+          "basis": "Wu et al. 2016: LC4 activation evokes takeoff, not backward walking; Sen et al. 2017: MDN is the retreat DN (inferred from behaviour, null check)",
+          "graded": 0.9999990000010001,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "op": "<",
+          "target": 1.0,
+          "saturated": false
+        },
+        {
+          "description": "spikes per neuron[lplc2, gf] >= 1.0 spikes/neuron  [3/3 seeds, sd 2.32]",
+          "value": 54.666666666666664,
+          "passed": true,
+          "margin": 1.7377225933280354,
+          "basis": "Klapoetke et al. 2017; Ache et al. 2019: LPLC2 synapses onto the giant fiber",
+          "graded": 0.9996654896859319,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            55.5,
+            57.0,
+            51.5
+          ],
+          "op": ">=",
+          "target": 1.0,
+          "saturated": false
+        },
+        {
+          "description": "spikes per neuron[lplc2, mdn] < 1.0 spikes/neuron  [3/3 seeds, sd 0]",
+          "value": 0.0,
+          "passed": true,
+          "margin": 3.0,
+          "basis": "Wu et al. 2016: LPLC2 activation evokes takeoff, not backward walking (inferred from behaviour, null check)",
+          "graded": 0.9999990000010001,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "op": "<",
+          "target": 1.0,
+          "saturated": false
+        },
+        {
+          "description": "spikes per neuron[lc6, mdn] < 1.0 spikes/neuron  [0/3 seeds, sd 0.408]",
+          "value": 1.5,
+          "passed": false,
+          "margin": -0.17609125905568124,
+          "basis": "Wu et al. 2016: LC6 activation evokes takeoff, not backward walking (inferred from behaviour, null check)",
+          "graded": 0.3076923076923077,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            1.0,
+            1.5,
+            2.0
+          ],
+          "op": "<",
+          "target": 1.0,
+          "saturated": false
+        },
+        {
+          "description": "spikes per neuron[lplc1, mdn] < 1.0 spikes/neuron  [0/3 seeds, sd 2.87]",
+          "value": 39.916666666666664,
+          "passed": false,
+          "margin": -1.6011542673669383,
+          "basis": "Wu et al. 2016: LPLC1 activation evokes takeoff, not backward walking (inferred from behaviour, null check)",
+          "graded": 0.0006272186771783873,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            36.25,
+            43.25,
+            40.25
+          ],
+          "op": "<",
+          "target": 1.0,
+          "saturated": false
+        },
+        {
+          "description": "spikes per neuron[lc16, gf] < 1.0 spikes/neuron  [3/3 seeds, sd 0]",
+          "value": 0.0,
+          "passed": true,
+          "margin": 3.0,
+          "basis": "Wu et al. 2016: LC16 activation evokes backward walking, not takeoff; the GF is the takeoff DN (inferred from behaviour, null check)",
+          "graded": 0.9999990000010001,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "op": "<",
+          "target": 1.0,
+          "saturated": false
+        },
+        {
+          "description": "spikes per neuron[lc16, dnp02] < 1.0 spikes/neuron  [3/3 seeds, sd 0]",
+          "value": 0.0,
+          "passed": true,
+          "margin": 3.0,
+          "basis": "Wu et al. 2016: LC16 evokes no takeoff; Dombrovski et al. 2023: DNp02 drives backward takeoff (inferred from behaviour, null check)",
+          "graded": 0.9999990000010001,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "op": "<",
+          "target": 1.0,
+          "saturated": false
+        },
+        {
+          "description": "spikes per neuron[lc16, dnp11] < 1.0 spikes/neuron  [3/3 seeds, sd 0]",
+          "value": 0.0,
+          "passed": true,
+          "margin": 3.0,
+          "basis": "Wu et al. 2016: LC16 evokes no takeoff; Dombrovski et al. 2023: DNp11 drives forward takeoff (inferred from behaviour, null check)",
+          "graded": 0.9999990000010001,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "op": "<",
+          "target": 1.0,
+          "saturated": false
+        },
+        {
+          "description": "spikes per neuron[lc16, mdn] >= 1.0 spikes/neuron  [3/3 seeds, sd 0.236]",
+          "value": 1.3333333333333333,
+          "passed": true,
+          "margin": 0.12493873660829993,
+          "basis": "Sen et al. 2017: LC16 \u2192 MDN excitatory feed-forward circuit mediates visually evoked retreat",
+          "graded": 0.64,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            1.5,
+            1.5,
+            1.0
+          ],
+          "op": ">=",
+          "target": 1.0,
+          "saturated": false
+        },
+        {
+          "description": "spikes per neuron[lc10a, gf] < 1.0 spikes/neuron  [3/3 seeds, sd 0]",
+          "value": 0.0,
+          "passed": true,
+          "margin": 3.0,
+          "basis": "Wu et al. 2016: LC10 activation evokes neither takeoff nor retreat; Ribeiro et al. 2018: LC10a serves courtship pursuit (inferred from behaviour, null check)",
+          "graded": 0.9999990000010001,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "op": "<",
+          "target": 1.0,
+          "saturated": false
+        },
+        {
+          "description": "spikes per neuron[lc10a, dnp02] < 1.0 spikes/neuron  [3/3 seeds, sd 0]",
+          "value": 0.5,
+          "passed": true,
+          "margin": 0.3010299956639812,
+          "basis": "Wu et al. 2016: LC10 activation evokes no takeoff (inferred from behaviour, null check)",
+          "graded": 0.8,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "op": "<",
+          "target": 1.0,
+          "saturated": false
+        },
+        {
+          "description": "spikes per neuron[lc10a, dnp11] < 1.0 spikes/neuron  [3/3 seeds, sd 0]",
+          "value": 0.0,
+          "passed": true,
+          "margin": 3.0,
+          "basis": "Wu et al. 2016: LC10 activation evokes no takeoff (inferred from behaviour, null check)",
+          "graded": 0.9999990000010001,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "op": "<",
+          "target": 1.0,
+          "saturated": false
+        },
+        {
+          "description": "spikes per neuron[lc10a, mdn] < 1.0 spikes/neuron  [3/3 seeds, sd 0]",
+          "value": 0.0,
+          "passed": true,
+          "margin": 3.0,
+          "basis": "Wu et al. 2016: LC10 activation evokes no backward walking (inferred from behaviour, null check)",
+          "graded": 0.9999990000010001,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "op": "<",
+          "target": 1.0,
+          "saturated": false
+        }
+      ],
+      "measurements": {
+        "lc4": {
+          "rate": 168.33333333333334,
+          "network_rate": 10.181502936771556,
+          "active_fraction": 0.11358182841898025,
+          "spikes": 788294.0,
+          "rate[gf]": 168.33333333333334,
+          "readout_active_fraction[gf]": 1.0,
+          "rate[dnp02]": 430.0,
+          "readout_active_fraction[dnp02]": 1.0,
+          "rate[dnp11]": 276.11111111111114,
+          "readout_active_fraction[dnp11]": 1.0,
+          "rate[mdn]": 0.0,
+          "readout_active_fraction[mdn]": 0.0
+        },
+        "lplc2": {
+          "rate": 182.22222222222226,
+          "network_rate": 9.728063645375547,
+          "active_fraction": 0.11850373914062118,
+          "spikes": 768196.0,
+          "rate[gf]": 182.22222222222226,
+          "readout_active_fraction[gf]": 1.0,
+          "rate[dnp02]": 0.0,
+          "readout_active_fraction[dnp02]": 0.0,
+          "rate[dnp11]": 1.6666666666666667,
+          "readout_active_fraction[dnp11]": 0.5,
+          "rate[mdn]": 0.0,
+          "readout_active_fraction[mdn]": 0.0
+        },
+        "lc6": {
+          "rate": 152.7777777777778,
+          "network_rate": 10.261128934537014,
+          "active_fraction": 0.11777442722562946,
+          "spikes": 792628.6666666666,
+          "rate[gf]": 152.7777777777778,
+          "readout_active_fraction[gf]": 1.0,
+          "rate[dnp02]": 0.0,
+          "readout_active_fraction[dnp02]": 0.0,
+          "rate[dnp11]": 0.0,
+          "readout_active_fraction[dnp11]": 0.0,
+          "rate[mdn]": 5.0,
+          "readout_active_fraction[mdn]": 0.8333333333333334
+        },
+        "lplc1": {
+          "rate": 1.1111111111111112,
+          "network_rate": 9.744274775506709,
+          "active_fraction": 0.1187758140519134,
+          "spikes": 777341.3333333334,
+          "rate[gf]": 1.1111111111111112,
+          "readout_active_fraction[gf]": 0.3333333333333333,
+          "rate[dnp02]": 0.0,
+          "readout_active_fraction[dnp02]": 0.0,
+          "rate[dnp11]": 17.77777777777778,
+          "readout_active_fraction[dnp11]": 1.0,
+          "rate[mdn]": 133.05555555555557,
+          "readout_active_fraction[mdn]": 1.0
+        },
+        "lc16": {
+          "rate": 0.0,
+          "network_rate": 9.27420238594582,
+          "active_fraction": 0.1141845499238568,
+          "spikes": 749882.6666666666,
+          "rate[gf]": 0.0,
+          "readout_active_fraction[gf]": 0.0,
+          "rate[dnp02]": 0.0,
+          "readout_active_fraction[dnp02]": 0.0,
+          "rate[dnp11]": 0.0,
+          "readout_active_fraction[dnp11]": 0.0,
+          "rate[mdn]": 4.444444444444445,
+          "readout_active_fraction[mdn]": 0.6666666666666666
+        },
+        "lc10a": {
+          "rate": 0.0,
+          "network_rate": 10.083096212490506,
+          "active_fraction": 0.11506312515823801,
+          "spikes": 784409.6666666666,
+          "rate[gf]": 0.0,
+          "readout_active_fraction[gf]": 0.0,
+          "rate[dnp02]": 1.6666666666666667,
+          "readout_active_fraction[dnp02]": 0.5,
+          "rate[dnp11]": 0.0,
+          "readout_active_fraction[dnp11]": 0.0,
+          "rate[mdn]": 0.0,
+          "readout_active_fraction[mdn]": 0.0
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "lc4": 126,
+        "lplc2": 185,
+        "lc6": 124,
+        "lplc1": 134,
+        "lc16": 182,
+        "lc10a": 275
+      },
+      "seconds": 173.8325207233429,
+      "notes": [],
+      "graded": 0.8602371981313907,
+      "graded_per_seed": [
+        0.8745116371829909,
+        0.8624757368382407,
+        0.8437242203729403
+      ],
+      "controls": {
+        "rewired": {
+          "score": 0.4375,
+          "passed": false
+        }
+      },
+      "specificity": 0.4375,
       "non_diagnostic": false
     }
   ],
