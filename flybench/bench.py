@@ -492,18 +492,42 @@ def _run_task_multiseed(task, c, params, verbose, simulator, seeds: int) -> Task
                       seconds=time.time() - t0, notes=notes, graded=graded, graded_per_seed=graded_per_seed)
 
 
+# ---- parallel workers (`--jobs`): one process per (task, wiring) unit -------------------------
+# Windows has no fork, so each worker loads the connectome by name/path itself and rebuilds the
+# seeded control wiring; the units are independent simulations with their own seeds, so the
+# report is bit-identical to a serial run, only the wall-clock changes.
+_worker: dict[str, Any] = {}
+
+
+def _init_worker(connectome_ref: str, cache: str | None, controls: list[str], seed: int, simulator_spec: str | None) -> None:
+    from .connectome import load_connectome
+    from .controls import make_control
+    c = load_connectome(connectome_ref, cache) if cache else load_connectome(connectome_ref)
+    _worker["c"] = c
+    _worker["controls"] = {name: make_control(c, name, seed=seed) for name in controls}
+    _worker["simulator"] = resolve_simulator(simulator_spec)
+
+
+def _run_unit(task: dict, control: str | None, params: LIFParams, seeds: int) -> tuple[str, str | None, TaskResult]:
+    cc = _worker["c"] if control is None else _worker["controls"][control]
+    return task["name"], control, run_task(task, cc, params, verbose=False, simulator=_worker["simulator"], seeds=seeds)
+
+
 def run_suite(c: Connectome, params: LIFParams, tasks: list[dict] | None = None, verbose: bool = False,
               simulator: SimulatorFactory = LIFSimulator, seeds: int = 1,
-              controls: list[str] | None = None) -> dict[str, Any]:
+              controls: list[str] | None = None, jobs: int = 1, connectome_ref: str | None = None,
+              cache: str | None = None, simulator_spec: str | None = None) -> dict[str, Any]:
     """controls: names from flybench.controls.CONTROLS. Each task is then also run on that shuffled
     wiring; the task's `specificity` is score(real) - max(score(control)), and a task some control
-    also passes is marked `non_diagnostic`."""
+    also passes is marked `non_diagnostic`.
+    jobs > 1 runs the (task, wiring) units in that many processes; it needs `connectome_ref` (the
+    name or directory `load_connectome` accepts) so each worker can load the wiring itself."""
     from .controls import make_control
     tasks = tasks or load_tasks()
     controls = list(controls or [])
-    control_cs = {name: make_control(c, name, seed=params.seed) for name in controls}
     results = []
     skipped: dict[str, str] = {}
+    runnable: list[dict] = []
     for task in tasks:
         why = task_unavailable(task, c)
         if why:
@@ -513,14 +537,40 @@ def run_suite(c: Connectome, params: LIFParams, tasks: list[dict] | None = None,
             if verbose:
                 print(f"[{task['name']}] skipped: {why}")
             continue
-        if verbose:
-            print(f"[{task['name']}] {task.get('title', '')}")
-        r = run_task(task, c, params, verbose=verbose, simulator=simulator, seeds=seeds)
-        for name, cc in control_cs.items():
+        runnable.append(task)
+    if jobs > 1 and connectome_ref and runnable:
+        from concurrent.futures import ProcessPoolExecutor, as_completed
+        units = [(t, ctl) for t in runnable for ctl in [None, *controls]]
+        real: dict[str, TaskResult] = {}
+        ctl_scores: dict[str, dict[str, dict[str, float | bool]]] = {t["name"]: {} for t in runnable}
+        with ProcessPoolExecutor(max_workers=min(jobs, len(units)), initializer=_init_worker,
+                                 initargs=(connectome_ref, cache, controls, params.seed, simulator_spec)) as pool:
+            futures = [pool.submit(_run_unit, t, ctl, params, seeds) for t, ctl in units]
+            for f in as_completed(futures):
+                name, ctl, r = f.result()
+                if ctl is None:
+                    real[name] = r
+                else:
+                    ctl_scores[name][ctl] = {"score": r.score, "passed": r.passed}
+                if verbose:
+                    print(f"[{name}] {'control: ' + ctl if ctl else 'done'}: {r.score:.2f}")
+        pairs = [(t, real[t["name"]]) for t in runnable]
+        for t, r in pairs:
+            r.controls = ctl_scores[t["name"]]
+    else:
+        control_cs = {name: make_control(c, name, seed=params.seed) for name in controls}
+        pairs = []
+        for task in runnable:
             if verbose:
-                print(f"[{task['name']}] control: {name}")
-            rc = run_task(task, cc, params, verbose=False, simulator=simulator, seeds=seeds)
-            r.controls[name] = {"score": rc.score, "passed": rc.passed}
+                print(f"[{task['name']}] {task.get('title', '')}")
+            r = run_task(task, c, params, verbose=verbose, simulator=simulator, seeds=seeds)
+            for name, cc in control_cs.items():
+                if verbose:
+                    print(f"[{task['name']}] control: {name}")
+                rc = run_task(task, cc, params, verbose=False, simulator=simulator, seeds=seeds)
+                r.controls[name] = {"score": rc.score, "passed": rc.passed}
+            pairs.append((task, r))
+    for task, r in pairs:
         if r.controls:
             r.specificity = float(r.score - max(v["score"] for v in r.controls.values()))
             # a task whose checks all say "X must NOT happen" is passed by a dead network too; only

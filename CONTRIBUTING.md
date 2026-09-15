@@ -44,7 +44,7 @@ flybench submit results/lif-gain-0.42.json --note "gain 0.42, otherwise Shiu 202
 
 `submit` validates the file, makes a branch, commits, and opens the pull request with the template filled in from the report (it uses the GitHub CLI, `gh`; install it once and run `gh auth login`). `--dry-run` shows the PR text without doing anything. If you'd rather do it by hand, `flybench validate` then a normal PR works too.
 
-Use `--seeds 3` (or more). Single-seed results are accepted but a maintainer will re-run with three, and the knife-edge behaviour near the gain window means single-seed passes sometimes don't survive that. Label rule: letters, digits, spaces, `._()+/-`, at most 60 characters, unique across `results/`. State the Codex data version and connection file you built from; results on different builds are not comparable and the PR template asks for it.
+Use `--seeds 3` (or more), and `--jobs N` to spread the (task, wiring) units over N cores — the report is bit-identical to a serial run. Single-seed results are accepted but a maintainer will re-run with three, and the knife-edge behaviour near the gain window means single-seed passes sometimes don't survive that. Label rule: letters, digits, spaces, `._()+/-`, at most 60 characters, unique across `results/`. State the Codex data version and connection file you built from; results on different builds are not comparable and the PR template asks for it.
 
 ## 2. Add a task
 

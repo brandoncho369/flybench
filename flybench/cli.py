@@ -80,8 +80,9 @@ def toy(cache):
 @click.option("--tier", default="all", type=click.Choice(["core", "hard", "all"]), show_default=True)
 @click.option("--seeds", default=1, show_default=True, help="run every condition this many times with different seeds; checks must hold on the mean")
 @click.option("--controls", default=None, help="also score each task on shuffled wiring: 'rewired', 'random', 'signflip', comma-separated, or 'all' (see docs/CONTROLS.md)")
+@click.option("--jobs", "-j", default=1, show_default=True, help="worker processes: each (task, wiring) unit is an independent simulation, so N jobs ≈ N× faster on N cores; results are bit-identical")
 @click.option("-v", "--verbose", is_flag=True)
-def run(connectome, config, gain, task_paths, out, label, cache, simulator, tier, seeds, controls, verbose):
+def run(connectome, config, gain, task_paths, out, label, cache, simulator, tier, seeds, controls, jobs, verbose):
     """Run the benchmark suite."""
     c = load_connectome(connectome, cache)
     overrides = yaml.safe_load(Path(config).read_text(encoding="utf-8")) if config else {}
@@ -92,7 +93,7 @@ def run(connectome, config, gain, task_paths, out, label, cache, simulator, tier
     tasks = load_tasks([Path(p) for p in task_paths]) if task_paths else load_tasks(tier=tier)
     from .controls import parse_controls
     report = run_suite(c, params, tasks, verbose=verbose, simulator=resolve_simulator(simulator), seeds=seeds,
-                       controls=parse_controls(controls))
+                       controls=parse_controls(controls), jobs=int(jobs), connectome_ref=connectome, cache=cache, simulator_spec=simulator)
     report["label"] = label or (Path(config).stem if config else f"gain{params.gain}")
     saved = save_report(report, out) if out else None  # save before rendering: a console encoding error must not lose a 40-minute run
 

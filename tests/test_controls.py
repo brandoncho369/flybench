@@ -100,3 +100,20 @@ def test_no_controls_leaves_fields_empty(toy):
     t = rep["tasks"][0]
     assert t["controls"] == {} and t["specificity"] is None and t["non_diagnostic"] is False
     assert rep["controls"] == [] and rep["specificity"] is None
+
+
+def test_jobs_gives_a_bit_identical_report(toy):
+    """--jobs runs (task, wiring) units in worker processes that load the toy themselves; every
+    number must match the serial run (only wall-clock differs)."""
+    from flybench.bench import load_tasks, run_suite
+    from flybench.sim import LIFParams
+    tasks = [t for t in load_tasks() if t["name"] in ("stability", "sugar_to_proboscis", "taste_specificity")]
+    p = LIFParams(seed=2)
+    serial = run_suite(toy, p, tasks, seeds=2, controls=["rewired"])
+    par = run_suite(toy, p, tasks, seeds=2, controls=["rewired"], jobs=2, connectome_ref="toy")
+    import json
+    for rep in (serial, par):
+        for t in rep["tasks"]:
+            t.pop("seconds")
+    assert json.dumps(serial, sort_keys=True) == json.dumps(par, sort_keys=True)   # via JSON: NaN z-scores compare equal
+    assert par["n_tasks"] == 3 and all(t["controls"]["rewired"] is not None for t in par["tasks"])
