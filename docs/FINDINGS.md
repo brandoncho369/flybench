@@ -399,3 +399,19 @@ cross-model comparison over the whole set, FlyWire v783, 25 applicable tasks, 3 
 Nothing about this says adaptation is how flies do it (docs/models: "a hypothesis, not a
 correction"). It says which listed behaviours it buys and which it costs, per task, with the
 shuffle next to it — and that the leaderboard now has a second row worth arguing about.
+
+## 2026-09-16 — QA pass: every result file rerun on one code version (v0.1.0 + review fixes)
+
+All 14 result files were rerun on commit `d1bd750` with `--jobs 6` so that every leaderboard row
+is on the 31-task set and one scoring version. Accounting, against the previously committed files:
+
+- The gate fix from the review (S1/S2 judged on a check's own window rather than the task's)
+  changed one archived check: Shiu 1.0's adaptation ratio (windows 950–1300 vs 250–600 ms) had
+  been marked saturated on whole-window rates and now passes on its own windows — Shiu graded
+  0.626 → 0.645. The four MaleCNS rows moved by ≤ 0.005 for the same reason. Every other check
+  on FlyWire 0.45, MaleCNS 0.65 and the adaptive LIF is bit-identical.
+- The six gain-sweep rows (0.3–0.7, single seed, and 0.4 × 3 seeds) were on 12 tasks from
+  2026-09-13 and are now on 31 (and on the every-seed and S2 rules). Their core columns — the
+  README's reflex-window table — are unchanged: 0.40 is still the knife edge (sugar reaches MN9
+  on 2 of 3 seeds), 0.45 still passes every core task on every seed.
+- Cost column populated on every row: ~5× real time per CPU on FlyWire, 0.4–0.6 GB per worker.

@@ -95,10 +95,10 @@
   "passed": 5,
   "n_tasks": 25,
   "cost": {
-    "wall_seconds": 267.20788407325745,
-    "cpu_seconds": 868.9766027927399,
+    "wall_seconds": 101.25717282295227,
+    "cpu_seconds": 309.6667788028717,
     "jobs": 6,
-    "peak_rss_mb": 299.484375,
+    "peak_rss_mb": 301.00390625,
     "bio_seconds": 68.4
   },
   "tasks": [
@@ -153,7 +153,7 @@
       },
       "readout_size": 139255,
       "stimulus_sizes": {},
-      "seconds": 3.7456297874450684,
+      "seconds": 1.0464723110198975,
       "notes": [],
       "graded": 0.995047504958495,
       "graded_per_seed": [
@@ -240,7 +240,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 23.308660984039307,
+      "seconds": 6.611658573150635,
       "notes": [],
       "graded": 0.3332666502201538,
       "graded_per_seed": [
@@ -312,7 +312,7 @@
         "sugar_grn": 129,
         "bitter_grn": 65
       },
-      "seconds": 36.28903913497925,
+      "seconds": 11.71631121635437,
       "notes": [],
       "graded": 1.9999999200000037e-08,
       "graded_per_seed": [
@@ -399,7 +399,7 @@
       "stimulus_sizes": {
         "looming_detectors": 314
       },
-      "seconds": 14.02692437171936,
+      "seconds": 3.6139578819274902,
       "notes": [],
       "graded": 0.9993544139337608,
       "graded_per_seed": [
@@ -462,7 +462,7 @@
       "stimulus_sizes": {
         "bitter_grn": 65
       },
-      "seconds": 14.663700342178345,
+      "seconds": 3.249722719192505,
       "notes": [],
       "graded": 0.9999498799995312,
       "graded_per_seed": [
@@ -589,7 +589,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 41.93260979652405,
+      "seconds": 11.991607666015625,
       "notes": [],
       "graded": 0.20000021599757717,
       "graded_per_seed": [
@@ -653,7 +653,7 @@
         "pulse1": 129,
         "pulse2": 129
       },
-      "seconds": 18.493696928024292,
+      "seconds": 5.308110952377319,
       "notes": [],
       "graded": 1.9999999200000037e-08,
       "graded_per_seed": [
@@ -760,7 +760,7 @@
       "stimulus_sizes": {
         "da1_orn": 127
       },
-      "seconds": 18.369695901870728,
+      "seconds": 5.846312522888184,
       "notes": [],
       "graded": 0.6806153690427382,
       "graded_per_seed": [
@@ -868,7 +868,7 @@
         "sugar_grn": 129,
         "looming_detectors": 314
       },
-      "seconds": 32.637691259384155,
+      "seconds": 11.11054253578186,
       "notes": [],
       "graded": 0.7499669288018143,
       "graded_per_seed": [
@@ -963,7 +963,7 @@
       "stimulus_sizes": {
         "looming_detectors": 314
       },
-      "seconds": 17.879771947860718,
+      "seconds": 3.50429105758667,
       "notes": [],
       "graded": 0.989349055861014,
       "graded_per_seed": [
@@ -1044,7 +1044,7 @@
       "stimulus_sizes": {
         "photoreceptors": 11153
       },
-      "seconds": 11.796411514282227,
+      "seconds": 4.015157461166382,
       "notes": [],
       "graded": 0.9709385235630714,
       "graded_per_seed": [
@@ -1139,7 +1139,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 21.231899976730347,
+      "seconds": 7.8986594676971436,
       "notes": [],
       "graded": 0.7475237524792475,
       "graded_per_seed": [
@@ -1263,7 +1263,7 @@
         "looming_detectors": 314,
         "sugar_grn": 129
       },
-      "seconds": 18.964056253433228,
+      "seconds": 7.17709755897522,
       "notes": [],
       "graded": 0.5999998079913108,
       "graded_per_seed": [
@@ -1397,7 +1397,7 @@
         "sugar_grn": 129,
         "looming_detectors": 314
       },
-      "seconds": 28.75453281402588,
+      "seconds": 10.555579423904419,
       "notes": [],
       "graded": 0.7995192280653063,
       "graded_per_seed": [
@@ -1589,7 +1589,7 @@
         "loom_left": 162,
         "loom_right": 152
       },
-      "seconds": 25.694560766220093,
+      "seconds": 10.445114612579346,
       "notes": [],
       "graded": 0.44444433333344446,
       "graded_per_seed": [
@@ -1748,7 +1748,7 @@
       "stimulus_sizes": {
         "da1_orn": 127
       },
-      "seconds": 28.684005737304688,
+      "seconds": 10.176633834838867,
       "notes": [],
       "graded": 0.30925879237065856,
       "graded_per_seed": [
@@ -1986,7 +1986,7 @@
         "orn_va1v": 94,
         "orn_dc1": 39
       },
-      "seconds": 76.29965925216675,
+      "seconds": 28.68243908882141,
       "notes": [],
       "graded": 0.6059024191385309,
       "graded_per_seed": [
@@ -2354,7 +2354,7 @@
         "lc16": 152,
         "lc10a": 237
       },
-      "seconds": 41.72825646400452,
+      "seconds": 13.104564905166626,
       "notes": [],
       "graded": 0.9374558362823866,
       "graded_per_seed": [
@@ -2524,7 +2524,7 @@
         "hs_right": 3,
         "h2_left": 1
       },
-      "seconds": 39.99114465713501,
+      "seconds": 16.63899827003479,
       "notes": [],
       "graded": 0.7254178037024043,
       "graded_per_seed": [
@@ -2632,7 +2632,7 @@
         "jo_ce": 433,
         "jo_f": 205
       },
-      "seconds": 19.234461307525635,
+      "seconds": 6.754275321960449,
       "notes": [],
       "graded": 0.28448271612070447,
       "graded_per_seed": [
@@ -2958,7 +2958,7 @@
         "orn_dc1": 39,
         "silence[dc1_apl_off]": 2
       },
-      "seconds": 192.53916573524475,
+      "seconds": 75.25664067268372,
       "notes": [],
       "graded": 0.6030993011525868,
       "graded_per_seed": [
@@ -3137,7 +3137,7 @@
         "orn_da1": 127,
         "orn_dm1": 68
       },
-      "seconds": 53.15979075431824,
+      "seconds": 18.814876794815063,
       "notes": [],
       "graded": 0.5711713078661774,
       "graded_per_seed": [
@@ -3321,7 +3321,7 @@
         "cue_g4": 6,
         "cue_g8": 8
       },
-      "seconds": 33.552332401275635,
+      "seconds": 13.93068552017212,
       "notes": [],
       "graded": 0.266071914822044,
       "graded_per_seed": [
@@ -3446,7 +3446,7 @@
         "oviin": 2,
         "pc1": 10
       },
-      "seconds": 17.536274671554565,
+      "seconds": 6.124600172042847,
       "notes": [],
       "graded": 0.4910318133326065,
       "graded_per_seed": [
@@ -3624,7 +3624,7 @@
         "fg": 2,
         "bb": 2
       },
-      "seconds": 38.46263003349304,
+      "seconds": 16.09246826171875,
       "notes": [],
       "graded": 0.4478260327674755,
       "graded_per_seed": [

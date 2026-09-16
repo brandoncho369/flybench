@@ -7,21 +7,21 @@
   "hard_score": 0.5927992724867724,
   "core_by_circuit": 0.7777777777777777,
   "hard_by_circuit": 0.567220238095238,
-  "graded": 0.6357218219688551,
+  "graded": 0.6321243354555673,
   "graded_ci95": [
-    0.6332289833695182,
-    0.6392394269892543
+    0.628922126089451,
+    0.6356245532564446
   ],
   "core_graded": 0.7297399691294955,
-  "hard_graded": 0.594478423472058,
+  "hard_graded": 0.5892700942397463,
   "profile": {
     "-1": 0.7972972972972973,
     "-0.5": 0.7432432432432432,
     "-0.25": 0.7094594594594594,
     "0": 0.6621621621621622,
-    "0.25": 0.5945945945945946,
-    "0.5": 0.4864864864864865,
-    "1": 0.4391891891891892
+    "0.25": 0.5878378378378378,
+    "0.5": 0.4797297297297297,
+    "1": 0.43243243243243246
   },
   "circuits": {
     "stability": "stability",
@@ -98,10 +98,10 @@
   "passed": 3,
   "n_tasks": 29,
   "cost": {
-    "wall_seconds": 461.6401207447052,
-    "cpu_seconds": 1615.0410811901093,
+    "wall_seconds": 452.02511167526245,
+    "cpu_seconds": 1538.1357972621918,
     "jobs": 6,
-    "peak_rss_mb": 550.7265625,
+    "peak_rss_mb": 549.2109375,
     "bio_seconds": 223.5
   },
   "tasks": [
@@ -164,7 +164,7 @@
       },
       "readout_size": 176422,
       "stimulus_sizes": {},
-      "seconds": 4.53383469581604,
+      "seconds": 4.4490437507629395,
       "notes": [],
       "graded": 0.995047504958495,
       "graded_per_seed": [
@@ -265,7 +265,7 @@
       "stimulus_sizes": {
         "sugar_grn": 34
       },
-      "seconds": 42.368767976760864,
+      "seconds": 39.76740026473999,
       "notes": [],
       "graded": 0.8355565501648207,
       "graded_per_seed": [
@@ -347,7 +347,7 @@
         "sugar_grn": 34,
         "bitter_grn": 38
       },
-      "seconds": 54.33773398399353,
+      "seconds": 49.22915697097778,
       "notes": [],
       "graded": 0.7325932739433236,
       "graded_per_seed": [
@@ -448,7 +448,7 @@
       "stimulus_sizes": {
         "looming_detectors": 311
       },
-      "seconds": 21.362404346466064,
+      "seconds": 21.66264796257019,
       "notes": [],
       "graded": 0.8290828217609199,
       "graded_per_seed": [
@@ -521,7 +521,7 @@
       "stimulus_sizes": {
         "bitter_grn": 38
       },
-      "seconds": 30.906824827194214,
+      "seconds": 26.520941972732544,
       "notes": [],
       "graded": 0.25641969481991805,
       "graded_per_seed": [
@@ -670,7 +670,7 @@
       "stimulus_sizes": {
         "sugar_grn": 34
       },
-      "seconds": 69.03445935249329,
+      "seconds": 58.88682508468628,
       "notes": [],
       "graded": 0.7215814602409788,
       "graded_per_seed": [
@@ -744,7 +744,7 @@
         "pulse1": 34,
         "pulse2": 34
       },
-      "seconds": 44.06249475479126,
+      "seconds": 41.22908663749695,
       "notes": [],
       "graded": 0.6246330244523793,
       "graded_per_seed": [
@@ -869,7 +869,7 @@
       "stimulus_sizes": {
         "da1_orn": 204
       },
-      "seconds": 27.113825798034668,
+      "seconds": 26.045196771621704,
       "notes": [],
       "graded": 0.5746197808684619,
       "graded_per_seed": [
@@ -995,7 +995,7 @@
         "sugar_grn": 34,
         "looming_detectors": 311
       },
-      "seconds": 39.64226198196411,
+      "seconds": 40.38115859031677,
       "notes": [],
       "graded": 0.7502827990514169,
       "graded_per_seed": [
@@ -1104,7 +1104,7 @@
       "stimulus_sizes": {
         "looming_detectors": 311
       },
-      "seconds": 17.08333730697632,
+      "seconds": 18.067325830459595,
       "notes": [],
       "graded": 0.7209759479697041,
       "graded_per_seed": [
@@ -1199,7 +1199,7 @@
       "stimulus_sizes": {
         "photoreceptors": 6091
       },
-      "seconds": 13.740870952606201,
+      "seconds": 14.418850421905518,
       "notes": [],
       "graded": 0.9495386069466076,
       "graded_per_seed": [
@@ -1312,7 +1312,7 @@
       "stimulus_sizes": {
         "sugar_grn": 34
       },
-      "seconds": 62.81021690368652,
+      "seconds": 71.56053233146667,
       "notes": [],
       "graded": 0.25404467364043515,
       "graded_per_seed": [
@@ -1458,7 +1458,7 @@
         "looming_detectors": 311,
         "sugar_grn": 34
       },
-      "seconds": 32.78555393218994,
+      "seconds": 35.495418548583984,
       "notes": [],
       "graded": 0.6677809785026056,
       "graded_per_seed": [
@@ -1614,7 +1614,7 @@
         "sugar_grn": 34,
         "looming_detectors": 311
       },
-      "seconds": 46.782432556152344,
+      "seconds": 45.33836603164673,
       "notes": [
         "seed-sensitive: check 2: passes on 1/3 seeds"
       ],
@@ -1798,7 +1798,7 @@
         "looming_detectors": 311,
         "sugar_grn": 34
       },
-      "seconds": 43.631152391433716,
+      "seconds": 39.96561861038208,
       "notes": [],
       "graded": 0.8343557483997452,
       "graded_per_seed": [
@@ -2028,7 +2028,7 @@
         "loom_left": 165,
         "loom_right": 146
       },
-      "seconds": 35.581562757492065,
+      "seconds": 34.90652108192444,
       "notes": [],
       "graded": 0.6432844228909245,
       "graded_per_seed": [
@@ -2217,7 +2217,7 @@
       "stimulus_sizes": {
         "da1_orn": 204
       },
-      "seconds": 54.63469195365906,
+      "seconds": 51.35405659675598,
       "notes": [],
       "graded": 0.4530128336321016,
       "graded_per_seed": [
@@ -2493,7 +2493,7 @@
         "orn_va1v": 130,
         "orn_dc1": 32
       },
-      "seconds": 152.23727440834045,
+      "seconds": 147.49249911308289,
       "notes": [],
       "graded": 0.6455215045475055,
       "graded_per_seed": [
@@ -2575,9 +2575,9 @@
           "description": "latency[loom, ttmn \u2192 dlmn] > 0.0 ms  [0/3 seeds, sd 0.0816]",
           "value": -1.5999959309895833,
           "passed": false,
-          "margin": 3.204118878186539,
+          "margin": 0.0,
           "basis": "Augustin et al. 2019: DLM lags TTM by ~0.5 ms (TTM 0.93, DLM 1.44); the ordering, not the magnitude",
-          "graded": 0.9999996093731658,
+          "graded": 0.5,
           "z": NaN,
           "ceiling": null,
           "capped": false,
@@ -2610,13 +2610,13 @@
       "stimulus_sizes": {
         "looming_detectors": 311
       },
-      "seconds": 14.031688213348389,
+      "seconds": 12.340909004211426,
       "notes": [],
-      "graded": 0.5186088251447674,
+      "graded": 0.39360892356928484,
       "graded_per_seed": [
-        0.518458409425445,
-        0.5190031061514315,
-        0.5183649598574256
+        0.3934585070809118,
+        0.3940031926584554,
+        0.39336507096848733
       ],
       "controls": {},
       "specificity": null,
@@ -2749,7 +2749,7 @@
         "water_grn": 17,
         "high_salt_grn": 26
       },
-      "seconds": 94.66405725479126,
+      "seconds": 80.93616223335266,
       "notes": [],
       "graded": 0.47330939624122276,
       "graded_per_seed": [
@@ -3183,7 +3183,7 @@
         "lc16": 182,
         "lc10a": 275
       },
-      "seconds": 82.48002433776855,
+      "seconds": 73.31805777549744,
       "notes": [],
       "graded": 0.9109432214885372,
       "graded_per_seed": [
@@ -3418,7 +3418,7 @@
         "pip10_left": 1,
         "pip10_right": 1
       },
-      "seconds": 59.218672037124634,
+      "seconds": 50.183905363082886,
       "notes": [],
       "graded": 0.8149351657329659,
       "graded_per_seed": [
@@ -3511,7 +3511,7 @@
       "stimulus_sizes": {
         "premotor": 664
       },
-      "seconds": 40.82756185531616,
+      "seconds": 35.2408881187439,
       "notes": [],
       "graded": 0.35801073400918465,
       "graded_per_seed": [
@@ -3707,7 +3707,7 @@
         "hs_right": 3,
         "h2_left": 1
       },
-      "seconds": 70.2362790107727,
+      "seconds": 62.82013916969299,
       "notes": [],
       "graded": 0.6290699268725488,
       "graded_per_seed": [
@@ -3833,7 +3833,7 @@
         "jo_ce": 335,
         "jo_f": 78
       },
-      "seconds": 47.88447165489197,
+      "seconds": 45.06318521499634,
       "notes": [],
       "graded": 0.46985198491291075,
       "graded_per_seed": [
@@ -4193,7 +4193,7 @@
         "orn_dc1": 32,
         "silence[dc1_apl_off]": 2
       },
-      "seconds": 285.5353021621704,
+      "seconds": 289.1983149051666,
       "notes": [],
       "graded": 0.46464652744545365,
       "graded_per_seed": [
@@ -4402,7 +4402,7 @@
         "orn_da1": 204,
         "orn_dm1": 74
       },
-      "seconds": 72.2467052936554,
+      "seconds": 65.72852826118469,
       "notes": [],
       "graded": 0.5713204023510766,
       "graded_per_seed": [
@@ -4572,7 +4572,7 @@
         "dna02_right": 1,
         "dna01_right": 1
       },
-      "seconds": 21.209258556365967,
+      "seconds": 21.086955547332764,
       "notes": [],
       "graded": 0.1667410877373732,
       "graded_per_seed": [
@@ -4786,7 +4786,7 @@
         "cue_g4": 6,
         "cue_g8": 8
       },
-      "seconds": 34.05735993385315,
+      "seconds": 35.44810509681702,
       "notes": [],
       "graded": 0.25801950870748896,
       "graded_per_seed": [
