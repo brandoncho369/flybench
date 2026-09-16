@@ -21,6 +21,7 @@ The first tagged task set: **31 tasks** (5 core, 26 hard), every one pre-registe
   (`flybench.adapter`, `flybench verify-adapter`), the cost column, `reproduce.ps1` /
   `Makefile`, `Dockerfile`, `CITATION.cff`.
 - Datasets: FlyWire v783 (female brain) and MaleCNS v1.0 (male brain + nerve cord), plus the
-  hand-wired toy that proves every task can pass.
+  hand-wired toy on which every circuit-level task can pass (the tasks that need dynamics a
+  uniform LIF lacks — dose response, adaptation, one spike per loom — fail on it too, by design).
 - Results: 14 runs on the full set, including the first cross-model comparison (adaptive LIF vs
   the reference; docs/FINDINGS.md 2026-09-16).

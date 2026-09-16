@@ -224,7 +224,7 @@ neuromodulatory), circadian (24 h), song rhythm (needs dynamics a static LIF lac
     row you would submit.
 53. **Done 2026-09-16 (fly-explorer: `?dataset&gain&rate&hold&type`, "copy link", absent-name banner).** Permalinks for every explorer experiment (dataset, populations, gain, duration, seed, readouts)
     in Codex's URL style; every task page links to the live experiment; "cite this experiment".
-54. **CLI done 2026-09-16 (`--dump-spikes DIR`, parquet or csv.gz, the shared time_ms/trial/neuron_index/root_id schema); explorer download pending.** Downloadable traces and spike rasters (CSV/Parquet/PNG) from both CLI (`--dump-traces`) and explorer.
+54. **Done 2026-09-16: CLI `--dump-spikes DIR` (parquet or csv.gz, the shared time_ms/trial/neuron_index/root_id schema); explorer "download csv" of per-neuron spike counts since reset.** Downloadable traces and spike rasters (CSV/Parquet/PNG) from both CLI (`--dump-traces`) and explorer.
 55. **Done 2026-09-16 (fly-explorer `src/data/synonyms.json`, resolves to the loaded dataset's own name).** Cell-type search synonyms and cross-dataset aliases (GF = DNp01 = giant fiber; EPG = E-PG;
     TTM = TTMn), and an explicit "this type does not exist in this dataset" answer.
 56. **Done 2026-09-16 for Codex (FlyWire), neuPrint (MaleCNS) and VFB; Neuroglancer left out until per-dataset segment ids are exported.** Cross-links per cell type: Codex, neuPrint, Virtual Fly Brain, Neuroglancer (CAVE state links).
