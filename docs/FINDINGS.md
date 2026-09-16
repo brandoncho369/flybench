@@ -366,3 +366,36 @@ MaleCNS 0.65 0.655. Across the twelve: the wiring was right about the circuit in
 model's failures were gain (ignition on sensory drives, silence on single DNs) in nine, a
 transmitter annotation in two (LN23, ExR6), and an intrinsic property the model lacks in one
 (the size principle). Three tasks where the shuffle beats the brain (23, 25, 29).
+
+## 2026-09-16 — the stale rows refreshed on all 31 tasks: adaptation beats the reference on the hard tier
+
+Every result file predating 2026-09-14 has been rerun on the current task set with `--jobs 6`
+(Adaptive LIF 0.45, Shiu 1.0, the reference-labelled 0.45, MaleCNS 0.45 / 0.50 / 0.55). The first
+cross-model comparison over the whole set, FlyWire v783, 25 applicable tasks, 3 seeds:
+
+| model | core | hard | graded | specificity |
+|---|---|---|---|---|
+| reference LIF, gain 0.45 | 1.00 | 0.526 | 0.669 | +0.21 |
+| **adaptive LIF (b 2 mV, τ 200 ms), gain 0.45** | 1.00 | **0.681** | **0.791** | **+0.34** |
+| Shiu 2024, gain 1.0 | 0.77 | 0.51 | 0.626 | +0.19 |
+
+- **One documented mechanism with two literature-range constants moves the hard tier by
+  +0.15** and passes the core tier untouched. Adaptation wins where the reference's failure was
+  ignition or saturation: return to rest (0.25 → 1.00, its original purpose), DA1 sparseness
+  (0.11 → 0.89), PN transfer function (0.14 → 0.71), dose response (0.40 → 0.80), looming DN
+  ensemble (0.67 → 1.00), LC → DN matrix (0.69 → 0.81), GF azimuth (0.44 → 0.67), grooming
+  (0 → 0.25). A neuron that tires is a neuron that leaves the refractory ceiling, and half the
+  hard tier's failures were ceilings.
+- **It is not uniformly better**, which is the point of a task-level table: it loses on the ring
+  attractor (0.14 → 0, the silence outcome), egg laying (0.75 → 0.50), optic flow (0.83 → 0.67)
+  and halting (0.50 → 0.33) — the tasks whose pass depended on a sustained response that
+  adaptation now cuts short. Unchanged on the tasks task 18's broadcast decides (26, 27) and on
+  the wiring-only nulls.
+- Shiu 1.0 fails the core tier (0.77) as the gain-window result says, and scores below the
+  reference on the hard tier except on grooming (0.75: at gain 1.0 the aDNs punch through DSOG1).
+- Cost column now populated (item 43): the reference run is 5.4× real time per CPU (2,200 CPU-s
+  for 410 simulated seconds), 0.4 GB peak per worker on FlyWire, 0.5 GB on MaleCNS.
+
+Nothing about this says adaptation is how flies do it (docs/models: "a hypothesis, not a
+correction"). It says which listed behaviours it buys and which it costs, per task, with the
+shuffle next to it — and that the leaderboard now has a second row worth arguing about.
