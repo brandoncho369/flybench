@@ -155,9 +155,13 @@ def run(connectome, config, gain, task_paths, out, label, cache, simulator, tier
 @main.command()
 @click.argument("a", type=click.Path(exists=True, dir_okay=False))
 @click.argument("b", type=click.Path(exists=True, dir_okay=False))
-def diff(a, b):
+@click.option("--fail-on-regression", is_flag=True, help="exit 1 if any check that passed in B fails in A, or any task score drops by more than --tolerance (for a lab's CI: A = the new run, B = the committed baseline)")
+@click.option("--tolerance", default=0.0, show_default=True, help="allowed drop in a task's score before it counts as a regression")
+@click.option("--format", "fmt", default="table", type=click.Choice(["table", "json", "markdown"]), show_default=True)
+def diff(a, b, fail_on_regression, tolerance, fmt):
     """Paired comparison of two result files: per-check graded differences (A − B), the probability
-    that A is better on a random check, and a bootstrap CI over seeds when both runs have them."""
+    that A is better on a random check, and a bootstrap CI over seeds when both runs have them.
+    With --fail-on-regression the exit code says whether A lost anything B had (ROADMAP item 57)."""
     from .scoring import paired_difference
     ra, rb = json.loads(Path(a).read_text(encoding="utf-8")), json.loads(Path(b).read_text(encoding="utf-8"))
     key = lambda t, ch: (t["task"], ch["description"].split("  [")[0])  # noqa: E731
@@ -169,6 +173,33 @@ def diff(a, b):
     if any("graded" not in ca[k] or "graded" not in cb[k] for k in keys):
         raise SystemExit("one of the runs predates graded scoring; re-run it")
     d = paired_difference([ca[k]["graded"] for k in keys], [cb[k]["graded"] for k in keys])
+    # regressions: a check B passed that A fails; a task whose score dropped by more than the tolerance
+    ta = {t["task"]: t for t in ra["tasks"]}; tb = {t["task"]: t for t in rb["tasks"]}
+    lost_checks = [k for k in keys if cb[k]["passed"] and not ca[k]["passed"]]
+    dropped_tasks = [(n, tb[n]["score"], ta[n]["score"]) for n in tb if n in ta and ta[n]["score"] < tb[n]["score"] - tolerance - 1e-9]
+    missing_tasks = [n for n in tb if n not in ta]
+    regressed = bool(lost_checks or dropped_tasks or missing_tasks)
+    if fmt == "json":
+        out = {"a": ra.get("label", a), "b": rb.get("label", b), "shared_checks": d["n"], "mean_graded_difference": d["mean"], "p_improve": d["p_improve"],
+               "lost_checks": [{"task": k[0], "check": k[1]} for k in lost_checks],
+               "dropped_tasks": [{"task": n, "before": s0, "after": s1} for n, s0, s1 in dropped_tasks],
+               "missing_tasks": missing_tasks, "regressed": regressed,
+               "per_check": [{"task": k[0], "check": k[1], "a": ca[k]["graded"], "b": cb[k]["graded"], "delta": ca[k]["graded"] - cb[k]["graded"]} for k in keys]}
+        print(json.dumps(out, indent=2))
+        if fail_on_regression and regressed:
+            raise SystemExit(1)
+        return
+    if fmt == "markdown":
+        print(f"### {ra.get('label', a)} vs {rb.get('label', b)}\n")
+        print(f"{d['n']} shared checks · mean graded difference A − B {d['mean']:+.3f} · P(A better) {d['p_improve']:.0%}\n")
+        print("| task | check | A | B | Δ |\n|---|---|---|---|---|")
+        for k in sorted(keys, key=lambda k: -abs(ca[k]["graded"] - cb[k]["graded"]))[:20]:
+            print(f"| {k[0]} | {k[1]} | {ca[k]['graded']:.2f} | {cb[k]['graded']:.2f} | {ca[k]['graded'] - cb[k]['graded']:+.2f} |")
+        if regressed:
+            print("\n**Regressions:** " + "; ".join([f"{k[0]}: {k[1]}" for k in lost_checks] + [f"{n} {s0:.2f} → {s1:.2f}" for n, s0, s1 in dropped_tasks] + [f"{n} missing" for n in missing_tasks]))
+        if fail_on_regression and regressed:
+            raise SystemExit(1)
+        return
     console.print(f"[bold]{ra.get('label', a)}[/] vs [bold]{rb.get('label', b)}[/] · {d['n']} shared checks "
                   f"({len(ca) - d['n']} only in A, {len(cb) - d['n']} only in B)")
     se = f" ± {2 * d['se']:.3f} (95%)" if d["se"] == d["se"] else ""
@@ -193,6 +224,17 @@ def diff(a, b):
     for k in sorted(keys, key=lambda k: -abs(ca[k]["graded"] - cb[k]["graded"]))[:12]:
         table.add_row(k[0], escape(k[1]), f"{ca[k]['graded']:.2f} ({ca[k]['value']:.3g})", f"{cb[k]['graded']:.2f} ({cb[k]['value']:.3g})", f"{ca[k]['graded'] - cb[k]['graded']:+.2f}")
     console.print(table)
+    if regressed:
+        for k in lost_checks:
+            console.print(f"[red]regression[/] {k[0]}: {escape(k[1])} passed in B, fails in A")
+        for n, s0, s1 in dropped_tasks:
+            console.print(f"[red]regression[/] {n}: score {s0:.2f} → {s1:.2f}")
+        for n in missing_tasks:
+            console.print(f"[red]regression[/] {n}: in B, missing from A")
+    elif fail_on_regression:
+        console.print("[green]no regressions[/]: every check B passed, A passes; no task score dropped")
+    if fail_on_regression and regressed:
+        raise SystemExit(1)
 
 
 @main.command()

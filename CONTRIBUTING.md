@@ -89,6 +89,18 @@ Results are only comparable on the same wiring. Every named connectome is pinned
 
 Cite the behaviour. State what you changed. Never tune per-neuron parameters to pass a task: that is fitting the test, and it defeats the point. A small set of unpublished hold-out tasks is run on notable submissions to check that a model generalises rather than memorising the public YAML; a model that passes the public tier and fails the hold-out gets a note on its row, not a removal.
 
+## Use it as a regression test in your own CI
+
+`flybench diff new.json baseline.json --fail-on-regression` exits 1 if the new run fails any check the
+baseline passed, drops any task score (beyond `--tolerance`), or lost a task; `--format json` or
+`--format markdown` for a bot comment. A lab that keeps its model's result file in its repo can run the
+suite on every commit (`--jobs`) and know the moment a change breaks a reflex that used to work:
+
+```bash
+flybench run -c flywire783 --gain 0.45 --seeds 3 --jobs 6 --simulator mylab.model:Sim -o new.json
+flybench diff new.json results/baseline.json --fail-on-regression --format markdown
+```
+
 ## Maintainers: verifying
 
 ```bash

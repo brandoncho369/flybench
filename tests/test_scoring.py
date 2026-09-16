@@ -127,3 +127,30 @@ def test_recording_check_changes_the_pass_flag(toy):
     task["checks"][0]["observed"] = {"mean": v * 10, "sd": max(v * 0.1, 1e-3), "n": 5, "source": "pretend recording"}
     r2 = run_task(task, toy, LIFParams(gain=1.0, seed=0))
     assert not r2.checks[0].passed and r2.checks[0].graded < 0.01   # threshold would pass (v > 5 Hz), the recording says no
+
+
+def test_diff_fail_on_regression_flags_lost_checks_and_dropped_scores(tmp_path, toy):
+    """`flybench diff A B --fail-on-regression` (ROADMAP item 57): exit 1 when A fails a check B passed
+    or a task score drops; exit 0 and 'no regressions' when A is at least as good; JSON names them."""
+    import json
+    from click.testing import CliRunner
+    from flybench.bench import load_tasks, run_suite, save_report
+    from flybench.cli import main
+    from flybench.sim import LIFParams
+    tasks = [t for t in load_tasks() if t["name"] in ("stability", "sugar_to_proboscis", "taste_specificity")]
+    good = run_suite(toy, LIFParams(seed=1), tasks); good["label"] = "good"
+    bad = run_suite(toy, LIFParams(seed=1, gain=0.05), tasks); bad["label"] = "bad"    # too weak: sugar never reaches MN9
+    ga, ba = tmp_path / "good.json", tmp_path / "bad.json"
+    save_report(good, ga); save_report(bad, ba)
+    r = CliRunner()
+    same = r.invoke(main, ["diff", str(ga), str(ga), "--fail-on-regression"])
+    assert same.exit_code == 0 and "no regressions" in same.output
+    worse = r.invoke(main, ["diff", str(ba), str(ga), "--fail-on-regression"])
+    assert worse.exit_code == 1 and "regression" in worse.output
+    better = r.invoke(main, ["diff", str(ga), str(ba), "--fail-on-regression"])
+    assert better.exit_code == 0
+    js = r.invoke(main, ["diff", str(ba), str(ga), "--format", "json"])
+    d = json.loads(js.output)
+    assert d["regressed"] and any(x["task"] == "sugar_to_proboscis" for x in d["dropped_tasks"]) and d["lost_checks"]
+    md = r.invoke(main, ["diff", str(ba), str(ga), "--format", "markdown", "--fail-on-regression"])
+    assert md.exit_code == 1 and "**Regressions:**" in md.output
