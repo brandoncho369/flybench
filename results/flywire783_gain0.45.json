@@ -4,24 +4,24 @@
   "seeds": 3,
   "verified": false,
   "core_score": 1.0,
-  "hard_score": 0.5152888007054673,
+  "hard_score": 0.5262599206349206,
   "core_by_circuit": 1.0,
-  "hard_by_circuit": 0.5004278273809524,
-  "graded": 0.661036405313564,
+  "hard_by_circuit": 0.5253422619047619,
+  "graded": 0.6688829465435497,
   "graded_ci95": [
-    0.6526476318155254,
-    0.670722983689913
+    0.6606658291734744,
+    0.6780348587077223
   ],
   "core_graded": 0.9474488931829368,
-  "hard_graded": 0.542461781401681,
+  "hard_graded": 0.55941949559236,
   "profile": {
-    "-1": 0.7166666666666667,
-    "-0.5": 0.7,
-    "-0.25": 0.625,
+    "-1": 0.7384615384615385,
+    "-0.5": 0.7230769230769231,
+    "-0.25": 0.6384615384615384,
     "0": 0.6,
-    "0.25": 0.5166666666666667,
-    "0.5": 0.475,
-    "1": 0.4583333333333333
+    "0.25": 0.5230769230769231,
+    "0.5": 0.46923076923076923,
+    "1": 0.45384615384615384
   },
   "circuits": {
     "stability": "stability",
@@ -46,7 +46,9 @@
     "antennal_grooming_vs_backward": "grooming",
     "mb_sparseness_apl": "olfaction",
     "co2_pathway_specificity": "olfaction",
-    "epg_ring_attractor": "navigation"
+    "epg_ring_attractor": "navigation",
+    "egg_laying_ovidn": "reproduction",
+    "halt_walk_off": "locomotion"
   },
   "skipped": {
     "looming_to_jump_muscle": "readout 'ttmn' matches no neurons on flywire783",
@@ -59,7 +61,7 @@
   "controls": [
     "rewired"
   ],
-  "specificity": 0.1888888888888889,
+  "specificity": 0.2137777777777778,
   "non_diagnostic": [],
   "tier": [
     "core",
@@ -89,9 +91,9 @@
     "extra": {}
   },
   "simulator": "flybench.sim.LIFSimulator",
-  "score": 0.6206608005521048,
+  "score": 0.6210079365079365,
   "passed": 7,
-  "n_tasks": 23,
+  "n_tasks": 25,
   "tasks": [
     {
       "task": "stability",
@@ -152,7 +154,7 @@
       },
       "readout_size": 139255,
       "stimulus_sizes": {},
-      "seconds": 3.1233932971954346,
+      "seconds": 3.2632699012756348,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -260,7 +262,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 22.327789783477783,
+      "seconds": 23.916563034057617,
       "notes": [],
       "graded": 0.8547046867837924,
       "graded_per_seed": [
@@ -347,7 +349,7 @@
         "sugar_grn": 129,
         "bitter_grn": 65
       },
-      "seconds": 35.71486473083496,
+      "seconds": 32.7046160697937,
       "notes": [],
       "graded": 0.9997156432785514,
       "graded_per_seed": [
@@ -453,7 +455,7 @@
       "stimulus_sizes": {
         "looming_detectors": 314
       },
-      "seconds": 12.766329050064087,
+      "seconds": 12.32449221611023,
       "notes": [],
       "graded": 0.8878267508943137,
       "graded_per_seed": [
@@ -531,7 +533,7 @@
       "stimulus_sizes": {
         "bitter_grn": 65
       },
-      "seconds": 13.925569772720337,
+      "seconds": 13.761390686035156,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -687,7 +689,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 37.61393857002258,
+      "seconds": 38.96481275558472,
       "notes": [
         "seed-sensitive: check 0: passes on 1/3 seeds"
       ],
@@ -768,7 +770,7 @@
         "pulse1": 129,
         "pulse2": 129
       },
-      "seconds": 28.053547859191895,
+      "seconds": 29.591527223587036,
       "notes": [],
       "graded": 0.49991747242872503,
       "graded_per_seed": [
@@ -898,7 +900,7 @@
       "stimulus_sizes": {
         "da1_orn": 127
       },
-      "seconds": 18.26570987701416,
+      "seconds": 17.313236474990845,
       "notes": [],
       "graded": 0.5972129056390362,
       "graded_per_seed": [
@@ -1029,7 +1031,7 @@
         "sugar_grn": 129,
         "looming_detectors": 314
       },
-      "seconds": 37.588462114334106,
+      "seconds": 27.99791693687439,
       "notes": [],
       "graded": 0.9998342392767291,
       "graded_per_seed": [
@@ -1143,7 +1145,7 @@
       "stimulus_sizes": {
         "looming_detectors": 314
       },
-      "seconds": 16.61484169960022,
+      "seconds": 12.084731578826904,
       "notes": [],
       "graded": 0.7312563216480612,
       "graded_per_seed": [
@@ -1243,7 +1245,7 @@
       "stimulus_sizes": {
         "photoreceptors": 11153
       },
-      "seconds": 11.836738586425781,
+      "seconds": 9.309172868728638,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -1363,7 +1365,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 48.03056502342224,
+      "seconds": 44.242244243621826,
       "notes": [],
       "graded": 0.2546784676665634,
       "graded_per_seed": [
@@ -1514,7 +1516,7 @@
         "looming_detectors": 314,
         "sugar_grn": 129
       },
-      "seconds": 31.18482494354248,
+      "seconds": 22.9548282623291,
       "notes": [],
       "graded": 0.6296693765754758,
       "graded_per_seed": [
@@ -1675,7 +1677,7 @@
         "sugar_grn": 129,
         "looming_detectors": 314
       },
-      "seconds": 43.08163523674011,
+      "seconds": 38.933027505874634,
       "notes": [
         "seed-sensitive: check 1: passes on 2/3 seeds"
       ],
@@ -1912,7 +1914,7 @@
         "loom_left": 162,
         "loom_right": 152
       },
-      "seconds": 28.713268518447876,
+      "seconds": 22.54289984703064,
       "notes": [],
       "graded": 0.44444433333344446,
       "graded_per_seed": [
@@ -2106,7 +2108,7 @@
       "stimulus_sizes": {
         "da1_orn": 127
       },
-      "seconds": 49.58545541763306,
+      "seconds": 33.136725425720215,
       "notes": [
         "seed-sensitive: check 2: passes on 1/3 seeds; check 4: passes on 1/3 seeds"
       ],
@@ -2389,7 +2391,7 @@
         "orn_va1v": 94,
         "orn_dc1": 39
       },
-      "seconds": 124.56219172477722,
+      "seconds": 105.16851544380188,
       "notes": [],
       "graded": 0.11105225523809181,
       "graded_per_seed": [
@@ -2828,7 +2830,7 @@
         "lc16": 152,
         "lc10a": 237
       },
-      "seconds": 57.84949088096619,
+      "seconds": 47.25168442726135,
       "notes": [
         "seed-sensitive: check 7: passes on 1/3 seeds"
       ],
@@ -3031,7 +3033,7 @@
         "hs_right": 3,
         "h2_left": 1
       },
-      "seconds": 52.082902908325195,
+      "seconds": 53.62255334854126,
       "notes": [],
       "graded": 0.7768232357694264,
       "graded_per_seed": [
@@ -3162,7 +3164,7 @@
         "jo_ce": 433,
         "jo_f": 205
       },
-      "seconds": 32.51492166519165,
+      "seconds": 31.655303955078125,
       "notes": [
         "seed-sensitive: check 1: passes on 2/3 seeds"
       ],
@@ -3529,7 +3531,7 @@
         "orn_dc1": 39,
         "silence[dc1_apl_off]": 2
       },
-      "seconds": 229.34031581878662,
+      "seconds": 250.0600883960724,
       "notes": [],
       "graded": 0.4891271896534126,
       "graded_per_seed": [
@@ -3743,7 +3745,7 @@
         "orn_da1": 127,
         "orn_dm1": 68
       },
-      "seconds": 51.98927330970764,
+      "seconds": 51.98009490966797,
       "notes": [],
       "graded": 0.5712879227564304,
       "graded_per_seed": [
@@ -3962,7 +3964,7 @@
         "cue_g4": 6,
         "cue_g8": 8
       },
-      "seconds": 79.94576978683472,
+      "seconds": 78.20399212837219,
       "notes": [],
       "graded": 0.190772358116327,
       "graded_per_seed": [
@@ -3977,6 +3979,363 @@
         }
       },
       "specificity": -0.14285714285714285,
+      "non_diagnostic": false
+    },
+    {
+      "task": "egg_laying_ovidn",
+      "title": "The egg-laying command is driven by oviEN, held down by oviIN, and not started by pC1",
+      "passed": false,
+      "score": 0.75,
+      "checks": [
+        {
+          "description": "rate[ovien, ovidn] > 5.0 Hz  [3/3 seeds, sd 1.89]",
+          "value": 14.333333333333334,
+          "passed": true,
+          "margin": 0.4573771965239053,
+          "basis": "Wang et al. 2020: oviENs are the oviDNs' major excitatory input and oviDN activation is sufficient for egg laying (SMP550 \u2192 oviDN 185 synapses in v783, inferred identity); 5 Hz is the task-02 convention for a response",
+          "graded": 0.8915139826422372,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            13.0,
+            13.0,
+            17.0
+          ],
+          "op": ">",
+          "target": 5.0,
+          "saturated": false,
+          "floored": false
+        },
+        {
+          "description": "rate[ovien_plus_oviin, ovidn] / rate[ovien] < 0.5  [0/3 seeds, sd 0.107]",
+          "value": 0.6772474339354502,
+          "passed": false,
+          "margin": -0.13177736384717087,
+          "basis": "Wang et al. 2020: oviINs inhibit both oviDNs and oviENs (feed-forward inhibition; silencing oviINs raises egg laying in virgins); < 0.5 is the task-03 convention for suppression",
+          "graded": 0.352776448907844,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.8205266261569623,
+            0.5641360920954799,
+            0.6470795835539085
+          ],
+          "op": "<",
+          "target": 0.5,
+          "saturated": false,
+          "floored": false
+        },
+        {
+          "description": "rate[pc1, oviin] > 5.0 Hz  [3/3 seeds, sd 25.3]",
+          "value": 52.0,
+          "passed": true,
+          "margin": 1.0170333392987803,
+          "basis": "Wang et al. 2020: pC1 neurons drive the oviINs (25 direct and ~41,000 two-hop synapse products from the ten female pC1 cells in v783); 5 Hz task-02 convention",
+          "graded": 0.9908391352143643,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            76.0,
+            17.0,
+            63.0
+          ],
+          "op": ">",
+          "target": 5.0,
+          "saturated": false,
+          "floored": false
+        },
+        {
+          "description": "rate[pc1, ovidn] < 2.0 Hz  [3/3 seeds, sd 0]",
+          "value": 0.0,
+          "passed": true,
+          "margin": 3.3010299956639813,
+          "basis": "null check. Wang et al. 2020: in virgins pC1 activity suppresses egg laying through oviIN; pC1 makes no synapse on oviDN in v783 and must not excite it (inferred from behaviour); 2 Hz is the task-05 convention for silence",
+          "graded": 0.9999997500000625,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "op": "<",
+          "target": 2.0,
+          "saturated": false,
+          "floored": false
+        }
+      ],
+      "measurements": {
+        "ovien": {
+          "rate": 14.333333333333334,
+          "network_rate": 0.002575610690220578,
+          "active_fraction": 0.00010532237023206828,
+          "spikes": 179.33333333333334,
+          "rate[ovidn]": 14.333333333333334,
+          "readout_active_fraction[ovidn]": 0.3333333333333333,
+          "rate[oviin]": 23.333333333333332,
+          "readout_active_fraction[oviin]": 1.0,
+          "rate[ovien]": 82.66666666666667,
+          "readout_active_fraction[ovien]": 1.0
+        },
+        "ovien_plus_oviin": {
+          "rate": 9.666666666666666,
+          "network_rate": 0.0029921127906837575,
+          "active_fraction": 7.181070697641019e-05,
+          "spikes": 209.0,
+          "rate[ovidn]": 9.666666666666666,
+          "readout_active_fraction[ovidn]": 0.3333333333333333,
+          "rate[oviin]": 87.0,
+          "readout_active_fraction[oviin]": 1.0,
+          "rate[ovien]": 78.33333333333333,
+          "readout_active_fraction[ovien]": 1.0
+        },
+        "pc1": {
+          "rate": 0.0,
+          "network_rate": 2.5417591229518988,
+          "active_fraction": 0.07840771725730973,
+          "spikes": 483203.6666666667,
+          "rate[ovidn]": 0.0,
+          "readout_active_fraction[ovidn]": 0.0,
+          "rate[oviin]": 52.0,
+          "readout_active_fraction[oviin]": 1.0,
+          "rate[ovien]": 0.0,
+          "readout_active_fraction[ovien]": 0.0
+        }
+      },
+      "readout_size": 6,
+      "stimulus_sizes": {
+        "ovien": 2,
+        "oviin": 2,
+        "pc1": 10
+      },
+      "seconds": 28.306013822555542,
+      "notes": [],
+      "graded": 0.8047534749457347,
+      "graded_per_seed": [
+        0.7844006601869663,
+        0.8078658765316369,
+        0.8219938881186006
+      ],
+      "controls": {
+        "rewired": {
+          "score": 0.25,
+          "passed": false
+        }
+      },
+      "specificity": 0.5,
+      "non_diagnostic": false
+    },
+    {
+      "task": "halt_walk_off",
+      "title": "Foxglove and Bluebell switch the walking commands off; sugar switches Foxglove on",
+      "passed": false,
+      "score": 0.5,
+      "checks": [
+        {
+          "description": "rate[sugar, fg] > 5.0 Hz  [3/3 seeds, sd 2.87]",
+          "value": 66.33333333333333,
+          "passed": true,
+          "margin": 1.1227618173540255,
+          "basis": "Sapkal et al. 2024: Foxglove is downstream of the sugar sensory pathway and responds to sugar (more in starved flies); 86,751 two-hop synapse products from the sugar GRNs in v783; 5 Hz is the task-02 convention for a response",
+          "graded": 0.9943504243459047,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            70.0,
+            66.0,
+            63.0
+          ],
+          "op": ">",
+          "target": 5.0,
+          "saturated": false,
+          "floored": false
+        },
+        {
+          "description": "rate[walk, bdn2] > 5.0 Hz  [3/3 seeds, sd 14.9]",
+          "value": 105.33333333333333,
+          "passed": true,
+          "margin": 1.3235958235627225,
+          "basis": "the walking-command stand-in must drive BDN2 (PVLP137 + CB0529 -> BDN2 1,660 synapses in v783) for the suppression checks to mean anything; 5 Hz task-02 convention",
+          "graded": 0.9977518210249697,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            102.0,
+            89.0,
+            125.0
+          ],
+          "op": ">",
+          "target": 5.0,
+          "saturated": false,
+          "floored": false
+        },
+        {
+          "description": "rate[walk, odn1] > 5.0 Hz  [3/3 seeds, sd 2.49]",
+          "value": 14.666666666666666,
+          "passed": true,
+          "margin": 0.46736141743050613,
+          "basis": "as above for oDN1 (1,117 synapses); 5 Hz task-02 convention",
+          "graded": 0.8958815363257752,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            14.0,
+            12.0,
+            18.0
+          ],
+          "op": ">",
+          "target": 5.0,
+          "saturated": false,
+          "floored": false
+        },
+        {
+          "description": "rate[walk_plus_fg, bdn2] / rate[walk] < 0.5  [0/3 seeds, sd 0.222]",
+          "value": 0.6858067180801979,
+          "passed": false,
+          "margin": -0.13723173076030015,
+          "basis": "Sapkal et al. 2024: Foxglove strongly inhibits BDN2 (-1,137 synapses in v783), the walk-OFF mechanism; < 0.5 is the task-03 convention for suppression",
+          "graded": 0.3470627398729754,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.5294163782708012,
+            1.0,
+            0.5280037759697923
+          ],
+          "op": "<",
+          "target": 0.5,
+          "saturated": false,
+          "floored": false
+        },
+        {
+          "description": "rate[walk_plus_fg, odn1] / rate[walk] < 0.5  [0/3 seeds, sd 0.242]",
+          "value": 1.0581947704691423,
+          "passed": false,
+          "margin": -0.32559560660977693,
+          "basis": "Sapkal et al. 2024: Foxglove inhibits oDN1 (-136 synapses in v783); < 0.5 task-03 convention",
+          "graded": 0.18251157018571146,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            1.2856938790086423,
+            1.1666527789350887,
+            0.7222376534636964
+          ],
+          "op": "<",
+          "target": 0.5,
+          "saturated": false,
+          "floored": false
+        },
+        {
+          "description": "rate[walk_plus_bb, odn1] / rate[walk] < 0.5  [0/3 seeds, sd 0.194]",
+          "value": 0.9087352447310709,
+          "passed": false,
+          "margin": -0.2594673678844185,
+          "basis": "Sapkal et al. 2024: Bluebell inhibits oDN1 (-206 synapses in v783); < 0.5 task-03 convention",
+          "graded": 0.23238525678975666,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            1.1428469395043213,
+            0.9166736105324557,
+            0.6666851841564356
+          ],
+          "op": "<",
+          "target": 0.5,
+          "saturated": false,
+          "floored": false
+        }
+      ],
+      "measurements": {
+        "sugar": {
+          "rate": 66.33333333333333,
+          "network_rate": 6.8224193027180355,
+          "active_fraction": 0.08778140820796382,
+          "spikes": 777451.0,
+          "rate[fg]": 66.33333333333333,
+          "readout_active_fraction[fg]": 1.0,
+          "rate[bb]": 1.0,
+          "readout_active_fraction[bb]": 0.5,
+          "rate[odn1]": 0.0,
+          "readout_active_fraction[odn1]": 0.0,
+          "rate[bdn2]": 32.666666666666664,
+          "readout_active_fraction[bdn2]": 1.0
+        },
+        "walk": {
+          "rate": 48.0,
+          "network_rate": 8.530556652663579,
+          "active_fraction": 0.08641700477541202,
+          "spikes": 890596.6666666666,
+          "rate[fg]": 48.0,
+          "readout_active_fraction[fg]": 1.0,
+          "rate[bb]": 0.0,
+          "readout_active_fraction[bb]": 0.0,
+          "rate[odn1]": 14.666666666666666,
+          "readout_active_fraction[odn1]": 1.0,
+          "rate[bdn2]": 105.33333333333333,
+          "readout_active_fraction[bdn2]": 1.0
+        },
+        "walk_plus_fg": {
+          "rate": 109.66666666666667,
+          "network_rate": 8.477708759709406,
+          "active_fraction": 0.08619917896425022,
+          "spikes": 889780.3333333334,
+          "rate[fg]": 109.66666666666667,
+          "readout_active_fraction[fg]": 1.0,
+          "rate[bb]": 0.0,
+          "readout_active_fraction[bb]": 0.0,
+          "rate[odn1]": 15.0,
+          "readout_active_fraction[odn1]": 1.0,
+          "rate[bdn2]": 69.66666666666667,
+          "readout_active_fraction[bdn2]": 1.0
+        },
+        "walk_plus_bb": {
+          "rate": 46.666666666666664,
+          "network_rate": 8.644606417483514,
+          "active_fraction": 0.08629253288331958,
+          "spikes": 901308.0,
+          "rate[fg]": 46.666666666666664,
+          "readout_active_fraction[fg]": 1.0,
+          "rate[bb]": 85.33333333333333,
+          "readout_active_fraction[bb]": 1.0,
+          "rate[odn1]": 13.0,
+          "readout_active_fraction[odn1]": 1.0,
+          "rate[bdn2]": 88.66666666666667,
+          "readout_active_fraction[bdn2]": 1.0
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "sugar": 129,
+        "walk": 4,
+        "fg": 2,
+        "bb": 2
+      },
+      "seconds": 61.037097454071045,
+      "notes": [],
+      "graded": 0.6193243716712078,
+      "graded_per_seed": [
+        0.6071468528732336,
+        0.571281754945648,
+        0.6795445071947418
+      ],
+      "controls": {
+        "rewired": {
+          "score": 0.0,
+          "passed": false
+        }
+      },
+      "specificity": 0.5,
       "non_diagnostic": false
     }
   ],

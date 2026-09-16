@@ -644,3 +644,46 @@ def test_bump_statistics_and_task29_ring_on_toy(toy):
     rb = run_task(t29, broken, LIFParams(seed=1))
     assert rb.checks[0].passed and rb.checks[1].passed
     assert not rb.checks[2].passed and not rb.checks[3].passed and not rb.checks[6].passed
+
+
+def test_task30_egg_laying_passes_on_toy_and_a_pc1_to_ovidn_edge_fails_the_null(toy):
+    import scipy.sparse as sp
+    from flybench.bench import task_unavailable
+    from flybench.connectome import Connectome
+    t30 = next(t for t in load_tasks() if t["name"] == "egg_laying_ovidn")
+    raw = yaml.safe_load((TASK_DIR / "30_egg_laying_ovidn.yaml").read_text(encoding="utf-8"))
+    assert lint_task(raw) == [] and t30["dataset_only"] == ["flywire783", "toy"] and task_unavailable(t30, toy) is None
+    male = Connectome(root_ids=toy.root_ids, W=toy.W, positions=toy.positions, annotations=toy.annotations, name="malecns", meta=dict(toy.meta))
+    assert task_unavailable(t30, male).startswith("not applicable")
+    r = run_task(t30, toy, LIFParams(seed=1))
+    assert r.passed and r.score == 1.0 and r.checks[1].value < 0.5 and r.checks[3].value == 0.0
+    W = toy.W.tolil(); pc1 = toy.select("pC1a"); ovidn = toy.select("oviDNa_a")
+    for i in pc1:
+        for j in ovidn:
+            W[i, j] = 30.0
+    broken = Connectome(root_ids=toy.root_ids, W=sp.csr_matrix(W, dtype=np.float32), positions=toy.positions,
+                        annotations=toy.annotations, name="toy", meta=dict(toy.meta))
+    rb = run_task(t30, broken, LIFParams(seed=1))
+    assert not rb.checks[3].passed and rb.checks[3].value >= 2
+    assert all(ch.passed for k, ch in enumerate(rb.checks) if k != 3)
+
+
+def test_task31_halt_passes_on_toy_and_fails_without_foxglove_edges(toy):
+    import scipy.sparse as sp
+    from flybench.bench import task_unavailable
+    from flybench.connectome import Connectome
+    t31 = next(t for t in load_tasks() if t["name"] == "halt_walk_off")
+    raw = yaml.safe_load((TASK_DIR / "31_halt_walk_off.yaml").read_text(encoding="utf-8"))
+    assert lint_task(raw) == [] and task_unavailable(t31, toy) is None
+    r = run_task(t31, toy, LIFParams(seed=1))
+    assert r.passed and r.score == 1.0 and r.checks[3].value < 0.5 and r.checks[5].value < 0.5
+    # cut Foxglove -> BDN2/oDN1: walking commands no longer switch off (checks 4-5 fail at ratio ~1); Bluebell still works
+    W = toy.W.tolil(); fg = toy.select("CB0890"); dns = toy.select({"cell_type": ["DNg97", "DNg100"]})
+    for i in fg:
+        for j in dns:
+            W[i, j] = 0.0
+    broken = Connectome(root_ids=toy.root_ids, W=sp.csr_matrix(W, dtype=np.float32), positions=toy.positions,
+                        annotations=toy.annotations, name="toy", meta=dict(toy.meta))
+    rb = run_task(t31, broken, LIFParams(seed=1))
+    assert not rb.checks[3].passed and not rb.checks[4].passed and rb.checks[3].value > 0.8
+    assert all(ch.passed for k, ch in enumerate(rb.checks) if k not in (3, 4))

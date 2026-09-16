@@ -110,6 +110,18 @@ POPS = [
     *[(f"epg_g{k}", 6, "central", "", "EPG", "EPG", "ACH", f"EPG_R{k};EPG | EPG_L{k}", (int(60 * __import__("math").cos(k * 0.7854)), 240 + int(60 * __import__("math").sin(k * 0.7854)), 30)) for k in range(1, 9)],
     *[(f"pen_g{k}", 3, "central", "", "PEN_a/PEN1", "PEN_a", "ACH", f"PEN_R{k}", (int(45 * __import__("math").cos(k * 0.7854)), 240 + int(45 * __import__("math").sin(k * 0.7854)), 20)) for k in range(1, 9)],
     ("delta7",       8, "central", "",          "Delta7",    "Delta7",     "GLUT", "Delta7",           (0, 240, 40)),
+    # task 30 (egg laying, the female twin of task 22): female pC1 -> the GABAergic oviIN -> oviDN and oviEN; oviEN -> oviDN
+    ("pc1_female",  10, "central", "",          "pC1a",      "pC1a",       "ACH",  "female pC1",       (30, 225, 30)),
+    ("oviin",        2, "central", "",          "oviIN",     "",           "GABA", "oviIN",            (20, 215, 20)),
+    ("ovien",        2, "central", "",          "SMP550",    "SMP550",     "ACH",  "oviEN",            (25, 220, 25)),
+    ("ovidn",        6, "descending", "",       "oviDNa_a",  "",           "ACH",  "oviDN",            (15, 200, -20)),
+    # task 31 (halting, Sapkal 2024's walk-OFF): the GABAergic Foxglove and Bluebell, the walking DNs they inhibit,
+    # and a walking-command input population; typed like FlyWire's community labels
+    ("foxglove",     2, "central", "",          "CB0890",    "",           "GABA", "Foxglove",         (10, 330, -30)),
+    ("bluebell",     2, "descending", "",       "DNg60",     "",           "GABA", "Bluebell",         (20, 330, -35)),
+    ("odn1",         2, "descending", "",       "DNg97",     "",           "ACH",  "oDN1",             (30, 190, -30)),
+    ("bdn2",         2, "descending", "",       "DNg100",    "",           "ACH",  "BDN2",             (40, 190, -30)),
+    ("walk_in",     10, "central", "",          "PVLP137",   "PVLP137",    "ACH",  "walking command input", (60, 210, 0)),
 ]
 
 SUB_CLASS = {"mn_t1": "fl"}   # Codex-style `sub_class` (fl/ml/hl = front/mid/hind leg); "" elsewhere
@@ -119,7 +131,7 @@ SUB_CLASS = {"mn_t1": "fl"}   # Codex-style `sub_class` (fl/ml/hl = front/mid/hi
 RING = {"epg_pen": 40, "pen_epg_self": 30, "pen_epg_side": 20, "epg_d7": 10, "d7_epg": 12}
 
 # Bump when POPS or the wiring change: load_connectome("toy") rebuilds a cache whose version differs.
-TOY_VERSION = "2026-09-15-ring1"
+TOY_VERSION = "2026-09-15-halt2"
 
 
 def build_toy_connectome(seed: int = 1) -> Connectome:
@@ -258,6 +270,20 @@ def build_toy_connectome(seed: int = 1) -> Connectome:
             connect(f"pen_g{k}", f"epg_g{tgt}", 1.0, w, w)
         connect(f"epg_g{k}", "delta7", 1.0, RING["epg_d7"], RING["epg_d7"])
         connect("delta7", f"epg_g{k}", 1.0, RING["d7_epg"], RING["d7_epg"])
+    # --- added 2026-09-15 for task 30 (MODELED, Wang 2020's diagram): pC1 -> oviIN; oviIN -> oviDN and -> oviEN
+    #     (feed-forward inhibition); oviEN -> oviDN
+    connect("pc1_female", "oviin", 0.8, 10, 20)
+    connect("oviin", "ovidn", 1.0, 40, 60)
+    connect("oviin", "ovien", 1.0, 40, 60)
+    connect("ovien", "ovidn", 1.0, 40, 60)
+    # --- added 2026-09-15 for task 31 (MODELED): the sugar pathway's second-order cells drive Foxglove; the walking
+    #     input drives oDN1 and BDN2; Foxglove inhibits both, Bluebell inhibits oDN1 (Sapkal 2024's walk-OFF)
+    connect("taste_in", "foxglove", 0.6, 6, 12)
+    for dn in ("odn1", "bdn2"):
+        connect("walk_in", dn, 0.8, 8, 14)
+    connect("foxglove", "odn1", 1.0, 60, 90)
+    connect("foxglove", "bdn2", 1.0, 60, 90)
+    connect("bluebell", "odn1", 1.0, 60, 90)
     pre = np.concatenate(rows); post = np.concatenate(cols); syn = np.concatenate(vals).astype(np.float32)
     keep = pre != post
     pre, post, syn = pre[keep], post[keep], syn[keep]

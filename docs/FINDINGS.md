@@ -337,3 +337,32 @@ brain. The model fails as the tier says, but in opposite directions:
 
 Housekeeping: FlyWire graded 0.678 → 0.661, MaleCNS 0.668 → 0.655 (S2 and task 29 together);
 new `navigation` circuit; 28 older tasks bit-identical apart from the S2 change on task 28.
+
+## 2026-09-15 — tasks 30 (egg laying, FlyWire-only) and 31 (halting): Phase 3 complete; the egg-laying command is the cleanest circuit in the hard tier
+
+**Task 30** (docs/rfcs/30, Wang 2020's oviDN circuit; oviEN = SMP550 by motif): FlyWire 0.45
+**3/4** against a pre-registered 1/4, rewired 1/4, specificity +0.50 — the day's highest.
+
+- **SMP550 drives oviDN at 14 Hz with 0.0 % of the brain active.** Two cells, six targets, no
+  ignition: a command pathway that behaves as the paper draws it at the gain where the core
+  reflexes work. The inferred oviEN identity is now also a functional one.
+- **The virgin null holds through an ignition**: pC1 at 100 Hz lights 8 % of the brain and
+  drives oviIN to 52 Hz, and oviDN stays at 0 Hz on every seed — feed-forward inhibition in a
+  uniform LIF on the female brain.
+- oviIN on top of a *forced* oviEN takes oviDN only to 0.68 of its rate: the fly's oviIN also
+  silences oviEN, which a forced stimulus cannot show. The check fails on the convention.
+
+**Task 31** (docs/rfcs/31, Sapkal 2024's walk-OFF): the paper's neurons are all in v783 under
+community labels; P9 dropped (no halt-neuron contact on DNp09); a declared walking stand-in
+(PVLP137 + CB0529). FlyWire **3/6** against 4/6 predicted, rewired 0/6, specificity +0.50.
+Sugar → Foxglove 66 Hz with Bluebell at 1 Hz (the paper's asymmetry). The walking stand-in
+ignites 9 % of the brain and recruits Foxglove on its own (48 Hz), so adding it suppresses BDN2
+to 0.69 — real but seed-sensitive (0.53 / 1.00 / 0.53); oDN1 is untouched by either halt
+neuron, as its −136 / −206 synapses predicted. MaleCNS skipped: no Foxglove under any name.
+
+**Phase 3 (roadmap items 19–30) is complete**: twelve tasks (20–31) in two days, every one
+pre-registered. Running tally of the hard tier on the reference LIF: FlyWire 0.45 graded 0.669,
+MaleCNS 0.65 0.655. Across the twelve: the wiring was right about the circuit in ten; the
+model's failures were gain (ignition on sensory drives, silence on single DNs) in nine, a
+transmitter annotation in two (LN23, ExR6), and an intrinsic property the model lacks in one
+(the size principle). Three tasks where the shuffle beats the brain (23, 25, 29).

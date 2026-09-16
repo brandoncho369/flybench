@@ -1,0 +1,45 @@
+name: egg_laying_ovidn
+title: The egg-laying command is driven by oviEN, held down by oviIN, and not started by pC1
+tier: hard
+circuit: reproduction
+description: >
+  Egg laying in the female is commanded by the oviposition descending neurons: "activation of
+  female-specific oviDNs is necessary and sufficient for egg laying" (Wang et al. 2020). Their
+  major excitatory input is the oviposition excitatory neurons (oviENs), and "GABAergic
+  oviposition inhibitory neurons (oviINs) mediate feed-forward inhibition from pC1 neurons to
+  both oviDNs and their major excitatory input, the oviENs" — in virgins the pC1 → oviIN drive
+  holds egg laying down, and after mating sex peptide silences the abdominal inputs to pC1 and
+  oviIN, disinhibiting oviDN. FlyWire v783 (a female) carries oviDNa/b, oviIN and the female pC1a–e
+  by name; the oviENs are not labelled, and SMP550 is taken as oviEN (INFERRED: the oviDNs'
+  largest excitatory input, 185 synapses, and the oviINs' largest target, −429 — exactly the
+  paper's motif). Conditions: oviEN alone; oviEN with oviIN driven; pC1 alone. Checks: oviEN
+  drives oviDN; adding oviIN halves it (the task-03 suppression convention); pC1 drives oviIN
+  and does not drive oviDN (the virgin null). FlyWire only — MaleCNS has no oviDN and its pC1
+  are the male types; recorded as not applicable there. Pre-registered predictions and outcome:
+  docs/rfcs/30_egg_laying_ovidn.md.
+citation: "Wang et al. 2020 (Nature 579:101, Neural circuitry linking mating and egg laying in Drosophila females); Wang et al. 2021 (Nature 596:433, oviDN and the egg-laying sequence)"
+dataset_only: [flywire783, toy]
+duration_ms: 900
+window: [200, 700]
+requires_stimuli: [ovien, oviin, pc1]
+requires_readouts: [ovidn, oviin, ovien]
+readouts:
+  ovidn: {select: {cell_type: [oviDNa_a, oviDNa_b, oviDNb]}}
+  oviin: {select: {any: [{cell_type: oviIN}, {labels_regex: "\boviIN\b"}]}}
+  ovien: {select: {cell_type: SMP550}}
+conditions:
+  ovien:
+    stimuli:
+      - {name: ovien, select: {cell_type: SMP550}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
+  ovien_plus_oviin:
+    stimuli:
+      - {name: ovien, select: {cell_type: SMP550}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
+      - {name: oviin, select: {any: [{cell_type: oviIN}, {labels_regex: "\boviIN\b"}]}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
+  pc1:
+    stimuli:
+      - {name: pc1, select: {cell_type_regex: "^pC1[a-e]$"}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
+checks:
+  - {type: rate, cond: ovien, readout: ovidn, op: ">", value: 5, basis: "Wang et al. 2020: oviENs are the oviDNs' major excitatory input and oviDN activation is sufficient for egg laying (SMP550 → oviDN 185 synapses in v783, inferred identity); 5 Hz is the task-02 convention for a response"}
+  - {type: ratio, cond: ovien_plus_oviin, over: ovien, readout: ovidn, op: "<", value: 0.5, basis: "Wang et al. 2020: oviINs inhibit both oviDNs and oviENs (feed-forward inhibition; silencing oviINs raises egg laying in virgins); < 0.5 is the task-03 convention for suppression"}
+  - {type: rate, cond: pc1, readout: oviin, op: ">", value: 5, basis: "Wang et al. 2020: pC1 neurons drive the oviINs (25 direct and ~41,000 two-hop synapse products from the ten female pC1 cells in v783); 5 Hz task-02 convention"}
+  - {type: rate, cond: pc1, readout: ovidn, op: "<", value: 2, basis: "null check. Wang et al. 2020: in virgins pC1 activity suppresses egg laying through oviIN; pC1 makes no synapse on oviDN in v783 and must not excite it (inferred from behaviour); 2 Hz is the task-05 convention for silence"}

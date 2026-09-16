@@ -12,7 +12,7 @@ METRICS = {"rate", "network_rate", "active_fraction", "readout_active_fraction",
            "rank_order", "recruitment_spread", "population_sparseness", "bump"}
 RATIO_METRICS = {"rate", "readout_active_fraction", "spikes_per_neuron", "population_sparseness", "latency"}
 CELL_METRICS = {"rate", "readout_active_fraction", "spikes_per_neuron"}   # what a matrix cell may measure
-CIRCUITS = {"stability", "taste", "escape", "olfaction", "physiology", "robustness", "courtship", "locomotion", "optic_flow", "grooming", "navigation"}
+CIRCUITS = {"stability", "taste", "escape", "olfaction", "physiology", "robustness", "courtship", "locomotion", "optic_flow", "grooming", "navigation", "reproduction"}
 REQUIRED = {"name", "title", "conditions", "checks"}
 TIERS = {"core", "hard"}
 

@@ -1,0 +1,53 @@
+name: halt_walk_off
+title: Foxglove and Bluebell switch the walking commands off; sugar switches Foxglove on
+tier: hard
+circuit: locomotion
+description: >
+  Sapkal et al. 2024 found two ways a fly stops. The "walk-OFF" mechanism is two GABAergic
+  brain neurons found by optogenetic screen, Foxglove and Bluebell, that inhibit specific
+  walking-promoting descending neurons: Foxglove strongly inhibits BDN2 (forward velocity)
+  and oDN1, Bluebell inhibits oDN1 — "oDN1 and BDN2 stood apart as important nodes" —
+  "comparable to taking one's foot off the gas pedal"; both are downstream of the sugar
+  sensory pathway and Foxglove responds to sugar more strongly in starved flies (halting to
+  feed). The "brake" mechanism, cholinergic ascending neurons in the nerve cord, is not scored
+  here. FlyWire v783 carries all of them under the paper's labels (Foxglove = CB0890, Bluebell
+  = DNg60, oDN1 = DNg97, BDN2 = DNg100). P9 (DNp09) is not scored: neither halt neuron contacts
+  it in v783. The model has no walking fly, so the walking command is stood in for by the shared
+  excitatory inputs of the two walking DNs, PVLP137 and CB0529 (four cells), driven at the
+  task-02 100 Hz (CONVENTION, declared: they are selected because they are the DNs' largest
+  common inputs, not for any behaviour of their own). Checks: sugar drives Foxglove; the walking
+  input drives BDN2 and oDN1; adding Foxglove halves both; adding Bluebell halves oDN1 (the
+  task-03 suppression convention, under the S1/S2 gates). MaleCNS has no Foxglove under any
+  name and is skipped. Pre-registered predictions and outcome: docs/rfcs/31_halt_walk_off.md.
+citation: "Sapkal et al. 2024 (Nature 634:191, Neural circuit mechanisms underlying context-specific halting in Drosophila); Bidaye et al. 2020 (Neuron 108:469)"
+duration_ms: 900
+window: [200, 700]
+requires_stimuli: [walk, fg, bb, sugar]
+requires_readouts: [fg, odn1, bdn2]
+readouts:
+  fg:   {select: &fg {any: [{cell_type: CB0890}, {labels_regex: "Foxglove"}]}}
+  bb:   {select: &bb {any: [{cell_type: DNg60}, {labels_regex: "Bluebell"}]}}
+  odn1: {select: {any: [{cell_type: DNg97}, {labels_regex: "\\boDN1\\b"}]}}
+  bdn2: {select: {any: [{cell_type: DNg100}, {labels_regex: "\\bBDN2\\b"}]}}
+conditions:
+  sugar:
+    stimuli:
+      - {name: sugar, select: {any: [{sub_class: "sugar/water"}, {all_of: [{labels_regex: "sugar"}, {super_class: sensory}, {not: {labels_regex: "bitter"}}]}, {all_of: [{sub_class: "labellar bristle"}, {cell_type_regex: "^LB3[bc]$"}]}]}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
+  walk:
+    stimuli:
+      - {name: walk, select: &walk {cell_type: [PVLP137, CB0529]}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
+  walk_plus_fg:
+    stimuli:
+      - {name: walk, select: *walk, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
+      - {name: fg,   select: *fg,   rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
+  walk_plus_bb:
+    stimuli:
+      - {name: walk, select: *walk, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
+      - {name: bb,   select: *bb,   rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
+checks:
+  - {type: rate, cond: sugar, readout: fg, op: ">", value: 5, basis: "Sapkal et al. 2024: Foxglove is downstream of the sugar sensory pathway and responds to sugar (more in starved flies); 86,751 two-hop synapse products from the sugar GRNs in v783; 5 Hz is the task-02 convention for a response"}
+  - {type: rate, cond: walk, readout: bdn2, op: ">", value: 5, basis: "the walking-command stand-in must drive BDN2 (PVLP137 + CB0529 -> BDN2 1,660 synapses in v783) for the suppression checks to mean anything; 5 Hz task-02 convention"}
+  - {type: rate, cond: walk, readout: odn1, op: ">", value: 5, basis: "as above for oDN1 (1,117 synapses); 5 Hz task-02 convention"}
+  - {type: ratio, cond: walk_plus_fg, over: walk, readout: bdn2, op: "<", value: 0.5, basis: "Sapkal et al. 2024: Foxglove strongly inhibits BDN2 (-1,137 synapses in v783), the walk-OFF mechanism; < 0.5 is the task-03 convention for suppression"}
+  - {type: ratio, cond: walk_plus_fg, over: walk, readout: odn1, op: "<", value: 0.5, basis: "Sapkal et al. 2024: Foxglove inhibits oDN1 (-136 synapses in v783); < 0.5 task-03 convention"}
+  - {type: ratio, cond: walk_plus_bb, over: walk, readout: odn1, op: "<", value: 0.5, basis: "Sapkal et al. 2024: Bluebell inhibits oDN1 (-206 synapses in v783); < 0.5 task-03 convention"}

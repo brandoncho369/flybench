@@ -146,8 +146,13 @@ numbers (figure-only in Ache 2019 / Klapoetke 2017).
     2026-09-15: task 29 (docs/rfcs/29), `expected_fail:` field, `bump` check (population vector over eight
     wedges by PB glomerulus, labelled on both datasets); a hand-wired toy ring that holds its bump.**
 29. **Egg-laying oviDN pathway, FlyWire-only** (Wang et al. 2020 Nature) — the female twin of 21.
+    **Started 2026-09-15: task 30 (docs/rfcs/30); oviDNa/b, oviIN and pC1a–e by name, oviEN = SMP550 by
+    motif (the oviDNs' largest excitatory input and oviIN's largest target); new `reproduction` circuit.**
 30. **Descending halt (Foxglove/Bluebell inhibit oDN1/P9)** (Sapkal et al. 2024 Nature) — types
-    were found by screen, VNC targets unnamed; medium-high difficulty.
+    were found by screen, VNC targets unnamed; medium-high difficulty. **Started 2026-09-15: task 31
+    (docs/rfcs/31) — the paper's neurons are in v783 under community labels (Foxglove = CB0890, Bluebell =
+    DNg60, oDN1 = DNg97, BDN2 = DNg100); walk-OFF only, with a declared walking stand-in (PVLP137 + CB0529);
+    P9 dropped (no halt-neuron contact on DNp09); the brake mechanism is VNC-side and not scored.**
 
 Blocked on annotation (do not build yet): thermosensory input types, ocellar types, adult MDN
 premotor names. Out of scope with reasons documented: sleep (dFB role contested, minutes-scale,
