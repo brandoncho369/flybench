@@ -584,3 +584,63 @@ def test_task28_steering_passes_on_toy_and_a_crossed_dna02_edge_fails_the_null(t
     rb = run_task(t28, broken, LIFParams(seed=1))
     assert not rb.checks[5].passed and rb.checks[5].value >= 2
     assert all(ch.passed for k, ch in enumerate(rb.checks) if k not in (4, 5))
+
+
+def test_rfc_s2_floor_fails_comparisons_between_silences(toy):
+    """A ratio whose every compared side is under 2 Hz is marked floored and counted as failed
+    (docs/rfcs/S2_response_floor.md); a comparison with one responding side is untouched."""
+    task = copy.deepcopy(next(t for t in load_tasks() if t["name"] == "steering_dna02_vs_dna01"))
+    for cond in task["conditions"].values():
+        for st in cond["stimuli"]:
+            st["rate_hz"] = 3                                        # both DNs barely tick: both pools silent
+    r = run_task(task, toy, LIFParams(gain=1.0, seed=0))
+    ratios = [c for c in r.checks if c.description.startswith(("latency[", "rate[dna02, leg_mn_right] /"))]
+    assert len(ratios) == 3 and all(c.floored and not c.passed and c.graded == 0.0 and c.margin == -10.0 and "floored" in c.description for c in ratios)
+    assert not any(c.saturated for c in r.checks)
+    # multi-seed: floored on every seed, tag once
+    r2 = run_task(task, toy, LIFParams(gain=1.0, seed=0), seeds=2)
+    f2 = [c for c in r2.checks if c.floored]
+    assert len(f2) == 3 and all(c.description.count("floored") == 1 for c in f2)
+    # the real toy task responds: nothing floored, the same three checks pass
+    plain = next(t for t in load_tasks() if t["name"] == "steering_dna02_vs_dna01")
+    rp = run_task(plain, toy, LIFParams(seed=1))
+    assert not any(c.floored for c in rp.checks) and rp.passed
+    # sugar over a silent baseline: one side responds, not floored
+    sugar = next(t for t in load_tasks() if t["name"] == "sugar_to_proboscis")
+    assert not any(c.floored for c in run_task(sugar, toy, LIFParams(seed=0)).checks)
+
+
+def test_bump_statistics_and_task29_ring_on_toy(toy):
+    import scipy.sparse as sp
+    from flybench.bench import angular_error_deg, bump_statistics, task_unavailable
+    from flybench.connectome import Connectome
+    ang = {f"g{k}": (k - 1) * 45 for k in range(1, 9)}
+    R, th = bump_statistics({f"g{k}": (1.0 if k == 4 else 0.0) for k in range(1, 9)}, ang)
+    assert R == pytest.approx(1.0) and th == pytest.approx(135.0)
+    assert bump_statistics({f"g{k}": 1.0 for k in range(1, 9)}, ang)[0] < 1e-9          # uniform ring
+    assert bump_statistics({f"g{k}": (1.0 if k in (2, 6) else 0.0) for k in range(1, 9)}, ang)[0] < 1e-9   # two opposite bumps
+    assert np.isnan(bump_statistics({f"g{k}": 0.0 for k in range(1, 9)}, ang)[0])      # silent ring
+    assert angular_error_deg(135, 350) == pytest.approx(145.0) and angular_error_deg(10, 350) == pytest.approx(20.0)
+    t29 = next(t for t in load_tasks() if t["name"] == "epg_ring_attractor")
+    raw = yaml.safe_load((TASK_DIR / "29_epg_ring_attractor.yaml").read_text(encoding="utf-8"))
+    assert lint_task(raw) == [] and raw["expected_fail"] and task_unavailable(t29, toy) is None
+    bad = copy.deepcopy(raw); bad["checks"][0]["angles"] = {"epg_g1": 0, "nowhere": 45, "epg_g3": 90}
+    assert any("nowhere" in e for e in lint_task(bad))
+    bad = copy.deepcopy(raw); bad["expected_fail"] = ""
+    assert any("expected_fail" in e for e in lint_task(bad))
+    assert all(toy.select(t29["readouts"][f"epg_g{k}"]["select"]).size == 6 for k in range(1, 9))
+    r = run_task(t29, toy, LIFParams(seed=1))
+    assert r.passed and r.score == 1.0
+    assert r.checks[0].description.startswith("bump resultant[cue, 8 wedges] >") and r.checks[0].value > 0.8
+    assert r.checks[1].description.startswith("bump error[cue, vs 135°] <") and r.checks[1].value < 5
+    assert r.checks[3].value > 0.8 and r.checks[5].value > 0.5
+    # cut PEN -> EPG: no recurrent excitation, the bump dies with the cue; the cue-window checks still pass
+    W = toy.W.tolil(); pen = toy.select({"cell_type_regex": "^PEN"}); epg = toy.select("EPG")
+    for i in pen:
+        for j in epg:
+            W[i, j] = 0.0
+    broken = Connectome(root_ids=toy.root_ids, W=sp.csr_matrix(W, dtype=np.float32), positions=toy.positions,
+                        annotations=toy.annotations, name="toy", meta=dict(toy.meta))
+    rb = run_task(t29, broken, LIFParams(seed=1))
+    assert rb.checks[0].passed and rb.checks[1].passed
+    assert not rb.checks[2].passed and not rb.checks[3].passed and not rb.checks[6].passed

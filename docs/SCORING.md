@@ -41,7 +41,7 @@ Card & Dickinson 2008). A check with `ceiling: c` reports `graded / c`, capped a
 "A benchmark without a ceiling is not interpretable" (Brain-Score). Ceilings are only set where a
 citation gives the animal's own rate; threshold checks have none.
 
-## The ceiling gate (RFC S1)
+## The ceiling gate (RFC S1) and the floor (RFC S2)
 
 A check that compares conditions (`ratio`, `lifetime_sparseness`) is only a pass if at least one
 compared condition has its readout below the refractory ceiling (80 % of 1000 / t_ref_ms; 364 Hz
@@ -50,6 +50,11 @@ fails, scores 0 and sits at margin −10 in the profile. A neuron that cannot fi
 "invariant", "compressive" and "selective" for free; tasks 16, 17 and 18 each produced such a
 pass before this rule existed (docs/rfcs/S1_ceiling_gate.md). Comparisons against a silent
 condition (baseline) are unaffected, as are absolute-rate checks.
+
+The floor is the same rule at the bottom (docs/rfcs/S2_response_floor.md): a comparison whose
+every side has its readout under 2 Hz (the null convention for silence) is marked
+`floored: true`, fails, scores 0 and sits at margin −10. Task 28 passed two ratios on eight
+spikes against three before it existed.
 
 ## Seeds
 

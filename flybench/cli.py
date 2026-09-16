@@ -104,7 +104,7 @@ def run(connectome, config, gain, task_paths, out, label, cache, simulator, tier
     for t in report["tasks"]:
         def marg(ch):  # effect size: how far from the line, as a multiplier on the passing (+) or failing (-) side
             m = ch.get("margin")
-            if m is None or m != m or ch.get("saturated"):
+            if m is None or m != m or ch.get("saturated") or ch.get("floored"):
                 return ""
             return f" [dim]{'+' if m >= 0 else '-'}{10 ** abs(m):.1f}x[/]"
         checks = "\n".join(("✓ " if ch["passed"] else "✗ ") + escape(f"{ch['description']}  [{ch['value']:.3g}]") + marg(ch) for ch in t["checks"])
@@ -112,6 +112,12 @@ def run(connectome, config, gain, task_paths, out, label, cache, simulator, tier
         n_sat = sum(1 for ch in t["checks"] if ch.get("saturated"))
         if n_sat:
             notes.append(f"[yellow]{n_sat} comparison check(s) saturated: every compared condition at the refractory ceiling → counted as failed (RFC S1)[/]")
+        ef = next((tk.get("expected_fail") for tk in tasks if tk["name"] == t["task"]), None)
+        if ef:
+            notes.append(f"[dim]expected-fail tier: {ef}[/]")
+        n_flo = sum(1 for ch in t["checks"] if ch.get("floored"))
+        if n_flo:
+            notes.append(f"[yellow]{n_flo} comparison check(s) floored: every compared condition silent → counted as failed (RFC S2)[/]")
         if t.get("controls"):
             ctrl = ", ".join(f"{k} {v['score']:.0%}" for k, v in t["controls"].items())
             notes.append(f"controls: {ctrl} · specificity {t['specificity']:+.2f}" + ("  [red]NON-DIAGNOSTIC[/]" if t.get("non_diagnostic") else ""))

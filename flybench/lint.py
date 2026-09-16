@@ -6,13 +6,13 @@ from pathlib import Path
 
 import yaml
 
-from .bench import KNOWN_CAPABILITIES, KNOWN_DATASETS, MATRIX_SIGNS, MATRIX_UNSCORED, OPS, RANK_ATTRIBUTES, expand_checks
+from .bench import BUMP_STATS, KNOWN_CAPABILITIES, KNOWN_DATASETS, MATRIX_SIGNS, MATRIX_UNSCORED, OPS, RANK_ATTRIBUTES, expand_checks
 
 METRICS = {"rate", "network_rate", "active_fraction", "readout_active_fraction", "ratio", "spikes_per_neuron", "lifetime_sparseness", "latency",
-           "rank_order", "recruitment_spread", "population_sparseness"}
+           "rank_order", "recruitment_spread", "population_sparseness", "bump"}
 RATIO_METRICS = {"rate", "readout_active_fraction", "spikes_per_neuron", "population_sparseness", "latency"}
 CELL_METRICS = {"rate", "readout_active_fraction", "spikes_per_neuron"}   # what a matrix cell may measure
-CIRCUITS = {"stability", "taste", "escape", "olfaction", "physiology", "robustness", "courtship", "locomotion", "optic_flow", "grooming"}
+CIRCUITS = {"stability", "taste", "escape", "olfaction", "physiology", "robustness", "courtship", "locomotion", "optic_flow", "grooming", "navigation"}
 REQUIRED = {"name", "title", "conditions", "checks"}
 TIERS = {"core", "hard"}
 
@@ -29,6 +29,8 @@ def lint_task(task: dict, source: str = "<task>") -> list[str]:
         errs.append(f"tier must be one of {sorted(TIERS)}")
     if not task.get("citation"):
         errs.append("needs a `citation` (published fly behaviour)")
+    if "expected_fail" in task and not (isinstance(task["expected_fail"], str) and task["expected_fail"].strip()):
+        errs.append("expected_fail must be a non-empty string saying why the reference model is expected to fail")
     if task.get("circuit") not in CIRCUITS:
         errs.append(f"needs `circuit` (one of {sorted(CIRCUITS)}) so the score can be weighted per pathway")
     duration = float(task.get("duration_ms", 1000))
@@ -175,10 +177,24 @@ def lint_task(task: dict, source: str = "<task>") -> list[str]:
         # network-level metrics ignore readouts; readout metrics default to the task's first readout (runtime does the same)
         if typ == "latency" and "from" in chk and chk["from"] not in readouts:
             errs.append(f"check {i}: latency `from` {chk['from']!r} is not a defined readout")
-        if typ in ("rate", "ratio", "readout_active_fraction", "lifetime_sparseness", "latency", "rank_order", "recruitment_spread", "population_sparseness") and "readout" in chk and chk["readout"] not in readouts:
+        if typ in ("rate", "ratio", "readout_active_fraction", "lifetime_sparseness", "latency", "rank_order", "recruitment_spread", "population_sparseness", "bump") and "readout" in chk and chk["readout"] not in readouts:
             errs.append(f"check {i}: readout {chk['readout']!r} not defined")
         if typ == "rank_order" and chk.get("by", "input_synapses") not in RANK_ATTRIBUTES:
             errs.append(f"check {i}: rank_order `by` must be one of {RANK_ATTRIBUTES}")
+        if typ == "bump":
+            angles = chk.get("angles")
+            if not isinstance(angles, dict) or len(angles) < 3:
+                errs.append(f"check {i}: bump needs `angles`, a mapping of at least 3 readouts to degrees")
+            else:
+                for rn, deg in angles.items():
+                    if rn not in readouts:
+                        errs.append(f"check {i}: bump angles: readout {rn!r} not defined")
+                    if not isinstance(deg, (int, float)):
+                        errs.append(f"check {i}: bump angles: {rn!r} must map to degrees")
+            if chk.get("stat", "resultant") not in BUMP_STATS:
+                errs.append(f"check {i}: bump stat must be one of {BUMP_STATS}")
+            if chk.get("stat") == "error_deg" and not isinstance(chk.get("cue_deg"), (int, float)):
+                errs.append(f"check {i}: bump error_deg needs `cue_deg`")
         for key in ("window", "over_window"):
             if key in chk:
                 w = chk[key]

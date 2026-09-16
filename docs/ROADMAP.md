@@ -142,7 +142,9 @@ numbers (figure-only in Ache 2019 / Klapoetke 2017).
     ratio metric, `over_readout` for left-vs-right comparisons; a see-saw null on the contralateral DNa02.**
 28. **EPG ring attractor — expected-fail tier**: one bump, FWHM ≈ 90°, persists in darkness; two
     drives → one winner (Kim et al. 2017 Science; Turner-Evans 2017 eLife). A uniform-parameter LIF
-    should fail; ship it labelled as such. Eon Systems concede they never validated this.
+    should fail; ship it labelled as such. Eon Systems concede they never validated this. **Started
+    2026-09-15: task 29 (docs/rfcs/29), `expected_fail:` field, `bump` check (population vector over eight
+    wedges by PB glomerulus, labelled on both datasets); a hand-wired toy ring that holds its bump.**
 29. **Egg-laying oviDN pathway, FlyWire-only** (Wang et al. 2020 Nature) — the female twin of 21.
 30. **Descending halt (Foxglove/Bluebell inhibit oDN1/P9)** (Sapkal et al. 2024 Nature) — types
     were found by screen, VNC targets unnamed; medium-high difficulty.

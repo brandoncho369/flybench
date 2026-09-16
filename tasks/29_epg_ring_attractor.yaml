@@ -1,0 +1,54 @@
+name: epg_ring_attractor
+title: The compass keeps one bump, keeps it in the dark, and picks one of two cues
+tier: hard
+expected_fail: "a uniform-parameter LIF has no documented mechanism for a persistent bump; the task is shipped to record how it fails (docs/rfcs/29)"
+circuit: navigation
+description: >
+  The head-direction system of the fly is a ring attractor: the EPG neurons of the ellipsoid
+  body carry a single bump of activity (~90° FWHM) that tracks heading, persists when the
+  visual cue is removed, drifts slowly in darkness, and when two cues compete one wins
+  (Seelig & Jayaraman 2015; Kim et al. 2017; Turner-Evans et al. 2017; Green et al. 2017). The
+  circuit is EPG → PEN → EPG local excitation with the glutamatergic Delta7 neurons providing
+  global inhibition (Hulse et al. 2021, the hemibrain central complex). This task cues one
+  ellipsoid-body wedge — the EPGs of PB glomerulus 4, both sides, at the task-02 100 Hz for
+  500 ms — and reads the ring as eight wedges by PB glomerulus number (the community and
+  neuPrint labels carry it; the wedge-to-angle map, 45° per glomerulus with left and right
+  merged, is INFERRED from Wolff, Iyer & Rubin 2015). The population vector's length (one bump
+  ≈ 0.85, spread or two bumps ≈ 0) and angle are the readouts, during the cue and 200–700 ms
+  after it ends; a second condition cues two opposite wedges. Shipped in the expected-fail tier:
+  a uniform LIF with no adaptation and a 20 ms membrane has nothing to hold a bump with, and the
+  task exists to say how it fails. Pre-registered predictions and outcome: docs/rfcs/29_epg_ring_attractor.md.
+citation: "Seelig & Jayaraman 2015 (Nature 521:186); Kim et al. 2017 (Science 356:849); Turner-Evans et al. 2017 (eLife 6:e23496); Green et al. 2017 (Nature 546:101); Hulse et al. 2021 (eLife 10:e66039); Wolff, Iyer & Rubin 2015 (J Comp Neurol 523:997)"
+duration_ms: 1500
+window: [200, 700]
+requires_stimuli: [cue_g4, cue_g8]
+requires_readouts: [epg, epg_g1, epg_g2, epg_g3, epg_g4, epg_g5, epg_g6, epg_g7, epg_g8]
+readouts:
+  epg: {select: {cell_type: EPG}}
+  epg_g1: {select: {all_of: [{cell_type: EPG}, {any: [{labels_regex: 'EPG(\(PB08\))?_[LR]1\b'}, {instance_regex: 'EPG(\(PB08\))?_[LR]1\b'}]}]}}
+  epg_g2: {select: {all_of: [{cell_type: EPG}, {any: [{labels_regex: 'EPG(\(PB08\))?_[LR]2\b'}, {instance_regex: 'EPG(\(PB08\))?_[LR]2\b'}]}]}}
+  epg_g3: {select: {all_of: [{cell_type: EPG}, {any: [{labels_regex: 'EPG(\(PB08\))?_[LR]3\b'}, {instance_regex: 'EPG(\(PB08\))?_[LR]3\b'}]}]}}
+  epg_g4: {select: {all_of: [{cell_type: EPG}, {any: [{labels_regex: 'EPG(\(PB08\))?_[LR]4\b'}, {instance_regex: 'EPG(\(PB08\))?_[LR]4\b'}]}]}}
+  epg_g5: {select: {all_of: [{cell_type: EPG}, {any: [{labels_regex: 'EPG(\(PB08\))?_[LR]5\b'}, {instance_regex: 'EPG(\(PB08\))?_[LR]5\b'}]}]}}
+  epg_g6: {select: {all_of: [{cell_type: EPG}, {any: [{labels_regex: 'EPG(\(PB08\))?_[LR]6\b'}, {instance_regex: 'EPG(\(PB08\))?_[LR]6\b'}]}]}}
+  epg_g7: {select: {all_of: [{cell_type: EPG}, {any: [{labels_regex: 'EPG(\(PB08\))?_[LR]7\b'}, {instance_regex: 'EPG(\(PB08\))?_[LR]7\b'}]}]}}
+  epg_g8: {select: {all_of: [{cell_type: EPG}, {any: [{labels_regex: 'EPG(\(PB08\))?_[LR]8\b'}, {instance_regex: 'EPG(\(PB08\))?_[LR]8\b'}]}]}}
+conditions:
+  cue:
+    stimuli:
+      - {name: cue_g4, select: {all_of: [{cell_type: EPG}, {any: [{labels_regex: 'EPG(\(PB08\))?_[LR]4\b'}, {instance_regex: 'EPG(\(PB08\))?_[LR]4\b'}]}]}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
+  two_cues:
+    stimuli:
+      - {name: cue_g4, select: {all_of: [{cell_type: EPG}, {any: [{labels_regex: 'EPG(\(PB08\))?_[LR]4\b'}, {instance_regex: 'EPG(\(PB08\))?_[LR]4\b'}]}]}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
+      - {name: cue_g8, select: {all_of: [{cell_type: EPG}, {any: [{labels_regex: 'EPG(\(PB08\))?_[LR]8\b'}, {instance_regex: 'EPG(\(PB08\))?_[LR]8\b'}]}]}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}
+checks:
+  # during the cue: one bump, at the cue
+  - {type: bump, cond: cue, stat: resultant, angles: &ring {epg_g1: 0, epg_g2: 45, epg_g3: 90, epg_g4: 135, epg_g5: 180, epg_g6: 225, epg_g7: 270, epg_g8: 315}, op: ">", value: 0.5, basis: "Seelig & Jayaraman 2015; Kim et al. 2017: a single bump of ~90° FWHM (population-vector length ~0.85 for such a bump; 0.5 is the length of a bump half the ring wide — convention)"}
+  - {type: bump, cond: cue, stat: error_deg, cue_deg: 135, angles: *ring, op: "<", value: 45, basis: "Seelig & Jayaraman 2015: the bump sits at the cue's heading; 45° is one wedge of the eight-wedge readout (convention)"}
+  # in the dark, 200–700 ms after the cue ends: still there, still one bump, still near the cue
+  - {type: rate, cond: cue, readout: epg, window: [900, 1400], op: ">", value: 5, basis: "Seelig & Jayaraman 2015: the bump persists after the visual cue is removed; 5 Hz over the whole ring is the task-02 convention for a response"}
+  - {type: bump, cond: cue, stat: resultant, window: [900, 1400], angles: *ring, op: ">", value: 0.5, basis: "Seelig & Jayaraman 2015; Kim et al. 2017: one bump persists in darkness (the attractor); 0.5 convention as above"}
+  - {type: bump, cond: cue, stat: error_deg, cue_deg: 135, window: [900, 1400], angles: *ring, op: "<", value: 45, basis: "Seelig & Jayaraman 2015: drift in darkness is slow (tens of degrees over seconds); under 45° in the 0.7 s after cue offset (convention)"}
+  # two opposite cues: one winner, and it persists
+  - {type: bump, cond: two_cues, stat: resultant, angles: *ring, op: ">", value: 0.5, basis: "Kim et al. 2017: two competing cues do not produce two bumps, one wins (winner-take-all); two equal opposite bumps give a population-vector length of 0"}
+  - {type: bump, cond: two_cues, stat: resultant, window: [900, 1400], angles: *ring, op: ">", value: 0.5, basis: "Kim et al. 2017: the winning bump persists after the cues end; 0.5 convention as above"}

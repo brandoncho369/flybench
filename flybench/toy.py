@@ -105,13 +105,21 @@ POPS = [
     ("dna02",        2, "descending", "",       "DNa02",     "DNa02",      "ACH",  "steering DN (high gain)", (100, 185, -20)),
     ("dna01",        2, "descending", "",       "DNa01",     "DNa01",      "ACH",  "steering DN (low gain)",  (100, 180, -20)),
     ("steer_in",    40, "vnc_intrinsic", "",    "steer_in_toy", "",        "ACH",  "steering premotor",       (100, 70, -60)),
+    # task 29 (ring attractor): eight EPG wedges labelled like FlyWire's community labels (EPG_R{k}), their PEN
+    # partners, and the glutamatergic Delta7 that inhibits the whole ring (GLUT is inhibitory, as in the datasets)
+    *[(f"epg_g{k}", 6, "central", "", "EPG", "EPG", "ACH", f"EPG_R{k};EPG | EPG_L{k}", (int(60 * __import__("math").cos(k * 0.7854)), 240 + int(60 * __import__("math").sin(k * 0.7854)), 30)) for k in range(1, 9)],
+    *[(f"pen_g{k}", 3, "central", "", "PEN_a/PEN1", "PEN_a", "ACH", f"PEN_R{k}", (int(45 * __import__("math").cos(k * 0.7854)), 240 + int(45 * __import__("math").sin(k * 0.7854)), 20)) for k in range(1, 9)],
+    ("delta7",       8, "central", "",          "Delta7",    "Delta7",     "GLUT", "Delta7",           (0, 240, 40)),
 ]
 
 SUB_CLASS = {"mn_t1": "fl"}   # Codex-style `sub_class` (fl/ml/hl = front/mid/hind leg); "" elsewhere
 
 
+# ring-attractor contact sizes (synapses per edge); see the task-29 block in build_toy_connectome
+RING = {"epg_pen": 40, "pen_epg_self": 30, "pen_epg_side": 20, "epg_d7": 10, "d7_epg": 12}
+
 # Bump when POPS or the wiring change: load_connectome("toy") rebuilds a cache whose version differs.
-TOY_VERSION = "2026-09-15-steer4"
+TOY_VERSION = "2026-09-15-ring1"
 
 
 def build_toy_connectome(seed: int = 1) -> Connectome:
@@ -240,6 +248,16 @@ def build_toy_connectome(seed: int = 1) -> Connectome:
         for mn in right_mns:
             if rng.random() < 0.5:
                 edge(s_, mn, 14)
+    # --- added 2026-09-15 for task 29 (MODELED): a hand-wired ring attractor. Each wedge's EPGs drive their PENs,
+    #     each PEN feeds its own wedge and both neighbours (local recurrent excitation); every EPG drives Delta7 and
+    #     Delta7 inhibits every EPG (global inhibition). Numbers chosen so that a cued bump outlives its cue.
+    for k in range(1, 9):
+        left, right = (k - 2) % 8 + 1, k % 8 + 1
+        connect(f"epg_g{k}", f"pen_g{k}", 1.0, RING["epg_pen"], RING["epg_pen"])
+        for tgt, w in ((k, RING["pen_epg_self"]), (left, RING["pen_epg_side"]), (right, RING["pen_epg_side"])):
+            connect(f"pen_g{k}", f"epg_g{tgt}", 1.0, w, w)
+        connect(f"epg_g{k}", "delta7", 1.0, RING["epg_d7"], RING["epg_d7"])
+        connect("delta7", f"epg_g{k}", 1.0, RING["d7_epg"], RING["d7_epg"])
     pre = np.concatenate(rows); post = np.concatenate(cols); syn = np.concatenate(vals).astype(np.float32)
     keep = pre != post
     pre, post, syn = pre[keep], post[keep], syn[keep]
@@ -247,7 +265,7 @@ def build_toy_connectome(seed: int = 1) -> Connectome:
     nt = np.empty(n, dtype=object)
     for p in POPS:
         nt[idx[p[0]]] = p[6]
-    sign = np.where(nt[pre] == "GABA", -1.0, 1.0).astype(np.float32)
+    sign = np.where(np.isin(nt[pre], ("GABA", "GLUT")), -1.0, 1.0).astype(np.float32)   # the datasets' NT_SIGN: GABA and glutamate inhibit
     W = sp.csr_matrix((syn * sign, (pre, post)), shape=(n, n), dtype=np.float32)
     W.sum_duplicates()
 

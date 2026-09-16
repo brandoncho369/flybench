@@ -53,6 +53,7 @@ from .sim import LIFParams, LIFSimulator, SimResult, Stimulus
 OPS = {">": operator.gt, ">=": operator.ge, "<": operator.lt, "<=": operator.le, "==": operator.eq}
 EPS = 1e-3
 CEILING_FRACTION = 0.8   # a readout at ≥ 80 % of its refractory-limited rate is "at ceiling" (docs/rfcs/S1_ceiling_gate.md)
+FLOOR_HZ = 2.0           # a readout under 2 Hz is silent (the task-05 null convention); a comparison between silences is not a pass (docs/rfcs/S2_response_floor.md)
 TASK_DIR = Path(__file__).resolve().parent.parent / "tasks"
 
 
@@ -71,6 +72,7 @@ class CheckResult:
     op: str = ""                   # the check's comparison and target, so a result file can be re-scored
     target: float = float("nan")
     saturated: bool = False        # comparison check whose every side sat at the refractory ceiling: failed, uninformative (RFC S1)
+    floored: bool = False          # comparison check whose every side was silent (< FLOOR_HZ): failed, uninformative (RFC S2)
 
 
 def _graded_check(desc: str, value: float, passed: bool, chk: dict, per_seed: list[float] | None = None) -> CheckResult:
@@ -272,6 +274,33 @@ def recruitment_spread(first_ms: np.ndarray) -> float:
     return float(q75 - q25)
 
 
+BUMP_STATS = ("resultant", "error_deg")
+
+
+def bump_statistics(rates: dict[str, float], angles: dict[str, float]) -> tuple[float, float]:
+    """Population vector of a ring: readouts at angles (degrees) with mean rates. Returns
+    (resultant length R in [0, 1], resultant angle in degrees). R = 1 is one readout carrying all
+    the activity, ~0.85 a single cosine bump of 90 deg FWHM, 0 uniform activity or two opposite
+    bumps. NaN when the ring is silent."""
+    total = 0.0; x = 0.0; y = 0.0
+    for name, deg in angles.items():
+        r = float(rates.get(name, float("nan")))
+        if not np.isfinite(r) or r <= 0:
+            continue
+        th = np.deg2rad(float(deg))
+        x += r * np.cos(th); y += r * np.sin(th); total += r
+    if total <= 0:
+        return float("nan"), float("nan")
+    return float(np.hypot(x, y) / total), float(np.rad2deg(np.arctan2(y, x)) % 360.0)
+
+
+def angular_error_deg(a: float, b: float) -> float:
+    if not (np.isfinite(a) and np.isfinite(b)):
+        return float("nan")
+    d = abs((float(a) - float(b) + 180.0) % 360.0 - 180.0)
+    return float(d)
+
+
 def lifetime_sparseness(rates: "np.ndarray") -> float:
     """Willmore & Tolhurst 2001 lifetime sparseness of one readout across N stimuli:
     S = (1 − (Σr/N)² / (Σr²/N)) / (1 − 1/N). 1 = responds to one stimulus only, 0 = equally to all.
@@ -470,6 +499,21 @@ def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False
             # one readout's rate across a panel of conditions (an odour panel), Willmore & Tolhurst 2001
             val = lifetime_sparseness([_metric(results[cn], ridx, "rate", *w) for cn in chk["conds"]])
             desc = f"lifetime sparseness[{rname}, {len(chk['conds'])} stimuli] {chk['op']} {target}"
+        elif typ == "bump":
+            # a ring of readouts at known angles: `stat: resultant` is the population-vector length
+            # (one bump vs spread or two bumps), `stat: error_deg` its angle's distance from `cue_deg`
+            angles = chk["angles"]
+            rates = {rn: _metric(results[chk["cond"]], readouts.get(rn, np.empty(0, dtype=int)), "rate", *w) for rn in angles}
+            R, theta = bump_statistics(rates, angles)
+            stat = chk.get("stat", "resultant")
+            if stat == "resultant":
+                val = R
+                desc = f"bump resultant[{chk['cond']}, {len(angles)} wedges] {chk['op']} {target}"
+            elif stat == "error_deg":
+                val = angular_error_deg(theta, float(chk["cue_deg"]))
+                desc = f"bump error[{chk['cond']}, vs {float(chk['cue_deg']):g}°] {chk['op']} {target} deg"
+            else:
+                raise ValueError(f"bump stat must be one of {BUMP_STATS}, not {stat!r}")
         elif typ == "rank_order":
             # recruitment order: Spearman rho between a per-neuron attribute and first-spike time in the window
             by = chk.get("by", "input_synapses")
@@ -490,7 +534,7 @@ def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False
         passed = bool(not np.isnan(val) and op(val, target))
         cr = _graded_check(desc, float(val), passed, chk)
         # RFC S1: a comparison between conditions that all sit at the refractory ceiling is not a pass
-        compared = [chk["cond"], chk["over"]] if (typ == "ratio" and chk.get("metric", "rate") == "rate") else (list(chk["conds"]) if typ == "lifetime_sparseness" else [])
+        compared = [chk["cond"], chk["over"]] if typ == "ratio" else (list(chk["conds"]) if typ == "lifetime_sparseness" else [])
         if compared:
             ceiling_hz = CEILING_FRACTION * 1000.0 / max(float(getattr(params, "t_ref_ms", 2.2)), 1e-3)
             keys = [f"rate[{rname}]"] * len(compared)
@@ -500,6 +544,10 @@ def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False
             if rates and all(np.isfinite(x) and x >= ceiling_hz for x in rates):
                 cr.saturated, cr.passed, cr.graded, cr.margin = True, False, 0.0, -10.0   # margin −10: a fail at every τ of the profile
                 cr.description += "  [saturated: all compared conditions at ceiling]"
+            # RFC S2: the same at the bottom — every compared side silent is a ratio of noise
+            elif rates and all(np.isfinite(x) and x < FLOOR_HZ for x in rates):
+                cr.floored, cr.passed, cr.graded, cr.margin = True, False, 0.0, -10.0
+                cr.description += "  [floored: every compared condition silent]"
         checks.append(cr)
 
     score = sum(ch.passed for ch in checks) / max(len(checks), 1)
@@ -533,11 +581,14 @@ def _run_task_multiseed(task, c, params, verbose, simulator, seeds: int) -> Task
         # 2 of 3 random draws is a coin flip, not a reproduced behaviour.
         passed = bool(np.isfinite(mean) and op(mean, target) and passes == seeds)
         sat = all(r.checks[i].saturated for r in runs)
-        base_desc = ch.description.replace("  [saturated: all compared conditions at ceiling]", "")
-        desc = f"{base_desc}  [{passes}/{seeds} seeds, sd {nstd(vals):.3g}]" + ("  [saturated: all compared conditions at ceiling]" if sat else "")
+        flo = all(r.checks[i].floored for r in runs)
+        base_desc = ch.description.replace("  [saturated: all compared conditions at ceiling]", "").replace("  [floored: every compared condition silent]", "")
+        desc = f"{base_desc}  [{passes}/{seeds} seeds, sd {nstd(vals):.3g}]" + ("  [saturated: all compared conditions at ceiling]" if sat else "") + ("  [floored: every compared condition silent]" if flo else "")
         cr = _graded_check(desc, mean, passed, chk, per_seed=[float(v) for v in vals])
         if sat:
             cr.saturated, cr.passed, cr.graded, cr.margin = True, False, 0.0, -10.0
+        if flo:
+            cr.floored, cr.passed, cr.graded, cr.margin = True, False, 0.0, -10.0
         checks.append(cr)
     notes = list(dict.fromkeys(n for r in runs for n in r.notes))
     flaky = [f"check {i}: passes on {sum(r.checks[i].passed for r in runs)}/{seeds} seeds" for i in range(len(base.checks))

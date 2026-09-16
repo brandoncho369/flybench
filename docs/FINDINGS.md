@@ -310,3 +310,30 @@ the same reason:
 Housekeeping: `latency` as a ratio metric, `over_readout` for cross-readout ratios; MaleCNS
 graded 0.680 → 0.668, hard-by-circuit 0.558 → 0.551; 27 older tasks bit-identical; FlyWire
 records 28 as not applicable, otherwise bit-identical.
+
+## 2026-09-15 — RFC S2 (response floor) applied; task 29 (ring attractor, expected-fail tier): one transmitter label decides which way the compass fails
+
+**RFC S2** (docs/rfcs/S2_response_floor.md): a comparison whose every side is under 2 Hz is
+floored and fails, the mirror of S1's ceiling gate. Applied by rerun: exactly task 28's two
+ratios on MaleCNS (8 vs 3 spikes) changed, 3/6 → 1/6, specificity +0.33 → 0.00; every other
+check on both brains bit-identical. The S1 gate now covers every ratio metric.
+
+**Task 29** (docs/rfcs/29), the first `expected_fail:` task: eight EPG wedges by PB glomerulus
+(labelled identically on both datasets), a new `bump` check (population-vector length and
+angle), a cue on one wedge, a dark window, two competing cues. FlyWire **1/7**, MaleCNS **2/7**,
+shuffle 2/7 on both (specificity −0.14 / 0.00) — the third task where random wiring beats the
+brain. The model fails as the tier says, but in opposite directions:
+
+- **FlyWire: the compass is a floodlight.** Six EPGs at 100 Hz light 9 % of the brain; all
+  eight wedges sit at 260–380 Hz through the cue and the dark (R = 0.02). The route is a
+  506 / 218 reciprocal loop between the EPGs and the right ExR6, whose `nt_type` is blank in
+  v783 (→ excitatory by default) while the left ExR6 is glutamatergic.
+- **MaleCNS: the compass is shut.** 0.0 % active; ExR6 is glutamatergic on both sides and, with
+  the GABAergic ER4m, is the EPGs' largest input (−446 / −436 onto the cued wedge). The PEN → EPG
+  loop never starts; the ring is silent in the dark.
+- Hulse et al. 2021 list ExR6 as glutamatergic: MaleCNS's label is the supported one and the
+  FlyWire blank is an annotation to raise. Second time today a single transmitter label
+  (LN23 in task 27) sets a task's outcome on one dataset.
+
+Housekeeping: FlyWire graded 0.678 → 0.661, MaleCNS 0.668 → 0.655 (S2 and task 29 together);
+new `navigation` circuit; 28 older tasks bit-identical apart from the S2 change on task 28.
