@@ -4,6 +4,10 @@
 
 In 2024 the [FlyWire](https://flywire.ai) consortium published the complete wiring diagram of an adult *Drosophila* brain: ~140,000 neurons, ~50 million synapses. Since then people have dropped that graph into a leaky integrate-and-fire model and wired it to Minecraft, Doom and Beat Saber. Every one of those demos had to make the same undocumented choices — synaptic weight, a global gain knob, which transmitters count as inhibitory, how many synapses an edge needs to exist — and then hand-tune them until something looked alive.
 
+[![the FlyWire connectome running live in the browser: sugar receptors fire, the taste pathway lights up, the proboscis motor neuron fires](https://raw.githubusercontent.com/brandoncho369/fly-explorer/master/docs/explorer.gif)](https://www.fly-bench.com)
+
+*Above: the same model running live at [www.fly-bench.com](https://www.fly-bench.com) — press a sense, watch the wiring answer. The benchmark below is what keeps it honest.*
+
 flybench asks the one question that keeps those choices honest:
 
 > **Does the simulated fly still do the things a real fly is known to do?**
