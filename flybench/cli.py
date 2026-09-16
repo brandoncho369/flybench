@@ -82,8 +82,9 @@ def toy(cache):
 @click.option("--controls", default=None, help="also score each task on shuffled wiring: 'rewired', 'random', 'signflip', comma-separated, or 'all' (see docs/CONTROLS.md)")
 @click.option("--jobs", "-j", default=1, show_default=True, help="worker processes: each (task, wiring) unit is an independent simulation, so N jobs ≈ N× faster on N cores; results are bit-identical")
 @click.option("--allow-unpinned", is_flag=True, help="run on a connectome whose fingerprint differs from flybench/manifests.json; the result is marked unpinned and ranked last")
+@click.option("--dump-spikes", "dump_dir", default=None, type=click.Path(file_okay=False), help="write every spike of every condition and seed (real wiring only) as <dir>/<task>/<condition>_seed<k>.parquet (or .csv.gz): time_ms, trial, neuron_index, root_id")
 @click.option("-v", "--verbose", is_flag=True)
-def run(connectome, config, gain, task_paths, out, label, cache, simulator, tier, seeds, controls, jobs, allow_unpinned, verbose):
+def run(connectome, config, gain, task_paths, out, label, cache, simulator, tier, seeds, controls, jobs, allow_unpinned, dump_dir, verbose):
     """Run the benchmark suite."""
     from .manifest import check_pinned
     c = load_connectome(connectome, cache)
@@ -105,7 +106,9 @@ def run(connectome, config, gain, task_paths, out, label, cache, simulator, tier
     tasks = load_tasks([Path(p) for p in task_paths]) if task_paths else load_tasks(tier=tier)
     from .controls import parse_controls
     report = run_suite(c, params, tasks, verbose=verbose, simulator=resolve_simulator(simulator), seeds=seeds,
-                       controls=parse_controls(controls), jobs=int(jobs), connectome_ref=connectome, cache=cache, simulator_spec=simulator)
+                       controls=parse_controls(controls), jobs=int(jobs), connectome_ref=connectome, cache=cache, simulator_spec=simulator, dump_dir=dump_dir)
+    if dump_dir:
+        report["spike_dump"] = str(Path(dump_dir))
     report["label"] = label or (Path(config).stem if config else f"gain{params.gain}")
     report["connectome_meta"]["sha256"] = pin["sha256"]
     report["connectome_meta"]["pinned_version"] = pin["version"]

@@ -699,3 +699,25 @@ def test_lint_requires_provenance_on_every_basis():
     assert not any("cite a year" in e for e in lint_task(ok))
     for t in load_tasks():   # every shipped task already carries it
         assert lint_task(yaml.safe_load((TASK_DIR / next(p.name for p in TASK_DIR.glob("*.yaml") if yaml.safe_load(p.read_text(encoding="utf-8"))["name"] == t["name"])).read_text(encoding="utf-8"))) == []
+
+
+def test_review_fixes_negative_targets_ramp_end_and_gate_windows(toy):
+    """From the 2026-09-16 review: margins with a negative target, a ramp with no t_end_ms, and the
+    S1/S2 gates judged on the check's own window."""
+    import copy as _copy
+    from flybench.bench import _stimuli
+    # margins mirror correctly for a negative target: rho = -0.9 against `< -0.5` is a pass, +0.5 is a fail
+    assert margin_of(-0.9, "<", -0.5) > 0 and margin_of(0.5, "<", -0.5) < -2 and margin_of(-0.3, "<", -0.5) < 0
+    assert margin_of(0.5, ">", -0.3) > 2 and margin_of(-0.9, ">", -0.3) < 0
+    # a ramp without t_end_ms ramps to the run's end at runtime, and the lint asks for t_end_ms
+    st = _stimuli(toy, [{"select": "GRN_sugar", "rate_hz": 0, "rate_end_hz": 100, "t_start_ms": 200}], {}, duration_ms=1200.0)[0]
+    assert st.t_end_ms == 1200.0 and st.rate_at(700) == pytest.approx(50.0)
+    raw = yaml.safe_load((TASK_DIR / "23_leg_mn_size_principle.yaml").read_text(encoding="utf-8"))
+    bad = _copy.deepcopy(raw); del bad["conditions"]["ramp"]["stimuli"][0]["t_end_ms"]
+    assert any("t_end_ms" in e for e in lint_task(bad))
+    # the floor gate looks at the check's window: a ratio on a short window where both sides respond is not floored
+    t = _copy.deepcopy(next(x for x in load_tasks() if x["name"] == "sugar_to_proboscis"))
+    t["duration_ms"] = 5000; t["window"] = [0, 5000]     # whole-window mean rate of a 600 ms burst is small
+    t["checks"] = [{"type": "ratio", "cond": "sugar", "over": "sugar", "window": [250, 800], "over_window": [250, 800], "op": ">", "value": 0.5, "basis": "convention: test"}]
+    r = run_task(t, toy, LIFParams(seed=1))
+    assert not r.checks[0].floored and r.checks[0].passed

@@ -72,6 +72,8 @@ def lint_task(task: dict, source: str = "<task>") -> list[str]:
                 errs.append(f"{cname}: stimulus {i} rate_hz must be > 0")
             if rate_end is not None and (not isinstance(rate_end, (int, float)) or rate < 0 or rate_end < 0 or rate_end == rate):
                 errs.append(f"{cname}: stimulus {i} rate_end_hz must be a rate >= 0 different from rate_hz (a ramp), with rate_hz >= 0")
+            if rate_end is not None and "t_end_ms" not in s:
+                errs.append(f"{cname}: stimulus {i} ramps (rate_end_hz) and must say when it ends: give t_end_ms")
     stim_names = {st.get("name") for cond in conds.values() for st in (cond.get("stimuli") or []) if isinstance(cond, dict)}
     for name in task.get("requires_stimuli", []) or []:
         if name not in stim_names:

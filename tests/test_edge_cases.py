@@ -469,3 +469,22 @@ def test_adaptive_lif_silences_and_keeps_reflexes(toy):
     # extra params flow through LIFParams.extra
     sim = AdaptiveLIFSimulator(toy, LIFParams(extra={"b_mv": 3.5, "tau_a_ms": 100}))
     assert sim.ap.b_mv == 3.5 and sim.ap.tau_a_ms == 100
+
+
+def test_dump_spikes_writes_the_shared_spike_schema(toy, tmp_path):
+    """--dump-spikes (ROADMAP 54, 40): every condition and seed as time_ms / trial / neuron_index / root_id."""
+    import glob
+    import pandas as pd
+    from flybench.bench import load_tasks, run_task
+    from flybench.sim import LIFParams
+    t = next(x for x in load_tasks() if x["name"] == "sugar_to_proboscis")
+    run_task(t, toy, LIFParams(seed=3), seeds=2, dump_dir=tmp_path)
+    files = sorted(glob.glob(str(tmp_path / "sugar_to_proboscis" / "*")))
+    assert [f.split("\\")[-1].split("/")[-1].split(".")[0] for f in files] == ["baseline_seed3", "baseline_seed4", "sugar_seed3", "sugar_seed4"]
+    f = next(x for x in files if "sugar_seed3" in x)
+    df = pd.read_parquet(f) if f.endswith(".parquet") else pd.read_csv(f)
+    assert list(df.columns) == ["time_ms", "trial", "neuron_index", "root_id"] and len(df) > 100
+    assert (df["trial"] == 3).all() and df["time_ms"].between(0, 1000).all()
+    assert (df["root_id"].to_numpy() == toy.root_ids[df["neuron_index"].to_numpy()]).all()
+    mn9 = set(toy.select("MN9").tolist())
+    assert (df["neuron_index"].isin(mn9)).any()          # the proboscis motor neuron is in the dump

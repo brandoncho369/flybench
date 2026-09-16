@@ -90,10 +90,14 @@ def margin_of(value: float, op: str, target: float) -> float:
     """Effect size for a check: how far the measurement sits from the line, in decades, sign = pass side."""
     if not np.isfinite(value):
         return float("nan")
+    if target < 0:
+        # mirror a negative target (rho < -0.5, say) onto the positive axis with the op flipped, so
+        # the rules below only ever see target > 0
+        flipped = {">": "<", ">=": "<=", "<": ">", "<=": ">=", "==": "=="}[op]
+        return margin_of(-value, flipped, -target)
     # a value on the other side of zero from the target (a negative rank correlation against a
     # positive threshold) is as far from the line as a zero response, not |value| away from it
-    wrong_side = (target > 0 and value <= 0) or (target < 0 and value >= 0)
-    v, t = (EPS if wrong_side else max(abs(value), EPS)), max(abs(target), EPS)
+    v, t = (EPS if value <= 0 else max(abs(value), EPS)), max(abs(target), EPS)
     m = float(np.log10(v / t))
     return m if op in (">", ">=") else -m
 
@@ -162,15 +166,17 @@ def load_tasks(paths: list[Path] | None = None, tier: str = "all") -> list[dict]
     return tasks
 
 
-def _stimuli(c: Connectome, spec_list: list[dict], sizes: dict[str, int]) -> list[Stimulus]:
+def _stimuli(c: Connectome, spec_list: list[dict], sizes: dict[str, int], duration_ms: float = float("inf")) -> list[Stimulus]:
     out = []
     for i, s in enumerate(spec_list):
         neurons = c.select(s["select"])
         name = s.get("name", f"stim{i}")
         sizes[name] = int(neurons.size)
+        # a ramp needs a finite end to ramp towards: the run's end unless the task says otherwise
+        t_end_default = duration_ms if s.get("rate_end_hz") is not None else float("inf")
         out.append(Stimulus(neurons=neurons, rate_hz=float(s.get("rate_hz", 100.0)),
                             t_start_ms=float(s.get("t_start_ms", 0.0)),
-                            t_end_ms=float(s.get("t_end_ms", float("inf"))), name=name,
+                            t_end_ms=float(s.get("t_end_ms", t_end_default)), name=name,
                             rate_end_hz=None if s.get("rate_end_hz") is None else float(s["rate_end_hz"])))
     return out
 
@@ -376,6 +382,24 @@ def silence_neurons(c: Connectome, neurons: np.ndarray) -> Connectome:
                       meta={**c.meta, "silenced": int(idx.size)})
 
 
+def dump_spikes(res: SimResult, c: Connectome, path: Path, trial: int = 0) -> Path:
+    """Write every spike of one simulation as a table (ROADMAP items 54, 40): columns `time_ms`,
+    `trial`, `neuron_index`, `root_id` — the spike schema shared by the fly-brain backends. Parquet
+    when pyarrow is installed, else gzipped CSV with the same columns; the extension says which."""
+    import pandas as pd
+    df = pd.DataFrame({"time_ms": np.asarray(res.spike_times_ms, dtype=np.float32),
+                       "trial": np.full(len(res.spike_times_ms), int(trial), dtype=np.int32),
+                       "neuron_index": np.asarray(res.spike_neurons, dtype=np.int32)})
+    df["root_id"] = c.root_ids[df["neuron_index"].to_numpy()]
+    path.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        import pyarrow  # noqa: F401
+        out = path.with_suffix(".parquet"); df.to_parquet(out, index=False)
+    except ImportError:
+        out = path.with_suffix(".csv.gz"); df.to_csv(out, index=False)
+    return out
+
+
 def perturb_weights(c: Connectome, sigma: float, seed: int) -> Connectome:
     """Same neurons, same edges, every synapse count multiplied by lognormal(0, sigma) noise."""
     rng = np.random.default_rng(10_000 + seed)
@@ -386,13 +410,14 @@ def perturb_weights(c: Connectome, sigma: float, seed: int) -> Connectome:
 
 
 def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False,
-             simulator: SimulatorFactory = LIFSimulator, seeds: int = 1) -> TaskResult:
+             simulator: SimulatorFactory = LIFSimulator, seeds: int = 1, dump_dir: Path | str | None = None) -> TaskResult:
     """Run one task. With seeds > 1 every condition is simulated `seeds` times (seed, seed+1, ...);
     a check passes only if it holds on the mean AND on every individual seed, and the per-seed
-    pass count is reported, so a knife-edge result cannot masquerade as a robust one."""
+    pass count is reported, so a knife-edge result cannot masquerade as a robust one.
+    `dump_dir`: write every condition's spikes to <dir>/<task>/<condition>_seed<k> (dump_spikes)."""
     task = expand_checks(task)
     if seeds > 1:
-        return _run_task_multiseed(task, c, params, verbose, simulator, seeds)
+        return _run_task_multiseed(task, c, params, verbose, simulator, seeds, dump_dir)
     t0 = time.time()
     notes: list[str] = []
     # readouts: either `readout: {select: ...}` (named "default") or `readouts: {name: {select: ...}}`
@@ -415,12 +440,12 @@ def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False
     measurements: dict[str, dict[str, float]] = {}
     stim_sizes: dict[str, int] = {}
     for cond_name, cond in task["conditions"].items():
-        stims = _stimuli(c, cond.get("stimuli", []), stim_sizes)
+        stims = _stimuli(c, cond.get("stimuli", []), stim_sizes, duration)
         for s in stims:
             if s.neurons.size == 0:
                 notes.append(f"{cond_name}: stimulus {s.name!r} matched 0 neurons")
         jit = float(cond.get("weight_jitter", 0.0))
-        if jit > 0 and jit not in jittered:
+        if jit > 0 and jit not in jittered and cond.get("silence") is None:
             # "a different individual": every synapse count scaled by an independent lognormal factor
             # (sigma = jit, in log units), same wiring diagram. Seeded so conditions are comparable.
             jittered[jit] = simulator(perturb_weights(c, jit, params.seed), params)
@@ -441,6 +466,8 @@ def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False
         else:
             res = sim.run(duration, stims)
         results[cond_name] = res
+        if dump_dir is not None:
+            dump_spikes(res, c, Path(dump_dir) / task["name"] / f"{cond_name}_seed{params.seed}", trial=params.seed)
         m = {
             "rate": _metric(res, readouts[default_readout], "rate", *window),
             "network_rate": _metric(res, readouts[default_readout], "network_rate", *window),
@@ -536,13 +563,17 @@ def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False
         passed = bool(not np.isnan(val) and op(val, target))
         cr = _graded_check(desc, float(val), passed, chk)
         # RFC S1: a comparison between conditions that all sit at the refractory ceiling is not a pass
-        compared = [chk["cond"], chk["over"]] if typ == "ratio" else (list(chk["conds"]) if typ == "lifetime_sparseness" else [])
+        # the compared sides, each as (condition, readout indices, window) — the check's own windows and
+        # readouts, so a transient inside a short check window is judged on that window, not the task's
+        if typ == "ratio":
+            compared = [(chk["cond"], ridx, w), (chk["over"], readouts.get(chk.get("over_readout", rname), np.empty(0, dtype=int)), chk.get("over_window", w))]
+        elif typ == "lifetime_sparseness":
+            compared = [(cn, ridx, w) for cn in chk["conds"]]
+        else:
+            compared = []
         if compared:
             ceiling_hz = CEILING_FRACTION * 1000.0 / max(float(getattr(params, "t_ref_ms", 2.2)), 1e-3)
-            keys = [f"rate[{rname}]"] * len(compared)
-            if typ == "ratio" and "over_readout" in chk:
-                keys[1] = f"rate[{chk['over_readout']}]"
-            rates = [measurements[cn].get(k, float("nan")) for cn, k in zip(compared, keys)]
+            rates = [_metric(results[cn], idx, "rate", *win) for cn, idx, win in compared]
             if rates and all(np.isfinite(x) and x >= ceiling_hz for x in rates):
                 cr.saturated, cr.passed, cr.graded, cr.margin = True, False, 0.0, -10.0   # margin −10: a fail at every τ of the profile
                 cr.description += "  [saturated: all compared conditions at ceiling]"
@@ -561,10 +592,10 @@ def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False
     )
 
 
-def _run_task_multiseed(task, c, params, verbose, simulator, seeds: int) -> TaskResult:
+def _run_task_multiseed(task, c, params, verbose, simulator, seeds: int, dump_dir=None) -> TaskResult:
     from dataclasses import replace
     t0 = time.time()
-    runs = [run_task(task, c, replace(params, seed=params.seed + k), verbose=False, simulator=simulator) for k in range(seeds)]
+    runs = [run_task(task, c, replace(params, seed=params.seed + k), verbose=False, simulator=simulator, dump_dir=dump_dir) for k in range(seeds)]
     base = runs[0]
     def nmean(v):  # all-NaN (an empty selector) is a legitimate "no measurement", not a warning
         v = np.asarray(v, dtype=float); return float(v[np.isfinite(v)].mean()) if np.isfinite(v).any() else float("nan")
@@ -662,16 +693,16 @@ def _init_worker(connectome_ref: str, cache: str | None, controls: list[str], se
     _worker["simulator"] = resolve_simulator(simulator_spec)
 
 
-def _run_unit(task: dict, control: str | None, params: LIFParams, seeds: int) -> tuple[str, str | None, TaskResult, float]:
+def _run_unit(task: dict, control: str | None, params: LIFParams, seeds: int, dump_dir=None) -> tuple[str, str | None, TaskResult, float]:
     cc = _worker["c"] if control is None else _worker["controls"][control]
-    r = run_task(task, cc, params, verbose=False, simulator=_worker["simulator"], seeds=seeds)
+    r = run_task(task, cc, params, verbose=False, simulator=_worker["simulator"], seeds=seeds, dump_dir=(None if control else dump_dir))
     return task["name"], control, r, peak_rss_mb()
 
 
 def run_suite(c: Connectome, params: LIFParams, tasks: list[dict] | None = None, verbose: bool = False,
               simulator: SimulatorFactory = LIFSimulator, seeds: int = 1,
               controls: list[str] | None = None, jobs: int = 1, connectome_ref: str | None = None,
-              cache: str | None = None, simulator_spec: str | None = None) -> dict[str, Any]:
+              cache: str | None = None, simulator_spec: str | None = None, dump_dir: Path | str | None = None) -> dict[str, Any]:
     """controls: names from flybench.controls.CONTROLS. Each task is then also run on that shuffled
     wiring; the task's `specificity` is score(real) - max(score(control)), and a task some control
     also passes is marked `non_diagnostic`.
@@ -699,12 +730,15 @@ def run_suite(c: Connectome, params: LIFParams, tasks: list[dict] | None = None,
         runnable.append(task)
     if jobs > 1 and connectome_ref and runnable:
         from concurrent.futures import ProcessPoolExecutor, as_completed
+        if not simulator_spec and simulator is not LIFSimulator:
+            # workers import the simulator by name; a module-level class can be found from the object itself
+            simulator_spec = f"{simulator.__module__}:{getattr(simulator, '__name__', type(simulator).__name__)}"
         units = [(t, ctl) for t in runnable for ctl in [None, *controls]]
         real: dict[str, TaskResult] = {}
         ctl_scores: dict[str, dict[str, dict[str, float | bool]]] = {t["name"]: {} for t in runnable}
         with ProcessPoolExecutor(max_workers=min(jobs, len(units)), initializer=_init_worker,
                                  initargs=(connectome_ref, cache, controls, params.seed, simulator_spec)) as pool:
-            futures = [pool.submit(_run_unit, t, ctl, params, seeds) for t, ctl in units]
+            futures = [pool.submit(_run_unit, t, ctl, params, seeds, dump_dir) for t, ctl in units]
             for f in as_completed(futures):
                 name, ctl, r, rss = f.result()
                 worker_rss.append(rss)
@@ -717,14 +751,14 @@ def run_suite(c: Connectome, params: LIFParams, tasks: list[dict] | None = None,
                     print(f"[{name}] {'control: ' + ctl if ctl else 'done'}: {r.score:.2f}")
         pairs = [(t, real[t["name"]]) for t in runnable]
         for t, r in pairs:
-            r.controls = ctl_scores[t["name"]]
+            r.controls = {name: ctl_scores[t["name"]][name] for name in controls if name in ctl_scores[t["name"]]}   # declared order, not completion order
     else:
         control_cs = {name: make_control(c, name, seed=params.seed) for name in controls}
         pairs = []
         for task in runnable:
             if verbose:
                 print(f"[{task['name']}] {task.get('title', '')}")
-            r = run_task(task, c, params, verbose=verbose, simulator=simulator, seeds=seeds)
+            r = run_task(task, c, params, verbose=verbose, simulator=simulator, seeds=seeds, dump_dir=dump_dir)
             cpu_seconds += r.seconds
             for name, cc in control_cs.items():
                 if verbose:
