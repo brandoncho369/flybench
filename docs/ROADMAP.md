@@ -222,10 +222,10 @@ neuromodulatory), circadian (24 h), song rhythm (needs dynamics a static LIF lac
 
 52. One-click Colab per tier (toy in seconds; FlyWire; MaleCNS), each ending with the leaderboard
     row you would submit.
-53. Permalinks for every explorer experiment (dataset, populations, gain, duration, seed, readouts)
+53. **Done 2026-09-16 (fly-explorer: `?dataset&gain&rate&hold&type`, "copy link", absent-name banner).** Permalinks for every explorer experiment (dataset, populations, gain, duration, seed, readouts)
     in Codex's URL style; every task page links to the live experiment; "cite this experiment".
 54. Downloadable traces and spike rasters (CSV/Parquet/PNG) from both CLI (`--dump-traces`) and explorer.
-55. Cell-type search synonyms and cross-dataset aliases (GF = DNp01 = giant fiber; EPG = E-PG;
+55. **Done 2026-09-16 (fly-explorer `src/data/synonyms.json`, resolves to the loaded dataset's own name).** Cell-type search synonyms and cross-dataset aliases (GF = DNp01 = giant fiber; EPG = E-PG;
     TTM = TTMn), and an explicit "this type does not exist in this dataset" answer.
 56. Cross-links per cell type: Codex, neuPrint, Virtual Fly Brain, Neuroglancer (CAVE state links).
 57. `flybench compare` with JSON, markdown, per-check margin diff, and `--fail-on-regression` for labs' CI.
