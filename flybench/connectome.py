@@ -18,7 +18,7 @@ Two sources are supported:
    https://codex.flywire.ai/api/download (free account) the files
    `connections.csv.gz`, `neurons.csv.gz`, `classification.csv.gz`,
    `labels.csv.gz` into a directory and run `flybench build <dir>`.
-2. **The bundled toy connectome** (`flybench toy`) — a ~2k neuron synthetic
+2. **The bundled toy connectome** (`flybench toy`) — a ~3.6k neuron synthetic
    network wired to exhibit the benchmark reflexes. It exists so the code,
    tests and the web explorer run without a 300 MB download. It proves
    nothing about biology.

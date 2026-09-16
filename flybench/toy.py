@@ -1,4 +1,4 @@
-"""A synthetic ~2k-neuron 'connectome' that exhibits the benchmark reflexes.
+"""A synthetic ~3.6k-neuron 'connectome' that exhibits the benchmark reflexes.
 
 This is scaffolding, not science. It lets the tests, the CLI and the web
 explorer run without the real FlyWire download, and it doubles as a sanity
