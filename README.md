@@ -90,9 +90,11 @@ A task can declare `requires_readouts:`; if this connectome has none of those ne
 
 ## Install
 
+Or skip the install: the toy notebook runs the whole thing in Colab in ~2 minutes — [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/brandoncho369/flybench/blob/master/notebooks/01_toy.ipynb) (`notebooks/01_toy.ipynb`, executed in CI).
+
 ```bash
 pip install -e ".[dev]"
-flybench toy          # builds a 3.6k-neuron synthetic connectome hand-wired to pass every task
+flybench toy          # builds a 3.6k-neuron synthetic connectome hand-wired so every circuit-level task can pass
 flybench run          # runs the suite on it (≈2 min; --jobs 6 for ≈20 s)
 pytest
 ```

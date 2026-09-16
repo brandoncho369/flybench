@@ -12,3 +12,4 @@ jobs:
       - run: flybench lint
       - run: flybench validate results/
       - run: flybench run --gain 1.0 --tier core
+      - run: pip install nbconvert ipykernel && python -m nbconvert --to notebook --execute notebooks/01_toy.ipynb --output /tmp/01_toy.executed.ipynb --ExecutePreprocessor.timeout=900
