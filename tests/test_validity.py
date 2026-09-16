@@ -721,3 +721,18 @@ def test_review_fixes_negative_targets_ramp_end_and_gate_windows(toy):
     t["checks"] = [{"type": "ratio", "cond": "sugar", "over": "sugar", "window": [250, 800], "over_window": [250, 800], "op": ">", "value": 0.5, "basis": "convention: test"}]
     r = run_task(t, toy, LIFParams(seed=1))
     assert not r.checks[0].floored and r.checks[0].passed
+
+
+def test_lint_strict_wants_a_doi_on_cited_bases():
+    """ROADMAP item 60 (opt-in): --strict requires a DOI / bioRxiv id on every cited basis, in the basis or
+    the task citation; conventions are exempt."""
+    raw = yaml.safe_load((TASK_DIR / "24_optic_flow_rotation.yaml").read_text(encoding="utf-8"))   # citation carries a DOI
+    assert lint_task(raw, strict=True) == []
+    bare = copy.deepcopy(raw); bare["citation"] = "Nat Neurosci 2025"
+    errs = lint_task(bare, strict=True)
+    assert errs and all("strict: a cited basis needs a DOI" in e for e in errs)
+    conv = copy.deepcopy(bare)
+    for ch in conv["checks"]:
+        ch["basis"] = "convention: test"
+    assert lint_task(conv, strict=True) == []
+    assert lint_task(bare) == []      # the default rule (a year) is unchanged

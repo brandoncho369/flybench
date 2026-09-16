@@ -1,0 +1,32 @@
+title: "[task] <behaviour>: <one line>"
+labels: ["task-proposal"]
+body:
+  - type: markdown
+    attributes:
+      value: "A task is a published fly behaviour turned into a stimulus, a readout and thresholds. Every threshold needs a `basis`: a citation with a year, or `convention: <why this number>`. Fill this in before writing the YAML; it becomes the RFC (docs/rfcs/TEMPLATE.md)."
+  - type: input
+    id: behaviour
+    attributes: { label: "The behaviour", description: "What the real fly does, with the paper (authors, year, journal) and the numbers it reports (mean, sd, n)." }
+    validations: { required: true }
+  - type: textarea
+    id: measures
+    attributes: { label: "What the task measures", description: "Stimulus (which cell types, what rate), readout, checks. Mark each null check. Tag every choice MEASURED / INFERRED / MODELED / CONVENTION." }
+    validations: { required: true }
+  - type: textarea
+    id: prediction
+    attributes: { label: "Pre-registered prediction", description: "What the reference LIF at 0.45 (FlyWire) and 0.65 (MaleCNS) will do, and what the `rewired` control will do. Written before the first run; a surprise is a finding." }
+    validations: { required: true }
+  - type: textarea
+    id: wrong
+    attributes: { label: "What would make this task wrong", description: "Annotation the dataset might lack, a convention that could be doing the work, a known confound." }
+  - type: checkboxes
+    id: rules
+    attributes:
+      label: "Rules"
+      options:
+        - label: "Every threshold has a `basis` (year or `convention`)"
+          required: true
+        - label: "The toy will be wired so the checks can pass, and a broken toy fails the key check"
+          required: true
+        - label: "No parameter is tuned to this task"
+          required: true

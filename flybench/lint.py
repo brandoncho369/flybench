@@ -18,7 +18,12 @@ REQUIRED = {"name", "title", "conditions", "checks"}
 TIERS = {"core", "hard"}
 
 
-def lint_task(task: dict, source: str = "<task>") -> list[str]:
+DOI_RE = re.compile(r"10\.\d{4,9}/\S+|arXiv:|bioRxiv \d{4}\.\d{2}\.\d{2}\.\d+|doi\.org/", re.I)
+
+
+def lint_task(task: dict, source: str = "<task>", strict: bool = False) -> list[str]:
+    """strict: every `basis` that is not a convention must carry a DOI / bioRxiv id, in the basis or in
+    the task's `citation` (ROADMAP item 60); the default rule is a year."""
     errs: list[str] = []
     missing = REQUIRED - set(task)
     if missing:
@@ -144,6 +149,8 @@ def lint_task(task: dict, source: str = "<task>") -> list[str]:
         elif not (re.search(r"\b(19|20)\d\d\b", basis) or "convention" in basis.lower()):
             # provenance (ROADMAP item 41): a threshold is either measured (cite the year) or a stated convention
             errs.append(f"check {i}: basis must cite a year (a published number) or say 'convention'; got {basis[:60]!r}")
+        elif strict and "convention" not in basis.lower() and not DOI_RE.search(basis) and not DOI_RE.search(str(task.get("citation", ""))):
+            errs.append(f"check {i}: strict: a cited basis needs a DOI (in the basis or the task's `citation`); got {basis[:60]!r}")
         if typ == "lifetime_sparseness":
             panel = chk.get("conds")
             if not isinstance(panel, list) or len(panel) < 2:
@@ -210,7 +217,7 @@ def lint_task(task: dict, source: str = "<task>") -> list[str]:
     return errs
 
 
-def lint_files(paths: list[Path]) -> dict[str, list[str]]:
+def lint_files(paths: list[Path], strict: bool = False) -> dict[str, list[str]]:
     out: dict[str, list[str]] = {}
     names: dict[str, str] = {}
     for p in paths:
@@ -219,7 +226,7 @@ def lint_files(paths: list[Path]) -> dict[str, list[str]]:
         except yaml.YAMLError as e:
             out[str(p)] = [f"YAML error: {e}"]
             continue
-        errs = lint_task(task, str(p))
+        errs = lint_task(task, str(p), strict=strict)
         name = task.get("name") if isinstance(task, dict) else None
         if name in names:
             errs.append(f"duplicate task name {name!r} (also in {names[name]})")

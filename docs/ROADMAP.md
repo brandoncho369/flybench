@@ -229,12 +229,12 @@ neuromodulatory), circadian (24 h), song rhythm (needs dynamics a static LIF lac
     TTM = TTMn), and an explicit "this type does not exist in this dataset" answer.
 56. **Done 2026-09-16 for Codex (FlyWire), neuPrint (MaleCNS) and VFB; Neuroglancer left out until per-dataset segment ids are exported.** Cross-links per cell type: Codex, neuPrint, Virtual Fly Brain, Neuroglancer (CAVE state links).
 57. **Done 2026-09-16 (`flybench diff A B --fail-on-regression [--tolerance] [--format json|markdown]`).** `flybench compare` with JSON, markdown, per-check margin diff, and `--fail-on-regression` for labs' CI.
-58. Classroom bundle for FlyWire Academy's open Python slot: trace a reflex; break the model (vary
+58. **Done 2026-09-16 (docs/CLASSROOM.md: trace a reflex, break the model, write a task; answer key).** Classroom bundle for FlyWire Academy's open Python slot: trace a reflex; break the model (vary
     gain and min-synapse, explain which assumption you violated); write a task from a paper.
 59. **Done 2026-09-16 (fly-explorer `/limits`: eight limits, each with its source, the task that measures it and what a better model needs).** A "what this model cannot do" page quoting the field's own critiques (Marder on gap junctions,
     Currier on connectivity ≠ function, Otopalik on static snapshots, Beiran on degeneracy) and
     mapping each to the tasks it predicts should fail.
-60. Task-authoring linter: `basis:` must carry a DOI or `convention:`; GitHub Discussions template
+60. **Done 2026-09-16 as opt-in (`flybench lint --strict`; 20 of 31 tasks pass it, the rest need DOIs added to their citations) and `.github/DISCUSSION_TEMPLATE/task-proposal.yml`.** Task-authoring linter: `basis:` must carry a DOI or `convention:`; GitHub Discussions template
     with the Part-3 table columns.
 
 ## Agreed research thread (model side, task first)

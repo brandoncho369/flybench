@@ -384,14 +384,15 @@ def select(connectome, spec, cache):
 
 
 @main.command()
+@click.option("--strict", is_flag=True, help="every cited basis must carry a DOI or bioRxiv id (in the basis or the task citation); conventions are exempt")
 @click.argument("paths", nargs=-1, type=click.Path(exists=True))
-def lint(paths):
+def lint(paths, strict):
     """Validate task YAML files (defaults to tasks/)."""
     from .bench import TASK_DIR
     from .lint import lint_files
 
     files = [Path(p) for p in paths] or sorted(TASK_DIR.glob("*.yaml"))
-    problems = lint_files(files)
+    problems = lint_files(files, strict=strict)
     for f in files:
         errs = problems.get(str(f))
         console.print(("[red]✗[/] " if errs else "[green]✓[/] ") + f.name)
