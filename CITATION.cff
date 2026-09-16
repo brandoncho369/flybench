@@ -1,0 +1,42 @@
+cff-version: 1.2.0
+message: "If you use flybench, cite it as below; cite the connectomes (FlyWire, MaleCNS) and the behavioural papers each task names as well."
+title: "flybench: a behavioural benchmark for whole-connectome simulations of Drosophila"
+type: software
+authors:
+  - family-names: Cho
+    given-names: Brandon
+repository-code: "https://github.com/brandoncho369/flybench"
+url: "https://www.fly-bench.com"
+license: MIT
+version: 0.1.0
+date-released: "2026-09-16"
+abstract: >
+  flybench scores a connectome-constrained neural model (the reference is a uniform leaky
+  integrate-and-fire on the FlyWire v783 and MaleCNS v1.0 connectomes) against published fly
+  behaviour: 31 tasks, each a stimulus, a readout and thresholds with a citation or a stated
+  convention, every one pre-registered as an RFC with predictions before its first run, scored
+  with graded margins, ceiling and floor gates, seeds, and shuffled-wiring controls.
+keywords:
+  - Drosophila
+  - connectome
+  - FlyWire
+  - MaleCNS
+  - benchmark
+  - leaky integrate-and-fire
+references:
+  - type: article
+    title: "A Drosophila computational brain model reveals sensorimotor processing"
+    authors:
+      - family-names: Shiu
+        given-names: Philip K.
+    journal: Nature
+    year: 2024
+    doi: 10.1038/s41586-024-07763-9
+  - type: article
+    title: "Neuronal wiring diagram of an adult brain"
+    authors:
+      - family-names: Dorkenwald
+        given-names: Sven
+    journal: Nature
+    year: 2024
+    doi: 10.1038/s41586-024-07558-y

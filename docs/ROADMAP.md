@@ -178,11 +178,11 @@ neuromodulatory), circadian (24 h), song rhythm (needs dynamics a static LIF lac
 
 ## 5. Reproducibility and packaging
 
-37. Pin every connectome artefact by `(id, version, sha256)`, fail loudly on mismatch, stamp it into
+37. **Done 2026-09-16:** `flybench/manifests.json`, `flybench fingerprint`, `--allow-unpinned` → `unpinned: true`, ranked last. Pin every connectome artefact by `(id, version, sha256)`, fail loudly on mismatch, stamp it into
     every result JSON (the v783 synapse re-prediction halving the working gain is the argument).
-38. `CITATION.cff` + Zenodo DOI per release; JOSS paper once the task set is v1.0 and six months public.
+38. **CITATION.cff added 2026-09-16 (DOI on the first tag).** `CITATION.cff` + Zenodo DOI per release; JOSS paper once the task set is v1.0 and six months public.
 39. Docker image + `make reproduce` that regenerates every number in README and LEADERBOARD.
-40. Adapter as a documented ABC with capability declarations (`can_silence`, `can_report_spike_times`,
+40. **Done 2026-09-16:** `flybench.adapter.SimulatorAdapter`, `capabilities`, `flybench verify-adapter` (names each defect). Adapter as a documented ABC with capability declarations (`can_silence`, `can_report_spike_times`,
     `is_closed_loop`, `min_dt`) and `flybench verify-adapter` conformance test; template repo with
     ~40-line stub; worked Brian2 and PyTorch adapters. Adopt the `time_ms, trial, neuron_index,
     flywire_id` parquet spike schema from eonsystemspbc/fly-brain (six backends share it).

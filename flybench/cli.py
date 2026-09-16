@@ -81,10 +81,22 @@ def toy(cache):
 @click.option("--seeds", default=1, show_default=True, help="run every condition this many times with different seeds; checks must hold on the mean")
 @click.option("--controls", default=None, help="also score each task on shuffled wiring: 'rewired', 'random', 'signflip', comma-separated, or 'all' (see docs/CONTROLS.md)")
 @click.option("--jobs", "-j", default=1, show_default=True, help="worker processes: each (task, wiring) unit is an independent simulation, so N jobs ≈ N× faster on N cores; results are bit-identical")
+@click.option("--allow-unpinned", is_flag=True, help="run on a connectome whose fingerprint differs from flybench/manifests.json; the result is marked unpinned and ranked last")
 @click.option("-v", "--verbose", is_flag=True)
-def run(connectome, config, gain, task_paths, out, label, cache, simulator, tier, seeds, controls, jobs, verbose):
+def run(connectome, config, gain, task_paths, out, label, cache, simulator, tier, seeds, controls, jobs, allow_unpinned, verbose):
     """Run the benchmark suite."""
+    from .manifest import check_pinned
     c = load_connectome(connectome, cache)
+    pin = check_pinned(c)
+    if pin["status"] == "mismatch" and not allow_unpinned:
+        console.print(f"[red]connectome {c.name!r} does not match its pin[/] (flybench/manifests.json, version {pin['version']!r}):")
+        console.print(f"  expected {pin['expected']}")
+        console.print(f"  got      {pin['sha256']}")
+        console.print("A rebuilt or re-exported dataset is a different graph; results would not be comparable. "
+                      "Pass --allow-unpinned to run anyway (the result is marked unpinned), or re-pin with `flybench fingerprint`.")
+        raise SystemExit(2)
+    if pin["status"] != "pinned":
+        console.print(f"[yellow]{pin['status']}:[/] connectome {c.name!r} is not the pinned artefact; the result will be marked unpinned")
     overrides = yaml.safe_load(Path(config).read_text(encoding="utf-8")) if config else {}
     if gain is not None:
         overrides["gain"] = gain
@@ -95,6 +107,9 @@ def run(connectome, config, gain, task_paths, out, label, cache, simulator, tier
     report = run_suite(c, params, tasks, verbose=verbose, simulator=resolve_simulator(simulator), seeds=seeds,
                        controls=parse_controls(controls), jobs=int(jobs), connectome_ref=connectome, cache=cache, simulator_spec=simulator)
     report["label"] = label or (Path(config).stem if config else f"gain{params.gain}")
+    report["connectome_meta"]["sha256"] = pin["sha256"]
+    report["connectome_meta"]["pinned_version"] = pin["version"]
+    report["unpinned"] = pin["status"] != "pinned"
     saved = save_report(report, out) if out else None  # save before rendering: a console encoding error must not lose a 40-minute run
 
     ci = report.get("graded_ci95")
@@ -178,6 +193,41 @@ def diff(a, b):
     for k in sorted(keys, key=lambda k: -abs(ca[k]["graded"] - cb[k]["graded"]))[:12]:
         table.add_row(k[0], escape(k[1]), f"{ca[k]['graded']:.2f} ({ca[k]['value']:.3g})", f"{cb[k]['graded']:.2f} ({cb[k]['value']:.3g})", f"{ca[k]['graded'] - cb[k]['graded']:+.2f}")
     console.print(table)
+
+
+@main.command()
+@click.argument("connectome")
+@click.option("--cache", default=str(DEFAULT_CACHE), show_default=True)
+def fingerprint(connectome, cache):
+    """Print a connectome's fingerprint (SHA-256 over ids, sparse matrix and annotations) and whether
+    it matches flybench/manifests.json. Paste it into the manifest after a deliberate rebuild."""
+    from .manifest import check_pinned
+    c = load_connectome(connectome, cache)
+    pin = check_pinned(c)
+    from rich.markup import escape as _esc
+    console.print(_esc(f"{c.name}: {pin['sha256']}  [{pin['status']}]" + (f"  pinned: {pin['expected']}" if pin["status"] == "mismatch" else "")))
+
+
+@main.command("verify-adapter")
+@click.argument("simulator")
+@click.option("--connectome", "-c", default="toy", show_default=True, help="the contract is checked on this connectome (the toy is enough)")
+@click.option("--gain", default=1.0, show_default=True)
+@click.option("--cache", default=str(DEFAULT_CACHE), show_default=True)
+def verify_adapter_cmd(simulator, connectome, gain, cache):
+    """Check a simulator against the adapter contract (flybench.adapter): 'module:Class'. Names every
+    defect — wrong result types, spikes out of range, ignored seeds or stimuli, an unhonoured ramp, a
+    declared capability that does not hold — and exits 1 if there is one. Run before submitting."""
+    from .adapter import verify_adapter
+    c = load_connectome(connectome, cache)
+    rep = verify_adapter(resolve_simulator(simulator), c, gain=gain)
+    console.print(f"[bold]{rep.simulator}[/] · capabilities {rep.capabilities or '[]'} · toy run {rep.seconds:.1f} s ({rep.spikes_per_second:,.0f} spikes/s)")
+    if rep.ok:
+        console.print("[green]conforms[/]: no defects")
+        return
+    for d in rep.defects:
+        console.print(f"  [red]{d.name}[/]: {d.detail}")
+    console.print(f"[red]{len(rep.defects)} defect(s)[/]")
+    raise SystemExit(1)
 
 
 @main.command()

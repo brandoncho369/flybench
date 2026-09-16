@@ -31,7 +31,7 @@ flybench = "flybench.cli:main"
 include = ["flybench*"]
 
 [tool.setuptools.package-data]
-flybench = ["schema/*.json"]
+flybench = ["schema/*.json", "manifests.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

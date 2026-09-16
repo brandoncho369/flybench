@@ -1,0 +1,23 @@
+{
+  "flywire783": {
+    "sha256": "3002ef5fe9d10ab6f5da169e3c6dd21720cfbd2f5e4e46162b123bff2194db81",
+    "version": "FlyWire Codex v783 (2024) build, min_synapses 5",
+    "source": "flywire-codex",
+    "n": 139255,
+    "n_edges": 3732460,
+    "pinned_on": "2026-09-16"
+  },
+  "malecns": {
+    "sha256": "c25b35ab6ecfbff5e6041943d0a8eb2b0d363e1694ee8eb35299778f8824a96a",
+    "version": "MaleCNS v1.0 (neuPrint male-cns:v1.0) build, min_synapses 5",
+    "source": "neuprint male-cns:v1.0",
+    "n": 176422,
+    "n_edges": 6287789,
+    "pinned_on": "2026-09-16"
+  },
+  "toy": {
+    "version": "2026-09-15-halt2",
+    "source": "flybench.toy.build_toy_connectome",
+    "pinned_on": "2026-09-16"
+  }
+}

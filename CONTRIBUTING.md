@@ -75,7 +75,15 @@ def run(self, duration_ms: float, stimuli: list[Stimulus]) -> SimResult: ...
 flybench run -c flywire783 --simulator submissions.yourname.model:MySim --seeds 3 --label "yourname adaptive-LIF v1" -o results/yourname-adaptive-lif-v1.json
 ```
 
-The report records the simulator path, so rows stay distinguishable. If a maintainer can install it, it gets verified; otherwise it is merged self-reported.
+Before submitting, run the contract check:
+
+```bash
+flybench verify-adapter submissions.yourname.model:MySim
+```
+
+It runs your simulator on the toy and names every defect — wrong result types, spikes outside the run, neuron ids out of range, a seed that is ignored, a stimulus that is ignored, a ramp (`rate_end_hz`) that does not ramp, state that leaks between runs, a declared capability that does not hold — and exits 1 if there is one. The contract itself is `flybench.adapter.SimulatorAdapter` (subclassing is optional; duck-typing is fine). The report records the simulator path and its declared capabilities, so rows stay distinguishable. If a maintainer can install it, it gets verified; otherwise it is merged self-reported.
+
+Results are only comparable on the same wiring. Every named connectome is pinned by a fingerprint in `flybench/manifests.json` (SHA-256 over ids, sparse matrix and annotations); `flybench run` refuses a connectome that does not match its pin unless `--allow-unpinned`, which marks the result `unpinned` (ranked last). `flybench fingerprint <name>` prints the value; a deliberate rebuild (new Codex export, different `min_synapses`) is a new pin, recorded with its version string.
 
 ## Ground rules
 

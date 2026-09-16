@@ -316,7 +316,9 @@ def lifetime_sparseness(rates: "np.ndarray") -> float:
 KNOWN_DATASETS = ("toy", "flywire783", "malecns")   # names `dataset_only` may list (connectome.name)
 
 
-KNOWN_CAPABILITIES = ("can_silence",)   # what `requires_capabilities` may list; simulators declare theirs in `.capabilities`
+from .adapter import CAPABILITIES as _CAPS  # noqa: E402
+
+KNOWN_CAPABILITIES = tuple(_CAPS)   # what `requires_capabilities` may list; simulators declare theirs in `.capabilities` (flybench.adapter)
 
 
 def simulator_capabilities(simulator: Any) -> frozenset:
@@ -742,6 +744,7 @@ def run_suite(c: Connectome, params: LIFParams, tasks: list[dict] | None = None,
         "n_edges": c.n_edges,
         "params": asdict(params),
         "simulator": f"{simulator.__module__}.{getattr(simulator, '__name__', type(simulator).__name__)}",
+        "simulator_capabilities": sorted(simulator_capabilities(simulator)),   # what the adapter declared (flybench.adapter); tasks needing more were skipped
         "score": total,
         "passed": sum(r.passed for r in results),
         "n_tasks": len(results),
@@ -769,14 +772,14 @@ def leaderboard(reports: list[dict]) -> str:
     sep = "|" + "---|" * (16 + len(task_names))
     rows = []
     fmt = lambda v: "–" if v is None else f"{v:.2f}"  # noqa: E731
-    # rank by core score, then hard score, then more seeds (more evidence), then verified
-    for r in sorted(reports, key=lambda r: (-(r.get("core_score") or 0), -(r.get("hard_score") or 0), -int(r.get("seeds", 1)), -int(bool(r.get("verified"))))):
+    # rank by pinned first, then core score, then hard score, then more seeds (more evidence), then verified
+    for r in sorted(reports, key=lambda r: (int(bool(r.get("unpinned"))), -(r.get("core_score") or 0), -(r.get("hard_score") or 0), -int(r.get("seeds", 1)), -int(bool(r.get("verified"))))):
         by_name = {t["task"]: t for t in r["tasks"]}
         cells = [("✅" if by_name[n]["passed"] else f"{by_name[n]['score']:.0%}") if n in by_name else "–" for n in task_names]
         p = r["params"]
         sim = r.get("simulator", "flybench.sim.LIFSimulator").replace("flybench.sim.", "")
         max_active = max((m["active_fraction"] for t in r["tasks"] for m in t["measurements"].values()), default=0.0)
-        ver = "✅" if r.get("verified") else "self-reported"
+        ver = ("✅" if r.get("verified") else "self-reported") + (" · unpinned" if r.get("unpinned") else "")
         # specificity: real minus best shuffled-wiring score (flybench.controls); "–" when no controls ran
         spec = "–" if r.get("specificity") is None else f"{r['specificity']:+.2f}"
         g = r.get("graded"); gci = r.get("graded_ci95")
