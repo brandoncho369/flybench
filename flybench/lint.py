@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 import yaml
@@ -135,8 +136,12 @@ def lint_task(task: dict, source: str = "<task>") -> list[str]:
             errs.append(f"check {i}: unknown op {chk.get('op')!r}")
         if "value" not in chk:
             errs.append(f"check {i}: missing value")
-        if not str(chk.get("basis", "")).strip():
+        basis = str(chk.get("basis", "")).strip()
+        if not basis:
             errs.append(f"check {i}: needs `basis` — a citation for the threshold, or 'convention: <why this number>'")
+        elif not (re.search(r"\b(19|20)\d\d\b", basis) or "convention" in basis.lower()):
+            # provenance (ROADMAP item 41): a threshold is either measured (cite the year) or a stated convention
+            errs.append(f"check {i}: basis must cite a year (a published number) or say 'convention'; got {basis[:60]!r}")
         if typ == "lifetime_sparseness":
             panel = chk.get("conds")
             if not isinstance(panel, list) or len(panel) < 2:

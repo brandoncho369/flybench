@@ -113,6 +113,7 @@ def test_jobs_gives_a_bit_identical_report(toy):
     par = run_suite(toy, p, tasks, seeds=2, controls=["rewired"], jobs=2, connectome_ref="toy")
     import json
     for rep in (serial, par):
+        rep.pop("cost")                 # wall-clock, CPU seconds and peak RSS differ by construction
         for t in rep["tasks"]:
             t.pop("seconds")
     assert json.dumps(serial, sort_keys=True) == json.dumps(par, sort_keys=True)   # via JSON: NaN z-scores compare equal

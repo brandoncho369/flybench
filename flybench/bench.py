@@ -611,6 +611,41 @@ def _run_task_multiseed(task, c, params, verbose, simulator, seeds: int) -> Task
                       seconds=time.time() - t0, notes=notes, graded=graded, graded_per_seed=graded_per_seed)
 
 
+def peak_rss_mb() -> float:
+    """Peak resident set size of this process in MB (ROADMAP item 43, the cost column). Windows via
+    the Win32 process counters, POSIX via getrusage; NaN if neither is available."""
+    try:
+        import resource
+        ru = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        import sys
+        return float(ru) / (1024.0 if sys.platform != "darwin" else 1024.0 * 1024.0)   # KB on Linux, bytes on macOS
+    except ImportError:
+        pass
+    try:
+        import ctypes
+        from ctypes import wintypes
+
+        class PMC(ctypes.Structure):
+            _fields_ = [("cb", wintypes.DWORD), ("PageFaultCount", wintypes.DWORD), ("PeakWorkingSetSize", ctypes.c_size_t),
+                        ("WorkingSetSize", ctypes.c_size_t), ("QuotaPeakPagedPoolUsage", ctypes.c_size_t), ("QuotaPagedPoolUsage", ctypes.c_size_t),
+                        ("QuotaPeakNonPagedPoolUsage", ctypes.c_size_t), ("QuotaNonPagedPoolUsage", ctypes.c_size_t),
+                        ("PagefileUsage", ctypes.c_size_t), ("PeakPagefileUsage", ctypes.c_size_t)]
+        pmc = PMC(); pmc.cb = ctypes.sizeof(PMC)
+        k32 = ctypes.WinDLL("kernel32", use_last_error=True); psapi = ctypes.WinDLL("psapi", use_last_error=True)
+        k32.GetCurrentProcess.restype = wintypes.HANDLE          # a pseudo-handle; the default int restype truncates it
+        psapi.GetProcessMemoryInfo.argtypes = [wintypes.HANDLE, ctypes.POINTER(PMC), wintypes.DWORD]
+        if psapi.GetProcessMemoryInfo(k32.GetCurrentProcess(), ctypes.byref(pmc), pmc.cb):
+            return float(pmc.PeakWorkingSetSize) / (1024.0 * 1024.0)
+    except Exception:  # noqa: BLE001
+        pass
+    return float("nan")
+
+
+def simulated_seconds(task: dict, seeds: int, n_wirings: int) -> float:
+    """Biological seconds this task simulates: conditions × seeds × wirings × duration."""
+    return len(task.get("conditions", {})) * seeds * n_wirings * float(task.get("duration_ms", 1000)) / 1000.0
+
+
 # ---- parallel workers (`--jobs`): one process per (task, wiring) unit -------------------------
 # Windows has no fork, so each worker loads the connectome by name/path itself and rebuilds the
 # seeded control wiring; the units are independent simulations with their own seeds, so the
@@ -627,9 +662,10 @@ def _init_worker(connectome_ref: str, cache: str | None, controls: list[str], se
     _worker["simulator"] = resolve_simulator(simulator_spec)
 
 
-def _run_unit(task: dict, control: str | None, params: LIFParams, seeds: int) -> tuple[str, str | None, TaskResult]:
+def _run_unit(task: dict, control: str | None, params: LIFParams, seeds: int) -> tuple[str, str | None, TaskResult, float]:
     cc = _worker["c"] if control is None else _worker["controls"][control]
-    return task["name"], control, run_task(task, cc, params, verbose=False, simulator=_worker["simulator"], seeds=seeds)
+    r = run_task(task, cc, params, verbose=False, simulator=_worker["simulator"], seeds=seeds)
+    return task["name"], control, r, peak_rss_mb()
 
 
 def run_suite(c: Connectome, params: LIFParams, tasks: list[dict] | None = None, verbose: bool = False,
@@ -642,11 +678,14 @@ def run_suite(c: Connectome, params: LIFParams, tasks: list[dict] | None = None,
     jobs > 1 runs the (task, wiring) units in that many processes; it needs `connectome_ref` (the
     name or directory `load_connectome` accepts) so each worker can load the wiring itself."""
     from .controls import make_control
+    t_start = time.time()
     tasks = tasks or load_tasks()
     controls = list(controls or [])
     results = []
     skipped: dict[str, str] = {}
     runnable: list[dict] = []
+    worker_rss: list[float] = []
+    cpu_seconds = 0.0            # simulation time summed over units (wall-clock of a serial run)
     for task in tasks:
         why = task_unavailable(task, c, simulator)
         if why:
@@ -667,7 +706,9 @@ def run_suite(c: Connectome, params: LIFParams, tasks: list[dict] | None = None,
                                  initargs=(connectome_ref, cache, controls, params.seed, simulator_spec)) as pool:
             futures = [pool.submit(_run_unit, t, ctl, params, seeds) for t, ctl in units]
             for f in as_completed(futures):
-                name, ctl, r = f.result()
+                name, ctl, r, rss = f.result()
+                worker_rss.append(rss)
+                cpu_seconds += r.seconds
                 if ctl is None:
                     real[name] = r
                 else:
@@ -684,10 +725,12 @@ def run_suite(c: Connectome, params: LIFParams, tasks: list[dict] | None = None,
             if verbose:
                 print(f"[{task['name']}] {task.get('title', '')}")
             r = run_task(task, c, params, verbose=verbose, simulator=simulator, seeds=seeds)
+            cpu_seconds += r.seconds
             for name, cc in control_cs.items():
                 if verbose:
                     print(f"[{task['name']}] control: {name}")
                 rc = run_task(task, cc, params, verbose=False, simulator=simulator, seeds=seeds)
+                cpu_seconds += rc.seconds
                 r.controls[name] = {"score": rc.score, "passed": rc.passed}
             pairs.append((task, r))
     for task, r in pairs:
@@ -748,6 +791,15 @@ def run_suite(c: Connectome, params: LIFParams, tasks: list[dict] | None = None,
         "score": total,
         "passed": sum(r.passed for r in results),
         "n_tasks": len(results),
+        # cost (ROADMAP item 43): wall-clock of this run, CPU seconds summed over units (a serial
+        # run's wall-clock), peak RSS of the heaviest process, and simulated biological seconds
+        "cost": {
+            "wall_seconds": float(time.time() - t_start),
+            "cpu_seconds": float(cpu_seconds),
+            "jobs": int(jobs if (jobs > 1 and connectome_ref and runnable) else 1),
+            "peak_rss_mb": float(np.nanmax([peak_rss_mb(), *worker_rss])) if worker_rss else float(peak_rss_mb()),
+            "bio_seconds": float(sum(simulated_seconds(t, seeds, 1 + len(controls)) for t in runnable)),
+        },
         "tasks": [asdict(r) for r in results],
     }
 
@@ -768,8 +820,8 @@ def leaderboard(reports: list[dict]) -> str:
         for t in r["tasks"]:
             if t["task"] not in task_names:
                 task_names.append(t["task"])
-    head = "| run | connectome | simulator | gain | w_syn | seeds | verified | core | hard | core by circuit | hard by circuit | graded (95% CI) | specificity | hold-out gap | division | max brain active | " + " | ".join(task_names) + " |"
-    sep = "|" + "---|" * (16 + len(task_names))
+    head = "| run | connectome | simulator | gain | w_syn | seeds | verified | core | hard | core by circuit | hard by circuit | graded (95% CI) | specificity | hold-out gap | division | max brain active | cost | " + " | ".join(task_names) + " |"
+    sep = "|" + "---|" * (17 + len(task_names))
     rows = []
     fmt = lambda v: "–" if v is None else f"{v:.2f}"  # noqa: E731
     # rank by pinned first, then core score, then hard score, then more seeds (more evidence), then verified
@@ -789,5 +841,12 @@ def leaderboard(reports: list[dict]) -> str:
         div = r.get("division") or ("closed" if sim == "LIFSimulator" and not r.get("n_free_parameters") else "open")
         if r.get("n_free_parameters") is not None:
             div += f" ({r['n_free_parameters']}p)"
-        rows.append(f"| {r.get('label', '')} | {r['connectome']} | {sim} | {p['gain']} | {p['w_syn_mv']} | {r.get('seeds', 1)} | {ver} | {fmt(r.get('core_score'))} | {fmt(r.get('hard_score'))} | {fmt(r.get('core_by_circuit'))} | {fmt(r.get('hard_by_circuit'))} | {graded} | {spec} | {gap_s} | {div} | {max_active:.1%} | " + " | ".join(cells) + " |")
+        cost = r.get("cost") or {}
+        # CPU seconds per simulated biological second, and peak memory: "–" for results written before the cost column
+        if not cost or not cost.get("bio_seconds"):
+            cost_s = "–"
+        else:
+            slow = cost["cpu_seconds"] / cost["bio_seconds"]
+            cost_s = (f"{slow:.1f}×" if slow < 10 else f"{slow:.0f}×") + f" real time, {cost.get('peak_rss_mb', float('nan')) / 1024:.1f} GB"
+        rows.append(f"| {r.get('label', '')} | {r['connectome']} | {sim} | {p['gain']} | {p['w_syn_mv']} | {r.get('seeds', 1)} | {ver} | {fmt(r.get('core_score'))} | {fmt(r.get('hard_score'))} | {fmt(r.get('core_by_circuit'))} | {fmt(r.get('hard_by_circuit'))} | {graded} | {spec} | {gap_s} | {div} | {max_active:.1%} | {cost_s} | " + " | ".join(cells) + " |")
     return "\n".join([head, sep, *rows])

@@ -687,3 +687,15 @@ def test_task31_halt_passes_on_toy_and_fails_without_foxglove_edges(toy):
     rb = run_task(t31, broken, LIFParams(seed=1))
     assert not rb.checks[3].passed and not rb.checks[4].passed and rb.checks[3].value > 0.8
     assert all(ch.passed for k, ch in enumerate(rb.checks) if k not in (3, 4))
+
+
+def test_lint_requires_provenance_on_every_basis():
+    """ROADMAP item 41: a threshold is either a published number (cite the year) or a stated convention."""
+    raw = yaml.safe_load((TASK_DIR / "02_sugar_to_proboscis.yaml").read_text(encoding="utf-8"))
+    assert lint_task(raw) == []
+    bad = copy.deepcopy(raw); bad["checks"][0]["basis"] = "seems about right"
+    assert any("cite a year" in e for e in lint_task(bad))
+    ok = copy.deepcopy(raw); ok["checks"][0]["basis"] = "convention: the smallest response that is not noise"
+    assert not any("cite a year" in e for e in lint_task(ok))
+    for t in load_tasks():   # every shipped task already carries it
+        assert lint_task(yaml.safe_load((TASK_DIR / next(p.name for p in TASK_DIR.glob("*.yaml") if yaml.safe_load(p.read_text(encoding="utf-8"))["name"] == t["name"])).read_text(encoding="utf-8"))) == []

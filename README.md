@@ -165,6 +165,20 @@ What is still weak: the thresholds are conventions far more often than measureme
 * **Not evidence of anything about consciousness.** A static graph with a five-constant neuron model is closer to a very large truth table than to an experience. The interesting ethical question is where on the fidelity curve that stops being obviously true; this project is nowhere near it, and says so.
 * **Not a leaderboard of "who made the most lifelike fly".** It's a regression suite. The point is to notice when a parameter choice breaks something that used to work.
 
+## Versions, pins and reproducing the numbers
+
+The task set is **v0.x**: tasks are added freely (each one first as an RFC in `docs/rfcs/` with
+predictions written before its first run) and every score-affecting change to the scoring rules
+is its own RFC (`S1` the ceiling gate, `S2` the response floor) applied to every archived result
+by rerun, with the before and after recorded in the RFC. At **v1.0** the task set freezes:
+additions come in minor versions, a task can be retired or rotated (its RFC says why) but not
+silently changed, and a result file states the task-set version it ran under. Every result also
+records the connectome fingerprint it ran on (`flybench/manifests.json`; `flybench run` refuses a
+connectome that does not match its pin unless `--allow-unpinned`, and such results rank last).
+`reproduce.ps1` / `make reproduce` regenerate `LEADERBOARD.md` and the explorer snapshot from the
+committed results; `-Full` / `make reproduce-full` rerun the two headline result files on the
+pinned connectomes; `make docker` runs the toy suite in a container. Cite with `CITATION.cff`.
+
 ## Use it from Python
 
 ```python

@@ -181,16 +181,16 @@ neuromodulatory), circadian (24 h), song rhythm (needs dynamics a static LIF lac
 37. **Done 2026-09-16:** `flybench/manifests.json`, `flybench fingerprint`, `--allow-unpinned` → `unpinned: true`, ranked last. Pin every connectome artefact by `(id, version, sha256)`, fail loudly on mismatch, stamp it into
     every result JSON (the v783 synapse re-prediction halving the working gain is the argument).
 38. **CITATION.cff added 2026-09-16 (DOI on the first tag).** `CITATION.cff` + Zenodo DOI per release; JOSS paper once the task set is v1.0 and six months public.
-39. Docker image + `make reproduce` that regenerates every number in README and LEADERBOARD.
+39. **Done 2026-09-16:** `reproduce.ps1` / `Makefile` (`reproduce`, `reproduce-full`, `docker`), `Dockerfile` (toy suite in a container). Docker image + `make reproduce` that regenerates every number in README and LEADERBOARD.
 40. **Done 2026-09-16:** `flybench.adapter.SimulatorAdapter`, `capabilities`, `flybench verify-adapter` (names each defect). Adapter as a documented ABC with capability declarations (`can_silence`, `can_report_spike_times`,
     `is_closed_loop`, `min_dt`) and `flybench verify-adapter` conformance test; template repo with
     ~40-line stub; worked Brian2 and PyTorch adapters. Adopt the `time_ms, trial, neuron_index,
     flywire_id` parquet spike schema from eonsystemspbc/fly-brain (six backends share it).
-41. Provenance vocabulary on every YAML constant: MEASURED / INFERRED / MODELED / CONVENTION
+41. **Lint rule added 2026-09-16: every `basis` must cite a year or say "convention"; all 31 tasks pass.** Provenance vocabulary on every YAML constant: MEASURED / INFERRED / MODELED / CONVENTION
     (after JayceeB1/flybox). Our male taste labels are INFERRED-then-CONFIRMED; say which.
-42. Versioning policy in the README: task set v1.0 frozen; additions in minor versions;
+42. **Done 2026-09-16 (README "Versions, pins and reproducing the numbers").** Versioning policy in the README: task set v1.0 frozen; additions in minor versions;
     score-changing edits force a major bump and re-score every archived submission.
-43. Cost column on the leaderboard: wall-clock, peak RAM, sim-seconds per bio-second,
+43. **Done 2026-09-16:** results carry `cost` (wall, CPU seconds, jobs, peak RSS, simulated seconds); LEADERBOARD shows "N× real time, M GB". Cost column on the leaderboard: wall-clock, peak RAM, sim-seconds per bio-second,
     n_free_parameters (NeuroBench pairs correctness with complexity).
 44. Integrations, in order of tractability: flyvis as an adapter and as an observation source (its
     24-study tuning table), eonsystemspbc/fly-brain backends, chaobrain's fitted whole-brain SNN as
