@@ -4,24 +4,24 @@
   "seeds": 3,
   "verified": false,
   "core_score": 1.0,
-  "hard_score": 0.5350570436507937,
+  "hard_score": 0.5371965452847806,
   "core_by_circuit": 1.0,
-  "hard_by_circuit": 0.5450325963718821,
-  "graded": 0.689812662417008,
+  "hard_by_circuit": 0.5515093537414966,
+  "graded": 0.6782273268795791,
   "graded_ci95": [
-    0.6819575802233626,
-    0.6997378359771401
+    0.6694581820161537,
+    0.6881002848937927
   ],
   "core_graded": 0.9474488931829368,
-  "hard_graded": 0.5626407365223438,
+  "hard_graded": 0.5631493945361137,
   "profile": {
-    "-1": 0.7452830188679245,
-    "-0.5": 0.7264150943396226,
-    "-0.25": 0.660377358490566,
-    "0": 0.6320754716981132,
-    "0.25": 0.5377358490566038,
-    "0.5": 0.49056603773584906,
-    "1": 0.4716981132075472
+    "-1": 0.7345132743362832,
+    "-0.5": 0.7168141592920354,
+    "-0.25": 0.6548672566371682,
+    "0": 0.6283185840707964,
+    "0.25": 0.5398230088495575,
+    "0.5": 0.49557522123893805,
+    "1": 0.4778761061946903
   },
   "circuits": {
     "stability": "stability",
@@ -44,19 +44,21 @@
     "lc_dn_matrix": "escape",
     "optic_flow_rotation": "optic_flow",
     "antennal_grooming_vs_backward": "grooming",
-    "mb_sparseness_apl": "olfaction"
+    "mb_sparseness_apl": "olfaction",
+    "co2_pathway_specificity": "olfaction"
   },
   "skipped": {
     "looming_to_jump_muscle": "readout 'ttmn' matches no neurons on flywire783",
     "gf_to_muscle_latency": "readout 'ttmn' matches no neurons on flywire783",
     "taste_modalities": "stimulus 'water_grn' matches no neurons on flywire783",
     "courtship_song_chain": "not applicable: courtship_song_chain is defined on malecns/toy only (this is flywire783)",
-    "leg_mn_size_principle": "not applicable: leg_mn_size_principle is defined on malecns/toy only (this is flywire783)"
+    "leg_mn_size_principle": "not applicable: leg_mn_size_principle is defined on malecns/toy only (this is flywire783)",
+    "steering_dna02_vs_dna01": "not applicable: steering_dna02_vs_dna01 is defined on malecns/toy only (this is flywire783)"
   },
   "controls": [
     "rewired"
   ],
-  "specificity": 0.18269085411942557,
+  "specificity": 0.1808802308802309,
   "non_diagnostic": [],
   "tier": [
     "core",
@@ -86,9 +88,9 @@
     "extra": {}
   },
   "simulator": "flybench.sim.LIFSimulator",
-  "score": 0.6457577475434618,
+  "score": 0.6423791486291486,
   "passed": 7,
-  "n_tasks": 21,
+  "n_tasks": 22,
   "tasks": [
     {
       "task": "stability",
@@ -147,7 +149,7 @@
       },
       "readout_size": 139255,
       "stimulus_sizes": {},
-      "seconds": 10.029772281646729,
+      "seconds": 3.230994701385498,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -252,7 +254,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 73.43906569480896,
+      "seconds": 25.128384590148926,
       "notes": [],
       "graded": 0.8547046867837924,
       "graded_per_seed": [
@@ -337,7 +339,7 @@
         "sugar_grn": 129,
         "bitter_grn": 65
       },
-      "seconds": 91.86118030548096,
+      "seconds": 33.32190442085266,
       "notes": [],
       "graded": 0.9997156432785514,
       "graded_per_seed": [
@@ -440,7 +442,7 @@
       "stimulus_sizes": {
         "looming_detectors": 314
       },
-      "seconds": 36.9619255065918,
+      "seconds": 13.179177522659302,
       "notes": [],
       "graded": 0.8878267508943137,
       "graded_per_seed": [
@@ -516,7 +518,7 @@
       "stimulus_sizes": {
         "bitter_grn": 65
       },
-      "seconds": 34.95354247093201,
+      "seconds": 15.632238388061523,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -667,7 +669,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 110.51618766784668,
+      "seconds": 44.86490035057068,
       "notes": [
         "seed-sensitive: check 0: passes on 1/3 seeds"
       ],
@@ -746,7 +748,7 @@
         "pulse1": 129,
         "pulse2": 129
       },
-      "seconds": 84.19330835342407,
+      "seconds": 37.259204387664795,
       "notes": [],
       "graded": 0.49991747242872503,
       "graded_per_seed": [
@@ -872,7 +874,7 @@
       "stimulus_sizes": {
         "da1_orn": 127
       },
-      "seconds": 50.08182191848755,
+      "seconds": 19.410127878189087,
       "notes": [],
       "graded": 0.5972129056390362,
       "graded_per_seed": [
@@ -999,7 +1001,7 @@
         "sugar_grn": 129,
         "looming_detectors": 314
       },
-      "seconds": 94.40647077560425,
+      "seconds": 39.10299110412598,
       "notes": [],
       "graded": 0.9998342392767291,
       "graded_per_seed": [
@@ -1110,7 +1112,7 @@
       "stimulus_sizes": {
         "looming_detectors": 314
       },
-      "seconds": 33.70186376571655,
+      "seconds": 15.829864501953125,
       "notes": [],
       "graded": 0.7312563216480612,
       "graded_per_seed": [
@@ -1207,7 +1209,7 @@
       "stimulus_sizes": {
         "photoreceptors": 11153
       },
-      "seconds": 38.66221046447754,
+      "seconds": 13.19102954864502,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -1323,7 +1325,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 124.69938397407532,
+      "seconds": 61.760225772857666,
       "notes": [],
       "graded": 0.2546784676665634,
       "graded_per_seed": [
@@ -1469,7 +1471,7 @@
         "looming_detectors": 314,
         "sugar_grn": 129
       },
-      "seconds": 68.34849786758423,
+      "seconds": 33.58014249801636,
       "notes": [],
       "graded": 0.6296693765754758,
       "graded_per_seed": [
@@ -1625,7 +1627,7 @@
         "sugar_grn": 129,
         "looming_detectors": 314
       },
-      "seconds": 98.61263108253479,
+      "seconds": 45.41377568244934,
       "notes": [
         "seed-sensitive: check 1: passes on 2/3 seeds"
       ],
@@ -1853,7 +1855,7 @@
         "loom_left": 162,
         "loom_right": 152
       },
-      "seconds": 72.80631232261658,
+      "seconds": 33.568623065948486,
       "notes": [],
       "graded": 0.44444433333344446,
       "graded_per_seed": [
@@ -2040,7 +2042,7 @@
       "stimulus_sizes": {
         "da1_orn": 127
       },
-      "seconds": 96.55384683609009,
+      "seconds": 47.06571364402771,
       "notes": [
         "seed-sensitive: check 2: passes on 1/3 seeds; check 4: passes on 1/3 seeds"
       ],
@@ -2314,7 +2316,7 @@
         "orn_va1v": 94,
         "orn_dc1": 39
       },
-      "seconds": 241.73327922821045,
+      "seconds": 124.39283776283264,
       "notes": [],
       "graded": 0.11105225523809181,
       "graded_per_seed": [
@@ -2737,7 +2739,7 @@
         "lc16": 152,
         "lc10a": 237
       },
-      "seconds": 130.43962931632996,
+      "seconds": 62.44838619232178,
       "notes": [
         "seed-sensitive: check 7: passes on 1/3 seeds"
       ],
@@ -2934,7 +2936,7 @@
         "hs_right": 3,
         "h2_left": 1
       },
-      "seconds": 121.65985059738159,
+      "seconds": 56.69096064567566,
       "notes": [],
       "graded": 0.7768232357694264,
       "graded_per_seed": [
@@ -3061,7 +3063,7 @@
         "jo_ce": 433,
         "jo_f": 205
       },
-      "seconds": 68.65636563301086,
+      "seconds": 38.381470680236816,
       "notes": [
         "seed-sensitive: check 1: passes on 2/3 seeds"
       ],
@@ -3420,7 +3422,7 @@
         "orn_dc1": 39,
         "silence[dc1_apl_off]": 2
       },
-      "seconds": 317.8290195465088,
+      "seconds": 254.8995931148529,
       "notes": [],
       "graded": 0.4891271896534126,
       "graded_per_seed": [
@@ -3435,6 +3437,213 @@
         }
       },
       "specificity": 0.25,
+      "non_diagnostic": false
+    },
+    {
+      "task": "co2_pathway_specificity",
+      "title": "CO2 reaches its own projection neurons, its extraglomerular channel and the lateral horn; other odours do not",
+      "passed": false,
+      "score": 0.5714285714285714,
+      "checks": [
+        {
+          "description": "rate[co2, pnv_bi] > 5.0 Hz  [3/3 seeds, sd 0.943]",
+          "value": 430.6666666666667,
+          "passed": true,
+          "margin": 1.9351712546033841,
+          "basis": "Suh et al. 2004; Lin et al. 2013: ORN_V drives the V-glomerulus PNs (5,258 synapses onto the V_ilPN pair in FlyWire v783); 5 Hz is the task-02 convention for a response",
+          "graded": 0.9998652282225279,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            432.0,
+            430.0,
+            430.0
+          ],
+          "op": ">",
+          "target": 5.0,
+          "saturated": false
+        },
+        {
+          "description": "rate[co2, ln23] > 5.0 Hz  [3/3 seeds, sd 1.08]",
+          "value": 186.5,
+          "passed": true,
+          "margin": 1.5717088318086876,
+          "basis": "bioRxiv 2026.01.05.697655: LN23 relays CO2 through an extraglomerular pathway and is necessary for CO2 avoidance (1,771 ORN_V synapses onto the four LN23 in FlyWire); 5 Hz task-02 convention",
+          "graded": 0.9992817588289795,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            188.0,
+            186.0,
+            185.5
+          ],
+          "op": ">",
+          "target": 5.0,
+          "saturated": false
+        },
+        {
+          "description": "rate[co2, pnm1] > 5.0 Hz  [3/3 seeds, sd 0.943]",
+          "value": 392.3333333333333,
+          "passed": true,
+          "margin": 1.8946852037877535,
+          "basis": "bioRxiv 2026.01.05.697655: PNm1 is postsynaptic to LN23, receives mostly CO2-channel input, and its activation induces strong aversion; 5 Hz task-02 convention",
+          "graded": 0.999837610082321,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            393.0,
+            391.0,
+            393.0
+          ],
+          "op": ">",
+          "target": 5.0,
+          "saturated": false
+        },
+        {
+          "description": "rate[co2, lhpd5c1] > 5.0 Hz  [3/3 seeds, sd 0.943]",
+          "value": 427.3333333333333,
+          "passed": true,
+          "margin": 1.9317967661271174,
+          "basis": "bioRxiv 2026.01.05.697655: LHPD5c1 is the primary lateral-horn target of PNvbi (1,055 synapses from V_ilPN in FlyWire); 5 Hz task-02 convention",
+          "graded": 0.9998631177874482,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            428.0,
+            428.0,
+            426.0
+          ],
+          "op": ">",
+          "target": 5.0,
+          "saturated": false
+        },
+        {
+          "description": "rate[cva, pnm1] < 2.0 Hz  [0/3 seeds, sd 0.471]",
+          "value": 234.33333333333334,
+          "passed": false,
+          "margin": -2.0688040746361804,
+          "basis": "null check. bioRxiv 2026.01.05.697655: PNm1's sensory input is the LN23 CO2 channel, and LN23 receives no synapse from any ORN but ORN_V in either connectome; 2 Hz is the task-05 convention for silence",
+          "graded": 7.283836963449297e-05,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            234.0,
+            235.0,
+            234.0
+          ],
+          "op": "<",
+          "target": 2.0,
+          "saturated": false
+        },
+        {
+          "description": "rate[dm1, pnm1] < 2.0 Hz  [0/3 seeds, sd 0.471]",
+          "value": 235.66666666666666,
+          "passed": false,
+          "margin": -2.0712681634132557,
+          "basis": "null check. bioRxiv 2026.01.05.697655: PNm1 is a CO2 channel, not a general odour channel; the same wiring argument as the DA1 null; 2 Hz task-05 convention",
+          "graded": 7.201656380967626e-05,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            236.0,
+            236.0,
+            235.0
+          ],
+          "op": "<",
+          "target": 2.0,
+          "saturated": false
+        },
+        {
+          "description": "rate[cva, pnv_bi] < 2.0 Hz  [0/3 seeds, sd 0.943]",
+          "value": 417.3333333333333,
+          "passed": false,
+          "margin": -2.3194530784907674,
+          "basis": "null check. Suh et al. 2004; Jones et al. 2007: the V glomerulus is the Gr21a/Gr63a channel and its PNs receive no synapse from any other ORN type (0 from ORN_DA1 in either connectome); 2 Hz task-05 convention",
+          "graded": 2.296592112481976e-05,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            416.0,
+            418.0,
+            418.0
+          ],
+          "op": "<",
+          "target": 2.0,
+          "saturated": false
+        }
+      ],
+      "measurements": {
+        "co2": {
+          "rate": 430.6666666666667,
+          "network_rate": 9.341543690830969,
+          "active_fraction": 0.08281689466566132,
+          "spikes": 945900.3333333334,
+          "rate[pnv_bi]": 430.6666666666667,
+          "readout_active_fraction[pnv_bi]": 1.0,
+          "rate[ln23]": 186.5,
+          "readout_active_fraction[ln23]": 1.0,
+          "rate[pnm1]": 392.3333333333333,
+          "readout_active_fraction[pnm1]": 1.0,
+          "rate[lhpd5c1]": 427.3333333333333,
+          "readout_active_fraction[lhpd5c1]": 1.0
+        },
+        "cva": {
+          "rate": 417.3333333333333,
+          "network_rate": 9.421880722415713,
+          "active_fraction": 0.08212272449822268,
+          "spikes": 951347.0,
+          "rate[pnv_bi]": 417.3333333333333,
+          "readout_active_fraction[pnv_bi]": 1.0,
+          "rate[ln23]": 20.0,
+          "readout_active_fraction[ln23]": 0.5,
+          "rate[pnm1]": 234.33333333333334,
+          "readout_active_fraction[pnm1]": 1.0,
+          "rate[lhpd5c1]": 417.6666666666667,
+          "readout_active_fraction[lhpd5c1]": 1.0
+        },
+        "dm1": {
+          "rate": 420.0,
+          "network_rate": 9.429478295213817,
+          "active_fraction": 0.08168467918566659,
+          "spikes": 951757.6666666666,
+          "rate[pnv_bi]": 420.0,
+          "readout_active_fraction[pnv_bi]": 1.0,
+          "rate[ln23]": 20.0,
+          "readout_active_fraction[ln23]": 0.5,
+          "rate[pnm1]": 235.66666666666666,
+          "readout_active_fraction[pnm1]": 1.0,
+          "rate[lhpd5c1]": 424.6666666666667,
+          "readout_active_fraction[lhpd5c1]": 1.0
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "orn_v": 67,
+        "orn_da1": 127,
+        "orn_dm1": 68
+      },
+      "seconds": 47.52764058113098,
+      "notes": [],
+      "graded": 0.5712879227564304,
+      "graded_per_seed": [
+        0.5712898431497562,
+        0.5712871259120279,
+        0.5712867992075071
+      ],
+      "controls": {
+        "rewired": {
+          "score": 0.42857142857142855,
+          "passed": false
+        }
+      },
+      "specificity": 0.14285714285714285,
       "non_diagnostic": false
     }
   ],

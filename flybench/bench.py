@@ -436,12 +436,22 @@ def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False
         tag = f"[{chk.get('cond', '')}" + (f", {rname}" if (rname != "default" and per_readout) else "") + (f", {w[0]:g}-{w[1]:g}ms" if w != window else "") + "]"
         if typ == "ratio":
             w2 = chk.get("over_window", w)
-            metric = chk.get("metric", "rate")        # rate (default), readout_active_fraction or spikes_per_neuron
-            a = _metric(results[chk["cond"]], ridx, metric, *w)
-            b = _metric(results[chk["over"]], ridx, metric, *w2)
+            metric = chk.get("metric", "rate")        # rate (default), readout_active_fraction, spikes_per_neuron, population_sparseness, latency
+            ridx2 = readouts.get(chk.get("over_readout", rname), np.empty(0, dtype=int))   # `over_readout`: compare two readouts (e.g. left vs right pool)
+            if metric == "latency":
+                # first-spike latency of the readout after each condition's own stimulus onset
+                def _lat(cn, idx):
+                    onsets = [float(st.get("t_start_ms", 0)) for st in task["conditions"][cn].get("stimuli", [])]
+                    t0 = min(onsets) if onsets else float(w[0])
+                    return first_spike_ms(results[cn], idx, t0, duration) - t0
+                a, b = _lat(chk["cond"], ridx), _lat(chk["over"], ridx2)
+            else:
+                a = _metric(results[chk["cond"]], ridx, metric, *w)
+                b = _metric(results[chk["over"]], ridx2, metric, *w2)
             val = (a + EPS) / (b + EPS)
             mname = metric.replace("_", " ")
-            desc = f"{mname}{tag} / {mname}[{chk['over']}] {chk['op']} {target}"
+            over_tag = f"{chk['over']}, {chk['over_readout']}" if "over_readout" in chk else chk["over"]
+            desc = f"{mname}{tag} / {mname}[{over_tag}] {chk['op']} {target}"
         elif typ == "latency":
             # first-spike latency (ms) of the readout after the condition's stimulus onset, or, with
             # `from`, after another readout's first spike (conduction time along a pathway)
@@ -483,8 +493,10 @@ def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False
         compared = [chk["cond"], chk["over"]] if (typ == "ratio" and chk.get("metric", "rate") == "rate") else (list(chk["conds"]) if typ == "lifetime_sparseness" else [])
         if compared:
             ceiling_hz = CEILING_FRACTION * 1000.0 / max(float(getattr(params, "t_ref_ms", 2.2)), 1e-3)
-            key = f"rate[{rname}]"
-            rates = [measurements[cn].get(key, float("nan")) for cn in compared]
+            keys = [f"rate[{rname}]"] * len(compared)
+            if typ == "ratio" and "over_readout" in chk:
+                keys[1] = f"rate[{chk['over_readout']}]"
+            rates = [measurements[cn].get(k, float("nan")) for cn, k in zip(compared, keys)]
             if rates and all(np.isfinite(x) and x >= ceiling_hz for x in rates):
                 cr.saturated, cr.passed, cr.graded, cr.margin = True, False, 0.0, -10.0   # margin −10: a fail at every τ of the profile
                 cr.description += "  [saturated: all compared conditions at ceiling]"

@@ -167,7 +167,7 @@ def test_task17_pn_transfer_function_on_toy(toy):
     # task 8 now has real glomeruli to read: DA1 fires, the three bystanders stay quiet
     sparse = next(t for t in load_tasks() if t["name"] == "olfactory_sparse_coding")
     r8 = run_task(sparse, toy, LIFParams(gain=1.0, seed=0))
-    assert r8.passed and r8.measurements["cva"]["readout_active_fraction[all_pn]"] == pytest.approx(0.125)   # DA1 of 8 glomeruli
+    assert r8.passed and r8.measurements["cva"]["readout_active_fraction[all_pn]"] == pytest.approx(8 / 66)   # DA1's 8 PNs of 64 glomerular + 2 V_ilPN (task 27)
 
 
 def test_task17_dynamic_range_check_fails_a_saturated_model(toy):
@@ -536,3 +536,51 @@ def test_silencing_capability_and_task26_on_toy(toy):
     rb = run_task(t26, broken, LIFParams(seed=1))
     assert all(not ch.passed and abs(ch.value - 1.0) < 1e-6 for ch in rb.checks[3:])
     assert not rb.checks[0].passed and rb.checks[0].value > 0.2
+
+
+def test_task27_co2_passes_on_toy_and_a_da1_leak_into_pnm1_fails_the_null(toy):
+    import scipy.sparse as sp
+    from flybench.bench import task_unavailable
+    from flybench.connectome import Connectome
+    t27 = next(t for t in load_tasks() if t["name"] == "co2_pathway_specificity")
+    raw = yaml.safe_load((TASK_DIR / "27_co2_pathway_specificity.yaml").read_text(encoding="utf-8"))
+    assert lint_task(raw) == [] and task_unavailable(t27, toy) is None
+    r = run_task(t27, toy, LIFParams(seed=1))
+    assert r.passed and r.score == 1.0
+    assert r.checks[4].description.startswith("rate[cva, pnm1] <") and r.checks[4].value == 0.0
+    # a DA1 PN -> PNm1 contact: cVA now reaches the CO2 channel and exactly the first null fails
+    W = toy.W.tolil(); pn = toy.select("DA1_lPN"); pnm1 = toy.select("M_smPNm1")
+    for i in pn:
+        for j in pnm1:
+            W[i, j] = 30.0
+    broken = Connectome(root_ids=toy.root_ids, W=sp.csr_matrix(W, dtype=np.float32), positions=toy.positions,
+                        annotations=toy.annotations, name="toy", meta=dict(toy.meta))
+    rb = run_task(t27, broken, LIFParams(seed=1))
+    assert not rb.checks[4].passed and rb.checks[4].value >= 2
+    assert all(ch.passed for k, ch in enumerate(rb.checks) if k != 4)
+
+
+def test_task28_steering_passes_on_toy_and_a_crossed_dna02_edge_fails_the_null(toy):
+    import scipy.sparse as sp
+    from flybench.bench import task_unavailable
+    from flybench.connectome import Connectome
+    t28 = next(t for t in load_tasks() if t["name"] == "steering_dna02_vs_dna01")
+    raw = yaml.safe_load((TASK_DIR / "28_steering_dna02_vs_dna01.yaml").read_text(encoding="utf-8"))
+    assert lint_task(raw) == [] and t28["dataset_only"] == ["malecns", "toy"] and task_unavailable(t28, toy) is None
+    bad = copy.deepcopy(raw); bad["checks"][4]["over_readout"] = "leg_mn_middle"
+    assert any("over_readout" in e for e in lint_task(bad))
+    r = run_task(t28, toy, LIFParams(seed=1))
+    assert r.passed and r.score == 1.0
+    assert r.checks[2].description.startswith("latency[dna02, leg_mn_right] / latency[dna01] <") and 0 < r.checks[2].value < 1
+    assert r.checks[4].description.startswith("rate[dna02, leg_mn_right] / rate[dna02, leg_mn_left] >")
+    assert r.checks[5].value == 0.0
+    # a right DNa02 -> left DNa02 contact: the twin wakes and exactly the see-saw null fails
+    W = toy.W.tolil(); l = toy.select({"all_of": [{"cell_type": "DNa02"}, {"side": "left"}]}); rt = toy.select({"all_of": [{"cell_type": "DNa02"}, {"side": "right"}]})
+    for i in rt:
+        for j in l:
+            W[i, j] = 120.0
+    broken = Connectome(root_ids=toy.root_ids, W=sp.csr_matrix(W, dtype=np.float32), positions=toy.positions,
+                        annotations=toy.annotations, name="toy", meta=dict(toy.meta))
+    rb = run_task(t28, broken, LIFParams(seed=1))
+    assert not rb.checks[5].passed and rb.checks[5].value >= 2
+    assert all(ch.passed for k, ch in enumerate(rb.checks) if k not in (4, 5))

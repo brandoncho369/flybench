@@ -261,3 +261,52 @@ population_sparseness); new `population_sparseness` metric (Willmore–Tolhurst 
 inter-odour correlation deliberately not scored (single-glomerulus odours give disjoint KC sets by
 construction — verified on the toy). FlyWire graded 0.710 → 0.690, MaleCNS 0.698 → 0.689; 25
 older tasks bit-identical on both.
+
+## 2026-09-15 — task 27 (CO2 pathway specificity): 4/7 on both as pre-registered; LN23 is the only CO2-private node in the model
+
+The "Structural basis of CO2 valence coding" circuit (bioRxiv 2026.01.05.697655) mapped onto both
+datasets by name — PNvbi = V_ilPN, LN23 = l2LN23, PNm1 = M_smPNm1, LHPD5c1 — as task 27
+(docs/rfcs/27). Four positives on the CO2 drive pass at ceiling on both brains; the three nulls
+(DA1/DM1 must not reach PNm1, DA1 must not reach V_ilPN) fail on both, exactly as predicted from
+task 18's antennal-lobe broadcast: cVA drives the CO2 PN at 417 Hz. Rewired 3/7, specificity
++0.14.
+
+- **LN23 is the one CO2-private element**: 187 Hz under CO2 vs 20 Hz under cVA or DM1 on FlyWire
+  (9×), 326 vs 59–75 Hz on MaleCNS (5×). It is the only cell in the circuit with no PN-side input
+  — its excitatory input is ORN_V alone — so the broadcast reaches it only through the residual
+  network. The extraglomerular channel's entry is specific in the model even though its exit
+  (PNm1, which also takes multiglomerular PNs) is not.
+- **MaleCNS labels LN23 GABAergic; the paper's anti-GABA staining says it is not.** On MaleCNS
+  the LN23 → PNm1 edge is therefore inhibitory in W, and PNm1 still fires at 374 Hz under CO2 —
+  driven by the ignition, not the pathway. Recorded as a dataset annotation to raise, not
+  corrected in the task.
+- Third task in a row (26, 27) whose nulls are task 18 in another costume: a model with
+  antennal-lobe lateral inhibition is what all three are waiting for.
+
+Housekeeping: FlyWire graded 0.690 → 0.678, MaleCNS 0.689 → 0.680; 26 older tasks bit-identical.
+
+## 2026-09-15 — task 28 (steering, DNa02 vs DNa01, MaleCNS-only): one steering DN moves nothing; the RFC 22 ignition was pIP10's, not every DN's
+
+Rayshubskiy 2025's steering pair as task 28 (docs/rfcs/28): MaleCNS confirms the paper's wiring
+claim (right DNa02 → 490 direct synapses on 11 right leg MNs, DNa01 104 on 6, all ipsilateral,
+no twin contact). Pre-registered 2/6 on the assumption that any DN at 100 Hz ignites the cord
+at 0.65 (RFC 22). Measured **3/6**, rewired 1/6, specificity +0.33 — with every check wrong for
+the same reason:
+
+- **A single steering DN at 100 Hz activates 0.0 % of the male CNS** and fires its own motor
+  pool at 0.12 Hz (eight spikes in 500 ms across 136 MNs). 490 synapses over 11 MNs is ~4 mV per
+  MN at 0.65, under threshold; DNa02's biggest targets are GABAergic premotor interneurons. The
+  whole-CNS event of RFC 22 was a property of pIP10's targets (and of the sensory drives), not
+  of descending neurons as a class. The "any drive to a DN becomes a whole-CNS event" rule
+  written after RFC 22 is withdrawn: it is drive-specific.
+- **The contralateral pool moves more** (0.34 vs 0.12 Hz) through IN07B006, DNa02's one strong
+  excitatory premotor target, which makes 1,043 synapses on the *left* leg MNs and none on the
+  right. A two-hop crossing route beats the one-hop ipsilateral wiring at these rates.
+- **The latency and gain ratios pass on 8 vs 3 spikes.** Direction as predicted, every seed,
+  and meaningless. There is no floor counterpart to the S1 ceiling gate; proposed as **RFC S2**:
+  a comparison check whose every side is below the task's own response threshold is not a
+  pass. To be applied to all archived results with S1-style accounting, not silently.
+
+Housekeeping: `latency` as a ratio metric, `over_readout` for cross-readout ratios; MaleCNS
+graded 0.680 → 0.668, hard-by-circuit 0.558 → 0.551; 27 older tasks bit-identical; FlyWire
+records 28 as not applicable, otherwise bit-identical.

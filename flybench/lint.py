@@ -10,7 +10,7 @@ from .bench import KNOWN_CAPABILITIES, KNOWN_DATASETS, MATRIX_SIGNS, MATRIX_UNSC
 
 METRICS = {"rate", "network_rate", "active_fraction", "readout_active_fraction", "ratio", "spikes_per_neuron", "lifetime_sparseness", "latency",
            "rank_order", "recruitment_spread", "population_sparseness"}
-RATIO_METRICS = {"rate", "readout_active_fraction", "spikes_per_neuron", "population_sparseness"}
+RATIO_METRICS = {"rate", "readout_active_fraction", "spikes_per_neuron", "population_sparseness", "latency"}
 CELL_METRICS = {"rate", "readout_active_fraction", "spikes_per_neuron"}   # what a matrix cell may measure
 CIRCUITS = {"stability", "taste", "escape", "olfaction", "physiology", "robustness", "courtship", "locomotion", "optic_flow", "grooming"}
 REQUIRED = {"name", "title", "conditions", "checks"}
@@ -170,6 +170,8 @@ def lint_task(task: dict, source: str = "<task>") -> list[str]:
             errs.append(f"check {i}: over {chk.get('over')!r} is not a condition")
         if typ == "ratio" and chk.get("metric", "rate") not in RATIO_METRICS:
             errs.append(f"check {i}: ratio metric must be one of {sorted(RATIO_METRICS)}")
+        if typ == "ratio" and "over_readout" in chk and chk["over_readout"] not in readouts:
+            errs.append(f"check {i}: over_readout {chk['over_readout']!r} not defined")
         # network-level metrics ignore readouts; readout metrics default to the task's first readout (runtime does the same)
         if typ == "latency" and "from" in chk and chk["from"] not in readouts:
             errs.append(f"check {i}: latency `from` {chk['from']!r} is not a defined readout")

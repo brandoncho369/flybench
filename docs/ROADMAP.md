@@ -132,9 +132,14 @@ numbers (figure-only in Ache 2019 / Klapoetke 2017).
     as a relative change; the absolute KC fraction is figure-only.
 26. **CO2 pathway specificity**: ORNv → PNv_bi → LH^PD5c1^; PNm1 is CO2-only, so DA1/DM1 drive must
     not activate it (bioRxiv 2026.01.05.697655; Suh 2004; Lin 2013). Names are hemibrain-style;
-    needs a FlyWire mapping pass.
+    needs a FlyWire mapping pass. **Started 2026-09-15: task 27 (docs/rfcs/27). Mapping: PNvbi = V_ilPN,
+    LN23 = l2LN23, PNm1 = M_smPNm1, LHPD5c1 — same names on both datasets. LHPD5c1 is not a null (it takes
+    DM1/DM4/DP1m PNs directly, "integrates CO2 + food cues"). MaleCNS labels LN23 GABA; the paper's
+    staining says non-GABAergic — recorded, not corrected.**
 27. **Steering gain DNa02 vs DNa01**: DNa02 has more direct MN connections; equal drive should give
-    shorter MN latency and steeper MN-rate slope (Rayshubskiy et al. 2025 eLife 102230).
+    shorter MN latency and steeper MN-rate slope (Rayshubskiy et al. 2025 eLife 102230). **Started
+    2026-09-15: task 28 (docs/rfcs/28); MaleCNS confirms 490 vs 104 direct MN synapses; `latency` as a
+    ratio metric, `over_readout` for left-vs-right comparisons; a see-saw null on the contralateral DNa02.**
 28. **EPG ring attractor — expected-fail tier**: one bump, FWHM ≈ 90°, persists in darkness; two
     drives → one winner (Kim et al. 2017 Science; Turner-Evans 2017 eLife). A uniform-parameter LIF
     should fail; ship it labelled as such. Eon Systems concede they never validated this.

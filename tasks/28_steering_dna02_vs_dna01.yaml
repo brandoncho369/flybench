@@ -1,0 +1,38 @@
+name: steering_dna02_vs_dna01
+title: DNa02 reaches the leg motor neurons faster and harder than DNa01, on its own side, without waking its twin
+tier: hard
+circuit: locomotion
+description: >
+  Two descending neurons per side steer the walking fly. Rayshubskiy et al. 2025: DNa02 predicts
+  high-gain steering (rotational velocity is a steep function of DNa02 activity, shallow of
+  DNa01), its activity leads DNa01's, and "DNa02 makes more direct synaptic connections onto
+  motor neurons, as compared to DNa01"; the two receive "see-saw" input, excitation of one
+  copy with inhibition of the contralateral copy, and unilateral DNa02 activation gives an
+  ipsilateral steering bias. MaleCNS v1.0 agrees on the wiring: the right DNa02 makes 490 direct
+  synapses on 11 right leg MNs, the right DNa01 104 on 6, neither touches a left-leg MN or its
+  contralateral twin. This task drives each right DN alone at the task-02 100 Hz and reads the
+  leg motor pools by side and the left DNa02. Checks: both DNs recruit the right leg MNs; the
+  DNa02 recruitment is faster (first-spike latency ratio) and stronger (rate ratio); DNa02
+  drives its own side more than the other; and the left DNa02 stays silent (the see-saw null).
+  MaleCNS only (leg MNs are in the nerve cord); FlyWire records it as not applicable.
+  Pre-registered predictions and outcome: docs/rfcs/28_steering_dna02_vs_dna01.md.
+citation: "Rayshubskiy et al. 2025 (eLife 13:RP102230); Bidaye et al. 2020 (Neuron 108:469, DNa01/DNa02 steering); Chen et al. 2018 (Nat Neurosci 21:1290)"
+dataset_only: [malecns, toy]
+duration_ms: 900
+window: [200, 700]
+requires_stimuli: [dna02_right, dna01_right]
+requires_readouts: [leg_mn_left, leg_mn_right, dna02_left]
+readouts:
+  leg_mn_left:  {select: {all_of: [{super_class: vnc_motor}, {cell_type_regex: "(flexor|extensor|rotator|reductor|depressor|levator|promotor|remotor|Tergotr|Sternotrochanter|ltm|^Ta |^Ti |^Tr |^Fe ) ?MN$"}, {side_regex: "^(left|l)$"}]}}
+  leg_mn_right: {select: {all_of: [{super_class: vnc_motor}, {cell_type_regex: "(flexor|extensor|rotator|reductor|depressor|levator|promotor|remotor|Tergotr|Sternotrochanter|ltm|^Ta |^Ti |^Tr |^Fe ) ?MN$"}, {side_regex: "^(right|r)$"}]}}
+  dna02_left:   {select: {all_of: [{cell_type: DNa02}, {side_regex: "^(left|l)$"}]}}
+conditions:
+  dna02: {stimuli: [{name: dna02_right, select: {all_of: [{cell_type: DNa02}, {side_regex: "^(right|r)$"}]}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}]}
+  dna01: {stimuli: [{name: dna01_right, select: {all_of: [{cell_type: DNa01}, {side_regex: "^(right|r)$"}]}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}]}
+checks:
+  - {type: rate, cond: dna02, readout: leg_mn_right, op: ">", value: 5, basis: "Rayshubskiy et al. 2025; Bidaye et al. 2020: DNa02 activation drives turning through the leg motor system (490 direct synapses on right leg MNs in MaleCNS); 5 Hz is the task-02 convention for a response"}
+  - {type: rate, cond: dna01, readout: leg_mn_right, op: ">", value: 5, basis: "Rayshubskiy et al. 2025; Bidaye et al. 2020: DNa01 activity also predicts (low-gain) steering; 5 Hz task-02 convention"}
+  - {type: ratio, metric: latency, cond: dna02, over: dna01, readout: leg_mn_right, op: "<", value: 1, basis: "Rayshubskiy et al. 2025: DNa02 makes more direct MN connections than DNa01 (490 vs 104 synapses here) and its activity leads DNa01's; a more direct route recruits the pool sooner (inferred from the wiring: a latency ratio below 1)"}
+  - {type: ratio, cond: dna02, over: dna01, readout: leg_mn_right, op: ">", value: 1, basis: "Rayshubskiy et al. 2025: rotational velocity is a steep function of DNa02 activity and a shallow one of DNa01 activity — equal drive should move the motor pool more (inferred to MN rate); > 1 is the task-18 convention for a direction"}
+  - {type: ratio, cond: dna02, over: dna02, readout: leg_mn_right, over_readout: leg_mn_left, op: ">", value: 1, basis: "Rayshubskiy et al. 2025: unilateral DNa02 activation gives an ipsilateral steering bias, and every direct DNa02 -> MN synapse in MaleCNS is ipsilateral (490 right, 0 left): the right pool must move more than the left (inferred to MN rate); > 1 is the task-18 direction convention"}
+  - {type: rate, cond: dna02, readout: dna02_left, op: "<", value: 2, basis: "null check. Rayshubskiy et al. 2025: steering commands are see-saw — excitation of one DNa02 with inhibition of the contralateral copy; the right DNa02 makes no synapse on the left one (inferred: the twin must not be co-activated); 2 Hz is the task-05 convention for silence"}

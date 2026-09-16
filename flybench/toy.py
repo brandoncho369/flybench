@@ -94,13 +94,24 @@ POPS = [
     # GABAergic APL that reads the whole KC population and inhibits all of it
     ("kc",         400, "central", "",          "KC_toy",    "",           "ACH",  "Kenyon cell",      (60, 230, 70)),
     ("apl",          2, "central", "",          "APL",       "APL",        "GABA", "APL",              (60, 235, 60)),
+    # task 27 (CO2 pathway): the V glomerulus's ORNs, its bilateral PN, the extraglomerular LN23 -> PNm1
+    # channel of bioRxiv 2026.01.05.697655, and PNvbi's lateral-horn target
+    ("orn_v",       40, "sensory", "olfactory", "ORN_V",     "ORN_V",      "ACH",  "CO2 ORN",          (0, 425, 5)),
+    ("pnv_bi",       2, "central", "",          "V_ilPN",    "V_ilPN",     "ACH",  "CO2 bilateral PN", (0, 255, 45)),
+    ("ln23",         4, "central", "",          "l2LN23",    "l2LN23",     "ACH",  "CO2 local neuron", (0, 265, 40)),
+    ("pnm1",         2, "central", "",          "M_smPNm1",  "M_smPNm1",   "GABA", "PNm1",             (10, 250, 50)),
+    ("lhpd5c1",      2, "central", "",          "LHPD5c1",   "LHPD5c1",    "GLUT", "LH CO2 target",    (120, 215, 65)),
+    # task 28 (steering gain): DNa02 contacts the front-leg MNs directly, DNa01 only through a premotor pool
+    ("dna02",        2, "descending", "",       "DNa02",     "DNa02",      "ACH",  "steering DN (high gain)", (100, 185, -20)),
+    ("dna01",        2, "descending", "",       "DNa01",     "DNa01",      "ACH",  "steering DN (low gain)",  (100, 180, -20)),
+    ("steer_in",    40, "vnc_intrinsic", "",    "steer_in_toy", "",        "ACH",  "steering premotor",       (100, 70, -60)),
 ]
 
 SUB_CLASS = {"mn_t1": "fl"}   # Codex-style `sub_class` (fl/ml/hl = front/mid/hind leg); "" elsewhere
 
 
 # Bump when POPS or the wiring change: load_connectome("toy") rebuilds a cache whose version differs.
-TOY_VERSION = "2026-09-15-mb3"
+TOY_VERSION = "2026-09-15-steer4"
 
 
 def build_toy_connectome(seed: int = 1) -> Connectome:
@@ -210,6 +221,25 @@ def build_toy_connectome(seed: int = 1) -> Connectome:
         rows.append(src); cols.append(np.full(n_in, k)); vals.append(rng.integers(10, 21, size=n_in))
     connect("kc", "apl", 1.0, 26, 30)
     connect("apl", "kc", 1.0, 26, 30)
+    # --- added 2026-09-15 for task 27 (MODELED): ORN_V -> V_ilPN and -> LN23; LN23 -> PNm1 (the extraglomerular
+    #     channel); V_ilPN -> LHPD5c1. The other glomeruli do not touch any of it, so the nulls pass trivially.
+    connect("orn_v", "pnv_bi", 0.8, 8, 16)
+    connect("orn_v", "ln23", 0.5, 4, 10)
+    connect("ln23", "pnm1", 1.0, 30, 50)
+    connect("pnv_bi", "lhpd5c1", 1.0, 60, 100)
+    # --- added 2026-09-15 for task 28 (MODELED, the MaleCNS pattern: DNa02 -> leg MNs 509 direct synapses on
+    #     15 ipsilateral MNs, DNa01 98 on 7 and a much larger two-hop route): DNa02 drives its side's T1 MNs
+    #     directly, DNa01 drives them through the steer_in pool; nothing crosses the midline
+    #     Wired on the right side only: the left T1 pool is task 23's readout and its premotor pool is
+    #     selected from the graph, so nothing new may contact it.
+    t1 = idx["mn_t1"]; right_mns = t1[t1.size // 2:]; si = idx["steer_in"]; right_in = si[si.size // 2:]
+    for mn in right_mns:
+        edge(idx["dna02"][1], mn, 90)
+    for s_ in right_in:
+        edge(idx["dna01"][1], s_, 70)
+        for mn in right_mns:
+            if rng.random() < 0.5:
+                edge(s_, mn, 14)
     pre = np.concatenate(rows); post = np.concatenate(cols); syn = np.concatenate(vals).astype(np.float32)
     keep = pre != post
     pre, post, syn = pre[keep], post[keep], syn[keep]
