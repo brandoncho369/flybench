@@ -266,9 +266,9 @@ def test_latency_metric_and_task19_skips_without_a_nerve_cord(toy):
     assert r.checks[1].description.startswith("latency[loom, det → gf]")
     bad = dict(task, checks=[dict(task["checks"][1], **{"from": "nope"})])
     assert any("from" in e for e in lint_task(bad))
-    # task 19 needs the nerve cord: skipped on the toy, not failed
+    # task 19 needs the nerve cord's flight motor neurons: skipped on the toy (which has TTMn since task 33, not DLMn), not failed
     t19 = next(t for t in load_tasks() if t["name"] == "gf_to_muscle_latency")
-    assert task_unavailable(t19, toy) and "ttmn" in task_unavailable(t19, toy)
+    assert task_unavailable(t19, toy) and "dlmn" in task_unavailable(t19, toy)
 
 
 def toy_delay(p):

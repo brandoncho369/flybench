@@ -223,9 +223,12 @@ neuromodulatory), circadian (24 h), song rhythm (needs dynamics a static LIF lac
 
 ## 7. Closed-loop track (later, and only with the control)
 
-51. A v2 embodied track on FlyGym/NeuroMechFly or flybody with its own hold-out. Not before item 8
-    exists: a closed-loop success metric without a shuffled-connectome control is exactly the
-    "digital sphinx" failure. Score behaviour against videography (flybody: 0.25 mm / <5° in flight).
+51. **Phase 7a done 2026-09-17:** the embodied track exists (`flybench/embodied/`, task 33, docs/rfcs/33): a task's
+    `body:` block hands a readout's spikes (TTMn, or the GF + 0.93 ms) to NeuroMechFly in FlyGym 2.1 / MuJoCo, one
+    fixed jump program per command, takeoff scored as a physics event, run with the `rewired` control like every
+    task. Feed-forward only. Still open (7b): closing the loop (the body's own vision through the flyvis front end,
+    proprioception), a walking task on a CPG-free body, scoring against videography (flybody: 0.25 mm / <5° in
+    flight), and an embodied hold-out.
 
 ## 8. Explorer and adoption
 

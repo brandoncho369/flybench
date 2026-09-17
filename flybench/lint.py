@@ -10,7 +10,9 @@ import yaml
 from .bench import BUMP_STATS, KNOWN_CAPABILITIES, KNOWN_DATASETS, MATRIX_SIGNS, MATRIX_UNSCORED, OPS, RANK_ATTRIBUTES, expand_checks
 
 METRICS = {"rate", "network_rate", "active_fraction", "readout_active_fraction", "ratio", "spikes_per_neuron", "lifetime_sparseness", "latency",
-           "rank_order", "recruitment_spread", "population_sparseness", "bump"}
+           "rank_order", "recruitment_spread", "population_sparseness", "bump",
+           "takeoff", "takeoff_latency", "n_commands", "thorax_rise"}     # the last four need a `body:` block (flybench.embodied)
+BODY_METRICS = {"takeoff", "takeoff_latency", "n_commands", "thorax_rise"}
 RATIO_METRICS = {"rate", "readout_active_fraction", "spikes_per_neuron", "population_sparseness", "latency"}
 CELL_METRICS = {"rate", "readout_active_fraction", "spikes_per_neuron"}   # what a matrix cell may measure
 CIRCUITS = {"stability", "taste", "escape", "olfaction", "physiology", "robustness", "courtship", "locomotion", "optic_flow", "grooming", "navigation", "reproduction"}
@@ -48,6 +50,20 @@ def lint_task(task: dict, source: str = "<task>", strict: bool = False) -> list[
     duration = float(task.get("duration_ms", 1000))
     if duration <= 0:
         errs.append("duration_ms must be > 0")
+    if "body" in task:
+        # the embodied track: a body model and the readout whose spikes command it
+        from .embodied import BODIES
+        body = task["body"]
+        if not isinstance(body, dict) or body.get("model") not in BODIES:
+            errs.append(f"body.model must be one of {BODIES}")
+        cmd = (body or {}).get("command") if isinstance(body, dict) else None
+        names = set(task.get("readouts", {}) or {}) | ({"default"} if "readout" in task else set())
+        if not isinstance(cmd, dict) or cmd.get("readout") not in names:
+            errs.append("body.command.readout must name one of the task's readouts")
+        elif cmd.get("fallback") is not None and cmd["fallback"] not in names:
+            errs.append("body.command.fallback must name one of the task's readouts")
+        elif cmd.get("fallback") is not None and "fallback_delay_ms" not in cmd:
+            errs.append("body.command.fallback needs fallback_delay_ms (the measured delay from the fallback readout to the muscle)")
     window = task.get("window", [0, duration])
     if not (0 <= window[0] < window[1] <= duration):
         errs.append(f"window {window} must lie within [0, {duration}]")
@@ -210,6 +226,8 @@ def lint_task(task: dict, source: str = "<task>", strict: bool = False) -> list[
             errs.append(f"check {i}: latency `from` {chk['from']!r} is not a defined readout")
         if typ in ("rate", "ratio", "readout_active_fraction", "lifetime_sparseness", "latency", "rank_order", "recruitment_spread", "population_sparseness", "bump") and "readout" in chk and chk["readout"] not in readouts:
             errs.append(f"check {i}: readout {chk['readout']!r} not defined")
+        if typ in BODY_METRICS and "body" not in task:
+            errs.append(f"check {i}: {typ} needs a `body:` block (the embodied track)")
         if typ == "rank_order" and chk.get("by", "input_synapses") not in RANK_ATTRIBUTES:
             errs.append(f"check {i}: rank_order `by` must be one of {RANK_ATTRIBUTES}")
         if typ == "bump":

@@ -25,6 +25,8 @@ dependencies = [
 dev = ["pytest>=8.0"]
 # only to re-render the sensory front-end caches (flybench frontend flyvis render); runs and CI use the committed .npz
 flyvis = ["flyvis>=1.2", "torch"]
+# the embodied track (flybench.embodied): NeuroMechFly in FlyGym / MuJoCo; a task with a `body:` block is skipped without it
+embodied = ["flygym>=2.1; python_version >= '3.12'"]
 
 [project.scripts]
 flybench = "flybench.cli:main"

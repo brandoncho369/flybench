@@ -122,6 +122,8 @@ class TaskResult:
     non_diagnostic: bool = False          # some control also passed: the task is not measuring the wiring
 
 
+BODY_METRIC_TYPES = ("takeoff", "takeoff_latency", "n_commands", "thorax_rise")   # flybench.embodied.BODY_METRICS
+
 MATRIX_SIGNS = {"+": ">=", "-": "<", "−": "<"}      # a cell's expected sign -> the op of its expanded check
 MATRIX_UNSCORED = {"?", ".", "", None}
 
@@ -375,6 +377,14 @@ def task_unavailable(task: dict, c: Connectome, simulator: Any = None) -> str | 
         from .frontends.flyvis_frontend import OUTPUT_TYPES
         if not any(c.select({"cell_type": t}).size for t in OUTPUT_TYPES):
             return f"frontend {fe!r}: none of its output cell types exist on {c.name}"
+    if task.get("body"):
+        from .embodied import BODIES
+        model = task["body"].get("model")
+        if model not in BODIES:
+            return f"unknown body model {model!r}"
+        from .embodied.flygym_body import available as body_available
+        if not body_available():
+            return "body 'flygym' is not installed (pip install -e .[embodied])"
     needed = set(task.get("requires_capabilities", []) or [])
     if needed and simulator is not None:
         have = simulator_capabilities(simulator)
@@ -518,6 +528,32 @@ def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False
             print(f"  {cond_name:>16}: readout {m['rate']:.2f} Hz, network {m['network_rate']:.3f} Hz, "
                   f"active {m['active_fraction']:.3%} {extra}")
 
+    if task.get("body"):
+        # the embodied track (flybench.embodied): the command readout's spikes drive a physics body,
+        # and what the body did becomes measurements ordinary checks can score
+        from .embodied import BODY_METRICS
+        from .embodied.flygym_body import run_body
+        cmd = task["body"].get("command", {})
+        cmd_readout = cmd.get("readout", default_readout)
+        delay = 0.0
+        if readouts.get(cmd_readout, np.empty(0, dtype=int)).size == 0 and cmd.get("fallback"):
+            # no nerve cord here: the fallback readout (the GF) plus the measured delay to the muscle
+            cmd_readout, delay = cmd["fallback"], float(cmd.get("fallback_delay_ms", 0.0))
+            notes.append(f"body: command readout {cmd.get('readout')!r} absent, using {cmd_readout!r} + {delay} ms")
+        cidx = readouts.get(cmd_readout, np.empty(0, dtype=int))
+        for cond_name, cond in task["conditions"].items():
+            res = results[cond_name]
+            spikes = res.spike_times_ms[np.isin(res.spike_neurons, cidx)] + delay if cidx.size else np.empty(0)
+            trace = run_body(spikes.tolist(), duration)
+            onsets = [float(st.get("t_start_ms", 0)) for st in cond.get("stimuli", [])]
+            onset = min(onsets) if onsets else 0.0
+            measurements[cond_name][BODY_METRICS["takeoff"]] = 1.0 if trace.takeoff else 0.0
+            measurements[cond_name][BODY_METRICS["takeoff_latency"]] = float(trace.takeoff_ms - onset) if trace.takeoff else float("nan")
+            measurements[cond_name][BODY_METRICS["n_commands"]] = float(trace.n_commands)
+            measurements[cond_name][BODY_METRICS["thorax_rise"]] = float(trace.thorax_rise_mm)
+            if verbose:
+                print(f"  {cond_name:>16}: body takeoff={trace.takeoff} at {trace.takeoff_ms - onset if trace.takeoff else float('nan'):.1f} ms, {trace.n_commands} commands")
+
     checks: list[CheckResult] = []
     input_synapses: np.ndarray | None = None
     for chk in task.get("checks", []):
@@ -591,6 +627,12 @@ def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False
         elif typ == "recruitment_spread":
             val = recruitment_spread(first_spikes_per_neuron(results[chk["cond"]], ridx, *w))
             desc = f"recruitment spread{tag} {chk['op']} {target} ms"
+        elif typ in BODY_METRIC_TYPES:
+            # what the body did (flybench.embodied): takeoff (0/1), takeoff latency (ms from stimulus onset), …
+            from .embodied import BODY_METRICS
+            val = measurements[chk["cond"]].get(BODY_METRICS[typ], float("nan"))
+            unit = " ms" if typ == "takeoff_latency" else (" mm" if typ == "thorax_rise" else "")
+            desc = f"body {typ.replace('_', ' ')}[{chk['cond']}] {chk['op']} {target}{unit}"
         else:
             val = _metric(results[chk["cond"]], ridx, typ, *w)
             unit = " Hz" if typ.endswith("rate") else (" spikes/neuron" if typ == "spikes_per_neuron" else "")
@@ -781,7 +823,7 @@ def run_suite(c: Connectome, params: LIFParams, tasks: list[dict] | None = None,
                 if ctl is None:
                     real[name] = r
                 else:
-                    ctl_scores[name][ctl] = {"score": r.score, "passed": r.passed}
+                    ctl_scores[name][ctl] = {"score": r.score, "passed": r.passed, "checks": [c.passed for c in r.checks]}   # which checks the shuffle passes
                 if verbose:
                     print(f"[{name}] {'control: ' + ctl if ctl else 'done'}: {r.score:.2f}")
         pairs = [(t, real[t["name"]]) for t in runnable]
@@ -800,7 +842,7 @@ def run_suite(c: Connectome, params: LIFParams, tasks: list[dict] | None = None,
                     print(f"[{task['name']}] control: {name}")
                 rc = run_task(task, cc, params, verbose=False, simulator=simulator, seeds=seeds)
                 cpu_seconds += rc.seconds
-                r.controls[name] = {"score": rc.score, "passed": rc.passed}
+                r.controls[name] = {"score": rc.score, "passed": rc.passed, "checks": [c.passed for c in rc.checks]}
             pairs.append((task, r))
     for task, r in pairs:
         if r.controls:

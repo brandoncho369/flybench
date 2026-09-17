@@ -84,3 +84,11 @@ def test_one_result_file_per_label_and_the_reference_is_tagged_on_disk():
     assert r.get("reference_baseline") is True and r.get("verified") is True and r.get("division") == "closed"
     assert r.get("conflict_of_interest")
     assert r.get("simulator") == "flybench.models.reference_lif.ReferenceLIFSimulator"
+
+
+def test_control_records_say_which_checks_the_shuffle_passes(toy):
+    task = next(t for t in load_tasks() if t["name"] == "sugar_to_proboscis")
+    r = run_suite(toy, LIFParams(gain=0.8), [task], controls=["rewired"])
+    ctl = r["tasks"][0]["controls"]["rewired"]
+    assert set(ctl) == {"score", "passed", "checks"} and len(ctl["checks"]) == len(task["checks"])
+    assert ctl["score"] == sum(ctl["checks"]) / len(ctl["checks"])

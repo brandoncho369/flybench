@@ -28,6 +28,7 @@ POPS = [
     ("lplc2",       60, "visual_projection", "", "LPLC2",     "LPLC2",      "ACH",  "looming",          (-200, 150, 0)),
     ("lc4",         50, "visual_projection", "", "LC4",       "LC4",        "ACH",  "looming",          (200, 150, 0)),
     ("gf",           2, "descending", "",       "GF",         "Giant Fiber","ACH",  "giant fiber",      (0, 200, -20)),
+    ("ttmn",         2, "motor",   "",          "TTMn",       "TTMn",       "ACH",  "jump muscle MN",   (0, 120, -60)),
     ("orn",        120, "sensory", "olfactory", "ORN",        "",           "ACH",  "olfactory",        (0, 420, 0)),
     ("pn",          60, "central", "",          "PN",         "",           "ACH",  "projection neuron",(0, 250, 40)),
     # two named glomeruli with Codex-style names so the olfactory tasks (8, 17) have something to read:
@@ -137,7 +138,7 @@ SUB_CLASS = {"mn_t1": "fl"}   # Codex-style `sub_class` (fl/ml/hl = front/mid/hi
 RING = {"epg_pen": 40, "pen_epg_self": 30, "pen_epg_side": 20, "epg_d7": 10, "d7_epg": 12}
 
 # Bump when POPS or the wiring change: load_connectome("toy") rebuilds a cache whose version differs.
-TOY_VERSION = "2026-09-17-flyvis3"
+TOY_VERSION = "2026-09-17-body1"
 
 
 def build_toy_connectome(seed: int = 1) -> Connectome:
@@ -166,6 +167,9 @@ def build_toy_connectome(seed: int = 1) -> Connectome:
     # --- escape: looming detectors -> giant fiber
     connect("lplc2", "gf", 0.6, 3, 8)
     connect("lc4", "gf", 0.6, 3, 8)
+    # GF -> TTMn: the fly's is a mixed electrical/chemical giant synapse (Allen et al. 2006); here a
+    # strong chemical contact so a GF spike reaches the jump muscle's motor neuron (task 33's body command)
+    connect("gf", "ttmn", 1.0, 20, 30)
     # --- olfaction (present, just not benchmarked)
     connect("orn", "pn", 0.15, 5, 15)
     connect("pn", "lhn", 0.2, 5, 15)

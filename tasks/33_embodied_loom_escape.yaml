@@ -1,0 +1,43 @@
+name: embodied_loom_escape
+title: A loom makes the body jump; a flash and rest do not (first embodied task)
+tier: hard
+circuit: escape
+description: >
+  The first task of the embodied track (docs/ROADMAP.md item 51): the brain's spikes drive a
+  physics body and the body's behaviour is scored. The jump command is a spike of the
+  tergotrochanteral motor neuron (TTMn) where the dataset has a nerve cord, or the giant fiber
+  plus the measured 0.93 ms GF→TTM delay (Augustin et al. 2019) where it has none; the body is
+  NeuroMechFly in FlyGym (MuJoCo), which runs one fixed middle-leg extension program per command
+  (flybench/embodied/flygym_body.py). Takeoff is a physics event: all six feet off the ground
+  within 30 ms of a command. A loom (the task-4 LPLC2/LC4 convention) must produce a takeoff
+  within the drive; a fly at rest must not jump; a full-field flash through the flyvis front end
+  must not make it jump. The loom through the eye (task 32) is measured, not scored, because
+  task 32 already scores that failure. Feed-forward: nothing from the body returns to the brain.
+  Pre-registered predictions and outcome: docs/rfcs/33_embodied_loom_escape.md.
+citation: "Card & Dickinson 2008 (Curr Biol 18:1300, doi:10.1016/j.cub.2008.07.094); von Reyn et al. 2014 (Nat Neurosci 17:962, doi:10.1038/nn.3741); Trimarchi & Schneiderman 1995 (J Exp Biol 198:1099); Allen et al. 2006 (J Neurosci 26:1264, doi:10.1523/JNEUROSCI.4258-05.2006); Augustin et al. 2019 (J Physiol 597:2233); Lobato-Rios et al. 2022 (Nat Methods 19:620, doi:10.1038/s41592-022-01466-7); Wang-Chen et al. 2024 (Nat Methods 21:2353, doi:10.1038/s41592-024-02497-y)"
+duration_ms: 1300
+window: [200, 1200]
+requires_frontends: [flyvis]
+requires_readouts: [gf]
+readouts:
+  gf:   {select: {any: [{cell_type: GF}, {cell_type: DNp01}, {hemibrain_type: "Giant Fiber"}]}}
+  ttmn: {select: {cell_type: TTMn}}
+body:
+  model: flygym
+  command:
+    readout: ttmn              # the jump muscle's motor neuron, where the dataset has it
+    fallback: gf               # a brain-only dataset: the GF stands in for TTMn …
+    fallback_delay_ms: 0.93    # … plus Augustin et al. 2019's brain-to-TTM delay (task 19)
+conditions:
+  baseline:  {stimuli: []}
+  loom:
+    stimuli:
+      - {name: looming_detectors, select: {any: [{cell_type: LPLC2}, {cell_type: LC4}, {hemibrain_type: LPLC2}, {hemibrain_type: LC4}]}, rate_hz: 150, t_start_ms: 200, t_end_ms: 500}
+  loom_eye:  {stimuli: [{name: loom,  frontend: flyvis, stimulus: loom,  t_start_ms: 200}]}
+  flash_eye: {stimuli: [{name: flash, frontend: flyvis, stimulus: flash, t_start_ms: 200}]}
+checks:
+  - {type: takeoff, cond: loom, op: ">=", value: 1, basis: "Card & Dickinson 2008; von Reyn et al. 2014: a loom with r/v = 40 ms evokes a GF-mediated takeoff; the body left the ground (physics, all six feet)"}
+  - {type: takeoff_latency, cond: loom, op: "<", value: 300, basis: "convention: the loom drive lasts 300 ms (task 4); a takeoff after the drive ended is not a response to it. The fly is airborne ~10 ms after the GF spike (Card & Dickinson 2008)"}
+  - {type: takeoff, cond: baseline, op: "<", value: 0.5, basis: "convention: a fly at rest does not jump (task 1: the network is silent at rest); 0.5 splits 0 from 1"}
+  - {type: takeoff, cond: flash_eye, op: "<", value: 0.5, basis: "von Reyn et al. 2014; Klapoetke et al. 2017: a full-field brightening is not a loom and evokes no GF spike (task 11), so no jump; through the eye (task 32) and the body"}
+  # loom_eye is measured (takeoff, latency, commands) and not scored: task 32 already scores that this front end does not reach the GF with a loom

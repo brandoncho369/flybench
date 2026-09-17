@@ -467,3 +467,53 @@ Housekeeping: the toy has 3,790 neurons (T4/T5 subtypes on a coarse grid, an LPi
 its MODELED dark-loom detector passes 3/3 and is the reason the task exists in CI, and proves
 nothing about the fly). Runs were done at `--jobs 4`: a `--jobs 6` attempt was killed for
 memory with a browser holding 9 GB, and 4 workers finish FlyWire in 30 min.
+
+## 2026-09-17 — task 33 (first embodied task): given an eye and a body, the reference model jumps at a flash and not at a loom
+
+Roadmap item 51, Phase 7a. The embodied track exists: a task's `body:` block hands a readout's
+spikes — TTMn where the dataset has a nerve cord, the GF plus Augustin 2019's 0.93 ms where it
+does not — to NeuroMechFly in FlyGym 2.1 / MuJoCo, which runs one fixed middle-leg extension per
+command; takeoff is a physics event (all six feet off the ground within 30 ms of a command).
+Feed-forward: nothing returns to the brain. The body is a transducer, and the `rewired` control
+runs the same body, so a jump the shuffle also makes is not the connectome's.
+
+Pre-registered (docs/rfcs/33, no development run on a real brain): loom → takeoff ~20–25 ms
+after drive onset; rest → nothing; flash through the eye → **a jump** (task 32's 37 Hz GF flash
+response, now acted on); loom through the eye → nothing (unscored). 3/4 on both brains.
+
+| | FlyWire 0.45 (GF + 0.93 ms) | MaleCNS 0.65 (real TTMn) |
+|---|---|---|
+| loom → takeoff, latency | yes, **17.1 ms** (sd 0.17), 4 commands | yes, **23.1 ms** (sd 0.13), TTMn 62 Hz |
+| rest → takeoff | no | no |
+| flash through the eye → takeoff | **yes, 257 ms** after onset, 2.7 commands | **yes, 264 ms**, GF 5.8 Hz → TTMn 0.7 Hz |
+| loom through the eye → takeoff (unscored) | no | **yes, 499 ms, GF silent** (TTMn 3.3 Hz) |
+| score · rewired · specificity | 3/4 · 2/4 · +0.25 | 3/4 · 2/4 · +0.25 |
+
+- **The escape works end to end, when the loom is handed to the detectors.** LPLC2/LC4 at
+  150 Hz → GF first spike at ~6 ms → +0.93 ms → the legs clear the ground ~10 ms later: 17 ms,
+  every seed within 0.2 ms. That is the pipeline, not a discovery; the real fly's GF spike comes
+  near collision and the takeoff ~10 ms after it (Card & Dickinson 2008).
+- **The flash jump is the finding.** Task 32 reported the flash GF response as a rate; here the
+  body takes off a quarter-second after the lights come up. And it is a property of the *real*
+  wiring: on the degree-matched shuffle the flash does not reach the GF (control checks
+  `[loom ✗, latency ✗, rest ✓, flash ✓]`) — the prediction that "a fifth of the brain lit at
+  random probably fires the GF" was wrong, specificity +0.25 not +0.50. The path from the
+  flyvis-driven medulla types to the GF is specific to FlyWire's wiring, and it is the wrong
+  path: it carries a brightening, not a loom.
+- **What the body cannot say.** One program per command: a GF at 430 Hz and a GF that fires
+  once produce the same jump (task 13 scores the difference). The transducer's ~0.7 mm and
+  ~11 ms are the body model's; a different body changes the numbers, not the structure.
+- **MaleCNS, unasked for: the loom through the eye does make the body jump — without the GF.**
+  With the real TTMn as the command, the flyvis loom (GF 0 Hz, as task 32 found) fires TTMn at
+  3.3 Hz and the body takes off 499 ms after loom onset on every seed. Task 32's 15 %-of-the-CNS
+  loom response reaches the jump muscle's motor neuron by a GF-independent path: the long-latency
+  escape pathway (Engel & Wu 1996; Card & Dickinson 2008) is wired in the male CNS. Unscored here;
+  the next task on this track is TTMn-without-GF with the GF silenced.
+
+The 130 (FlyWire) and 149 (MaleCNS) older checks are bit-identical (`flybench diff`); graded
+0.653 → 0.655 and 0.639 → 0.641 (a 3/4 task joined). FlyWire's row is the reference submission
+evaluated through `flybench evaluate` (verified, `reference_baseline`).
+
+Housekeeping: result files now record which checks each control passes
+(`controls.<name>.checks`); the toy gained TTMn (3,792 neurons); `pip install -e .[embodied]`
+(FlyGym needs Python ≥ 3.12; CI moved to 3.12); a task with `body:` is skipped without it.
