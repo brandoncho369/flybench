@@ -14,7 +14,11 @@ division: closed              # closed = reference LIF, only gain changed. Anyth
 # n_free_parameters: 3        #   how many constants were fitted (0 if every value is from the literature)
 # fit_data: "..."             #   what they were fitted on. Fitting on benchmark tasks makes a submission ineligible.
 # controls: rewired           # negative-control wiring CI also scores (rewired | random | signflip | all | none)
+conflict_of_interest: none    # a sentence: who wrote the model, whether you wrote tasks it targets, what you stand to gain
 ```
+
+`reference-lif-0.45.yaml` is the maintainers' own model going through this same door (CONTRIBUTING.md,
+"The maintainers' model is a submission, not the answer"); its row is tagged `reference_baseline`.
 
 CI also runs the unpublished hold-out tasks and reports the **gap** (public − hold-out score) and the
 **specificity** (real − shuffled-wiring score). Both appear on the leaderboard; a large gap on an

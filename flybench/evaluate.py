@@ -23,13 +23,13 @@ from .connectome import DEFAULT_CACHE, load_connectome
 from .sim import LIFParams
 
 CACHE_URL = "https://github.com/brandoncho369/flybench/releases/download/cache-{name}/{name}-cache.zip"
-ALLOWED_SIMULATORS = {"flybench.sim:LIFSimulator", "flybench.models.adaptive_lif:AdaptiveLIFSimulator"}
+ALLOWED_SIMULATORS = {"flybench.sim:LIFSimulator", "flybench.models.reference_lif:ReferenceLIFSimulator", "flybench.models.adaptive_lif:AdaptiveLIFSimulator"}
 ALLOWED_CONNECTOMES = {"flywire783", "toy"}
 DIVISIONS = {"closed", "open"}
 # closed division = the reference LIF dynamics with only the global gain fitted (Shiu et al. 2024 as
 # published). Anything else — other dynamics, other parameters, fitted constants — is the open
 # division, where the submitter must say how many parameters were free and what they were fit on.
-CLOSED_SIMULATOR = "flybench.sim:LIFSimulator"
+CLOSED_SIMULATORS = {"flybench.sim:LIFSimulator", "flybench.models.reference_lif:ReferenceLIFSimulator"}
 CLOSED_FREE_PARAMS = {"gain", "seed"}
 
 
@@ -42,6 +42,18 @@ def _task_names() -> set[str]:
 
 def slug(label: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", label.lower()).strip("-")[:60] or "submission"
+
+
+def result_for(label: str, results_dir: Path | str = "results") -> Path | None:
+    """The result file already carrying this label, if any (one file per label: the explorer looks runs up
+    by label). CI evaluates a merged config only when nothing in results/ has its label."""
+    for f in sorted(Path(results_dir).glob("*.json")):
+        try:
+            if json.loads(f.read_text(encoding="utf-8")).get("label") == label:
+                return f
+        except Exception:  # pragma: no cover
+            continue
+    return None
 
 
 def validate_submission(cfg: dict) -> list[str]:
@@ -84,7 +96,7 @@ def validate_submission(cfg: dict) -> list[str]:
         errs.append(f"division: must be one of {sorted(DIVISIONS)}")
     changed = {k for k in (params if isinstance(params, dict) else {}) if k not in CLOSED_FREE_PARAMS}
     if division == "closed":
-        if sim != CLOSED_SIMULATOR or changed:
+        if sim not in CLOSED_SIMULATORS or changed:
             errs.append("division: 'closed' means the reference LIF with only params.gain changed; "
                         f"this submission changes {sorted(changed) or 'the simulator'} → set division: open, "
                         "n_free_parameters and fit_data")
@@ -98,6 +110,10 @@ def validate_submission(cfg: dict) -> list[str]:
     fit = cfg.get("fit_data")
     if division == "open" and not fit:
         errs.append("fit_data: required in the open division (what the free parameters were fitted on; 'none' if literature values)")
+    # ROADMAP item 49: every submission says who it is from and what they stand to gain; "none" is an answer
+    coi = cfg.get("conflict_of_interest")
+    if coi is not None and (not isinstance(coi, str) or not coi.strip() or len(coi) > 300):
+        errs.append("conflict_of_interest: a short sentence (max 300 characters), e.g. 'none' or 'authors of task 26'")
     if fit is not None:
         fit_s = str(fit)
         if len(fit_s) > 300:
@@ -158,7 +174,7 @@ def holdout_gap(public_score: float | None, holdout: dict | None) -> float | Non
     return float(public_score - holdout["score"])
 
 
-def evaluate(config_path: Path, out: Path | None = None, comment: Path | None = None, cache: Path = DEFAULT_CACHE, seeds_override: int | None = None) -> dict:
+def evaluate(config_path: Path, out: Path | None = None, comment: Path | None = None, cache: Path = DEFAULT_CACHE, seeds_override: int | None = None, jobs: int = 1) -> dict:
     cfg = yaml.safe_load(Path(config_path).read_text(encoding="utf-8"))
     errs = validate_submission(cfg)
     if errs:
@@ -171,7 +187,8 @@ def evaluate(config_path: Path, out: Path | None = None, comment: Path | None = 
     seeds = seeds_override or int(cfg.get("seeds", 3))
     from .controls import parse_controls
     controls = parse_controls(str(cfg.get("controls", "rewired")).replace("none", ""))
-    report = run_suite(c, params, load_tasks(), simulator=sim, seeds=seeds, controls=controls)
+    report = run_suite(c, params, load_tasks(), simulator=sim, seeds=seeds, controls=controls, jobs=int(jobs),
+                       connectome_ref=name, cache=cache, simulator_spec=cfg.get("simulator", "flybench.sim:LIFSimulator"))
     holdout = run_holdout(c, params, sim, seeds)
     report["public_score"] = report["score"]
     if holdout is not None:
@@ -182,6 +199,7 @@ def evaluate(config_path: Path, out: Path | None = None, comment: Path | None = 
     report["division"] = cfg.get("division", "closed")
     report["n_free_parameters"] = cfg.get("n_free_parameters")
     report["fit_data"] = str(cfg.get("fit_data", ""))
+    report["conflict_of_interest"] = str(cfg.get("conflict_of_interest") or "none declared")
     report["verified"] = True            # produced by the benchmark's own CI, not self-reported
     report["submission"] = str(Path(config_path).as_posix())
     out = out or Path("results") / f"{slug(cfg['label'])}.json"

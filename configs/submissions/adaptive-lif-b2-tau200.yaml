@@ -11,3 +11,4 @@ simulator: flybench.models.adaptive_lif:AdaptiveLIFSimulator
 division: open
 n_free_parameters: 0          # b and tau_a are literature values (Benda & Herz 2003), applied uniformly; gain swept
 fit_data: none — constants from the literature, not fitted; gain swept over the same grid as the reference LIF
+conflict_of_interest: "written by the flybench maintainer; the model is a hypothesis, and it is graded by the same CI as any other"

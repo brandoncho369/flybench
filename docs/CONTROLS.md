@@ -52,3 +52,14 @@ specificity; `–` means no controls were run.
 Each control multiplies the run time of the suite by roughly one (three controls ≈ 4× a plain run).
 Building the controls themselves takes seconds even on MaleCNS (6.3 M edges); it is the simulation
 that costs. Use `--controls rewired` for routine runs and `all` for leaderboard rows.
+
+## The audit (ROADMAP item 47)
+
+`flybench audit tasks/x.yaml -c flywire783` is the controls applied at the door: a proposed task
+is run on the reference LIF with the `rewired` control and refused when it is non-diagnostic
+(a positive check passes on the real wiring and on the shuffle). It also flags a `hard` task the
+reference passes with ≥ 1 decade of margin on every check (trivial — a regression test, not a
+target) and a tier the run contradicts. CI runs it for every task a pull request adds or changes.
+Existing tasks 1–32 were not audited retroactively at their creation; their `non_diagnostic`
+flags in the result files are the same test applied after the fact (task 23 and 32 sit at the
+floor for both wirings, which is "not discriminating yet", not "non-diagnostic").

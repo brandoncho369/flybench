@@ -157,12 +157,16 @@ def expand_checks(task: dict) -> dict:
     return {**task, "checks": out}
 
 
-def load_tasks(paths: list[Path] | None = None, tier: str = "all") -> list[dict]:
-    """tier: 'core' (reflexes the reference LIF must pass), 'hard', or 'all'."""
+def load_tasks(paths: list[Path] | None = None, tier: str = "all", include_retired: bool = False) -> list[dict]:
+    """tier: 'core' (reflexes the reference LIF must pass), 'hard', or 'all'. A task with `status: retired`
+    (docs/GOVERNANCE.md) is skipped unless asked for by path or with include_retired."""
+    explicit = paths is not None
     paths = paths or sorted(TASK_DIR.glob("*.yaml"))
     tasks = [expand_checks(yaml.safe_load(Path(p).read_text(encoding="utf-8"))) for p in paths]
     if tier != "all":
         tasks = [t for t in tasks if t.get("tier", "core") == tier]
+    if not explicit and not include_retired:
+        tasks = [t for t in tasks if t.get("status", "active") != "retired"]
     return tasks
 
 
@@ -853,6 +857,10 @@ def run_suite(c: Connectome, params: LIFParams, tasks: list[dict] | None = None,
         "params": asdict(params),
         "simulator": f"{simulator.__module__}.{getattr(simulator, '__name__', type(simulator).__name__)}",
         "simulator_capabilities": sorted(simulator_capabilities(simulator)),   # what the adapter declared (flybench.adapter); tasks needing more were skipped
+        # ROADMAP item 45: the maintainers' own model is a submission like any other, tagged so the
+        # leaderboard shows it as the floor to beat and never as the benchmark's answer
+        "reference_baseline": bool(getattr(simulator, "reference_baseline", False)),
+        "model_card": getattr(simulator, "model_card", None),
         "score": total,
         "passed": sum(r.passed for r in results),
         "n_tasks": len(results),
@@ -885,8 +893,8 @@ def leaderboard(reports: list[dict]) -> str:
         for t in r["tasks"]:
             if t["task"] not in task_names:
                 task_names.append(t["task"])
-    head = "| run | connectome | simulator | gain | w_syn | seeds | verified | core | hard | core by circuit | hard by circuit | graded (95% CI) | specificity | hold-out gap | division | max brain active | cost | " + " | ".join(task_names) + " |"
-    sep = "|" + "---|" * (17 + len(task_names))
+    head = "| run | role | connectome | simulator | gain | w_syn | seeds | verified | core | hard | core by circuit | hard by circuit | graded (95% CI) | specificity | hold-out gap | division | conflict of interest | max brain active | cost | " + " | ".join(task_names) + " |"
+    sep = "|" + "---|" * (19 + len(task_names))
     rows = []
     fmt = lambda v: "–" if v is None else f"{v:.2f}"  # noqa: E731
     # rank by pinned first, then core score, then hard score, then more seeds (more evidence), then verified
@@ -906,6 +914,9 @@ def leaderboard(reports: list[dict]) -> str:
         div = r.get("division") or ("closed" if sim == "LIFSimulator" and not r.get("n_free_parameters") else "open")
         if r.get("n_free_parameters") is not None:
             div += f" ({r['n_free_parameters']}p)"
+        # ROADMAP items 45 and 49: baseline rows are the maintainers' reference model; every row may declare a conflict of interest
+        role = "reference baseline" if r.get("reference_baseline") else "submission"
+        coi = r.get("conflict_of_interest") or "–"
         cost = r.get("cost") or {}
         # CPU seconds per simulated biological second, and peak memory: "–" for results written before the cost column
         if not cost or not cost.get("bio_seconds"):
@@ -913,5 +924,5 @@ def leaderboard(reports: list[dict]) -> str:
         else:
             slow = cost["cpu_seconds"] / cost["bio_seconds"]
             cost_s = (f"{slow:.1f}×" if slow < 10 else f"{slow:.0f}×") + f" real time, {cost.get('peak_rss_mb', float('nan')) / 1024:.1f} GB"
-        rows.append(f"| {r.get('label', '')} | {r['connectome']} | {sim} | {p['gain']} | {p['w_syn_mv']} | {r.get('seeds', 1)} | {ver} | {fmt(r.get('core_score'))} | {fmt(r.get('hard_score'))} | {fmt(r.get('core_by_circuit'))} | {fmt(r.get('hard_by_circuit'))} | {graded} | {spec} | {gap_s} | {div} | {max_active:.1%} | {cost_s} | " + " | ".join(cells) + " |")
+        rows.append(f"| {r.get('label', '')} | {role} | {r['connectome']} | {sim} | {p['gain']} | {p['w_syn_mv']} | {r.get('seeds', 1)} | {ver} | {fmt(r.get('core_score'))} | {fmt(r.get('hard_score'))} | {fmt(r.get('core_by_circuit'))} | {fmt(r.get('hard_by_circuit'))} | {graded} | {spec} | {gap_s} | {div} | {coi} | {max_active:.1%} | {cost_s} | " + " | ".join(cells) + " |")
     return "\n".join([head, sep, *rows])

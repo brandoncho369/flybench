@@ -2,7 +2,7 @@
   "schema": 1,
   "flybench_version": "0.1.0",
   "seeds": 3,
-  "verified": false,
+  "verified": true,
   "core_score": 1.0,
   "hard_score": 0.5011999244142101,
   "core_by_circuit": 1.0,
@@ -73,9 +73,7 @@
     "source": "flywire-codex",
     "min_synapses": 5,
     "n": 139255,
-    "n_edges": 3732460,
-    "sha256": "3002ef5fe9d10ab6f5da169e3c6dd21720cfbd2f5e4e46162b123bff2194db81",
-    "pinned_version": "FlyWire Codex v783 (2024) build, min_synapses 5"
+    "n_edges": 3732460
   },
   "n_neurons": 139255,
   "n_edges": 3732460,
@@ -93,18 +91,85 @@
     "seed": 0,
     "extra": {}
   },
-  "simulator": "flybench.sim.LIFSimulator",
+  "simulator": "flybench.models.reference_lif.ReferenceLIFSimulator",
   "simulator_capabilities": [
     "can_silence"
   ],
+  "reference_baseline": true,
+  "model_card": {
+    "name": "reference LIF (Shiu et al. 2024 constants)",
+    "engine": "flybench.sim:LIFSimulator",
+    "division": "closed",
+    "n_free_parameters": 1,
+    "free_parameters": {
+      "gain": "global multiplier on every synaptic weight; swept 0.3\u20131.0 on FlyWire, 0.45 chosen as the widest window in which the five core reflexes pass on every seed. Not fitted to any task."
+    },
+    "constants": {
+      "v_rest_mv": {
+        "value": -52.0,
+        "provenance": "CONVENTION",
+        "basis": "Shiu et al. 2024 (Nature 634:210) leaky integrate-and-fire; resting potential"
+      },
+      "v_reset_mv": {
+        "value": -52.0,
+        "provenance": "CONVENTION",
+        "basis": "Shiu 2024: reset to rest"
+      },
+      "v_th_mv": {
+        "value": -45.0,
+        "provenance": "CONVENTION",
+        "basis": "Shiu 2024: 7 mV above rest"
+      },
+      "tau_m_ms": {
+        "value": 20.0,
+        "provenance": "MEASURED",
+        "basis": "membrane time constant, Shiu 2024 after Gouwens & Wilson 2009"
+      },
+      "tau_syn_ms": {
+        "value": 5.0,
+        "provenance": "CONVENTION",
+        "basis": "Shiu 2024 synaptic current decay"
+      },
+      "t_ref_ms": {
+        "value": 2.2,
+        "provenance": "MEASURED",
+        "basis": "absolute refractory period, Shiu 2024"
+      },
+      "delay_ms": {
+        "value": 1.8,
+        "provenance": "MEASURED",
+        "basis": "synaptic delay, Shiu 2024"
+      },
+      "w_syn_mv": {
+        "value": 0.275,
+        "provenance": "MEASURED",
+        "basis": "unitary PSP per synapse, Shiu 2024; sign from the dataset's transmitter prediction (GABA/glutamate inhibitory)"
+      },
+      "dt_ms": {
+        "value": 0.1,
+        "provenance": "CONVENTION",
+        "basis": "integration step"
+      }
+    },
+    "not_modelled": [
+      "neuromodulation",
+      "plasticity",
+      "gap junctions",
+      "dendritic computation",
+      "a body"
+    ],
+    "fit_data": "gain swept; not fitted to any task",
+    "maintainer": "Brandon Cho (flybench maintainer)",
+    "conflict_of_interest": "the benchmark's maintainers wrote this model; it is a baseline, and the README never scores the benchmark by it"
+  },
   "score": 0.5971230158730159,
   "passed": 7,
   "n_tasks": 26,
   "cost": {
-    "wall_seconds": 1790.8087167739868,
-    "cpu_seconds": 6848.357824087143,
+    "wall_seconds": 1856.2023339271545,
+    "cpu_seconds": 7002.792941570282,
     "jobs": 4,
-    "peak_rss_mb": 419.23046875,
+    "peak_rss_mb": 417.4375,
     "bio_seconds": 426.0
   },
   "tasks": [
@@ -167,7 +232,7 @@
       },
       "readout_size": 139255,
       "stimulus_sizes": {},
-      "seconds": 7.84362006187439,
+      "seconds": 9.48912262916565,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -275,7 +340,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 86.86791062355042,
+      "seconds": 89.59700441360474,
       "notes": [],
       "graded": 0.8547046867837924,
       "graded_per_seed": [
@@ -362,7 +427,7 @@
         "sugar_grn": 129,
         "bitter_grn": 65
       },
-      "seconds": 114.59424757957458,
+      "seconds": 110.68752360343933,
       "notes": [],
       "graded": 0.9997156432785514,
       "graded_per_seed": [
@@ -468,7 +533,7 @@
       "stimulus_sizes": {
         "looming_detectors": 314
       },
-      "seconds": 42.26432752609253,
+      "seconds": 40.815367698669434,
       "notes": [],
       "graded": 0.8878267508943137,
       "graded_per_seed": [
@@ -546,7 +611,7 @@
       "stimulus_sizes": {
         "bitter_grn": 65
       },
-      "seconds": 34.51478338241577,
+      "seconds": 37.80322313308716,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -702,7 +767,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 136.46670985221863,
+      "seconds": 133.02002930641174,
       "notes": [
         "seed-sensitive: check 0: passes on 1/3 seeds"
       ],
@@ -783,7 +848,7 @@
         "pulse1": 129,
         "pulse2": 129
       },
-      "seconds": 143.12268543243408,
+      "seconds": 136.68848037719727,
       "notes": [],
       "graded": 0.49991747242872503,
       "graded_per_seed": [
@@ -913,7 +978,7 @@
       "stimulus_sizes": {
         "da1_orn": 127
       },
-      "seconds": 65.14691519737244,
+      "seconds": 62.080822467803955,
       "notes": [],
       "graded": 0.5972129056390362,
       "graded_per_seed": [
@@ -1044,7 +1109,7 @@
         "sugar_grn": 129,
         "looming_detectors": 314
       },
-      "seconds": 113.44287872314453,
+      "seconds": 106.25359344482422,
       "notes": [],
       "graded": 0.9998342392767291,
       "graded_per_seed": [
@@ -1158,7 +1223,7 @@
       "stimulus_sizes": {
         "looming_detectors": 314
       },
-      "seconds": 43.27485013008118,
+      "seconds": 43.178051710128784,
       "notes": [],
       "graded": 0.7312563216480612,
       "graded_per_seed": [
@@ -1258,7 +1323,7 @@
       "stimulus_sizes": {
         "photoreceptors": 11153
       },
-      "seconds": 33.56521725654602,
+      "seconds": 29.85380983352661,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -1378,7 +1443,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 236.3879508972168,
+      "seconds": 230.25701451301575,
       "notes": [],
       "graded": 0.2546784676665634,
       "graded_per_seed": [
@@ -1529,7 +1594,7 @@
         "looming_detectors": 314,
         "sugar_grn": 129
       },
-      "seconds": 76.088693857193,
+      "seconds": 78.11574363708496,
       "notes": [],
       "graded": 0.6296693765754758,
       "graded_per_seed": [
@@ -1690,7 +1755,7 @@
         "sugar_grn": 129,
         "looming_detectors": 314
       },
-      "seconds": 107.66455221176147,
+      "seconds": 111.32833313941956,
       "notes": [
         "seed-sensitive: check 1: passes on 2/3 seeds"
       ],
@@ -1927,7 +1992,7 @@
         "loom_left": 162,
         "loom_right": 152
       },
-      "seconds": 78.52907919883728,
+      "seconds": 82.00591564178467,
       "notes": [],
       "graded": 0.44444433333344446,
       "graded_per_seed": [
@@ -2121,7 +2186,7 @@
       "stimulus_sizes": {
         "da1_orn": 127
       },
-      "seconds": 131.6999533176422,
+      "seconds": 128.1380317211151,
       "notes": [
         "seed-sensitive: check 2: passes on 1/3 seeds; check 4: passes on 1/3 seeds"
       ],
@@ -2404,7 +2469,7 @@
         "orn_va1v": 94,
         "orn_dc1": 39
       },
-      "seconds": 367.68806624412537,
+      "seconds": 380.89007925987244,
       "notes": [],
       "graded": 0.11105225523809181,
       "graded_per_seed": [
@@ -2843,7 +2908,7 @@
         "lc16": 152,
         "lc10a": 237
       },
-      "seconds": 164.51920628547668,
+      "seconds": 181.687087059021,
       "notes": [
         "seed-sensitive: check 7: passes on 1/3 seeds"
       ],
@@ -3046,7 +3111,7 @@
         "hs_right": 3,
         "h2_left": 1
       },
-      "seconds": 151.43265175819397,
+      "seconds": 162.96936082839966,
       "notes": [],
       "graded": 0.7768232357694264,
       "graded_per_seed": [
@@ -3177,7 +3242,7 @@
         "jo_ce": 433,
         "jo_f": 205
       },
-      "seconds": 109.05450797080994,
+      "seconds": 98.34138989448547,
       "notes": [
         "seed-sensitive: check 1: passes on 2/3 seeds"
       ],
@@ -3544,7 +3609,7 @@
         "orn_dc1": 39,
         "silence[dc1_apl_off]": 2
       },
-      "seconds": 872.9564759731293,
+      "seconds": 953.7969419956207,
       "notes": [],
       "graded": 0.4891271896534126,
       "graded_per_seed": [
@@ -3758,7 +3823,7 @@
         "orn_da1": 127,
         "orn_dm1": 68
       },
-      "seconds": 179.7183096408844,
+      "seconds": 181.64272475242615,
       "notes": [],
       "graded": 0.5712879227564304,
       "graded_per_seed": [
@@ -3977,7 +4042,7 @@
         "cue_g4": 6,
         "cue_g8": 8
       },
-      "seconds": 412.1568224430084,
+      "seconds": 436.74654269218445,
       "notes": [],
       "graded": 0.190772358116327,
       "graded_per_seed": [
@@ -4125,7 +4190,7 @@
         "oviin": 2,
         "pc1": 10
       },
-      "seconds": 81.28232979774475,
+      "seconds": 85.51899695396423,
       "notes": [],
       "graded": 0.8047534749457347,
       "graded_per_seed": [
@@ -4334,7 +4399,7 @@
         "fg": 2,
         "bb": 2
       },
-      "seconds": 259.77089977264404,
+      "seconds": 266.4695556163788,
       "notes": [],
       "graded": 0.6193243716712078,
       "graded_per_seed": [
@@ -4449,7 +4514,7 @@
         "loom": 31825,
         "flash": 31825
       },
-      "seconds": 227.6570897102356,
+      "seconds": 239.73730611801147,
       "notes": [],
       "graded": 3.5999966560033343e-07,
       "graded_per_seed": [
@@ -4467,6 +4532,12 @@
       "non_diagnostic": false
     }
   ],
+  "public_score": 0.5971230158730159,
   "label": "LIF gain 0.45 (3 seeds)",
-  "unpinned": false
+  "note": "Shiu 2024 constants, gain 0.45 \u2014 the widest window in which the five core reflexes pass on every seed",
+  "division": "closed",
+  "n_free_parameters": 1,
+  "fit_data": "gain swept; not fitted to any task",
+  "conflict_of_interest": "the benchmark's maintainers wrote this model; it is the baseline, not the answer",
+  "submission": "configs/submissions/reference-lif-0.45.yaml"
 }

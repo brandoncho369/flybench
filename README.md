@@ -12,6 +12,8 @@ flybench asks the one question that keeps those choices honest:
 
 > **Does the simulated fly still do the things a real fly is known to do?**
 
+Scope, stated once so it is never overstated: the benchmark measures *these cited manipulations* — the tasks listed below, each a published stimulus → response with a threshold and a basis. It does not measure "biological realism" or how close to a fly a model is; a higher score reproduces more of the listed behaviours, nothing else ([docs/GOVERNANCE.md](docs/GOVERNANCE.md)).
+
 It ships a small suite of reflexes with citations, a reference LIF simulator, and a scoring harness, so any set of model parameters (or any alternative simulator that can run the tasks) gets a number you can compare.
 
 ```
@@ -161,7 +163,7 @@ A score is the fraction of listed behaviours a model reproduces under fixed, cit
 2. Mechanisms added to a model should be ones neuroscience has independent evidence for (spike-frequency adaptation, synaptic depression, gap junctions, neuromodulation) with constants in literature ranges, and the citation goes in the note.
 3. A change that fixes one task while breaking a core reflex is a finding, not a failure to hide; it usually means the mechanism is real but the numbers are not.
 
-The reference model is deliberately the simplest thing that works. Every improvement on it is a claim to be argued with, and the benchmark exists so the argument can happen with numbers.
+The reference model is deliberately the simplest thing that works. Every improvement on it is a claim to be argued with, and the benchmark exists so the argument can happen with numbers. It is also a *submission*, not the benchmark's answer: it has a model card (`flybench/models/reference_lif.py`), goes through `configs/submissions/` and `flybench evaluate` like anyone else's model, declares its conflict of interest (the maintainers wrote it), and its row is tagged **baseline** on the leaderboard. Nothing here scores the benchmark by its own model.
 
 **How good is the ruler itself?** Honestly: calibrated at the coarse end. It reliably tells "this brain is seizing" from "this pathway is dead" from "this reflex works"; it cannot yet rank two nearly-right models. What keeps it honest, and what we changed once we noticed the gaps:
 

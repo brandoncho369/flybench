@@ -1,0 +1,50 @@
+# Audits every task a pull request adds or changes (ROADMAP item 47): runs it on the reference LIF
+# (FlyWire v783, gain 0.45, 3 seeds) with the rewired control and refuses a task the shuffled
+# wiring also passes. Trivial hard tasks and tier mismatches are reported as warnings.
+name: audit-tasks
+on:
+  pull_request:
+    paths: ["tasks/*.yaml"]
+permissions:
+  contents: read
+  pull-requests: write
+concurrency:
+  group: audit-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install -e .
+      - name: pick tasks
+        id: pick
+        run: |
+          git diff --name-only --diff-filter=AM origin/${{ github.base_ref }}...HEAD -- 'tasks/*.yaml' > tasks.txt
+          echo "count=$(grep -c . tasks.txt || true)" >> "$GITHUB_OUTPUT"; cat tasks.txt
+      - name: lint
+        if: steps.pick.outputs.count != '0'
+        run: xargs -a tasks.txt flybench lint --strict
+      - name: audit on FlyWire
+        if: steps.pick.outputs.count != '0'
+        id: audit
+        run: |
+          set +e
+          xargs -a tasks.txt flybench audit -c flywire783 --gain 0.45 --seeds 3 --jobs 2 --comment audit.md --json audit.json
+          echo "status=$?" >> "$GITHUB_OUTPUT"
+      - name: comment on PR
+        if: steps.pick.outputs.count != '0'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const body = fs.existsSync('audit.md') ? fs.readFileSync('audit.md', 'utf8') : 'audit did not produce a report (see the workflow log)';
+            await github.rest.issues.createComment({ ...context.repo, issue_number: context.issue.number, body });
+      - name: verdict
+        if: steps.pick.outputs.count != '0'
+        run: |
+          if [ "${{ steps.audit.outputs.status }}" != "0" ]; then echo "a task was rejected as non-diagnostic (see the PR comment)"; exit 1; fi

@@ -1,0 +1,13 @@
+# The reference model, submitted like any third party (docs/ROADMAP.md item 45). CI evaluates this
+# config exactly as it would a stranger's; the result is tagged `reference_baseline` on the
+# leaderboard. Model card: flybench/models/reference_lif.py.
+label: LIF gain 0.45 (3 seeds)
+note: Shiu 2024 constants, gain 0.45 — the widest window in which the five core reflexes pass on every seed
+connectome: flywire783
+seeds: 3
+params:
+  gain: 0.45
+simulator: flybench.models.reference_lif:ReferenceLIFSimulator
+division: closed
+controls: rewired
+conflict_of_interest: "the benchmark's maintainers wrote this model; it is the baseline, not the answer"

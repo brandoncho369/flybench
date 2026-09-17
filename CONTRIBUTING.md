@@ -61,6 +61,20 @@ flybench run -c flywire783 -t tasks/your_task.yaml   # on the real brain
 
 Negative controls ("X should *not* happen") are the most valuable tasks; they are what stop a model from passing by firing everything.
 
+Before opening the PR, audit it (what CI will do on FlyWire for every task a PR adds or changes,
+`.github/workflows/audit-tasks.yml`):
+
+```bash
+flybench audit tasks/your_task.yaml -c flywire783 --gain 0.45 --seeds 3 --jobs 4
+```
+
+It runs the task on the reference LIF with the `rewired` control and **rejects** a task the
+shuffled wiring also passes (non-diagnostic: it measures something, but not the connectome).
+It **warns** on a `hard` task the reference passes on every seed with ≥ 10× margin (trivial: a
+regression test, not a target — make it `core`, and only if no core task guards that pathway), and
+on a tier the run contradicts (`core` is by definition what the reference passes). A task the
+dataset cannot run is a warning, not a verdict.
+
 ## 3. Plug in a different model
 
 The benchmark doesn't care how you simulate, only what fires. A simulator is any callable `Simulator(connectome, params)` returning an object with
@@ -120,6 +134,21 @@ Branch protection on the default branch should require the `ci` check and one re
   give `n_free_parameters` and `fit_data`. `fit_data` that names a benchmark task, the benchmark,
   or the hold-out set is rejected: fit on recordings or literature values, then evaluate.
 - CI reports `gap = public − hold-out`. Nobody sees the hold-out thresholds; keep it that way.
+
+## The maintainers' model is a submission, not the answer
+
+The reference LIF is packaged as a model card (`flybench/models/reference_lif.py`: Shiu 2024
+constants with provenance, one free parameter) and submitted through the same path as everyone
+else's: `configs/submissions/reference-lif-0.45.yaml`, evaluated by `flybench evaluate`, its
+result `verified` by the benchmark's CI rather than by its author. Its row is tagged
+`reference_baseline` on `LEADERBOARD.md` and shows a *baseline* badge on the site. It is the
+floor to beat. Nothing in the README scores the benchmark by it, and "the reference passes /
+fails this" is a statement about one submission.
+
+Every submission config may — and the maintainers' must — carry `conflict_of_interest:` (a
+sentence; `none` is an answer: who wrote the model, whether they wrote tasks it targets, what
+they stand to gain). It is shown on the leaderboard next to the row. Task authors do not review
+submissions that target their tasks; the maintainers do not review their own.
 
 ## Graded scores and recording-match checks
 

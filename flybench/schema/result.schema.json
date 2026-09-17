@@ -13,6 +13,9 @@
     "simulator": { "type": "string" },
     "seeds": { "type": "integer", "minimum": 1, "maximum": 50 },
     "verified": { "type": "boolean" },
+    "reference_baseline": { "type": "boolean" },
+    "model_card": { "type": ["object", "null"] },
+    "conflict_of_interest": { "type": "string", "maxLength": 300 },
     "tier": { "type": "array", "items": { "enum": ["core", "hard"] } },
     "params": {
       "type": "object",

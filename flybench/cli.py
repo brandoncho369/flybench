@@ -275,6 +275,55 @@ def frontend(frontend, action, stimulus):
         console.print(f"  → {render_to_cache(n)}")
 
 
+@main.command()
+@click.argument("task_paths", nargs=-1, type=click.Path(exists=True, dir_okay=False))
+@click.option("--connectome", "-c", default="flywire783", show_default=True)
+@click.option("--gain", default=0.45, show_default=True, type=float, help="reference LIF gain (0.45 on FlyWire, 0.65 on MaleCNS)")
+@click.option("--seeds", default=3, show_default=True, type=int)
+@click.option("--jobs", "-j", default=1, show_default=True, type=int)
+@click.option("--cache", default=str(DEFAULT_CACHE), show_default=True)
+@click.option("--comment", default=None, help="write the markdown verdict here (CI posts it on the PR)")
+@click.option("--json", "json_out", default=None, help="write the audit records here")
+@click.option("--strict", is_flag=True, help="exit 1 on warnings too (tier mismatch, trivial hard task)")
+def audit(task_paths, connectome, gain, seeds, jobs, cache, comment, json_out, strict):
+    """Is a proposed task worth having? Runs it on the reference LIF with the rewired control and
+    rejects non-diagnostic tasks (passes on shuffled wiring), flags trivial ones and tier mismatches.
+    CI runs this on every task a pull request adds or changes."""
+    from .audit import audit_paths, markdown, to_dict
+    from .evaluate import ensure_cache
+
+    if not task_paths:
+        raise SystemExit("give one or more task YAML files")
+    ensure_cache(connectome, Path(cache))
+    c = load_connectome(connectome, cache)
+    audits = audit_paths([Path(p) for p in task_paths], c, LIFParams(gain=gain), seeds=seeds, jobs=jobs, connectome_ref=connectome, cache=cache)
+    md = markdown(audits, c.name, gain, seeds)
+    console.print(md)
+    if comment:
+        Path(comment).write_text(md, encoding="utf-8")
+    if json_out:
+        Path(json_out).write_text(json.dumps([to_dict(a) for a in audits], indent=2), encoding="utf-8")
+    worst = max((a.verdict for a in audits), key=["ok", "warn", "reject"].index)
+    if worst == "reject" or (strict and worst == "warn"):
+        raise SystemExit(1)
+
+
+@main.command()
+@click.argument("results", nargs=-1, type=click.Path(exists=True))
+@click.option("--out", "-o", default=None, help="write markdown here (default: stdout)")
+def lifecycle(results, out):
+    """Which tasks still discriminate? Per task and connectome: rows run, rows passed, and whether the
+    passing rows are indistinguishable (saturated → candidate for retirement, docs/GOVERNANCE.md)."""
+    from .lifecycle import load_reports, markdown, states
+
+    md = markdown(states(load_reports([Path(r) for r in results] or [Path("results")])))
+    if out:
+        Path(out).write_text(md + chr(10), encoding="utf-8")
+        console.print(f"lifecycle → {out}")
+    else:
+        console.print(md)
+
+
 @main.command("verify-adapter")
 @click.argument("simulator")
 @click.option("--connectome", "-c", default="toy", show_default=True, help="the contract is checked on this connectome (the toy is enough)")
@@ -451,7 +500,8 @@ def validate(paths):
 @click.option("--cache", default=str(DEFAULT_CACHE), show_default=True)
 @click.option("--tolerance", default=0.05, show_default=True, help="max allowed difference in any task score")
 @click.option("--mark", is_flag=True, help="on success, write verified: true into the report")
-def verify(report, cache, tolerance, mark):
+@click.option("--jobs", "-j", default=1, show_default=True, type=int, help="worker processes (bit-identical to serial)")
+def verify(report, cache, tolerance, mark, jobs):
     """Re-run a submitted report's parameters and compare scores. Maintainers run this before marking a result verified."""
     from .validate import validate_report
 
@@ -459,13 +509,17 @@ def verify(report, cache, tolerance, mark):
     errs = validate_report(r)
     if errs:
         console.print("[red]report is not valid:[/]"); [console.print("  " + escape(e)) for e in errs]; raise SystemExit(1)
-    if r.get("simulator", "flybench.sim.LIFSimulator") != "flybench.sim.LIFSimulator":
-        console.print(f"[yellow]custom simulator {r['simulator']} — install it, then re-run with --simulator to verify manually[/]"); raise SystemExit(2)
+    from .evaluate import ALLOWED_SIMULATORS
+    sim_name = r.get("simulator", "flybench.sim.LIFSimulator")
+    spec = next((s for s in ALLOWED_SIMULATORS if s.replace(":", ".") == sim_name), None)
+    if spec is None:
+        console.print(f"[yellow]custom simulator {sim_name} — install it, then re-run with --simulator to verify manually[/]"); raise SystemExit(2)
     c = load_connectome(r["connectome"], cache)
     params = LIFParams.from_dict(r["params"])
     names = {t["task"] for t in r["tasks"]}
     tasks = [t for t in load_tasks() if t["name"] in names]
-    fresh = run_suite(c, params, tasks, seeds=int(r.get("seeds", 1)))
+    fresh = run_suite(c, params, tasks, seeds=int(r.get("seeds", 1)), simulator=resolve_simulator(spec), jobs=int(jobs),
+                      connectome_ref=r["connectome"], cache=cache, simulator_spec=spec)
     worst = 0.0
     for a in r["tasks"]:
         b = next((t for t in fresh["tasks"] if t["task"] == a["task"]), None)
@@ -498,11 +552,12 @@ def submit(report, note, dry_run):
 @click.option("--comment", default=None, help="write the markdown summary here (CI posts it on the PR)")
 @click.option("--seeds", default=None, type=int, help="override the config's seed count")
 @click.option("--cache", default=str(DEFAULT_CACHE), show_default=True)
-def evaluate(config, out, comment, seeds, cache):
+@click.option("--jobs", "-j", default=1, show_default=True, type=int, help="worker processes (bit-identical to serial)")
+def evaluate(config, out, comment, seeds, cache, jobs):
     """Evaluate a submission config (configs/submissions/*.yaml) on the real connectome. This is what CI runs."""
     from .evaluate import evaluate as _evaluate
 
-    _evaluate(Path(config), Path(out) if out else None, Path(comment) if comment else None, Path(cache), seeds)
+    _evaluate(Path(config), Path(out) if out else None, Path(comment) if comment else None, Path(cache), seeds, jobs=jobs)
 
 
 @main.command()

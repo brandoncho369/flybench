@@ -199,19 +199,27 @@ neuromodulatory), circadian (24 h), song rhythm (needs dynamics a static LIF lac
 
 ## 6. Governance (not grading our own model)
 
-45. Move the reference LIF into its own package and submit it like any third party, marked
-    `reference_baseline`.
+45. **Done 2026-09-17:** the reference LIF is a model card (`flybench/models/reference_lif.py`, constants with
+    provenance, one free parameter) submitted through `configs/submissions/reference-lif-0.45.yaml` and evaluated
+    by `flybench evaluate` (now with `--jobs`); its result carries `reference_baseline: true`, `verified` by the
+    benchmark's CI path, and shows a *baseline* badge / `role` column. The engine stays in `flybench.sim` (a
+    separate pip package would break every import for no governance gain).
 46. Task RFC template: cited experiment with mean ± SD ± n, readouts and margins, pre-registered
     prediction of whether the reference model passes, shuffled-connectome control result,
     provenance tags on every constant. Two public reviews + maintainer meta-review; accepted task
     authors join the reviewer pool and get co-authorship (BIG-bench's credit model).
-47. Reject tasks the reference model trivially passes and tasks the shuffle also passes.
+47. **Done 2026-09-17:** `flybench audit` (flybench/audit.py) runs a task on the reference LIF with the `rewired`
+    control and rejects non-diagnostic tasks, warns on trivial hard tasks (≥ 1 decade of margin on every check) and
+    tier mismatches; `.github/workflows/audit-tasks.yml` runs it on FlyWire for every task a PR adds or changes
+    and fails the check on a rejection.
 48. A "break flybench" round: solicit tasks that current passing models fail, score submissions by
     how far they drive mean scores down (Brain-Score 2024 inverted its competition this way).
-49. Conflict-of-interest field per leaderboard row; task authors recuse from reviewing models that
-    target their tasks.
-50. Lifecycle policy: retire or rotate tasks once passing models are statistically indistinguishable;
-    named maintainer; scope the README claim to "these cited manipulations", never "biological realism".
+49. **Done 2026-09-17:** `conflict_of_interest:` in every submission config, carried into the result and a
+    leaderboard column (CONTRIBUTING.md); the recusal rule is written there. Enforcement is by review.
+50. **Done 2026-09-17:** docs/GOVERNANCE.md — named maintainer, the scope claim ("these cited manipulations", in the
+    README's first screen), the task lifecycle (proposed → audited → active → saturated → retired; `status: retired`
+    with date and reason, skipped by `load_tasks`, null guards never retired) and `flybench lifecycle results/`, the
+    saturation evidence (passing rows' margins within 0.3 decades, ≥ 3 rows).
 
 ## 7. Closed-loop track (later, and only with the control)
 

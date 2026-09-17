@@ -33,6 +33,12 @@ def lint_task(task: dict, source: str = "<task>", strict: bool = False) -> list[
         errs.append("needs `readout` or `readouts`")
     if task.get("tier", "core") not in TIERS:
         errs.append(f"tier must be one of {sorted(TIERS)}")
+    # lifecycle (docs/GOVERNANCE.md): a retired task stays in the repo with the reason and date, and is not run by default
+    status = task.get("status", "active")
+    if status not in ("active", "retired"):
+        errs.append("status must be `active` (default) or `retired`")
+    if status == "retired" and not (isinstance(task.get("retired"), dict) and task["retired"].get("date") and task["retired"].get("reason")):
+        errs.append("a retired task needs `retired: {date: YYYY-MM-DD, reason: ...}` (docs/GOVERNANCE.md)")
     if not task.get("citation"):
         errs.append("needs a `citation` (published fly behaviour)")
     if "expected_fail" in task and not (isinstance(task["expected_fail"], str) and task["expected_fail"].strip()):
