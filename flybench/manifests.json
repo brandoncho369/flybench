@@ -16,7 +16,7 @@
     "pinned_on": "2026-09-16"
   },
   "toy": {
-    "version": "2026-09-15-halt2",
+    "version": "2026-09-17-flyvis3",
     "source": "flybench.toy.build_toy_connectome",
     "pinned_on": "2026-09-16"
   }

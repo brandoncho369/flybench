@@ -415,3 +415,55 @@ is on the 31-task set and one scoring version. Accounting, against the previousl
   README's reflex-window table — are unchanged: 0.40 is still the knife edge (sugar reaches MN9
   on 2 of 3 seeds), 0.45 still passes every core task on every seed.
 - Cost column populated on every row: ~5× real time per CPU on FlyWire, 0.4–0.6 GB per worker.
+
+## 2026-09-17 — task 32 (first sensory front end): through flyvis, the reference model's giant fiber fires to a flash and not to a loom
+
+Roadmap item 44. Every escape task so far drove LPLC2 and LC4 *themselves* at 150 Hz — a
+convention that assumes the optic lobe has already computed "loom". Task 32 replaces the
+convention with a published optic-lobe model: a rendered dark disc (r/v 40 ms, collision at 1 s)
+goes through the pretrained flyvis network (Lappalainen et al. 2024), and the 27 output types
+both connectomes name identically (T4a–d, T5a–d, T2, T2a, T3, Tm/TmY; ~32,000 FlyWire cells) are
+driven column by column with flyvis's rates above rest (1 unit = 100 Hz, an inferred PCA
+retinotopy — `flybench/frontends/flyvis_frontend.py`). The connectome's own wiring has to carry
+it from there to LPLC2, LC4 and the GF. Front-end outputs are cached and committed
+(`data/frontends/flyvis/*.npz`, 4 MB), so runs and CI need neither torch nor flyvis.
+
+Pre-registered (docs/rfcs/32, informed by disclosed single-seed development runs): 0/3 on both
+brains, rewired ties at 0/3, and the *unscored* flash fires the GF at tens of Hz.
+
+| | FlyWire 0.45 | MaleCNS 0.65 |
+|---|---|---|
+| loom → LPLC2 / LC4 (900–1200 ms) / GF spikes | 0.0 / 0.0 Hz / 0.0 | 0.0 / 0.0 Hz / 0.0 |
+| loom, brain active | 4 % | **15 %** |
+| flash (unscored) → GF / brain active | **37 Hz** / 22 % | 5.8 Hz / 23 % |
+| score · rewired · specificity | 0/3 · 0/3 · 0.00 | 0/3 · 0/3 · 0.00 |
+
+- **The loom never arrives.** The loom's T5 drive is *sparse*: at the last frames 10–15 % of
+  columns exceed 20 Hz and the field mean over the last 500 ms is ~1 Hz per type; an LPLC2's
+  ~110 T5 synapses at 1 Hz is 0.07 mV. The flash is a synchronous transient on every column
+  (T4 154 Hz, Tm3 tonic 42 Hz), lights 22 % of the brain and reaches the GF through LC4 (4.8 Hz)
+  and the network. A point-neuron LIF that sums synapses cannot prefer a sparse late edge to a
+  full-field step; the fly's LPLC2 does it with the layer-specific radial arrangement of its
+  T4/T5 inputs (Klapoetke 2017), which is a dendritic computation, not a synapse count.
+- **Why the flash is measured, not scored.** Through this front end a brightening step gives
+  T5 as well as T4 a synchronous transient, so a flash null would be failed by any model that
+  sums T5 over the eye and passed only by one with retinotopic expansion selectivity — a test of
+  the front end rather than the connectome. `rate[flash, gf]` is in every result file.
+- **What survives the caveats.** flyvis models only 50–57 % of LPLC2/LC4's input types; the
+  column mapping uses about a third of the retina per type; 1 unit = 100 Hz is a convention.
+  All three bias toward failure. The *sign* of flash-vs-loom does not depend on them.
+- **First task at the floor for both the model and its shuffle** (with task 23): specificity
+  0.00 by construction, which is the honest number — the task discriminates nothing yet. It
+  becomes diagnostic the day a model passes it.
+
+The 127 checks of tasks 1–31 were bit-identical on FlyWire (`flybench diff`, mean graded
+difference 0.000); graded 0.669 → 0.653 only because a 0/3 task joined the denominator.
+MaleCNS likewise (146 checks identical; 0.650 → 0.639). One MaleCNS-only number: the loom
+lights 15 % of the CNS at 0.65 and still none of it is LPLC2, LC4 or the GF — the drive spreads
+without summing onto the detectors; the flash reaches the GF more weakly there (5.8 Hz), as
+tasks 4 and 16 already showed for the LC4 → GF path.
+
+Housekeeping: the toy has 3,790 neurons (T4/T5 subtypes on a coarse grid, an LPi-like layer;
+its MODELED dark-loom detector passes 3/3 and is the reason the task exists in CI, and proves
+nothing about the fly). Runs were done at `--jobs 4`: a `--jobs 6` attempt was killed for
+memory with a browser holding 9 GB, and 4 workers finish FlyWire in 30 min.

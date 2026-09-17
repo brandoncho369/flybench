@@ -1,0 +1,38 @@
+name: flyvis_loom_escape
+title: Through a real visual front end, a loom reaches the loom detectors and the giant fiber
+tier: hard
+circuit: escape
+description: >
+  The escape tasks so far drive the loom detectors themselves (LPLC2 and LC4 at 150 Hz): a
+  convention that assumes the optic lobe has already done its job. This task replaces it with a
+  published model of the optic lobe: flyvis (Lappalainen et al. 2024), a connectome-constrained
+  network of 65 cell types on a 721-column retina, sees a rendered stimulus and its output types
+  (T4/T5, T2/T3, Tm/TmY) drive the same types in the connectome, column by column (an inferred
+  retinotopy, see flybench/frontends/flyvis_frontend.py); the LIF's own wiring from there to LPLC2,
+  LC4 and the giant fiber does the rest. A dark disc expanding with r/v = 40 ms (von Reyn 2014,
+  Ache 2019) must fire LPLC2 and LC4 (Klapoetke 2017; Ache 2019) and give the giant fiber at
+  least one spike (von Reyn 2014). A full-field brightening (the task-11 null, now through the
+  eye) is measured and reported but not scored: see the checks. Front-end outputs are cached and committed
+  (data/frontends/flyvis), so runs need neither torch nor flyvis; a dataset without the optic-lobe
+  types skips the task. Pre-registered predictions and outcome: docs/rfcs/32_flyvis_loom_escape.md.
+citation: "Lappalainen et al. 2024 (Nature 634:1132, flyvis); von Reyn et al. 2014 (Nat Neurosci 17:962); Klapoetke et al. 2017 (Nature 551:237); Ache et al. 2019 (Curr Biol 29:1073)"
+duration_ms: 1300
+window: [200, 1200]
+requires_frontends: [flyvis]
+requires_readouts: [gf, lplc2, lc4]
+readouts:
+  gf:    {select: {any: [{cell_type: GF}, {cell_type: DNp01}, {hemibrain_type: "Giant Fiber"}]}}
+  lplc2: {select: {any: [{cell_type: LPLC2}, {hemibrain_type: LPLC2}]}}
+  lc4:   {select: {any: [{cell_type: LC4}, {hemibrain_type: LC4}]}}
+conditions:
+  # each condition is a 1 s movie rendered at 100 Hz through flyvis, starting at 200 ms; the first 100 ms of every movie is the grey field
+  loom:  {stimuli: [{name: loom,  frontend: flyvis, stimulus: loom,  t_start_ms: 200}]}
+  flash: {stimuli: [{name: flash, frontend: flyvis, stimulus: flash, t_start_ms: 200}]}
+checks:
+  # the loom's last 300 ms: the disc grows from 22° to 90° and the edge sweeps most columns (Ache 2019: the GF spike comes near collision)
+  - {type: rate, cond: loom, readout: lplc2, window: [900, 1200], op: ">", value: 5, basis: "Klapoetke et al. 2017: LPLC2 responds to looming (radially expanding) motion, most strongly as the object grows; 5 Hz is the task-02 convention for a response"}
+  - {type: rate, cond: loom, readout: lc4, window: [900, 1200], op: ">", value: 5, basis: "Ache et al. 2019; von Reyn et al. 2017: LC4 responds to looming, encoding angular size; 5 Hz task-02 convention"}
+  - {type: spikes_per_neuron, cond: loom, readout: gf, op: ">=", value: 1, basis: "von Reyn et al. 2014: a looming stimulus with r/v = 40 ms evokes a giant-fiber spike; one spike per neuron is the task-16 convention for 'the DN responded'"}
+  # the flash is measured, not scored: through this front end a brightening step gives T4 and T5 a synchronous
+  # transient that no toy without retinotopic selectivity can reject, so a flash null here would be a test of
+  # the front end, not of the connectome (docs/rfcs/32). rate[flash, gf] is in every result file.

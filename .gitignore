@@ -12,3 +12,11 @@ data/
 flywire783-cache.zip
 data-malecns/ 
 !public/data/malecns/ 
+
+# sensory front-end caches are small, deterministic and needed by CI
+!data/
+data/*
+!data/frontends/
+
+# stray explorer exports (the explorer keeps its own copies in ../fly-explorer/public/data)
+public/

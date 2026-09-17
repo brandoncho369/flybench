@@ -166,9 +166,20 @@ def load_tasks(paths: list[Path] | None = None, tier: str = "all") -> list[dict]
     return tasks
 
 
-def _stimuli(c: Connectome, spec_list: list[dict], sizes: dict[str, int], duration_ms: float = float("inf")) -> list[Stimulus]:
+def _stimuli(c: Connectome, spec_list: list[dict], sizes: dict[str, int], duration_ms: float = float("inf"), seed: int = 0) -> list[Stimulus]:
     out = []
     for i, s in enumerate(spec_list):
+        if s.get("frontend"):
+            # a sensory front end (flybench.frontends): the stimulus is a named movie, the neurons are
+            # every driven cell type present here, the rates are the front end's per-column output
+            if s["frontend"] != "flyvis":
+                raise ValueError(f"unknown frontend {s['frontend']!r}")
+            from .frontends.flyvis_frontend import stimuli_from_cache
+            stims, fsizes = stimuli_from_cache(c, s["stimulus"], float(s.get("t_start_ms", 0.0)), scale=float(s.get("scale", 1.0)), seed=seed)
+            name = s.get("name", f"{s['frontend']}:{s['stimulus']}")
+            sizes[name] = int(sum(fsizes.values()))
+            out.extend(stims)
+            continue
         neurons = c.select(s["select"])
         name = s.get("name", f"stim{i}")
         sizes[name] = int(neurons.size)
@@ -342,6 +353,24 @@ def task_unavailable(task: dict, c: Connectome, simulator: Any = None) -> str | 
     only = task.get("dataset_only")
     if only and c.name not in list(only):
         return f"not applicable: {task['name']} is defined on {'/'.join(only)} only (this is {c.name})"
+    for fe in task.get("requires_frontends", []) or []:
+        # a front end's cached output must exist (or the front end itself, to render it)
+        from .frontends import FRONTENDS
+        if fe not in FRONTENDS:
+            return f"unknown frontend {fe!r}"
+        from .frontends.flyvis_frontend import available, cached
+        names = {st.get("stimulus") for cond in task.get("conditions", {}).values() for st in cond.get("stimuli", []) if st.get("frontend") == fe}
+        missing = [n for n in names if n and not cached(n)]
+        if missing and not available():
+            return f"frontend {fe!r} output not cached for {sorted(missing)} and {fe} is not installed"
+        if missing:
+            from .frontends.flyvis_frontend import render_to_cache
+            for n in missing:
+                render_to_cache(n)
+        # the driven types must exist here
+        from .frontends.flyvis_frontend import OUTPUT_TYPES
+        if not any(c.select({"cell_type": t}).size for t in OUTPUT_TYPES):
+            return f"frontend {fe!r}: none of its output cell types exist on {c.name}"
     needed = set(task.get("requires_capabilities", []) or [])
     if needed and simulator is not None:
         have = simulator_capabilities(simulator)
@@ -362,6 +391,8 @@ def task_unavailable(task: dict, c: Connectome, simulator: Any = None) -> str | 
         if not specs:
             return f"requires stimulus {name!r} which no condition defines"
         for st in specs:
+            if st.get("frontend"):
+                continue          # checked above by requires_frontends
             if c.select(st["select"]).size == 0:
                 return f"stimulus {name!r} matches no neurons on {c.name}"
     return None
@@ -440,7 +471,7 @@ def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False
     measurements: dict[str, dict[str, float]] = {}
     stim_sizes: dict[str, int] = {}
     for cond_name, cond in task["conditions"].items():
-        stims = _stimuli(c, cond.get("stimuli", []), stim_sizes, duration)
+        stims = _stimuli(c, cond.get("stimuli", []), stim_sizes, duration, seed=params.seed)
         for s in stims:
             if s.neurons.size == 0:
                 notes.append(f"{cond_name}: stimulus {s.name!r} matched 0 neurons")

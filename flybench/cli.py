@@ -253,6 +253,28 @@ def fingerprint(connectome, cache):
     console.print(_esc(f"{c.name}: {pin['sha256']}  [{pin['status']}]" + (f"  pinned: {pin['expected']}" if pin["status"] == "mismatch" else "")))
 
 
+@main.command()
+@click.argument("frontend", type=click.Choice(["flyvis"]))
+@click.argument("action", type=click.Choice(["render", "status"]))
+@click.option("--stimulus", "-s", multiple=True, help="which named stimuli to render (default: all)")
+def frontend(frontend, action, stimulus):
+    """Sensory front ends (flybench.frontends). `flyvis render` runs the named stimuli through the
+    pretrained flyvis network and writes data/frontends/flyvis/<name>.npz (committed, so runs and CI
+    need neither torch nor flyvis); `flyvis status` says what is cached and whether flyvis is installed."""
+    from .frontends.flyvis_frontend import STIMULI, available, cache_path, cached, render_to_cache
+    names = list(stimulus) or list(STIMULI)
+    if action == "status":
+        console.print(f"flyvis installed: {available()}")
+        for n in STIMULI:
+            console.print(f"  {n:10} {'cached ' + str(cache_path(n)) if cached(n) else 'not cached'}")
+        return
+    if not available():
+        raise SystemExit("flyvis is not installed: pip install flyvis && flyvis download-pretrained (set FLYVIS_ROOT_DIR)")
+    for n in names:
+        console.print(f"rendering {n} …")
+        console.print(f"  → {render_to_cache(n)}")
+
+
 @main.command("verify-adapter")
 @click.argument("simulator")
 @click.option("--connectome", "-c", default="toy", show_default=True, help="the contract is checked on this connectome (the toy is enough)")

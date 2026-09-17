@@ -192,8 +192,9 @@ neuromodulatory), circadian (24 h), song rhythm (needs dynamics a static LIF lac
     score-changing edits force a major bump and re-score every archived submission.
 43. **Done 2026-09-16:** results carry `cost` (wall, CPU seconds, jobs, peak RSS, simulated seconds); LEADERBOARD shows "N× real time, M GB". Cost column on the leaderboard: wall-clock, peak RAM, sim-seconds per bio-second,
     n_free_parameters (NeuroBench pairs correctness with complexity).
-44. Integrations, in order of tractability: flyvis as an adapter and as an observation source (its
-    24-study tuning table), eonsystemspbc/fly-brain backends, chaobrain's fitted whole-brain SNN as
+44. **flyvis front end done 2026-09-16** (`flybench/frontends/flyvis_frontend.py`, task 32, docs/rfcs/32): a rendered movie
+    through the pretrained flyvis network drives T4/T5/T2/T3/Tm/TmY column by column; outputs cached and committed.
+    Still open: flyvis as an adapter (its 24-study tuning table as tasks), eonsystemspbc/fly-brain backends, chaobrain's fitted whole-brain SNN as
     the high-parameter counterpoint, FlyGym/flybody for a future closed-loop track.
 
 ## 6. Governance (not grading our own model)

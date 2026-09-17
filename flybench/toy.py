@@ -122,6 +122,12 @@ POPS = [
     ("odn1",         2, "descending", "",       "DNg97",     "",           "ACH",  "oDN1",             (30, 190, -30)),
     ("bdn2",         2, "descending", "",       "DNg100",    "",           "ACH",  "BDN2",             (40, 190, -30)),
     ("walk_in",     10, "central", "",          "PVLP137",   "PVLP137",    "ACH",  "walking command input", (60, 210, 0)),
+    # task 32 (flyvis front end): the optic-lobe output types the front end drives. T5 (OFF-edge motion) feeds the
+    # loom detectors; T4 (ON-edge motion) projects nowhere in the toy, so a flash is a null by construction.
+    # Somata on a disc (spread 60) so the front end's PCA column mapping has something to work with.
+    *[(f"t5{k}", 24, "visual_projection", "", f"T5{k}", f"T5{k}", "ACH", "T5", (-230, 150, 0)) for k in "abcd"],
+    *[(f"t4{k}", 24, "visual_projection", "", f"T4{k}", f"T4{k}", "ACH", "T4", (-230, 130, 0)) for k in "abcd"],
+    ("lpi",         20, "central", "",          "LPi_toy",   "",           "GABA", "lobula plate intrinsic", (-200, 140, 0)),
 ]
 
 SUB_CLASS = {"mn_t1": "fl"}   # Codex-style `sub_class` (fl/ml/hl = front/mid/hind leg); "" elsewhere
@@ -131,7 +137,7 @@ SUB_CLASS = {"mn_t1": "fl"}   # Codex-style `sub_class` (fl/ml/hl = front/mid/hi
 RING = {"epg_pen": 40, "pen_epg_self": 30, "pen_epg_side": 20, "epg_d7": 10, "d7_epg": 12}
 
 # Bump when POPS or the wiring change: load_connectome("toy") rebuilds a cache whose version differs.
-TOY_VERSION = "2026-09-15-halt2"
+TOY_VERSION = "2026-09-17-flyvis3"
 
 
 def build_toy_connectome(seed: int = 1) -> Connectome:
@@ -284,6 +290,15 @@ def build_toy_connectome(seed: int = 1) -> Connectome:
     connect("foxglove", "odn1", 1.0, 60, 90)
     connect("foxglove", "bdn2", 1.0, 60, 90)
     connect("bluebell", "odn1", 1.0, 60, 90)
+    # --- added 2026-09-17 for task 32 (MODELED): a dark-loom detector. Every T5 subtype (OFF-edge motion) excites the
+    #     loom detectors, strongly, because the front end's loom is a brief edge passing each column; every T4 subtype
+    #     (ON-edge motion, what a brightening flash drives) reaches them through a GABAergic LPi-like layer. The real
+    #     LPLC2 gets expansion selectivity from the layer-specific radial arrangement of T4/T5 inputs (Klapoetke 2017),
+    #     which the toy cannot have without retinotopy; ON-inhibition is the toy's stand-in for "not a flash".
+    for k in "abcd":
+        connect(f"t5{k}", "lplc2", 0.6, 24, 34); connect(f"t5{k}", "lc4", 0.6, 24, 34)
+        connect(f"t4{k}", "lpi", 0.8, 14, 20)
+    connect("lpi", "lplc2", 0.9, 34, 44); connect("lpi", "lc4", 0.9, 34, 44)
     pre = np.concatenate(rows); post = np.concatenate(cols); syn = np.concatenate(vals).astype(np.float32)
     keep = pre != post
     pre, post, syn = pre[keep], post[keep], syn[keep]

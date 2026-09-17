@@ -60,12 +60,27 @@ class Stimulus:
     t_end_ms: float = float("inf")
     name: str = ""
     rate_end_hz: float | None = None
+    # a per-neuron rate time course (Hz), shape (n_neurons, n_bins) with bins of `series_bin_ms` from
+    # t_start_ms — what a sensory front end produces (flybench.frontends). Overrides rate_hz / rate_end_hz.
+    rate_series_hz: np.ndarray | None = None
+    series_bin_ms: float = 10.0
 
     def rate_at(self, t_ms: float) -> float:
+        if self.rate_series_hz is not None:
+            return float(np.mean(self.rates_at(t_ms)))
         if self.rate_end_hz is None or not np.isfinite(self.t_end_ms) or self.t_end_ms <= self.t_start_ms:
             return self.rate_hz
         f = min(max((t_ms - self.t_start_ms) / (self.t_end_ms - self.t_start_ms), 0.0), 1.0)
         return self.rate_hz + (self.rate_end_hz - self.rate_hz) * f
+
+    def rates_at(self, t_ms: float) -> np.ndarray:
+        """Per-neuron rate at time t (Hz): the series' bin (held), or the scalar rate for every neuron."""
+        n = len(self.neurons)
+        if self.rate_series_hz is None:
+            return np.full(n, self.rate_at(t_ms), dtype=np.float32)
+        b = int((t_ms - self.t_start_ms) // self.series_bin_ms)
+        b = min(max(b, 0), self.rate_series_hz.shape[1] - 1)
+        return np.asarray(self.rate_series_hz[:, b], dtype=np.float32)
 
 
 @dataclass
@@ -176,6 +191,10 @@ class LIFSimulator:
             forced_parts = []
             for neurons, prob, t0, t1, s in stim:
                 if t0 <= self.t < t1:
+                    if s.rate_series_hz is not None:
+                        # per-neuron probabilities from the front end's rate time course
+                        forced_parts.append(neurons[self.rng.random(neurons.size) < s.rates_at(self.t) * per_ms])
+                        continue
                     if s.rate_end_hz is not None:
                         prob = s.rate_at(self.t) * per_ms
                     forced_parts.append(neurons[self.rng.random(neurons.size) < prob])

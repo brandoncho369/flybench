@@ -67,6 +67,17 @@ def lint_task(task: dict, source: str = "<task>", strict: bool = False) -> list[
         if not (isinstance(jit, (int, float)) and 0 <= jit <= 1):
             errs.append(f"{cname}: weight_jitter must be a number in [0, 1] (lognormal sigma)")
         for i, s in enumerate(cond.get("stimuli", []) or []):
+            if s.get("frontend"):
+                from .frontends import FRONTENDS
+                if s["frontend"] not in FRONTENDS:
+                    errs.append(f"{cname}: stimulus {i} frontend {s['frontend']!r} is not one of {FRONTENDS}")
+                elif s["frontend"] == "flyvis":
+                    from .frontends.flyvis_frontend import STIMULI
+                    if s.get("stimulus") not in STIMULI:
+                        errs.append(f"{cname}: stimulus {i} flyvis stimulus must be one of {sorted(STIMULI)}")
+                if s["frontend"] not in (task.get("requires_frontends") or []):
+                    errs.append(f"{cname}: stimulus {i} uses frontend {s['frontend']!r}: add `requires_frontends: [{s['frontend']}]` so datasets and installs without it skip the task")
+                continue
             if "select" not in s:
                 errs.append(f"{cname}: stimulus {i} has no `select`")
             t0, t1 = float(s.get("t_start_ms", 0)), float(s.get("t_end_ms", duration))
