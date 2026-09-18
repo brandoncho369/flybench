@@ -14,7 +14,7 @@ can be argued with.
 ## What the benchmark claims
 
 flybench measures whether a whole-brain simulation reproduces **these cited manipulations**: the
-32 tasks in `tasks/`, each a published stimulus → response with a citation, a threshold with a
+tasks in `tasks/` (34 at the time of writing), each a published stimulus → response with a citation, a threshold with a
 `basis`, and a pre-registered RFC. It does not measure "biological realism", "how close to a
 fly" a model is, or anything a task does not test. A model that tops the leaderboard reproduces
 more of the listed behaviours than the others; it is not thereby more fly-like, and the README,
@@ -42,7 +42,11 @@ not review their own model's row (it is evaluated by CI, and the CI log is the r
 2. **Audited** — `flybench audit` (CI, on every task a PR touches): rejected if the shuffled
    wiring also passes it; warned if trivial or mis-tiered (item 47).
 3. **Active** — in `tasks/` with `status: active` (the default), run by every submission,
-   scored in its tier.
+   scored in its tier. Tiers are defined against the reference *submission*
+   (`configs/submissions/reference-lif-0.45.yaml`, FlyWire v783): `core` is what it passes on
+   every seed — a regression test — and `hard` is what it fails or cannot run. A task the
+   reference submission skips (a nerve-cord task on a brain-only dataset, task 34) stays `hard`
+   whatever it scores elsewhere.
 4. **Saturated** — every row that has run it on a connectome passes it with the same margin
    (`flybench lifecycle results/`: passing rows' mean margins within 0.3 decades, at least three
    rows). The task no longer separates models on that connectome.

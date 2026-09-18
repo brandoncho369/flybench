@@ -138,7 +138,7 @@ SUB_CLASS = {"mn_t1": "fl"}   # Codex-style `sub_class` (fl/ml/hl = front/mid/hi
 RING = {"epg_pen": 40, "pen_epg_self": 30, "pen_epg_side": 20, "epg_d7": 10, "d7_epg": 12}
 
 # Bump when POPS or the wiring change: load_connectome("toy") rebuilds a cache whose version differs.
-TOY_VERSION = "2026-09-17-body1"
+TOY_VERSION = "2026-09-18-ttmn5"
 
 
 def build_toy_connectome(seed: int = 1) -> Connectome:
@@ -167,9 +167,6 @@ def build_toy_connectome(seed: int = 1) -> Connectome:
     # --- escape: looming detectors -> giant fiber
     connect("lplc2", "gf", 0.6, 3, 8)
     connect("lc4", "gf", 0.6, 3, 8)
-    # GF -> TTMn: the fly's is a mixed electrical/chemical giant synapse (Allen et al. 2006); here a
-    # strong chemical contact so a GF spike reaches the jump muscle's motor neuron (task 33's body command)
-    connect("gf", "ttmn", 1.0, 20, 30)
     # --- olfaction (present, just not benchmarked)
     connect("orn", "pn", 0.15, 5, 15)
     connect("pn", "lhn", 0.2, 5, 15)
@@ -303,6 +300,15 @@ def build_toy_connectome(seed: int = 1) -> Connectome:
         connect(f"t5{k}", "lplc2", 0.6, 24, 34); connect(f"t5{k}", "lc4", 0.6, 24, 34)
         connect(f"t4{k}", "lpi", 0.8, 14, 20)
     connect("lpi", "lplc2", 0.9, 34, 44); connect("lpi", "lc4", 0.9, 34, 44)
+    # --- added 2026-09-17/18 for tasks 33 and 34, after every older draw. GF -> TTMn: the fly's is a mixed
+    #     electrical/chemical giant synapse (Allen et al. 2006); here a strong chemical contact so a GF spike reaches
+    #     the jump muscle's motor neuron (task 33's body command). DNp02/DNp11 -> TTMn: a GF-independent route,
+    #     MODELED after the long-latency escape (Engel & Wu 1996; Card & Dickinson 2008); it carries the convention
+    #     loom (task 34 check 4). The toy's eye-driven detectors fire only at collision, so the toy does not make
+    #     task 34's eye-loom checks (1-3) — by design, not a target: docs/rfcs/34.
+    connect("gf", "ttmn", 1.0, 20, 30)
+    connect("dnp11", "ttmn", 1.0, 16, 24)
+    connect("dnp02", "ttmn", 1.0, 16, 24)
     pre = np.concatenate(rows); post = np.concatenate(cols); syn = np.concatenate(vals).astype(np.float32)
     keep = pre != post
     pre, post, syn = pre[keep], post[keep], syn[keep]

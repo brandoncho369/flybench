@@ -517,3 +517,40 @@ evaluated through `flybench evaluate` (verified, `reference_baseline`).
 Housekeeping: result files now record which checks each control passes
 (`controls.<name>.checks`); the toy gained TTMn (3,792 neurons); `pip install -e .[embodied]`
 (FlyGym needs Python ≥ 3.12; CI moved to 3.12); a task with `body:` is skipped without it.
+
+## 2026-09-18 — task 34 (the jump without the giant fiber): the flash's road to the jump muscle is the GF; the loom's is not
+
+Follows task 33's unasked-for observation (a flyvis loom made the MaleCNS body jump with the GF
+silent). Task 34 zeroes the GF's outgoing synapses (`silence:`) and asks the body directly, with
+TTMn as the command. Pre-registered 5/6 (docs/rfcs/34): the eye loom and the convention loom
+would still reach TTMn and jump; rest quiet; and the flash — which lights 23 % of the CNS, more
+than the loom's 15 % — would reach TTMn too, GF or no GF.
+
+| MaleCNS 0.65, GF silenced | TTMn | takeoff, latency | predicted |
+|---|---|---|---|
+| loom through the eye | 3.3 spikes/neuron | yes, **499 ms** (411–558) | ✓ |
+| convention loom | 27 | yes, **30 ms** (23 ms with the GF) | ✓ |
+| flash through the eye | **0.0** (the GF itself still 6 Hz) | **no** | ✗ predicted a jump |
+| rest | 0 | no | ✓ |
+
+**6/6, rewired 1/6, specificity +0.83** — the highest in the suite. Older 153 checks identical.
+
+- **The dissociation.** Silencing the GF removes the flash's jump entirely and leaves the loom's
+  untouched (same seeds, same 3.3 Hz, same 499 ms). Task 32/33's wrong-way escape — the model
+  jumping at a brightening — is GF-borne end to end; the loom's route to TTMn does not use the
+  GF at all. Two stimuli that both light a sixth to a quarter of the CNS take different roads to
+  one motor neuron; "non-specific spread" does not describe either. Which descending neurons
+  carry the GF-free loom route is the next task (`upstream_of: TTMn` minus the GF, silenced in
+  turn).
+- **Fast and slow.** The GF-free route carries the convention loom in 30 ms (7 ms slower than
+  with the GF) and the eye loom in 411–558 ms — slow and variable, as the fly's long mode is.
+- **The shuffle fails the flash null** (on rewired wiring the flash reaches TTMn without the GF):
+  the real wiring's flash null is specific.
+- **Tier stays hard** although the reference passes 6/6 here: tiers are defined against the
+  reference submission on FlyWire, which cannot run a TTMn task (docs/GOVERNANCE.md, added).
+
+Housekeeping: the toy's DNp02/DNp11 → TTMn (MODELED) carries the convention loom but its
+eye-driven detectors fire only at collision, so the toy scores 3/6 by design (docs/rfcs/34); the
+toy's new wiring is appended after every older draw so tasks 1–33 are bit-identical on it.
+Runs are back to one at a time — pytest and a 4-worker run together were killed for memory with
+a browser at 11.6 GB.

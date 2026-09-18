@@ -1,0 +1,41 @@
+name: ttmn_without_gf
+title: The jump without the giant fiber — a loom through the eye reaches TTMn with the GF silenced
+tier: hard
+circuit: escape
+description: >
+  Flies take off from a loom in two modes (Card & Dickinson 2008; von Reyn et al. 2014): the
+  giant-fiber short mode, and a long mode that survives silencing the GF and ends in the same
+  tergotrochanteral muscle. Task 33 found, unasked, that the flyvis loom made the body jump on
+  MaleCNS with the GF at 0 Hz. Here the GF's outgoing synapses are zeroed for the condition
+  (`silence`, as in task 26) and the question is asked directly, on the body: does the loom
+  through the eye still reach TTMn and make NeuroMechFly leave the ground before the movie's
+  collision; does the task-4 convention loom also have a GF-free route; does the flash's jump
+  (task 33) survive the GF's silencing (predicted not to — see the RFC); does the fly stay put at
+  rest. The GF-intact loom is measured, not scored (task 33 owns it). MaleCNS in practice (TTMn
+  needs a nerve cord). Pre-registered predictions and outcome: docs/rfcs/34_ttmn_without_gf.md.
+citation: "Card & Dickinson 2008 (Curr Biol 18:1300, doi:10.1016/j.cub.2008.07.094); von Reyn et al. 2014 (Nat Neurosci 17:962, doi:10.1038/nn.3741); Engel & Wu 1996 (J Comp Physiol A 178:105); Lobato-Rios et al. 2022 (Nat Methods 19:620, doi:10.1038/s41592-022-01466-7)"
+duration_ms: 1300
+window: [200, 1200]
+requires_frontends: [flyvis]
+requires_capabilities: [can_silence]
+requires_readouts: [ttmn, gf]
+readouts:
+  gf:   {select: &gf {any: [{cell_type: GF}, {cell_type: DNp01}, {hemibrain_type: "Giant Fiber"}]}}
+  ttmn: {select: {cell_type: TTMn}}
+body:
+  model: flygym
+  command: {readout: ttmn}
+conditions:
+  loom_eye:         {stimuli: [{name: loom,  frontend: flyvis, stimulus: loom,  t_start_ms: 200}]}
+  loom_eye_gf_off:  {stimuli: [{name: loom,  frontend: flyvis, stimulus: loom,  t_start_ms: 200}], silence: *gf}
+  loom_gf_off:      {stimuli: [{name: looming_detectors, select: {any: [{cell_type: LPLC2}, {cell_type: LC4}, {hemibrain_type: LPLC2}, {hemibrain_type: LC4}]}, rate_hz: 150, t_start_ms: 200, t_end_ms: 500}], silence: *gf}
+  flash_eye_gf_off: {stimuli: [{name: flash, frontend: flyvis, stimulus: flash, t_start_ms: 200}], silence: *gf}
+  rest_gf_off:      {stimuli: [], silence: *gf}
+checks:
+  - {type: spikes_per_neuron, cond: loom_eye_gf_off, readout: ttmn, op: ">=", value: 1, basis: "von Reyn et al. 2014: GF-silenced flies still take off from a loom (the long mode); Engel & Wu 1996: the long-latency TTM response is not the GF's; one spike per neuron is the task-15/16 convention for 'responded'"}
+  - {type: takeoff, cond: loom_eye_gf_off, op: ">=", value: 1, basis: "von Reyn et al. 2014: the GF-independent takeoff; the body left the ground (physics, all six feet)"}
+  - {type: takeoff_latency, cond: loom_eye_gf_off, op: "<", value: 1000, basis: "convention: the rendered loom collides 1000 ms after onset; a takeoff after the object has arrived is not an escape (Card & Dickinson 2008 measure every takeoff before contact)"}
+  - {type: spikes_per_neuron, cond: loom_gf_off, readout: ttmn, op: ">=", value: 1, basis: "von Reyn et al. 2014; Card & Dickinson 2008: the long mode exists for the same looms that drive the GF, so the convention loom must also reach TTMn without it (LC4 → DNp02/DNp11, task 10)"}
+  - {type: takeoff, cond: flash_eye_gf_off, op: "<", value: 0.5, basis: "von Reyn et al. 2014; Klapoetke et al. 2017: a full-field brightening is not a loom; the task-11 null through the eye and the body, with the GF's route removed"}
+  - {type: takeoff, cond: rest_gf_off, op: "<", value: 0.5, basis: "convention: a fly at rest does not jump (task 1); 0.5 splits 0 from 1"}
+  # loom_eye (GF intact) is measured and not scored: task 33 owns it

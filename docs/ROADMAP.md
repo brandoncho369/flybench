@@ -228,7 +228,7 @@ neuromodulatory), circadian (24 h), song rhythm (needs dynamics a static LIF lac
     fixed jump program per command, takeoff scored as a physics event, run with the `rewired` control like every
     task. Feed-forward only. Still open (7b): closing the loop (the body's own vision through the flyvis front end,
     proprioception), a walking task on a CPG-free body, scoring against videography (flybody: 0.25 mm / <5° in
-    flight), and an embodied hold-out.
+    flight), and an embodied hold-out. Task 34 (2026-09-18) adds the GF-silenced long-mode escape on the body.
 
 ## 8. Explorer and adoption
 
