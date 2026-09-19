@@ -115,7 +115,7 @@ def test_tasks_needing_neurons_the_dataset_lacks_are_skipped_not_failed(toy):
     rep = run_suite(toy, LIFParams(gain=1.0, seed=0), tasks)
     assert "looming_to_jump_muscle" in rep["skipped"]
     assert all(t["task"] != "looming_to_jump_muscle" for t in rep["tasks"])
-    assert rep["n_tasks"] == len(tasks) - len(rep["skipped"]) and len(rep["skipped"]) == 2   # 15 and 19 need the nerve cord
+    assert rep["n_tasks"] == len(tasks) - len(rep["skipped"]) and len(rep["skipped"]) == 3   # 15 and 19 need the nerve cord, 35 needs GFC2
     # a required readout that is not defined is a lint error, not a silent skip
     bad = dict(jump, requires_readouts=["nope"])
     assert task_unavailable(bad, toy).startswith("requires readout")

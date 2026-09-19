@@ -1,0 +1,54 @@
+name: gf_free_route_to_ttmn
+title: Which descending neurons carry the giant-fiber-free loom route to the jump muscle
+tier: hard
+circuit: escape
+dataset_only: [malecns, toy]   # the toy has no GFC2 and skips it through requires_readouts
+description: >
+  Task 34 showed a route from the flyvis eye to TTMn that survives silencing the giant fiber
+  and that the flash does not use. This task asks which descending neurons carry it, on the body
+  (NeuroMechFly, TTMn as the command). Every condition is the rendered loom with the GF silenced
+  plus one more silenced set: nothing more (the route exists); every descending neuron (the
+  route must descend — a check on the task itself); the three direct loom-DN inputs to TTMn
+  (DNp02, DNp06, DNp10 — predicted, from anatomy, not to matter, because task 32 found LC4 and
+  LPLC2 silent to this loom); the candidate set named by a fixed, disclosed procedure from one
+  development spike dump (docs/rfcs/35, stage 2: nine DN types converging on the GF-coupled
+  interneurons GFC2 and IN20A.22A, none of them a loom DN of the literature); and the top five
+  candidates one at a time. MaleCNS in practice: the candidate types are this dataset's names and
+  the toy has no GFC2, so it is skipped there; GFC2 (the GF-coupled interneuron the route runs
+  through) is read out in every condition.
+  Pre-registered in two disclosed stages: docs/rfcs/35_gf_free_route_to_ttmn.md.
+citation: "von Reyn et al. 2014 (Nat Neurosci 17:962, doi:10.1038/nn.3741); Card & Dickinson 2008 (Curr Biol 18:1300, doi:10.1016/j.cub.2008.07.094); Allen et al. 2006 (J Neurosci 26:1264, doi:10.1523/JNEUROSCI.4258-05.2006); Dombrovski et al. 2023 (Nature 613:534, doi:10.1038/s41586-022-05586-0)"
+duration_ms: 1300
+window: [200, 1200]
+requires_frontends: [flyvis]
+requires_capabilities: [can_silence]
+requires_readouts: [ttmn, gf, gfc2]
+readouts:
+  gf:   {select: &gf {any: [{cell_type: GF}, {cell_type: DNp01}]}}
+  ttmn: {select: {cell_type: TTMn}}
+  gfc2: {select: {cell_type: GFC2}}
+body:
+  model: flygym
+  command: {readout: ttmn}
+conditions:
+  # every condition: the rendered loom through flyvis, GF silenced, plus one more silenced set
+  gf_off:           {stimuli: &loom [{name: loom, frontend: flyvis, stimulus: loom, t_start_ms: 200}], silence: *gf}
+  gf_all_dn_off:    {stimuli: *loom, silence: {any: [*gf, {super_class: descending_neuron}]}}
+  gf_direct_dn_off: {stimuli: *loom, silence: {any: [*gf, {cell_type: [DNp02, DNp06, DNp10]}]}}
+  gf_route_off:     {stimuli: *loom, silence: {any: [*gf, {cell_type: [DNge048, DNa02, DNbe007, DNge006, DNg45, DNpe002, DNa11, DNb05, DNge053]}]}}
+  gf_dnge048_off:   {stimuli: *loom, silence: {any: [*gf, {cell_type: DNge048}]}}
+  gf_dna02_off:     {stimuli: *loom, silence: {any: [*gf, {cell_type: DNa02}]}}
+  gf_dnbe007_off:   {stimuli: *loom, silence: {any: [*gf, {cell_type: DNbe007}]}}
+  gf_dnge006_off:   {stimuli: *loom, silence: {any: [*gf, {cell_type: DNge006}]}}
+  gf_dng45_off:     {stimuli: *loom, silence: {any: [*gf, {cell_type: DNg45}]}}
+checks:
+  - {type: spikes_per_neuron, cond: gf_off, readout: ttmn, op: ">=", value: 1, basis: "von Reyn et al. 2014: the GF-independent takeoff (task 34's result, reproduced); one spike per neuron is the task-15/16 convention for 'responded'"}
+  - {type: spikes_per_neuron, cond: gf_all_dn_off, readout: ttmn, op: "<", value: 0.5, basis: "convention: the stimulus drives medulla types only, so a route to the nerve cord must descend; with every descending neuron silenced TTMn must be silent. The reference LIF fails this: its ascending neurons, driven at their brain-side (axo-axonic) inputs, fire backwards into the nerve cord — a point-neuron defect a compartmental model would not have (docs/rfcs/35, outcome)"}
+  - {type: spikes_per_neuron, cond: gf_direct_dn_off, readout: ttmn, op: ">=", value: 1, basis: "Ache et al. 2019; Dombrovski et al. 2023: DNp02/DNp06/DNp10 are LC4/LPLC2 targets, and task 32 found LC4 and LPLC2 silent to this loom on MaleCNS — so the route should survive silencing them (pre-registered from anatomy, docs/rfcs/35)"}
+  - {type: spikes_per_neuron, cond: gf_route_off, readout: ttmn, op: "<", value: 0.5, basis: "convention: the candidate set is the smallest prefix of the fixed ranking carrying >= 80 % of the loom-evoked drive onto TTMn's excitatory interneurons (docs/rfcs/35 stage 2); silencing it should abolish the response"}
+  - {type: takeoff, cond: gf_route_off, op: "<", value: 0.5, basis: "convention: and the body no longer jumps; 0.5 splits 0 from 1"}
+  - {type: spikes_per_neuron, cond: gf_dnge048_off, readout: ttmn, op: ">=", value: 1, basis: "convention: redundancy — no single candidate carries the route (DNge048 is 29 % of the weighted drive, the one most likely to break this; docs/rfcs/35)"}
+  - {type: spikes_per_neuron, cond: gf_dna02_off, readout: ttmn, op: ">=", value: 1, basis: "convention: redundancy — DNa02 alone (13 % of the drive) is not necessary"}
+  - {type: spikes_per_neuron, cond: gf_dnbe007_off, readout: ttmn, op: ">=", value: 1, basis: "convention: redundancy — DNbe007 alone (8 %) is not necessary"}
+  - {type: spikes_per_neuron, cond: gf_dnge006_off, readout: ttmn, op: ">=", value: 1, basis: "convention: redundancy — DNge006 alone (7 %) is not necessary"}
+  - {type: spikes_per_neuron, cond: gf_dng45_off, readout: ttmn, op: ">=", value: 1, basis: "convention: redundancy — DNg45 alone (6 %) is not necessary"}

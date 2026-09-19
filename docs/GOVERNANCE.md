@@ -14,7 +14,7 @@ can be argued with.
 ## What the benchmark claims
 
 flybench measures whether a whole-brain simulation reproduces **these cited manipulations**: the
-tasks in `tasks/` (34 at the time of writing), each a published stimulus → response with a citation, a threshold with a
+tasks in `tasks/` (35 at the time of writing), each a published stimulus → response with a citation, a threshold with a
 `basis`, and a pre-registered RFC. It does not measure "biological realism", "how close to a
 fly" a model is, or anything a task does not test. A model that tops the leaderboard reproduces
 more of the listed behaviours than the others; it is not thereby more fly-like, and the README,

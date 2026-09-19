@@ -554,3 +554,34 @@ eye-driven detectors fire only at collision, so the toy scores 3/6 by design (do
 toy's new wiring is appended after every older draw so tasks 1–33 are bit-identical on it.
 Runs are back to one at a time — pytest and a 4-worker run together were killed for memory with
 a browser at 11.6 GB.
+
+## 2026-09-19 — task 35 (which DNs carry the GF-free loom route): nine descending types converging on the GF-coupled interneurons — and ascending neurons run backwards in a point-neuron CNS
+
+Pre-registered in two disclosed stages (docs/rfcs/35): the anatomy and the test before any run,
+the candidate set from one spike dump by a procedure fixed in advance, then the scored run.
+MaleCNS 0.65, GF silenced throughout, loom through the flyvis eye, TTMn commanding the body.
+
+- **The route.** Nine DN types (DNge048, DNa02, DNbe007, DNge006, DNg45, DNpe002, DNa11, DNb05,
+  DNge053 — none a loom DN of the literature; DNa02 is task 28's steering DN) converge on the
+  giant-fiber-coupled interneurons GFC2 and IN20A.22A, which drive TTMn. Silencing the nine
+  abolishes TTMn and the jump on every seed; silencing any one of the top five alone does not
+  (1.7–9.5 spikes/neuron remain) — redundancy, as predicted. The three direct loom-DN inputs to
+  TTMn (DNp02/DNp06/DNp10) never fire and do not matter, as predicted from anatomy. 465 of
+  1,314 DNs fire to this loom; the route is a diffuse convergence, not a labelled line.
+- **The failed sanity check is a model defect worth a check of its own.** Silencing *every*
+  DN does not abolish the response (3.2 spikes/neuron, takeoff at 873 ms) although silencing
+  nine of them does. The residual carrier is the **ascending neurons**: 22 % of their input
+  synapses are in the brain (axo-axonic), a point neuron cannot tell a terminal input from a
+  dendritic one, so the loom's brain activity fires 437 ANs and their nerve-cord outputs reach
+  GFC2/TTMn. Every DN + every AN silenced → 0.0; GF + every AN silenced → the DN route still
+  works (6.5). No fly has this route. Check 2 stays: a compartmental model passes it, the
+  point-neuron LIF fails it. **9/10, rewired 3/10, specificity +0.60.**
+- **Two consequences for the rest of the suite.** (1) Any whole-CNS point-neuron result that
+  involves the nerve cord may carry antidromic AN drive; tasks 33–34's DN routes were checked
+  and stand without the ANs, but the caveat belongs on every VNC readout until a model places
+  axo-axonic synapses where they are. (2) The cheapest documented fix — treat synapses onto a
+  neuron's axon terminal as modulating its output rather than its membrane — needs synapse
+  positions relative to the soma, which the datasets have and the connectome cache does not
+  yet carry. A task that fails without it now exists (check 2); the mechanism can follow.
+
+Older 159 checks bit-identical; MaleCNS graded 0.652 → 0.660.
