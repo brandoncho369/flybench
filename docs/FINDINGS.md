@@ -585,3 +585,36 @@ MaleCNS 0.65, GF silenced throughout, loom through the flyvis eye, TTMn commandi
   yet carry. A task that fails without it now exists (check 2); the mechanism can follow.
 
 Older 159 checks bit-identical; MaleCNS graded 0.652 → 0.660.
+
+## 2026-09-20 — RFC M1, the terminal-aware LIF: moving 0.6 % of synapses off the soma passes task 35 and repairs three older MaleCNS tasks
+
+The first mechanism admitted by the "task before mechanism" rule since adaptation: task 35's
+failed check (ascending neurons firing backwards) earned it. `flybench fetch-terminals` reads
+neuPrint's per-connection ROI counts into a signed terminal matrix (555,960 axo-axonic synapses on
+MaleCNS's neck-spanning neurons — 11.6 % of the ascending classes' input); `flybench.models.
+terminal_lif` keeps them off the soma and lets inhibitory ones scale release (floor 0.3, Olsen &
+Wilson 2008). Open division, no free parameters; bit-identical to the reference wherever there is
+no terminal data (FlyWire, the toy, every shuffled control).
+
+| MaleCNS 0.65 | reference | terminal-aware | predicted |
+|---|---|---|---|
+| task 35 (all DNs silenced → cord silent) | 9/10 | **10/10** | ✓ |
+| tasks 33, 34 | 3/4, 6/6 | 3/4, 6/6 | ✓ |
+| task 20 taste_modalities | 2/4 | **4/4** (high salt → MN9 183 → 0 Hz) | ✗ "unchanged" |
+| task 24 optic_flow_rotation | 3/6 | 4/6 | ✗ |
+| task 23 leg_mn_size_principle | 0/3 | 1/3 | ✗ |
+| hard · graded · specificity | 0.574 · 0.660 · +0.218 | **0.613 · 0.669 · +0.252** | graded ✓, spec ✗ |
+| control scores | | identical, 33/33 | ✓ |
+
+- **It does what it was built for**: the first model to pass task 35; the GF-free loom route is
+  thinner (1.5 spikes/neuron at the low seed) but on every seed.
+- **It repairs things it was not built for.** The 2026-09-14 "high salt → MN9 is seed-bistable
+  on MaleCNS" result was in part ascending neurons driven at their SEZ terminals and igniting
+  the feeding circuit from below; with the terminals where they belong the null holds on every
+  seed and salt halves the sugar response. Three unrelated tasks moved toward the fly, none
+  away, the shuffled controls did not move, and the network fires *less*. docs/MALECNS.md's
+  "no gain does both taste and vision" stands, but one of its examples was the model, not the male.
+- **What it is not.** Only neck-spanning neurons are treated; within-brain axo-axonic contacts
+  still sum into the soma. The floor and slope are one olfactory synapse's numbers. Excitatory
+  terminal contacts are ignored, not modelled.
+- **Cost.** Half the wall-clock of the reference on the same suite (fewer spikes).

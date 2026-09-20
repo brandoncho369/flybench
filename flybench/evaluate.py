@@ -23,7 +23,7 @@ from .connectome import DEFAULT_CACHE, load_connectome
 from .sim import LIFParams
 
 CACHE_URL = "https://github.com/brandoncho369/flybench/releases/download/cache-{name}/{name}-cache.zip"
-ALLOWED_SIMULATORS = {"flybench.sim:LIFSimulator", "flybench.models.reference_lif:ReferenceLIFSimulator", "flybench.models.adaptive_lif:AdaptiveLIFSimulator"}
+ALLOWED_SIMULATORS = {"flybench.sim:LIFSimulator", "flybench.models.reference_lif:ReferenceLIFSimulator", "flybench.models.adaptive_lif:AdaptiveLIFSimulator", "flybench.models.terminal_lif:TerminalLIFSimulator"}
 ALLOWED_CONNECTOMES = {"flywire783", "toy"}
 DIVISIONS = {"closed", "open"}
 # closed division = the reference LIF dynamics with only the global gain fitted (Shiu et al. 2024 as

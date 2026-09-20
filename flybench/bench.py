@@ -423,8 +423,12 @@ def silence_neurons(c: Connectome, neurons: np.ndarray) -> Connectome:
         rows = np.repeat(np.arange(c.n), np.diff(W.indptr))
         W.data[mask[rows]] = 0.0
         W.eliminate_zeros()
+    T = c.terminal
+    if T is not None and idx.size:
+        # a silenced neuron's terminal contacts onto others go too (they are its outgoing synapses)
+        T = T.copy().tocsr(); trows = np.repeat(np.arange(c.n), np.diff(T.indptr)); T.data[mask[trows]] = 0.0; T.eliminate_zeros()
     return Connectome(root_ids=c.root_ids, W=W, positions=c.positions, annotations=c.annotations, name=c.name,
-                      meta={**c.meta, "silenced": int(idx.size)})
+                      meta={**c.meta, "silenced": int(idx.size)}, terminal=T)
 
 
 def dump_spikes(res: SimResult, c: Connectome, path: Path, trial: int = 0) -> Path:
@@ -450,7 +454,8 @@ def perturb_weights(c: Connectome, sigma: float, seed: int) -> Connectome:
     rng = np.random.default_rng(10_000 + seed)
     W = c.W.copy()
     W.data = (W.data * rng.lognormal(0.0, sigma, size=W.data.shape)).astype(np.float32)
-    return Connectome(root_ids=c.root_ids, W=W, positions=c.positions, annotations=c.annotations, name=c.name,
+    # the terminal counts stay as they are (they say *where* a synapse is, not how strong); TerminalLIF clips them to the edge
+    return Connectome(root_ids=c.root_ids, W=W, positions=c.positions, annotations=c.annotations, name=c.name, terminal=c.terminal,
                       meta={**c.meta, "weight_jitter": sigma})
 
 

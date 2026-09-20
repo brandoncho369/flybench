@@ -143,3 +143,66 @@ def fetch(out_dir: Path | str, dataset: str = DATASET, server: str = SERVER, min
     log(f"  wrote {len(edges):,} edges, {int(ok.sum()):,} soma positions → {out}")
     log(f"  next: flybench build {out} --name {dataset.split(':')[0].replace('-', '')}")
     return out
+
+
+# ---------------------------------------------------------------------------
+# Terminal (axo-axonic) input synapses — the data behind flybench.models.terminal_lif
+# ---------------------------------------------------------------------------
+# A neuron that spans the neck has its dendrites on one side and its axon on the other:
+# ascending neurons collect input in the nerve cord and terminate in the brain, descending
+# neurons the reverse. An input synapse on the axon side is axo-axonic — it sits on the terminal,
+# not the dendrite — and a point-neuron model that sums it into the soma lets a brain-side input
+# fire an ascending neuron backwards into the cord (docs/rfcs/35). neuPrint records, per
+# connection, how many of its synapses fall in each ROI; the super-level ROIs 'CentralBrain',
+# 'Optic(L)', 'Optic(R)' and 'VNC' split them by side. MEASURED, per connection.
+DENDRITIC_SIDE = {
+    # superclass -> the side its dendrites are on; inputs on the other side are terminal
+    "ascending_neuron": "vnc", "sensory_ascending": "vnc", "efferent_ascending": "vnc",
+    "descending_neuron": "brain", "sensory_descending": "brain", "efferent_descending": "brain",
+}
+BRAIN_ROIS = ("CentralBrain", "Optic(L)", "Optic(R)")
+
+
+def fetch_terminal_synapses(np_: "NeuPrint", min_synapses: int = 5, log=print) -> pd.DataFrame:
+    """Per connection onto a neck-spanning neuron: total weight and the post-synapse count on the
+    postsynaptic neuron's axon side (`terminal`). Columns: pre, post, weight, terminal, side."""
+    frames = []
+    for sc, side in DENDRITIC_SIDE.items():
+        ids = np_.query(f"MATCH (b:Neuron) WHERE b.superclass = '{sc}' RETURN b.bodyId AS id ORDER BY id")
+        ids = ids["id"].astype(np.int64).to_numpy()
+        log(f"{sc}: {ids.size} neurons")
+        for k in range(0, ids.size, 200):
+            chunk = ids[k:k + 200].tolist()
+            df = np_.query(
+                f"MATCH (a:Neuron)-[c:ConnectsTo]->(b:Neuron) WHERE b.bodyId IN {chunk} AND c.weight >= {min_synapses} "
+                "RETURN a.bodyId AS pre, b.bodyId AS post, c.weight AS weight, c.roiInfo AS roi")
+            if df.empty:
+                continue
+            def terminal(roi: str) -> int:
+                r = json.loads(roi) if isinstance(roi, str) else (roi or {})
+                if side == "vnc":       # dendrites in the cord: brain-side posts are terminal
+                    return int(sum(r.get(x, {}).get("post", 0) for x in BRAIN_ROIS))
+                return int(r.get("VNC", {}).get("post", 0))
+            df["terminal"] = df["roi"].map(terminal)
+            df["side"] = side
+            frames.append(df.drop(columns=["roi"]))
+        log(f"  {sum(len(f) for f in frames):,} connections so far")
+    out = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame(columns=["pre", "post", "weight", "terminal", "side"])
+    return out
+
+
+def build_terminal_matrix(c, table: pd.DataFrame):
+    """Sparse (n, n) matrix of terminal post-synapse counts aligned to the connectome's W (pre rows,
+    post columns), signed like W (an inhibitory terminal input is presynaptic inhibition)."""
+    import scipy.sparse as sp
+    idx = pd.Series(np.arange(c.n), index=c.root_ids.astype(np.int64))
+    pre = idx.reindex(table["pre"].astype(np.int64)).to_numpy()
+    post = idx.reindex(table["post"].astype(np.int64)).to_numpy()
+    ok = ~(np.isnan(pre) | np.isnan(post)) & (table["terminal"].to_numpy() > 0)
+    pre, post, cnt = pre[ok].astype(int), post[ok].astype(int), table["terminal"].to_numpy()[ok].astype(np.float32)
+    T = sp.csr_matrix((cnt, (pre, post)), shape=(c.n, c.n), dtype=np.float32)
+    # never more than the edge itself carries; sign from W
+    W = c.W.tocsr()
+    T = T.minimum(abs(W)).multiply(W.sign()).tocsr()
+    T.eliminate_zeros()
+    return T

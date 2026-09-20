@@ -232,7 +232,10 @@ neuromodulatory), circadian (24 h), song rhythm (needs dynamics a static LIF lac
     nine-DN route to the GF-coupled interneurons and exposes a point-neuron defect: ascending neurons driven at
     their brain-side axo-axonic inputs fire backwards into the nerve cord. Next mechanism candidate (task before
     mechanism, satisfied by task 35 check 2): synapse positions in the cache, axo-axonic inputs modelled at the
-    terminal.
+    terminal. **Done 2026-09-20 (RFC M1):** `flybench fetch-terminals` reads neuPrint's per-connection ROI counts
+    into a signed terminal matrix (MaleCNS: 555,960 axo-axonic synapses on neck-spanning neurons) and
+    `flybench.models.terminal_lif` keeps them off the soma (presynaptic modulation of release, Olsen & Wilson 2008
+    floor); open division, no free parameters, bit-identical to the reference where there is no terminal data.
 
 ## 8. Explorer and adoption
 

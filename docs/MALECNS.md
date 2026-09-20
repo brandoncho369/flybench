@@ -115,3 +115,13 @@ MaleCNS includes the ventral nerve cord, so "fraction of the brain active" count
 neurons that the female dataset does not have; the two datasets are compared on the same tasks
 but are not the same animal, sex, or extent, and the stability thresholds were set on v783.
 Treat cross-dataset rows as two experiments on the same instrument, not as a ranking.
+
+
+## 2026-09-20 — one of the taste failures was the model
+
+The high-salt → MN9 ignition at gain 0.65 (task 20, 183 Hz, seed-bistable) disappears under the
+terminal-aware LIF (RFC M1): ascending neurons terminate in the SEZ, the point-neuron model let the
+labellar drive fire them from their terminals, and their SEZ outputs helped ignite MN9. With
+axo-axonic inputs kept off the soma, high salt gives MN9 0 Hz on every seed and sugar + salt halves
+the sugar response. The quinine → MN9 failure (task 5) does not change and remains the dataset's
+transmitter-label question.

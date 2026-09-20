@@ -59,6 +59,11 @@ class Connectome:
     annotations: pd.DataFrame
     name: str = "unnamed"
     meta: dict[str, Any] = field(default_factory=dict)
+    # terminal (axo-axonic) input synapses, a signed (pre, post) count matrix aligned to W — the part of
+    # W that sits on the postsynaptic neuron's axon rather than its dendrites (fetch_neuprint.py,
+    # flybench.models.terminal_lif). Optional: None when the dataset has no side information. Not part
+    # of the fingerprint (it annotates edges, it does not change the graph).
+    terminal: sp.csr_matrix | None = None
 
     # ---- basic facts -------------------------------------------------
     @property
@@ -101,7 +106,8 @@ class Connectome:
             ann = pd.read_csv(path / "annotations.csv", dtype=str, keep_default_na=False)
         meta = json.loads((path / "meta.json").read_text(encoding="utf-8")) if (path / "meta.json").exists() else {}
         name = meta.pop("name", path.name)
-        return cls(root_ids=root_ids, W=W, positions=positions, annotations=ann, name=name, meta=meta)
+        terminal = sp.load_npz(path / "terminal.npz").tocsr() if (path / "terminal.npz").exists() else None
+        return cls(root_ids=root_ids, W=W, positions=positions, annotations=ann, name=name, meta=meta, terminal=terminal)
 
 
 def _has_parquet() -> bool:

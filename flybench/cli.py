@@ -324,6 +324,29 @@ def lifecycle(results, out):
         console.print(md)
 
 
+@main.command("fetch-terminals")
+@click.option("--connectome", "-c", default="malecns", show_default=True)
+@click.option("--cache", default=str(DEFAULT_CACHE), show_default=True)
+@click.option("--table", default="data/terminal/malecns_terminal_synapses.csv.gz", show_default=True, help="per-connection terminal counts (fetched from neuPrint if missing)")
+def fetch_terminals(connectome, cache, table):
+    """Build <cache>/<connectome>/terminal.npz — the axo-axonic (terminal) part of every edge onto a neck-spanning
+    neuron, from neuPrint's per-connection ROI counts (flybench.models.terminal_lif). MaleCNS only for now."""
+    import pandas as pd
+    import scipy.sparse as sp
+    from .fetch_neuprint import NeuPrint, build_terminal_matrix, fetch_terminal_synapses
+    t = Path(table)
+    if not t.exists():
+        console.print(f"fetching terminal-synapse counts from neuPrint → {t}")
+        df = fetch_terminal_synapses(NeuPrint(), log=lambda m: console.print(escape(str(m))))
+        t.parent.mkdir(parents=True, exist_ok=True); df.to_csv(t, index=False)
+    df = pd.read_csv(t)
+    c = load_connectome(connectome, cache)
+    T = build_terminal_matrix(c, df)
+    out = Path(cache) / connectome / "terminal.npz"
+    sp.save_npz(out, T)
+    console.print(f"[green]terminal[/] {T.nnz:,} edges carry {int(abs(T).sum()):,} terminal synapses ({int(abs(T).sum()) / max(int(abs(c.W).sum()), 1):.2%} of all) → {out}")
+
+
 @main.command("verify-adapter")
 @click.argument("simulator")
 @click.option("--connectome", "-c", default="toy", show_default=True, help="the contract is checked on this connectome (the toy is enough)")

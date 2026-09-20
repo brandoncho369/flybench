@@ -20,3 +20,5 @@ data/*
 
 # stray explorer exports (the explorer keeps its own copies in ../fly-explorer/public/data)
 public/
+!data/terminal/
+!data/terminal/*.csv.gz
