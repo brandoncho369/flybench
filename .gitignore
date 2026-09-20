@@ -22,3 +22,4 @@ data/*
 public/
 !data/terminal/
 !data/terminal/*.csv.gz
+data/terminal/malecns_per_neuropil.csv.gz

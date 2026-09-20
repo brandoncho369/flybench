@@ -325,26 +325,41 @@ def lifecycle(results, out):
 
 
 @main.command("fetch-terminals")
-@click.option("--connectome", "-c", default="malecns", show_default=True)
+@click.option("--connectome", "-c", default="flywire783", show_default=True, type=click.Choice(["flywire783", "malecns"]))
 @click.option("--cache", default=str(DEFAULT_CACHE), show_default=True)
-@click.option("--table", default="data/terminal/malecns_terminal_synapses.csv.gz", show_default=True, help="per-connection terminal counts (fetched from neuPrint if missing)")
-def fetch_terminals(connectome, cache, table):
-    """Build <cache>/<connectome>/terminal.npz — the axo-axonic (terminal) part of every edge onto a neck-spanning
-    neuron, from neuPrint's per-connection ROI counts (flybench.models.terminal_lif). MaleCNS only for now."""
+@click.option("--connections", default="data/connections.csv.gz", show_default=True, help="FlyWire: the Codex per-neuropil connection table")
+@click.option("--table", default=None, help="MaleCNS: cached per-connection ROI counts (fetched from neuPrint if missing)")
+def fetch_terminals(connectome, cache, connections, table):
+    """Build <cache>/<connectome>/terminal.npz — each edge's axo-axonic (terminal) synapses by neuropil polarity
+    (docs/rfcs/M1b): an input in a neuropil where the postsynaptic neuron is >= 80 % presynaptic sits on its axon.
+    FlyWire from the Codex table in data/; MaleCNS from neuPrint's per-neuron and per-connection ROI counts."""
     import pandas as pd
     import scipy.sparse as sp
-    from .fetch_neuprint import NeuPrint, build_terminal_matrix, fetch_terminal_synapses
-    t = Path(table)
-    if not t.exists():
-        console.print(f"fetching terminal-synapse counts from neuPrint → {t}")
-        df = fetch_terminal_synapses(NeuPrint(), log=lambda m: console.print(escape(str(m))))
-        t.parent.mkdir(parents=True, exist_ok=True); df.to_csv(t, index=False)
-    df = pd.read_csv(t)
+    from .terminal import THETA, flywire_per_neuropil, malecns_per_neuropil, polarity, terminal_counts, to_matrix
     c = load_connectome(connectome, cache)
-    T = build_terminal_matrix(c, df)
+    if connectome == "flywire783":
+        per = flywire_per_neuropil(connections); pol = polarity(per)
+    else:
+        from .fetch_neuprint import NeuPrint
+        t = Path(table or "data/terminal/malecns_per_neuropil.csv.gz")
+        if not t.exists():
+            console.print(f"fetching per-connection ROI counts from neuPrint → {t}")
+            per = malecns_per_neuropil(NeuPrint(), log=lambda m: console.print(escape(str(m))))
+            t.parent.mkdir(parents=True, exist_ok=True); per.to_csv(t, index=False)
+        per = pd.read_csv(t); pol = polarity(per)
+    tab = terminal_counts(per, pol)
+    T = to_matrix(c, tab)
+    if connectome == "malecns":
+        # union with RFC M1's neck rule: an ascending neuron's brain arbor is axon whatever its local polarity
+        # (its dendrites are in the cord), and the same for a descending neuron's cord arbor. Recorded in M1b.
+        neck = pd.read_csv("data/terminal/malecns_terminal_synapses.csv.gz"); neck = neck[neck["terminal"] > 0]
+        Tn = to_matrix(c, neck[["pre", "post", "terminal"]])
+        T = abs(T).maximum(abs(Tn)).multiply(c.W.tocsr().sign()).tocsr(); T.eliminate_zeros()
     out = Path(cache) / connectome / "terminal.npz"
     sp.save_npz(out, T)
-    console.print(f"[green]terminal[/] {T.nnz:,} edges carry {int(abs(T).sum()):,} terminal synapses ({int(abs(T).sum()) / max(int(abs(c.W).sum()), 1):.2%} of all) → {out}")
+    n_neurons = int((abs(T).sum(axis=0) > 0).sum())
+    console.print(f"[green]terminal[/] θ={THETA}: {T.nnz:,} edges carry {int(abs(T).sum()):,} terminal synapses "
+                  f"({int(abs(T).sum()) / max(int(abs(c.W).sum()), 1):.2%} of all) onto {n_neurons:,} neurons → {out}")
 
 
 @main.command("verify-adapter")

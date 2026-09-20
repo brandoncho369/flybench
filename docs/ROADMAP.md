@@ -236,6 +236,8 @@ neuromodulatory), circadian (24 h), song rhythm (needs dynamics a static LIF lac
     into a signed terminal matrix (MaleCNS: 555,960 axo-axonic synapses on neck-spanning neurons) and
     `flybench.models.terminal_lif` keeps them off the soma (presynaptic modulation of release, Olsen & Wilson 2008
     floor); open division, no free parameters, bit-identical to the reference where there is no terminal data.
+    **M1b (same day):** the rule for every neuron by neuropil polarity (θ 0.8, both datasets); FlyWire graded 0.655 → 0.711,
+    MaleCNS core 0.57 → 0.90, controls unchanged. Open: a per-synapse axon/dendrite split; excitatory axo-axonic contacts.
 
 ## 8. Explorer and adoption
 

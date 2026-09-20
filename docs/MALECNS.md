@@ -125,3 +125,9 @@ labellar drive fire them from their terminals, and their SEZ outputs helped igni
 axo-axonic inputs kept off the soma, high salt gives MN9 0 Hz on every seed and sugar + salt halves
 the sugar response. The quinine → MN9 failure (task 5) does not change and remains the dataset's
 transmitter-label question.
+
+Under the terminal-aware LIF with the full neuropil-polarity table (RFC M1b, 2026-09-20) MaleCNS
+at 0.65 scores 0.90 on the core tier: sugar → MN9 with 7 % of the brain active, bitter halves it,
+looming → GF is clean, the other-fly perturbation survives. Only quinine → MN9 remains. "No gain
+at which the reference model does both taste and vision" is still true of the reference model;
+most of what it was measuring was the point neuron, not the male.

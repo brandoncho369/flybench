@@ -618,3 +618,40 @@ no terminal data (FlyWire, the toy, every shuffled control).
   still sum into the soma. The floor and slope are one olfactory synapse's numbers. Excitatory
   terminal contacts are ignored, not modelled.
 - **Cost.** Half the wall-clock of the reference on the same suite (fewer spikes).
+
+## 2026-09-20 — RFC M1b, terminal synapses for every neuron: the mushroom body goes sparse on both brains, MaleCNS's core tier goes from 0.57 to 0.90, and the GF-free loom route thins to one spike
+
+The neck rule generalised: a neuron's compartments are its neuropils, and an input in a
+neuropil where the neuron is ≥ 80 % presynaptic sits on its axon (θ fixed before the run from
+the canonical compartments — ORN terminals 0.86, T4 axons 0.90, PN axons 0.93 vs T4 dendrites
+0.10, PN dendrites 0.37, the GF 0.03). FlyWire from the Codex per-neuropil table (1.87 M
+synapses, 3.7 %); MaleCNS from 9.1 M per-connection neuPrint ROI rows in the same pair units,
+unioned with the neck rule (3.78 M, 4.2 %). `flybench fetch-terminals -c flywire783|malecns`.
+
+| | FlyWire 0.45 ref → M1b | MaleCNS 0.65 ref → M1 → M1b |
+|---|---|---|
+| core | 5/5 → 5/5 | 0.567 → 0.567 → **0.900** |
+| hard | 0.513 → **0.573** | 0.574 → 0.613 → 0.594 |
+| graded | 0.655 → **0.711** | 0.660 → 0.669 → **0.700** |
+| specificity | +0.207 → **+0.256** | +0.218 → +0.252 → **+0.286** |
+| spikes / condition | 680 k → 316 k | 1.34 M → 1.26 M → 0.57 M |
+| controls | identical | identical |
+
+- **The mushroom body is sparse.** Task 26 goes 5/8 → 8/8 on both brains: Kenyon cells active per
+  odour 60 % → 1.3 % (FlyWire), 85 % → 7 % (MaleCNS) — Lin 2014's number is 5–10 %. The first
+  README's "no lateral inhibition, the antennal lobe is a broadcast" was, in large part, LN → ORN
+  presynaptic inhibition being summed into the ORN soma where it did nothing (ORNs are driven by
+  forced spikes) instead of scaling their release. Task 8's cVA active fraction halves too.
+- **MaleCNS at 0.65 nearly does taste and vision.** Sugar → MN9 with 7 % of the brain active
+  (was 12 %), bitter halves it, looming → GF clean, the other-fly perturbation survives; only
+  quinine → MN9 remains. docs/MALECNS.md's headline is now qualified: most of that failure was
+  the point neuron.
+- **The embodied fly no longer jumps at the flash** (task 33, 4/4 on MaleCNS) — the GF's flash
+  response is gone with the axo-axonic drive that fed it.
+- **The cost.** The GF-free loom route to TTMn (tasks 34–35) is reduced to a single spike on two
+  of three seeds: task 35 reads 3/10 for M1b against 10/10 for M1 (the check it was built for
+  passes; the seven route checks no longer do), task 34 5/6; water → MN9 becomes seed-fragile
+  (task 20 back to 2/4); task 17 loses one ratio check. No shuffled control moved.
+- **What decides between M1 and M1b** is not the score but the data: a per-synapse
+  axon/dendrite split (the datasets have coordinates) and a model for excitatory axo-axonic
+  contacts, which at 4 % of synapses is now the model's largest stated omission.
