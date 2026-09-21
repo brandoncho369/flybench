@@ -655,3 +655,38 @@ unioned with the neck rule (3.78 M, 4.2 %). `flybench fetch-terminals -c flywire
 - **What decides between M1 and M1b** is not the score but the data: a per-synapse
   axon/dendrite split (the datasets have coordinates) and a model for excitatory axo-axonic
   contacts, which at 4 % of synapses is now the model's largest stated omission.
+
+## 2026-09-21 — task 36, the closed loop: the male brain jumps before contact through its own eyes — and at a near miss; the female brain never commands
+
+Phase 7b. The brain's visual input is now the body's: NeuroMechFly's two retinas (721 ommatidia
+each) are rendered every 10 ms, mapped one-to-one onto flyvis's 721-hexal lattice, run through
+flyvis frame by frame with its state carried (bit-identical to a batch run), and drive the
+connectome's own optic-lobe cells; TTMn (or the GF + 0.93 ms) starts the jump; the eyes see the
+world from wherever the body is. A 2 mm sphere approaches at 50 mm/s (r/v 40 ms); a copy passes
+10 mm to the side; a third stands still. Pre-registered (docs/rfcs/36): nobody passes, 2/4 all
+round, MaleCNS "some but not all seeds" on the approach.
+
+| | toy | MaleCNS 0.65 (real TTMn) | FlyWire 0.45 (GF + 0.93 ms) |
+|---|---|---|---|
+| approach → takeoff | 26 ms *after* contact | **yes, 3/3, 10–120 ms before contact** | no |
+| near miss → takeoff | no | **yes, 3/3, at 551 ms** | no |
+| motionless → takeoff | no | no | no |
+| score · rewired · specificity | 3/4 | 3/4 · 2/4 · +0.25 | 2/4 · 2/4 · 0.00 |
+
+- **At real resolution the loom is a late, small event.** The object's half-angle is atan(0.04/τ):
+  14° at 160 ms before contact, 34° at 60 ms. flyvis's rates on the driven types reach 13 Hz at
+  60 ms and 39 Hz at 10 ms. Anything that needed the cached movie's disc to fill the field gets
+  50 ms of it here.
+- **MaleCNS closes the loop — through the wrong route.** LPLC2 0 Hz, GF 0.4 Hz, TTMn 4 Hz, 20 %
+  of the CNS active: tasks 34–35's diffuse medulla-driven DN route to the GF-coupled interneurons,
+  which answers "a dark thing moving on my eye" and therefore also fires, earlier, for the miss.
+  Both MaleCNS predictions were wrong in the same direction (every seed, not some). The 60 ms-early
+  jump lifts the thorax 0.7 mm; the object still passes 1.08 mm from the eyes — an escape command
+  in time and a failed escape in space, which is the body model's jump, not the brain.
+- **FlyWire never commands**, as predicted: the live loom does not reach the GF. The nulls pass
+  by silence, as they do for the shuffle.
+- **Cost.** ~45 s per closed-loop condition on the toy, ~2.5 min on MaleCNS (eye rendering is
+  the fixed cost: 2 × 150 frames at 50 ms); the task roughly doubles a suite run.
+
+Older checks bit-identical on both brains (169 / 134). The terminal-aware rows have not run task
+36 yet. Loop closed; nobody escapes it properly; that is the target.

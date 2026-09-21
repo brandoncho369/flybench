@@ -377,6 +377,10 @@ def task_unavailable(task: dict, c: Connectome, simulator: Any = None) -> str | 
         from .frontends.flyvis_frontend import OUTPUT_TYPES
         if not any(c.select({"cell_type": t}).size for t in OUTPUT_TYPES):
             return f"frontend {fe!r}: none of its output cell types exist on {c.name}"
+    if any(cond.get("closed_loop") for cond in task.get("conditions", {}).values()):
+        from .embodied.vision import available as loop_available
+        if not loop_available():
+            return "closed loop needs flygym, flyvis and torch installed (pip install -e .[embodied,flyvis])"
     if task.get("body"):
         from .embodied import BODIES
         model = task["body"].get("model")
@@ -489,7 +493,29 @@ def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False
     results: dict[str, SimResult] = {}
     measurements: dict[str, dict[str, float]] = {}
     stim_sizes: dict[str, int] = {}
+    loop_traces: dict[str, Any] = {}
     for cond_name, cond in task["conditions"].items():
+        if cond.get("closed_loop"):
+            # the closed loop (flybench.embodied.closed_loop): the body's eyes drive the brain, the brain's
+            # command readout drives the body, every 0.1 ms, for the whole condition
+            from .embodied.closed_loop import LoopSpec, run_closed_loop
+            cmd = (task.get("body") or {}).get("command", {})
+            cmd_readout, delay = cmd.get("readout", default_readout), 0.0
+            if readouts.get(cmd_readout, np.empty(0, dtype=int)).size == 0 and cmd.get("fallback"):
+                cmd_readout, delay = cmd["fallback"], float(cmd.get("fallback_delay_ms", 0.0))
+                notes.append(f"body: command readout {cmd.get('readout')!r} absent, using {cmd_readout!r} + {delay} ms")
+            spec = LoopSpec.from_dict(cond["closed_loop"])
+            res, trace = run_closed_loop(c, params, simulator, spec, duration, readouts.get(cmd_readout, np.empty(0, dtype=int)), delay, seed=params.seed)
+            stim_sizes[f"eyes[{cond_name}]"] = int(trace.driven)
+            results[cond_name] = res; loop_traces[cond_name] = trace
+            m = {"rate": _metric(res, readouts[default_readout], "rate", *window), "network_rate": _metric(res, readouts[default_readout], "network_rate", *window),
+                 "active_fraction": _metric(res, readouts[default_readout], "active_fraction", *window), "spikes": float(len(res.spike_times_ms))}
+            for name, idx in readouts.items():
+                m[f"rate[{name}]"] = _metric(res, idx, "rate", *window); m[f"readout_active_fraction[{name}]"] = _metric(res, idx, "readout_active_fraction", *window)
+            measurements[cond_name] = m
+            if verbose:
+                print(f"  {cond_name:>16}: closed loop, takeoff={trace.takeoff} at {trace.takeoff_ms:.1f} ms (collision {trace.collision_ms:.0f}), {trace.n_commands} commands, {trace.frames} frames")
+            continue
         stims = _stimuli(c, cond.get("stimuli", []), stim_sizes, duration, seed=params.seed)
         for s in stims:
             if s.neurons.size == 0:
@@ -548,10 +574,17 @@ def run_task(task: dict, c: Connectome, params: LIFParams, verbose: bool = False
         cidx = readouts.get(cmd_readout, np.empty(0, dtype=int))
         for cond_name, cond in task["conditions"].items():
             res = results[cond_name]
-            spikes = res.spike_times_ms[np.isin(res.spike_neurons, cidx)] + delay if cidx.size else np.empty(0)
-            trace = run_body(spikes.tolist(), duration)
-            onsets = [float(st.get("t_start_ms", 0)) for st in cond.get("stimuli", [])]
-            onset = min(onsets) if onsets else 0.0
+            if cond_name in loop_traces:
+                # the body already ran inside the loop; latency is from the object's start, and the loop adds its own numbers
+                trace = loop_traces[cond_name]
+                onset = float(cond["closed_loop"].get("t_start_ms", 200.0))
+                measurements[cond_name]["collision_ms"] = float(trace.collision_ms - onset)
+                measurements[cond_name]["min_distance_mm"] = float(trace.min_distance_mm)
+            else:
+                spikes = res.spike_times_ms[np.isin(res.spike_neurons, cidx)] + delay if cidx.size else np.empty(0)
+                trace = run_body(spikes.tolist(), duration)
+                onsets = [float(st.get("t_start_ms", 0)) for st in cond.get("stimuli", [])]
+                onset = min(onsets) if onsets else 0.0
             measurements[cond_name][BODY_METRICS["takeoff"]] = 1.0 if trace.takeoff else 0.0
             measurements[cond_name][BODY_METRICS["takeoff_latency"]] = float(trace.takeoff_ms - onset) if trace.takeoff else float("nan")
             measurements[cond_name][BODY_METRICS["n_commands"]] = float(trace.n_commands)

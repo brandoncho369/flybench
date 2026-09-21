@@ -88,6 +88,16 @@ def lint_task(task: dict, source: str = "<task>", strict: bool = False) -> list[
         jit = cond.get("weight_jitter", 0)
         if not (isinstance(jit, (int, float)) and 0 <= jit <= 1):
             errs.append(f"{cname}: weight_jitter must be a number in [0, 1] (lognormal sigma)")
+        if cond.get("closed_loop") is not None:
+            # the closed loop (flybench.embodied.closed_loop): a world the body's eyes see; needs the body block
+            from .embodied.closed_loop import WORLDS
+            cl = cond["closed_loop"]
+            if not isinstance(cl, dict) or cl.get("world") not in WORLDS:
+                errs.append(f"{cname}: closed_loop.world must be one of {WORLDS}")
+            if "body" not in task:
+                errs.append(f"{cname}: a closed_loop condition needs the task's `body:` block (the command readout)")
+            if cond.get("stimuli"):
+                errs.append(f"{cname}: a closed_loop condition takes no stimuli (the eyes are the stimulus)")
         for i, s in enumerate(cond.get("stimuli", []) or []):
             if s.get("frontend"):
                 from .frontends import FRONTENDS

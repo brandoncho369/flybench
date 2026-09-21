@@ -150,3 +150,98 @@ def run_body(command_times_ms: list[float], duration_ms: float) -> BodyTrace:
             if not np.any(sim.get_ground_contact_info(FLY_NAME)[0]):
                 takeoff_ms = t
     return BodyTrace(bool(np.isfinite(takeoff_ms)), takeoff_ms, len(cmds), rise, cmds)
+
+
+# ---------------------------------------------------------------------------------------------
+# A steppable body with eyes and a world object, for the closed loop (flybench.embodied.closed_loop)
+# ---------------------------------------------------------------------------------------------
+
+BALL_RGBA = (0.0, 0.0, 0.0, 1.0)     # a black object on FlyGym's white sky and dark ground
+
+
+class Body:
+    """NeuroMechFly with compound eyes and one kinematic ball in its world. `reset()` stands the fly
+    up; `step(program_dt_ms)` advances 0.1 ms with the jump program at that phase (None = standing
+    pose); `eyes()` renders both retinas; `set_ball(xyz)` moves the object. Built once per process
+    with the ball present (a compiled MuJoCo model cannot gain bodies), parked far away when unused."""
+
+    PARK = (1000.0, 1000.0, 1000.0)
+
+    def __init__(self, ball_radius_mm: float = 2.0):
+        import mujoco
+        from flygym import Simulation
+        from flygym.anatomy import ActuatedDOFPreset, AxisOrder, ContactBodiesPreset, JointPreset, Skeleton
+        from flygym.compose import FlatGroundWorld, KinematicPosePreset, NeuroMechFly
+        from flygym.compose.fly.base_fly import ActuatorType
+        from flygym.utils.math import Rotation3D
+        fly = NeuroMechFly(name=FLY_NAME)
+        skeleton = Skeleton(joint_preset=JointPreset.LEGS_ACTIVE_ONLY, axis_order=AxisOrder.ROLL_PITCH_YAW)
+        neutral = KinematicPosePreset.NEUTRAL
+        fly.add_joints(skeleton, neutral_pose=neutral)
+        fly.add_actuators(skeleton.get_actuated_dofs_from_preset(ActuatedDOFPreset.LEGS_ACTIVE_ONLY), actuator_type="position", neutral_input=neutral, kp=50)
+        fly.add_vision()
+        world = FlatGroundWorld()
+        b = world.mjcf_root.worldbody.add_body(name="ball", pos=list(self.PARK), mocap=True)
+        b.add_geom(name="ball_geom", type=mujoco.mjtGeom.mjGEOM_SPHERE, size=[ball_radius_mm, 0, 0], rgba=list(BALL_RGBA), contype=0, conaffinity=0)
+        world.add_fly(fly, [0, 0, 0.7], Rotation3D(format="quat", values=[1, 0, 0, 0]), bodysegs_with_ground_contact=ContactBodiesPreset.LEGS_THORAX_ABDOMEN_HEAD)
+        self.sim = Simulation(world, timestep=DT_S)
+        self.AT = ActuatorType
+        order = fly.get_actuated_jointdofs_order(ActuatorType.POSITION)
+        names = [f"{d.child.name}_{d.axis.value}" for d in order]
+        na = fly.jointdof_to_neutralaction_by_type[ActuatorType.POSITION]
+        self.neutral = np.array([na[d] for d in order], dtype=float)
+        self.jump_idx = np.array([names.index(n) for n in JUMP_DOFS])
+        segs = [s.name for s in fly.get_bodysegs_order()]
+        self.thorax = segs.index("c_thorax"); self.head = segs.index("c_head")
+        self.mocap_id = int(mujoco.mj_name2id(self.sim.mj_model, mujoco.mjtObj.mjOBJ_BODY, "ball"))
+        self.mocap_index = int(self.sim.mj_model.body_mocapid[self.mocap_id])
+        self.radius = ball_radius_mm
+        self.z0 = None
+
+    @property
+    def retina(self):
+        if self.sim.retina is None:
+            self.sim.get_raw_vision(FLY_NAME)      # lazily builds the retina and the eye renderer
+        return self.sim.retina
+
+    def set_ball(self, xyz) -> None:
+        self.sim.mj_data.mocap_pos[self.mocap_index] = np.asarray(xyz, dtype=float)
+
+    def reset(self) -> None:
+        self.sim.reset()
+        self.set_ball(self.PARK)
+        for _ in range(int(SETTLE_MS / (DT_S * 1000.0))):
+            self.step(None)
+        self.z0 = self.thorax_z()
+
+    def step(self, program_dt_ms: float | None) -> None:
+        pose = self.neutral if program_dt_ms is None else _pose_at(program_dt_ms, self.neutral, self.jump_idx)
+        self.sim.set_actuator_inputs(FLY_NAME, self.AT.POSITION, pose)
+        self.sim.step()
+
+    def thorax_z(self) -> float:
+        return float(self.sim.get_body_positions(FLY_NAME)[self.thorax, 2])
+
+    def head_xyz(self) -> np.ndarray:
+        """The point between the two eye cameras, in world coordinates (what the object approaches)."""
+        import mujoco
+        m, d = self.sim.mj_model, self.sim.mj_data
+        cams = [i for i in range(m.ncam) if "eye" in (mujoco.mj_id2name(m, mujoco.mjtObj.mjOBJ_CAMERA, i) or "")]
+        return np.asarray(d.cam_xpos[cams].mean(axis=0), dtype=float) if cams else np.asarray(self.sim.get_body_positions(FLY_NAME)[self.head], dtype=float)
+
+    def on_ground(self) -> bool:
+        return bool(np.any(self.sim.get_ground_contact_info(FLY_NAME)[0]))
+
+    def eyes(self) -> np.ndarray:
+        """(2, 721, 2) ommatidia readouts, left then right."""
+        return self.sim.get_ommatidia_readouts(FLY_NAME)
+
+
+_LIVE_BODY: Body | None = None
+
+
+def live_body(ball_radius_mm: float = 2.0) -> Body:
+    global _LIVE_BODY
+    if _LIVE_BODY is None or _LIVE_BODY.radius != ball_radius_mm:
+        _LIVE_BODY = Body(ball_radius_mm)
+    return _LIVE_BODY

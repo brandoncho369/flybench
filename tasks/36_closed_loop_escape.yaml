@@ -1,0 +1,37 @@
+name: closed_loop_escape
+title: The closed loop — the body's own eyes, an approaching object, and the jump
+tier: hard
+circuit: escape
+description: >
+  Phase 7b. The brain's visual input is the body's: every 10 ms NeuroMechFly's two compound eyes
+  are rendered in MuJoCo, mapped one-to-one onto flyvis's 721-hexal retina, run through the
+  pretrained flyvis network frame by frame with its state carried, and the resulting rates drive
+  the connectome's own optic-lobe cells; a spike of TTMn (or the GF plus the measured 0.93 ms
+  where there is no nerve cord) starts the jump program, and the eyes see the world from wherever
+  the body now is. A black 2 mm sphere approaches the eyes at 50 mm/s (r/v = 40 ms, the geometry
+  of every escape task here) and must produce a takeoff before contact; the same sphere on a
+  10 mm near-miss path and a motionless sphere must not. Nobody is predicted to pass: at a real
+  eye's resolution the loom is a small, late event. Needs flygym, flyvis and torch installed;
+  skipped otherwise. Pre-registered predictions and outcome: docs/rfcs/36_closed_loop_escape.md.
+citation: "Card & Dickinson 2008 (Curr Biol 18:1300, doi:10.1016/j.cub.2008.07.094); von Reyn et al. 2014 (Nat Neurosci 17:962, doi:10.1038/nn.3741); Lappalainen et al. 2024 (Nature 634:1132, doi:10.1038/s41586-024-07939-3); Lobato-Rios et al. 2022 (Nat Methods 19:620, doi:10.1038/s41592-022-01466-7); Wang-Chen et al. 2024 (Nat Methods 21:2353, doi:10.1038/s41592-024-02497-y)"
+duration_ms: 1500
+window: [200, 1500]
+requires_readouts: [gf]
+readouts:
+  gf:    {select: {any: [{cell_type: GF}, {cell_type: DNp01}, {hemibrain_type: "Giant Fiber"}]}}
+  ttmn:  {select: {cell_type: TTMn}}
+  lplc2: {select: {any: [{cell_type: LPLC2}, {hemibrain_type: LPLC2}]}}
+  lc4:   {select: {any: [{cell_type: LC4}, {hemibrain_type: LC4}]}}
+body:
+  model: flygym
+  command: {readout: ttmn, fallback: gf, fallback_delay_ms: 0.93}
+conditions:
+  # each condition is one closed-loop run: object radius 2 mm, 60 mm ahead of the eyes, moving from 200 ms
+  approach: {closed_loop: {world: approach, radius_mm: 2.0, speed_mm_s: 50.0, start_mm: 60.0, t_start_ms: 200}}
+  pass_by:  {closed_loop: {world: pass_by,  radius_mm: 2.0, speed_mm_s: 50.0, start_mm: 60.0, lateral_mm: 10.0, t_start_ms: 200}}
+  static:   {closed_loop: {world: static,   radius_mm: 2.0, start_mm: 60.0, t_start_ms: 200}}
+checks:
+  - {type: takeoff, cond: approach, op: ">=", value: 1, basis: "Card & Dickinson 2008; von Reyn et al. 2014: an object on a collision course with r/v = 40 ms evokes a takeoff; the body left the ground (physics, all six feet)"}
+  - {type: takeoff_latency, cond: approach, op: "<", value: 1160, basis: "convention: contact is 1,160 ms after the object starts (58 mm at 50 mm/s); a takeoff after the object has arrived is not an escape (Card & Dickinson 2008 measure every takeoff before contact)"}
+  - {type: takeoff, cond: pass_by, op: "<", value: 0.5, basis: "convention after Card & Dickinson 2008 and von Reyn et al. 2014: takeoff probability falls steeply off the collision course; a 5-radius miss is scored as no jump"}
+  - {type: takeoff, cond: static, op: "<", value: 0.5, basis: "convention: a motionless object evokes no escape (task 1's rest, with something to look at); 0.5 splits 0 from 1"}

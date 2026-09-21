@@ -226,9 +226,10 @@ neuromodulatory), circadian (24 h), song rhythm (needs dynamics a static LIF lac
 51. **Phase 7a done 2026-09-17:** the embodied track exists (`flybench/embodied/`, task 33, docs/rfcs/33): a task's
     `body:` block hands a readout's spikes (TTMn, or the GF + 0.93 ms) to NeuroMechFly in FlyGym 2.1 / MuJoCo, one
     fixed jump program per command, takeoff scored as a physics event, run with the `rewired` control like every
-    task. Feed-forward only. Still open (7b): closing the loop (the body's own vision through the flyvis front end,
-    proprioception), a walking task on a CPG-free body, scoring against videography (flybody: 0.25 mm / <5° in
-    flight), and an embodied hold-out. Task 34 (2026-09-18) adds the GF-silenced long-mode escape on the body; task 35 (2026-09-19) names the
+    task. Feed-forward only. **7b done 2026-09-21** (task 36, docs/rfcs/36): the loop is closed through the body's own eyes — FlyGym retinas →
+    flyvis, frame by frame with state carried → the connectome's optic-lobe cells → TTMn → the jump → the eyes.
+    Still open: proprioception into the brain, a walking task on a CPG-free body, scoring against videography
+    (flybody: 0.25 mm / <5° in flight), and an embodied hold-out. Task 34 (2026-09-18) adds the GF-silenced long-mode escape on the body; task 35 (2026-09-19) names the
     nine-DN route to the GF-coupled interneurons and exposes a point-neuron defect: ascending neurons driven at
     their brain-side axo-axonic inputs fire backwards into the nerve cord. Next mechanism candidate (task before
     mechanism, satisfied by task 35 check 2): synapse positions in the cache, axo-axonic inputs modelled at the
