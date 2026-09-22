@@ -22,20 +22,20 @@ import numpy as np
 
 from ..connectome import Connectome
 from ..frontends.flyvis_frontend import (BIN_MS, HEX_EXTENT, OUTPUT_TYPES, RATE_PER_UNIT_HZ, _patch_datamate_windows,
-                                         map_neurons_to_columns)
+                                         map_neurons_to_columns, network_view)
 
 FLYVIS_NETWORK = "flow/0000/000"
 FRAME_S = BIN_MS / 1000.0
 
 
 def available() -> bool:
+    """flygym, flyvis, torch and the pretrained flyvis network (flyvis_frontend.pretrained_available)."""
+    from ..frontends.flyvis_frontend import pretrained_available
     try:
-        import flyvis  # noqa: F401
-        import torch  # noqa: F401
         import flygym  # noqa: F401
     except Exception:
         return False
-    return True
+    return pretrained_available(FLYVIS_NETWORK)
 
 
 def _whiten(xy: np.ndarray) -> np.ndarray:
@@ -65,11 +65,10 @@ class LiveEye:
 
     def __init__(self, c: Connectome, retina, seed: int = 0, network: str = FLYVIS_NETWORK):
         import torch
-        from flyvis import NetworkView
         from flyvis.datasets.rendering import BoxEye
         _patch_datamate_windows()
         self.torch = torch
-        self.net = NetworkView(network).init_network()
+        self.net = network_view(network).init_network()
         eye = BoxEye(extent=HEX_EXTENT)
         rc = eye.receptor_centers
         rc = rc.numpy() if hasattr(rc, "numpy") else np.asarray(rc)

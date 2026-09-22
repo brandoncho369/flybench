@@ -690,3 +690,42 @@ round, MaleCNS "some but not all seeds" on the approach.
 
 Older checks bit-identical on both brains (169 / 134). The terminal-aware rows have not run task
 36 yet. Loop closed; nobody escapes it properly; that is the target.
+
+## 2026-09-21 — housekeeping: every row rerun on the 36-task suite; the first female-brain row that jumps from its own eyes is Shiu 2024 at gain 1.0
+
+All thirteen stale rows (the FlyWire gain sweep, Shiu 1.0, the adaptive LIF, both terminal-aware
+rows, MaleCNS 0.45/0.50/0.55) were rerun on the current 36 tasks, three workers, one code version
+(dbd83eb); the adaptive LIF went through `flybench evaluate` and is now a verified open-division
+row. Every row now shows every task it can run (28 on FlyWire, 34 on MaleCNS).
+
+| FlyWire v783 | core | hard | graded | spec. | task 36 |
+|---|---|---|---|---|---|
+| Adaptive LIF 0.45 (verified) | 1.00 | **0.647** | **0.754** | **+0.31** | 2/4 |
+| Terminal LIF 0.45 | 1.00 | 0.570 | 0.696 | +0.25 | 2/4 |
+| reference LIF 0.45 (verified baseline) | 1.00 | 0.512 | 0.644 | +0.20 | 2/4 |
+| Shiu 2024, gain 1.0 | 0.77 | 0.509 | 0.629 | +0.18 | **1/4** |
+| gain 0.3 / 0.35 / 0.4 / 0.5 / 0.7 (1 seed) | 0.67 / 0.67 / 1.00 / 0.83 / 0.87 | 0.58 / 0.53 / 0.55 / 0.56 / 0.58 | 0.58 / 0.58 / 0.64 / 0.67 / 0.70 | – | 2/4 each |
+
+| MaleCNS v1.0 | core | hard | graded | spec. | task 36 |
+|---|---|---|---|---|---|
+| Terminal LIF 0.65 | **0.90** | **0.591** | **0.697** | **+0.28** | 2/4 |
+| reference 0.65 | 0.57 | 0.580 | 0.657 | +0.22 | **3/4** |
+| 0.45 / 0.50 / 0.55 | 0.90 / 0.90 / 0.73 | 0.59 / 0.57 / 0.56 | 0.65 / 0.64 / 0.62 | – | 2/4 each |
+
+- **The adaptive LIF's lead narrows on the full suite** (graded 0.791 → 0.754 against 25 → 28
+  tasks; hard 0.68 → 0.65; specificity +0.34 → +0.31) and holds. On the closed loop it never
+  commands (7 % of the brain active to the approach): adaptation damps the very spread the
+  MaleCNS route runs on.
+- **Shiu 2024 at gain 1.0 is the first female-brain row to jump from its own eyes** — before
+  contact on two of three seeds (1,104 ms) — and it also jumps at the near miss on every seed
+  (838 ms): 1/4, the worst score on the task, for the same reason MaleCNS scores 3/4: the route
+  is not a loom detector. Task 36's ordering of models is now: nobody 4/4, MaleCNS reference 3/4,
+  everyone else 2/4 by silence, Shiu 1/4 by promiscuity.
+- **The terminal-aware rows** scored 2/4 on task 36 as predicted in docs/rfcs/36 (M1b thinned the
+  route): on MaleCNS the approach still produces a takeoff on every seed but 15 ms before contact
+  on average, past the line on one seed; the miss jumps too.
+- **Nothing else moved.** Every previously run check reproduced bit for bit on every row
+  (`flybench diff` against the committed files); the only differences are the added tasks.
+
+Runs took the wall-clock they took plus a night's sleep (the `cost.wall_seconds` of three rows
+include the machine sleeping; `cpu_seconds`, which the leaderboard's cost column uses, do not).

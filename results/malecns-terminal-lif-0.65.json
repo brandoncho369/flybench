@@ -4,24 +4,24 @@
   "seeds": 3,
   "verified": false,
   "core_score": 0.9,
-  "hard_score": 0.593735827664399,
+  "hard_score": 0.590503557744937,
   "core_by_circuit": 0.9444444444444445,
-  "hard_by_circuit": 0.5640992063492063,
-  "graded": 0.700324255318391,
+  "hard_by_circuit": 0.5628037518037518,
+  "graded": 0.6968606157669693,
   "graded_ci95": [
-    0.6896787095476248,
-    0.7078365588450889
+    0.687287234148275,
+    0.7045623611751064
   ],
   "core_graded": 0.7991685019658229,
-  "hard_graded": 0.61753490961268,
+  "hard_graded": 0.6152705688752478,
   "profile": {
-    "-1": 0.8245614035087719,
-    "-0.5": 0.8011695906432749,
-    "-0.25": 0.7777777777777778,
-    "0": 0.7076023391812866,
-    "0.25": 0.6023391812865497,
-    "0.5": 0.47368421052631576,
-    "1": 0.45614035087719296
+    "-1": 0.8285714285714286,
+    "-0.5": 0.8057142857142857,
+    "-0.25": 0.7771428571428571,
+    "0": 0.7085714285714285,
+    "0.25": 0.5942857142857143,
+    "0.5": 0.4685714285714286,
+    "1": 0.4514285714285714
   },
   "circuits": {
     "stability": "stability",
@@ -56,7 +56,8 @@
     "flyvis_loom_escape": "escape",
     "embodied_loom_escape": "escape",
     "ttmn_without_gf": "escape",
-    "gf_free_route_to_ttmn": "escape"
+    "gf_free_route_to_ttmn": "escape",
+    "closed_loop_escape": "escape"
   },
   "skipped": {
     "egg_laying_ovidn": "not applicable: egg_laying_ovidn is defined on flywire783/toy only (this is malecns)",
@@ -65,7 +66,7 @@
   "controls": [
     "rewired"
   ],
-  "specificity": 0.2859247234247234,
+  "specificity": 0.277515172735761,
   "non_diagnostic": [],
   "tier": [
     "core",
@@ -125,15 +126,15 @@
     "fit_data": "none \u2014 constants from the literature or declared conventions; nothing fitted",
     "conflict_of_interest": "written by the flybench maintainer in response to task 35's failed check; graded by the same CI as any other row"
   },
-  "score": 0.6401394901394901,
+  "score": 0.6360177404295051,
   "passed": 8,
-  "n_tasks": 33,
+  "n_tasks": 34,
   "cost": {
-    "wall_seconds": 1892.572841644287,
-    "cpu_seconds": 5211.822703838348,
+    "wall_seconds": 3045.5502235889435,
+    "cpu_seconds": 8079.918211698532,
     "jobs": 3,
-    "peak_rss_mb": 1554.2578125,
-    "bio_seconds": 603.0
+    "peak_rss_mb": 2513.85546875,
+    "bio_seconds": 630.0
   },
   "tasks": [
     {
@@ -195,7 +196,7 @@
       },
       "readout_size": 176422,
       "stimulus_sizes": {},
-      "seconds": 4.991502046585083,
+      "seconds": 5.359285354614258,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -307,7 +308,7 @@
       "stimulus_sizes": {
         "sugar_grn": 34
       },
-      "seconds": 57.734745502471924,
+      "seconds": 65.32478737831116,
       "notes": [],
       "graded": 0.8875390930982222,
       "graded_per_seed": [
@@ -399,7 +400,7 @@
         "sugar_grn": 34,
         "bitter_grn": 38
       },
-      "seconds": 94.08516955375671,
+      "seconds": 119.10818552970886,
       "notes": [],
       "graded": 0.8617192271537438,
       "graded_per_seed": [
@@ -509,7 +510,7 @@
       "stimulus_sizes": {
         "looming_detectors": 311
       },
-      "seconds": 25.2970027923584,
+      "seconds": 31.567726850509644,
       "notes": [],
       "graded": 0.9181692632333539,
       "graded_per_seed": [
@@ -592,7 +593,7 @@
       "stimulus_sizes": {
         "bitter_grn": 38
       },
-      "seconds": 41.88170099258423,
+      "seconds": 53.33307909965515,
       "notes": [],
       "graded": 0.3333674213852995,
       "graded_per_seed": [
@@ -750,7 +751,7 @@
       "stimulus_sizes": {
         "sugar_grn": 34
       },
-      "seconds": 91.59273219108582,
+      "seconds": 122.62491583824158,
       "notes": [],
       "graded": 0.7093560668443243,
       "graded_per_seed": [
@@ -836,7 +837,7 @@
         "pulse1": 34,
         "pulse2": 34
       },
-      "seconds": 70.40244746208191,
+      "seconds": 90.00079846382141,
       "notes": [
         "seed-sensitive: check 1: passes on 2/3 seeds"
       ],
@@ -972,7 +973,7 @@
       "stimulus_sizes": {
         "da1_orn": 204
       },
-      "seconds": 35.2828323841095,
+      "seconds": 45.46813201904297,
       "notes": [],
       "graded": 0.6180342152438837,
       "graded_per_seed": [
@@ -1109,7 +1110,7 @@
         "sugar_grn": 34,
         "looming_detectors": 311
       },
-      "seconds": 67.45105981826782,
+      "seconds": 85.5244562625885,
       "notes": [],
       "graded": 0.7498995249749948,
       "graded_per_seed": [
@@ -1229,7 +1230,7 @@
       "stimulus_sizes": {
         "looming_detectors": 311
       },
-      "seconds": 23.51772451400757,
+      "seconds": 28.271077394485474,
       "notes": [],
       "graded": 0.7308855914178198,
       "graded_per_seed": [
@@ -1334,7 +1335,7 @@
       "stimulus_sizes": {
         "photoreceptors": 6091
       },
-      "seconds": 22.29169511795044,
+      "seconds": 28.924153566360474,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -1459,7 +1460,7 @@
       "stimulus_sizes": {
         "sugar_grn": 34
       },
-      "seconds": 103.25916576385498,
+      "seconds": 135.62227630615234,
       "notes": [],
       "graded": 0.2650637694275522,
       "graded_per_seed": [
@@ -1616,7 +1617,7 @@
         "looming_detectors": 311,
         "sugar_grn": 34
       },
-      "seconds": 56.07951068878174,
+      "seconds": 67.72186040878296,
       "notes": [],
       "graded": 0.654770664456231,
       "graded_per_seed": [
@@ -1784,7 +1785,7 @@
         "sugar_grn": 34,
         "looming_detectors": 311
       },
-      "seconds": 69.64786195755005,
+      "seconds": 99.83249950408936,
       "notes": [],
       "graded": 0.8715247231176383,
       "graded_per_seed": [
@@ -1978,7 +1979,7 @@
         "looming_detectors": 311,
         "sugar_grn": 34
       },
-      "seconds": 62.91908383369446,
+      "seconds": 76.29488635063171,
       "notes": [],
       "graded": 0.853634413634043,
       "graded_per_seed": [
@@ -2221,7 +2222,7 @@
         "loom_left": 165,
         "loom_right": 146
       },
-      "seconds": 58.025747299194336,
+      "seconds": 67.26292943954468,
       "notes": [],
       "graded": 0.6435681316694514,
       "graded_per_seed": [
@@ -2426,7 +2427,7 @@
       "stimulus_sizes": {
         "da1_orn": 204
       },
-      "seconds": 81.14484596252441,
+      "seconds": 105.07402658462524,
       "notes": [],
       "graded": 0.4447896551906801,
       "graded_per_seed": [
@@ -2716,7 +2717,7 @@
         "orn_va1v": 130,
         "orn_dc1": 32
       },
-      "seconds": 213.37580466270447,
+      "seconds": 273.30460000038147,
       "notes": [],
       "graded": 0.7042148617279403,
       "graded_per_seed": [
@@ -2849,7 +2850,7 @@
       "stimulus_sizes": {
         "looming_detectors": 311
       },
-      "seconds": 18.30370593070984,
+      "seconds": 23.1885187625885,
       "notes": [],
       "graded": 0.3949388436752373,
       "graded_per_seed": [
@@ -2999,7 +3000,7 @@
         "water_grn": 17,
         "high_salt_grn": 26
       },
-      "seconds": 102.2515299320221,
+      "seconds": 129.7541105747223,
       "notes": [
         "seed-sensitive: check 0: passes on 2/3 seeds; check 2: passes on 2/3 seeds"
       ],
@@ -3446,7 +3447,7 @@
         "lc16": 182,
         "lc10a": 275
       },
-      "seconds": 107.56489443778992,
+      "seconds": 137.35377979278564,
       "notes": [
         "seed-sensitive: check 6: passes on 1/3 seeds; check 7: passes on 1/3 seeds"
       ],
@@ -3706,7 +3707,7 @@
         "pip10_left": 1,
         "pip10_right": 1
       },
-      "seconds": 78.28534126281738,
+      "seconds": 102.57229542732239,
       "notes": [],
       "graded": 0.802235791349995,
       "graded_per_seed": [
@@ -3814,7 +3815,7 @@
       "stimulus_sizes": {
         "premotor": 664
       },
-      "seconds": 53.31035876274109,
+      "seconds": 65.16288232803345,
       "notes": [],
       "graded": 0.38619127949936055,
       "graded_per_seed": [
@@ -4020,7 +4021,7 @@
         "hs_right": 3,
         "h2_left": 1
       },
-      "seconds": 98.4247829914093,
+      "seconds": 121.19207334518433,
       "notes": [
         "seed-sensitive: check 3: passes on 1/3 seeds; check 4: passes on 2/3 seeds; check 5: passes on 2/3 seeds"
       ],
@@ -4161,7 +4162,7 @@
         "jo_ce": 335,
         "jo_f": 78
       },
-      "seconds": 58.29762578010559,
+      "seconds": 78.40426397323608,
       "notes": [
         "seed-sensitive: check 2: passes on 1/3 seeds"
       ],
@@ -4534,7 +4535,7 @@
         "orn_dc1": 32,
         "silence[dc1_apl_off]": 2
       },
-      "seconds": 507.05859327316284,
+      "seconds": 671.2180149555206,
       "notes": [],
       "graded": 0.923598920828172,
       "graded_per_seed": [
@@ -4758,7 +4759,7 @@
         "orn_da1": 204,
         "orn_dm1": 74
       },
-      "seconds": 96.22695326805115,
+      "seconds": 118.69856214523315,
       "notes": [],
       "graded": 0.5712401794469896,
       "graded_per_seed": [
@@ -4942,7 +4943,7 @@
         "dna02_right": 1,
         "dna01_right": 1
       },
-      "seconds": 19.180105209350586,
+      "seconds": 23.107093334197998,
       "notes": [],
       "graded": 0.16678287136725867,
       "graded_per_seed": [
@@ -5169,7 +5170,7 @@
         "cue_g4": 6,
         "cue_g8": 8
       },
-      "seconds": 35.971378803253174,
+      "seconds": 44.21130394935608,
       "notes": [],
       "graded": 0.25801950870748896,
       "graded_per_seed": [
@@ -5293,7 +5294,7 @@
         "loom": 36102,
         "flash": 36102
       },
-      "seconds": 121.01858830451965,
+      "seconds": 168.00059461593628,
       "notes": [],
       "graded": 3.5999966560033343e-07,
       "graded_per_seed": [
@@ -5466,7 +5467,7 @@
         "loom": 36102,
         "flash": 36102
       },
-      "seconds": 204.29804754257202,
+      "seconds": 253.92105746269226,
       "notes": [],
       "graded": 0.8735244149943858,
       "graded_per_seed": [
@@ -5698,7 +5699,7 @@
         "silence[flash_eye_gf_off]": 2,
         "silence[rest_gf_off]": 2
       },
-      "seconds": 274.22137212753296,
+      "seconds": 356.65127992630005,
       "notes": [
         "seed-sensitive: check 0: passes on 1/3 seeds"
       ],
@@ -6091,7 +6092,7 @@
         "silence[gf_dnge006_off]": 4,
         "silence[gf_dng45_off]": 4
       },
-      "seconds": 603.2582218647003,
+      "seconds": 855.9386892318726,
       "notes": [
         "seed-sensitive: check 0: passes on 1/3 seeds; check 2: passes on 1/3 seeds; check 5: passes on 1/3 seeds; check 7: passes on 1/3 seeds; check 9: passes on 1/3 seeds"
       ],
@@ -6116,6 +6117,186 @@
             false,
             false,
             false
+          ]
+        }
+      },
+      "specificity": 0.0,
+      "non_diagnostic": false
+    },
+    {
+      "task": "closed_loop_escape",
+      "title": "The closed loop \u2014 the body's own eyes, an approaching object, and the jump",
+      "passed": false,
+      "score": 0.5,
+      "checks": [
+        {
+          "description": "body takeoff[approach] >= 1.0  [3/3 seeds, sd 0]",
+          "value": 1.0,
+          "passed": true,
+          "margin": 0.0,
+          "basis": "Card & Dickinson 2008; von Reyn et al. 2014: an object on a collision course with r/v = 40 ms evokes a takeoff; the body left the ground (physics, all six feet)",
+          "graded": 0.5,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "op": ">=",
+          "target": 1.0,
+          "saturated": false,
+          "floored": false
+        },
+        {
+          "description": "body takeoff latency[approach] < 1160.0 ms  [1/3 seeds, sd 76.2]",
+          "value": 1145.2333333332053,
+          "passed": false,
+          "margin": 0.005564009053051557,
+          "basis": "convention: contact is 1,160 ms after the object starts (58 mm at 50 mm/s); a takeoff after the object has arrived is not an escape (Card & Dickinson 2008 measure every takeoff before contact)",
+          "graded": 0.5064054516976093,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            1223.7999999998005,
+            1169.8999999998496,
+            1041.999999999966
+          ],
+          "op": "<",
+          "target": 1160.0,
+          "saturated": false,
+          "floored": false
+        },
+        {
+          "description": "body takeoff[pass_by] < 0.5  [0/3 seeds, sd 0]",
+          "value": 1.0,
+          "passed": false,
+          "margin": -0.3010299956639812,
+          "basis": "convention after Card & Dickinson 2008 and von Reyn et al. 2014: takeoff probability falls steeply off the collision course; a 5-radius miss is scored as no jump",
+          "graded": 0.2,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "op": "<",
+          "target": 0.5,
+          "saturated": false,
+          "floored": false
+        },
+        {
+          "description": "body takeoff[static] < 0.5  [3/3 seeds, sd 0]",
+          "value": 0.0,
+          "passed": true,
+          "margin": 2.6989700043360187,
+          "basis": "convention: a motionless object evokes no escape (task 1's rest, with something to look at); 0.5 splits 0 from 1",
+          "graded": 0.9999960000160001,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "op": "<",
+          "target": 0.5,
+          "saturated": false,
+          "floored": false
+        }
+      ],
+      "measurements": {
+        "approach": {
+          "rate": 1.794871794871795,
+          "network_rate": 0.8417055957612124,
+          "active_fraction": 0.14532579081218142,
+          "spikes": 193268.0,
+          "rate[gf]": 1.794871794871795,
+          "readout_active_fraction[gf]": 0.5,
+          "rate[ttmn]": 1.0256410256410255,
+          "readout_active_fraction[ttmn]": 0.6666666666666666,
+          "rate[lplc2]": 0.029106029106029108,
+          "readout_active_fraction[lplc2]": 0.018018018018018018,
+          "rate[lc4]": 0.18518518518518515,
+          "readout_active_fraction[lc4]": 0.07671957671957672,
+          "collision_ms": 1160.0,
+          "min_distance_mm": 0.5986493982898994,
+          "takeoff": 1.0,
+          "takeoff_latency_ms": 1145.2333333332053,
+          "n_commands": 1.0,
+          "thorax_rise_mm": 0.7288327508732863
+        },
+        "pass_by": {
+          "rate": 1.0256410256410255,
+          "network_rate": 2.0339285553374498,
+          "active_fraction": 0.1491310607520604,
+          "spikes": 466666.6666666667,
+          "rate[gf]": 1.0256410256410255,
+          "readout_active_fraction[gf]": 0.3333333333333333,
+          "rate[ttmn]": 1.1538461538461537,
+          "readout_active_fraction[ttmn]": 0.5,
+          "rate[lplc2]": 0.0,
+          "readout_active_fraction[lplc2]": 0.0,
+          "rate[lc4]": 0.046805046805046796,
+          "readout_active_fraction[lc4]": 0.023809523809523808,
+          "collision_ms": 1160.0,
+          "min_distance_mm": 11.286090493003067,
+          "takeoff": 1.0,
+          "takeoff_latency_ms": 708.1000000001068,
+          "n_commands": 1.0,
+          "thorax_rise_mm": 0.7264617835671402
+        },
+        "static": {
+          "rate": 0.0,
+          "network_rate": 0.008064870100217164,
+          "active_fraction": 0.00879330998023678,
+          "spikes": 1950.3333333333333,
+          "rate[gf]": 0.0,
+          "readout_active_fraction[gf]": 0.0,
+          "rate[ttmn]": 0.0,
+          "readout_active_fraction[ttmn]": 0.0,
+          "rate[lplc2]": 0.0,
+          "readout_active_fraction[lplc2]": 0.0,
+          "rate[lc4]": 0.0,
+          "readout_active_fraction[lc4]": 0.0,
+          "collision_ms": 1160.0,
+          "min_distance_mm": 59.99957229293155,
+          "takeoff": 0.0,
+          "takeoff_latency_ms": NaN,
+          "n_commands": 0.0,
+          "thorax_rise_mm": 0.0
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "eyes[approach]": 36102,
+        "eyes[pass_by]": 36102,
+        "eyes[static]": 36102
+      },
+      "seconds": 687.5808844566345,
+      "notes": [
+        "seed-sensitive: check 1: passes on 1/3 seeds"
+      ],
+      "graded": 0.5518690282271469,
+      "graded_per_seed": [
+        0.543312791842735,
+        0.5489367418320545,
+        0.5633575510066511
+      ],
+      "controls": {
+        "rewired": {
+          "score": 0.5,
+          "passed": false,
+          "checks": [
+            false,
+            false,
+            true,
+            true
           ]
         }
       },

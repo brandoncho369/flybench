@@ -66,13 +66,44 @@ STIMULI: dict[str, dict] = {
 }
 
 
-def available() -> bool:
+PRETRAINED = "flow/0000/000"
+
+
+def flyvis_root():
+    """Where the pretrained networks live: FLYVIS_ROOT_DIR, else flyvis's default download location
+    (~/.cache/flyvis) when it holds them, else flyvis's own package default."""
+    import os
+    from pathlib import Path
+    env = os.environ.get("FLYVIS_ROOT_DIR")
+    if env:
+        return Path(env).expanduser()
+    default = Path.home() / ".cache" / "flyvis"
+    if (default / "results" / PRETRAINED).exists():
+        return default
+    import flyvis
+    return Path(flyvis.root_dir)
+
+
+def network_view(network: str = PRETRAINED):
+    """A flyvis NetworkView for the named pretrained network, resolved against flyvis_root()."""
+    _patch_datamate_windows()
+    from flyvis import NetworkView
+    return NetworkView(network, root_dir=flyvis_root() / "results")
+
+
+def pretrained_available(network: str = PRETRAINED) -> bool:
+    """flyvis and torch import, and the pretrained network directory resolves."""
     try:
         import flyvis  # noqa: F401
         import torch  # noqa: F401
+        network_view(network)
         return True
-    except ImportError:
+    except Exception:
         return False
+
+
+def available() -> bool:
+    return pretrained_available()
 
 
 def cache_path(name: str) -> Path:
@@ -134,7 +165,6 @@ def render_to_cache(name: str, network: str = "flow/0000/000") -> Path:
     """Run one named stimulus through the pretrained flyvis network; write per-type per-column
     rates (Hz, 10 ms bins) to the cache. Returns the file written."""
     import torch
-    from flyvis import NetworkView
     from flyvis.datasets.rendering import BoxEye
     _patch_datamate_windows()
     spec = STIMULI[name]
@@ -142,7 +172,7 @@ def render_to_cache(name: str, network: str = "flow/0000/000") -> Path:
     px = int(eye.min_frame_size[0])
     frames = render_frames(spec, px)
     movie = eye(torch.tensor(frames)).squeeze(1).squeeze(1)[None, :, None, :]   # (1, T, 1, 721)
-    net = NetworkView(network).init_network()
+    net = network_view(network).init_network()
     act = net.simulate(movie, dt=1.0 / 100).detach().numpy()[0]                  # (T, nodes)
     nodes = net.connectome.nodes
     types = np.array([t.decode() for t in nodes.type[:]])

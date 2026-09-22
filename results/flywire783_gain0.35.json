@@ -4,21 +4,21 @@
   "seeds": 1,
   "verified": false,
   "core_score": 0.6666666666666666,
-  "hard_score": 0.5517261904761904,
+  "hard_score": 0.5341097308488613,
   "core_by_circuit": 0.8148148148148149,
-  "hard_by_circuit": 0.5202579365079365,
-  "graded": 0.5952582948459113,
+  "hard_by_circuit": 0.5074603174603174,
+  "graded": 0.5828844309923014,
   "graded_ci95": null,
   "core_graded": 0.6642879576332437,
-  "hard_graded": 0.5533643411077005,
+  "hard_graded": 0.5322354030432622,
   "profile": {
-    "-1": 0.7538461538461538,
-    "-0.5": 0.6923076923076923,
-    "-0.25": 0.6384615384615384,
-    "0": 0.5846153846153846,
-    "0.25": 0.4846153846153846,
-    "0.5": 0.45384615384615384,
-    "1": 0.4153846153846154
+    "-1": 0.7428571428571429,
+    "-0.5": 0.6857142857142857,
+    "-0.25": 0.6285714285714286,
+    "0": 0.5785714285714286,
+    "0.25": 0.4785714285714286,
+    "0.5": 0.45,
+    "1": 0.4142857142857143
   },
   "circuits": {
     "stability": "stability",
@@ -45,7 +45,10 @@
     "co2_pathway_specificity": "olfaction",
     "epg_ring_attractor": "navigation",
     "egg_laying_ovidn": "reproduction",
-    "halt_walk_off": "locomotion"
+    "halt_walk_off": "locomotion",
+    "flyvis_loom_escape": "escape",
+    "embodied_loom_escape": "escape",
+    "closed_loop_escape": "escape"
   },
   "skipped": {
     "looming_to_jump_muscle": "readout 'ttmn' matches no neurons on flywire783",
@@ -53,7 +56,9 @@
     "taste_modalities": "stimulus 'water_grn' matches no neurons on flywire783",
     "courtship_song_chain": "not applicable: courtship_song_chain is defined on malecns/toy only (this is flywire783)",
     "leg_mn_size_principle": "not applicable: leg_mn_size_principle is defined on malecns/toy only (this is flywire783)",
-    "steering_dna02_vs_dna01": "not applicable: steering_dna02_vs_dna01 is defined on malecns/toy only (this is flywire783)"
+    "steering_dna02_vs_dna01": "not applicable: steering_dna02_vs_dna01 is defined on malecns/toy only (this is flywire783)",
+    "ttmn_without_gf": "readout 'ttmn' matches no neurons on flywire783",
+    "gf_free_route_to_ttmn": "not applicable: gf_free_route_to_ttmn is defined on malecns/toy only (this is flywire783)"
   },
   "controls": [],
   "specificity": null,
@@ -91,15 +96,17 @@
   "simulator_capabilities": [
     "can_silence"
   ],
-  "score": 0.5747142857142858,
+  "reference_baseline": false,
+  "model_card": null,
+  "score": 0.557780612244898,
   "passed": 4,
-  "n_tasks": 25,
+  "n_tasks": 28,
   "cost": {
-    "wall_seconds": 100.46082615852356,
-    "cpu_seconds": 332.82364320755005,
-    "jobs": 6,
-    "peak_rss_mb": 320.1484375,
-    "bio_seconds": 68.4
+    "wall_seconds": 245.48160934448242,
+    "cpu_seconds": 487.8893086910248,
+    "jobs": 3,
+    "peak_rss_mb": 2198.23828125,
+    "bio_seconds": 80.7
   },
   "tasks": [
     {
@@ -153,7 +160,7 @@
       },
       "readout_size": 139255,
       "stimulus_sizes": {},
-      "seconds": 1.0459825992584229,
+      "seconds": 1.0275163650512695,
       "notes": [],
       "graded": 0.995047504958495,
       "graded_per_seed": [
@@ -240,7 +247,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 7.993558883666992,
+      "seconds": 5.729152679443359,
       "notes": [],
       "graded": 0.3332501714136795,
       "graded_per_seed": [
@@ -312,7 +319,7 @@
         "sugar_grn": 129,
         "bitter_grn": 65
       },
-      "seconds": 8.428703784942627,
+      "seconds": 9.971249103546143,
       "notes": [],
       "graded": 1.9999999200000037e-08,
       "graded_per_seed": [
@@ -399,7 +406,7 @@
       "stimulus_sizes": {
         "looming_detectors": 314
       },
-      "seconds": 4.440125942230225,
+      "seconds": 4.24717903137207,
       "notes": [],
       "graded": 0.9931922117945137,
       "graded_per_seed": [
@@ -462,7 +469,7 @@
       "stimulus_sizes": {
         "bitter_grn": 65
       },
-      "seconds": 4.408689260482788,
+      "seconds": 4.243526220321655,
       "notes": [],
       "graded": 0.9999498799995312,
       "graded_per_seed": [
@@ -589,7 +596,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 14.462602615356445,
+      "seconds": 11.550027847290039,
       "notes": [],
       "graded": 0.20000021599757717,
       "graded_per_seed": [
@@ -653,7 +660,7 @@
         "pulse1": 129,
         "pulse2": 129
       },
-      "seconds": 8.028281211853027,
+      "seconds": 6.797561407089233,
       "notes": [],
       "graded": 1.9999999200000037e-08,
       "graded_per_seed": [
@@ -760,7 +767,7 @@
       "stimulus_sizes": {
         "da1_orn": 127
       },
-      "seconds": 6.361304998397827,
+      "seconds": 5.220444440841675,
       "notes": [],
       "graded": 0.6437262142225387,
       "graded_per_seed": [
@@ -868,7 +875,7 @@
         "sugar_grn": 129,
         "looming_detectors": 314
       },
-      "seconds": 10.013998746871948,
+      "seconds": 9.998677492141724,
       "notes": [],
       "graded": 0.7499667907838058,
       "graded_per_seed": [
@@ -963,7 +970,7 @@
       "stimulus_sizes": {
         "looming_detectors": 314
       },
-      "seconds": 4.619304895401001,
+      "seconds": 3.5543477535247803,
       "notes": [],
       "graded": 0.8327984781338564,
       "graded_per_seed": [
@@ -1044,7 +1051,7 @@
       "stimulus_sizes": {
         "photoreceptors": 11153
       },
-      "seconds": 3.37898850440979,
+      "seconds": 3.2103662490844727,
       "notes": [],
       "graded": 0.96637107609288,
       "graded_per_seed": [
@@ -1139,7 +1146,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 8.218086004257202,
+      "seconds": 7.520330905914307,
       "notes": [],
       "graded": 0.7475237524792475,
       "graded_per_seed": [
@@ -1263,7 +1270,7 @@
         "looming_detectors": 314,
         "sugar_grn": 129
       },
-      "seconds": 8.779297351837158,
+      "seconds": 9.782208681106567,
       "notes": [],
       "graded": 0.5999998079913108,
       "graded_per_seed": [
@@ -1397,7 +1404,7 @@
         "sugar_grn": 129,
         "looming_detectors": 314
       },
-      "seconds": 12.098664045333862,
+      "seconds": 11.700310230255127,
       "notes": [],
       "graded": 0.7927129792437204,
       "graded_per_seed": [
@@ -1589,7 +1596,7 @@
         "loom_left": 162,
         "loom_right": 152
       },
-      "seconds": 9.391453981399536,
+      "seconds": 9.336345434188843,
       "notes": [],
       "graded": 0.44444433333344446,
       "graded_per_seed": [
@@ -1748,7 +1755,7 @@
       "stimulus_sizes": {
         "da1_orn": 127
       },
-      "seconds": 11.203429698944092,
+      "seconds": 9.696500539779663,
       "notes": [],
       "graded": 0.44390254915164185,
       "graded_per_seed": [
@@ -1986,7 +1993,7 @@
         "orn_va1v": 94,
         "orn_dc1": 39
       },
-      "seconds": 30.932657480239868,
+      "seconds": 29.62785029411316,
       "notes": [],
       "graded": 0.5695798270768805,
       "graded_per_seed": [
@@ -2354,7 +2361,7 @@
         "lc16": 152,
         "lc10a": 237
       },
-      "seconds": 19.052584171295166,
+      "seconds": 17.608097791671753,
       "notes": [],
       "graded": 0.7521028869459838,
       "graded_per_seed": [
@@ -2524,7 +2531,7 @@
         "hs_right": 3,
         "h2_left": 1
       },
-      "seconds": 12.854931354522705,
+      "seconds": 11.818723917007446,
       "notes": [],
       "graded": 0.7498474512387135,
       "graded_per_seed": [
@@ -2632,7 +2639,7 @@
         "jo_ce": 433,
         "jo_f": 205
       },
-      "seconds": 11.026889562606812,
+      "seconds": 7.394103527069092,
       "notes": [],
       "graded": 0.33221472260068596,
       "graded_per_seed": [
@@ -2958,7 +2965,7 @@
         "orn_dc1": 39,
         "silence[dc1_apl_off]": 2
       },
-      "seconds": 71.51800274848938,
+      "seconds": 65.87452054023743,
       "notes": [],
       "graded": 0.5204992731664171,
       "graded_per_seed": [
@@ -3137,7 +3144,7 @@
         "orn_da1": 127,
         "orn_dm1": 68
       },
-      "seconds": 18.52919340133667,
+      "seconds": 16.378865957260132,
       "notes": [],
       "graded": 0.5712223802559778,
       "graded_per_seed": [
@@ -3321,7 +3328,7 @@
         "cue_g4": 6,
         "cue_g8": 8
       },
-      "seconds": 23.250906229019165,
+      "seconds": 18.549208641052246,
       "notes": [],
       "graded": 0.20483149708844223,
       "graded_per_seed": [
@@ -3446,7 +3453,7 @@
         "oviin": 2,
         "pc1": 10
       },
-      "seconds": 6.4832680225372314,
+      "seconds": 6.036383867263794,
       "notes": [],
       "graded": 0.5093390575835595,
       "graded_per_seed": [
@@ -3624,11 +3631,410 @@
         "fg": 2,
         "bb": 2
       },
-      "seconds": 16.302737712860107,
+      "seconds": 16.20419931411743,
       "notes": [],
       "graded": 0.4362035087673258,
       "graded_per_seed": [
         0.4362035087673258
+      ],
+      "controls": {},
+      "specificity": null,
+      "non_diagnostic": false
+    },
+    {
+      "task": "flyvis_loom_escape",
+      "title": "Through a real visual front end, a loom reaches the loom detectors and the giant fiber",
+      "passed": false,
+      "score": 0.0,
+      "checks": [
+        {
+          "description": "rate[loom, lplc2, 900-1200ms] > 5.0 Hz",
+          "value": 0.0,
+          "passed": false,
+          "margin": -3.6989700043360187,
+          "basis": "Klapoetke et al. 2017: LPLC2 responds to looming (radially expanding) motion, most strongly as the object grows; 5 Hz is the task-02 convention for a response",
+          "graded": 3.999999840000007e-08,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [],
+          "op": ">",
+          "target": 5.0,
+          "saturated": false,
+          "floored": false
+        },
+        {
+          "description": "rate[loom, lc4, 900-1200ms] > 5.0 Hz",
+          "value": 0.0,
+          "passed": false,
+          "margin": -3.6989700043360187,
+          "basis": "Ache et al. 2019; von Reyn et al. 2017: LC4 responds to looming, encoding angular size; 5 Hz task-02 convention",
+          "graded": 3.999999840000007e-08,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [],
+          "op": ">",
+          "target": 5.0,
+          "saturated": false,
+          "floored": false
+        },
+        {
+          "description": "spikes per neuron[loom] >= 1.0 spikes/neuron",
+          "value": 0.0,
+          "passed": false,
+          "margin": -3.0,
+          "basis": "von Reyn et al. 2014: a looming stimulus with r/v = 40 ms evokes a giant-fiber spike; one spike per neuron is the task-16 convention for 'the DN responded'",
+          "graded": 9.99999000001e-07,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [],
+          "op": ">=",
+          "target": 1.0,
+          "saturated": false,
+          "floored": false
+        }
+      ],
+      "measurements": {
+        "loom": {
+          "rate": 0.0,
+          "network_rate": 0.1034145991167283,
+          "active_fraction": 0.03572582672076407,
+          "spikes": 14453.0,
+          "rate[gf]": 0.0,
+          "readout_active_fraction[gf]": 0.0,
+          "rate[lplc2]": 0.0,
+          "readout_active_fraction[lplc2]": 0.0,
+          "rate[lc4]": 0.0,
+          "readout_active_fraction[lc4]": 0.0
+        },
+        "flash": {
+          "rate": 111.5,
+          "network_rate": 7.469792826110373,
+          "active_fraction": 0.19650999964094645,
+          "spikes": 1148794.0,
+          "rate[gf]": 111.5,
+          "readout_active_fraction[gf]": 1.0,
+          "rate[lplc2]": 0.0,
+          "readout_active_fraction[lplc2]": 0.0,
+          "rate[lc4]": 5.9423076923076925,
+          "readout_active_fraction[lc4]": 0.3942307692307692
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "loom": 31825,
+        "flash": 31825
+      },
+      "seconds": 22.388291835784912,
+      "notes": [],
+      "graded": 3.5999966560033343e-07,
+      "graded_per_seed": [
+        3.5999966560033343e-07
+      ],
+      "controls": {},
+      "specificity": null,
+      "non_diagnostic": false
+    },
+    {
+      "task": "embodied_loom_escape",
+      "title": "A loom makes the body jump; a flash and rest do not (first embodied task)",
+      "passed": false,
+      "score": 0.75,
+      "checks": [
+        {
+          "description": "body takeoff[loom] >= 1.0",
+          "value": 1.0,
+          "passed": true,
+          "margin": 0.0,
+          "basis": "Card & Dickinson 2008; von Reyn et al. 2014: a loom with r/v = 40 ms evokes a GF-mediated takeoff; the body left the ground (physics, all six feet)",
+          "graded": 0.5,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [],
+          "op": ">=",
+          "target": 1.0,
+          "saturated": false,
+          "floored": false
+        },
+        {
+          "description": "body takeoff latency[loom] < 300.0 ms",
+          "value": 17.729989624023432,
+          "passed": true,
+          "margin": 1.2284127732772718,
+          "basis": "convention: the loom drive lasts 300 ms (task 4); a takeoff after the drive ended is not a response to it. The fly is airborne ~10 ms after the GF spike (Card & Dickinson 2008)",
+          "graded": 0.9965193513184257,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [],
+          "op": "<",
+          "target": 300.0,
+          "saturated": false,
+          "floored": false
+        },
+        {
+          "description": "body takeoff[baseline] < 0.5",
+          "value": 0.0,
+          "passed": true,
+          "margin": 2.6989700043360187,
+          "basis": "convention: a fly at rest does not jump (task 1: the network is silent at rest); 0.5 splits 0 from 1",
+          "graded": 0.9999960000160001,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [],
+          "op": "<",
+          "target": 0.5,
+          "saturated": false,
+          "floored": false
+        },
+        {
+          "description": "body takeoff[flash_eye] < 0.5",
+          "value": 1.0,
+          "passed": false,
+          "margin": -0.3010299956639812,
+          "basis": "von Reyn et al. 2014; Klapoetke et al. 2017: a full-field brightening is not a loom and evokes no GF spike (task 11), so no jump; through the eye (task 32) and the body",
+          "graded": 0.2,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [],
+          "op": "<",
+          "target": 0.5,
+          "saturated": false,
+          "floored": false
+        }
+      ],
+      "measurements": {
+        "baseline": {
+          "rate": 0.0,
+          "network_rate": 0.0,
+          "active_fraction": 0.0,
+          "spikes": 0.0,
+          "rate[gf]": 0.0,
+          "readout_active_fraction[gf]": 0.0,
+          "rate[ttmn]": NaN,
+          "readout_active_fraction[ttmn]": NaN,
+          "takeoff": 0.0,
+          "takeoff_latency_ms": NaN,
+          "n_commands": 0.0,
+          "thorax_rise_mm": 0.0
+        },
+        "loom": {
+          "rate": 137.5,
+          "network_rate": 2.2243797350184913,
+          "active_fraction": 0.02735987935801228,
+          "spikes": 349150.0,
+          "rate[gf]": 137.5,
+          "readout_active_fraction[gf]": 1.0,
+          "rate[ttmn]": NaN,
+          "readout_active_fraction[ttmn]": NaN,
+          "takeoff": 1.0,
+          "takeoff_latency_ms": 17.729989624023432,
+          "n_commands": 5.0,
+          "thorax_rise_mm": 0.7250278463047062
+        },
+        "loom_eye": {
+          "rate": 0.0,
+          "network_rate": 0.1034145991167283,
+          "active_fraction": 0.03572582672076407,
+          "spikes": 14453.0,
+          "rate[gf]": 0.0,
+          "readout_active_fraction[gf]": 0.0,
+          "rate[ttmn]": NaN,
+          "readout_active_fraction[ttmn]": NaN,
+          "takeoff": 0.0,
+          "takeoff_latency_ms": NaN,
+          "n_commands": 0.0,
+          "thorax_rise_mm": 0.0
+        },
+        "flash_eye": {
+          "rate": 111.5,
+          "network_rate": 7.469792826110373,
+          "active_fraction": 0.19650999964094645,
+          "spikes": 1148794.0,
+          "rate[gf]": 111.5,
+          "readout_active_fraction[gf]": 1.0,
+          "rate[ttmn]": NaN,
+          "readout_active_fraction[ttmn]": NaN,
+          "takeoff": 1.0,
+          "takeoff_latency_ms": 262.5299926757813,
+          "n_commands": 10.0,
+          "thorax_rise_mm": 0.7675043049516168
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "looming_detectors": 314,
+        "loom": 31825,
+        "flash": 31825
+      },
+      "seconds": 34.56180214881897,
+      "notes": [
+        "readout 'ttmn' matched 0 neurons",
+        "body: command readout 'ttmn' absent, using 'gf' + 0.93 ms"
+      ],
+      "graded": 0.6741288378336064,
+      "graded_per_seed": [
+        0.6741288378336064
+      ],
+      "controls": {},
+      "specificity": null,
+      "non_diagnostic": false
+    },
+    {
+      "task": "closed_loop_escape",
+      "title": "The closed loop \u2014 the body's own eyes, an approaching object, and the jump",
+      "passed": false,
+      "score": 0.5,
+      "checks": [
+        {
+          "description": "body takeoff[approach] >= 1.0",
+          "value": 0.0,
+          "passed": false,
+          "margin": -3.0,
+          "basis": "Card & Dickinson 2008; von Reyn et al. 2014: an object on a collision course with r/v = 40 ms evokes a takeoff; the body left the ground (physics, all six feet)",
+          "graded": 9.99999000001e-07,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [],
+          "op": ">=",
+          "target": 1.0,
+          "saturated": false,
+          "floored": false
+        },
+        {
+          "description": "body takeoff latency[approach] < 1160.0 ms",
+          "value": NaN,
+          "passed": false,
+          "margin": NaN,
+          "basis": "convention: contact is 1,160 ms after the object starts (58 mm at 50 mm/s); a takeoff after the object has arrived is not an escape (Card & Dickinson 2008 measure every takeoff before contact)",
+          "graded": 0.0,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [],
+          "op": "<",
+          "target": 1160.0,
+          "saturated": false,
+          "floored": false
+        },
+        {
+          "description": "body takeoff[pass_by] < 0.5",
+          "value": 0.0,
+          "passed": true,
+          "margin": 2.6989700043360187,
+          "basis": "convention after Card & Dickinson 2008 and von Reyn et al. 2014: takeoff probability falls steeply off the collision course; a 5-radius miss is scored as no jump",
+          "graded": 0.9999960000160001,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [],
+          "op": "<",
+          "target": 0.5,
+          "saturated": false,
+          "floored": false
+        },
+        {
+          "description": "body takeoff[static] < 0.5",
+          "value": 0.0,
+          "passed": true,
+          "margin": 2.6989700043360187,
+          "basis": "convention: a motionless object evokes no escape (task 1's rest, with something to look at); 0.5 splits 0 from 1",
+          "graded": 0.9999960000160001,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [],
+          "op": "<",
+          "target": 0.5,
+          "saturated": false,
+          "floored": false
+        }
+      ],
+      "measurements": {
+        "approach": {
+          "rate": 0.0,
+          "network_rate": 0.23368308830231205,
+          "active_fraction": 0.07895587232056299,
+          "spikes": 42424.0,
+          "rate[gf]": 0.0,
+          "readout_active_fraction[gf]": 0.0,
+          "rate[ttmn]": NaN,
+          "readout_active_fraction[ttmn]": NaN,
+          "rate[lplc2]": 0.0,
+          "readout_active_fraction[lplc2]": 0.0,
+          "rate[lc4]": 0.0,
+          "readout_active_fraction[lc4]": 0.0,
+          "collision_ms": 1160.0,
+          "min_distance_mm": 0.003596360900289369,
+          "takeoff": 0.0,
+          "takeoff_latency_ms": NaN,
+          "n_commands": 0.0,
+          "thorax_rise_mm": 0.0
+        },
+        "pass_by": {
+          "rate": 0.0,
+          "network_rate": 0.04515788688708871,
+          "active_fraction": 0.025076298876162435,
+          "spikes": 8280.0,
+          "rate[gf]": 0.0,
+          "readout_active_fraction[gf]": 0.0,
+          "rate[ttmn]": NaN,
+          "readout_active_fraction[ttmn]": NaN,
+          "rate[lplc2]": 0.0,
+          "readout_active_fraction[lplc2]": 0.0,
+          "rate[lc4]": 0.0,
+          "readout_active_fraction[lc4]": 0.0,
+          "collision_ms": 1160.0,
+          "min_distance_mm": 10.003539130923253,
+          "takeoff": 0.0,
+          "takeoff_latency_ms": NaN,
+          "n_commands": 0.0,
+          "thorax_rise_mm": 0.0
+        },
+        "static": {
+          "rate": 0.0,
+          "network_rate": 0.008733286748438807,
+          "active_fraction": 0.009737531866001221,
+          "spikes": 1679.0,
+          "rate[gf]": 0.0,
+          "readout_active_fraction[gf]": 0.0,
+          "rate[ttmn]": NaN,
+          "readout_active_fraction[ttmn]": NaN,
+          "rate[lplc2]": 0.0,
+          "readout_active_fraction[lplc2]": 0.0,
+          "rate[lc4]": 0.0,
+          "readout_active_fraction[lc4]": 0.0,
+          "collision_ms": 1160.0,
+          "min_distance_mm": 59.99957229293155,
+          "takeoff": 0.0,
+          "takeoff_latency_ms": NaN,
+          "n_commands": 0.0,
+          "thorax_rise_mm": 0.0
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "eyes[approach]": 31825,
+        "eyes[pass_by]": 31825,
+        "eyes[static]": 31825
+      },
+      "seconds": 127.86151647567749,
+      "notes": [
+        "readout 'ttmn' matched 0 neurons",
+        "body: command readout 'ttmn' absent, using 'gf' + 0.93 ms",
+        "body: command readout 'ttmn' absent, using 'gf' + 0.93 ms",
+        "body: command readout 'ttmn' absent, using 'gf' + 0.93 ms",
+        "body: command readout 'ttmn' absent, using 'gf' + 0.93 ms"
+      ],
+      "graded": 0.49999825000775006,
+      "graded_per_seed": [
+        0.49999825000775006
       ],
       "controls": {},
       "specificity": null,
