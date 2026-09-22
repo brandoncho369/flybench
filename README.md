@@ -10,6 +10,20 @@ In 2024 the [FlyWire](https://flywire.ai) consortium published the complete wiri
 
 *Above: the same model running live at [www.fly-bench.com](https://www.fly-bench.com) — press a sense, watch the wiring answer. The benchmark below is what keeps it honest.*
 
+**In one screen.** 36 tasks, each a published fly behaviour with a citation and a pre-registered prediction; two connectomes (FlyWire v783, MaleCNS v1.0 with its nerve cord); shuffled-wiring controls on every row; a real optic-lobe model in front of the brain and a physics body behind it. Six things it has found so far, each with its RFC:
+
+- The reference model's working gain is **0.45**, not the published 1.0 — at 1.0 a fifth of the brain fires at 29 Hz ([docs/FINDINGS.md](docs/FINDINGS.md)).
+- Given a real eye, the reference giant fiber fires at a **flash and not at a loom** — the opposite of the fly ([RFC 32](docs/rfcs/32_flyvis_loom_escape.md)); given a body too, it jumps at the flash ([RFC 33](docs/rfcs/33_embodied_loom_escape.md)).
+- On the male CNS a loom reaches the jump muscle **without the giant fiber**, through nine descending types onto the GF-coupled interneurons; the flash's route *is* the GF ([RFCs 34–35](docs/rfcs/)).
+- A whole-CNS point-neuron model lets ascending neurons **fire backwards** from their brain-side terminals. Keeping 0.6–4 % of synapses off the soma (no free parameters) makes the mushroom body sparse on both brains and takes the male core tier from 0.57 to 0.90 ([RFC M1](docs/rfcs/M1_terminal_synapses.md), [M1b](docs/rfcs/M1b_terminal_everywhere.md)).
+- Spike-frequency adaptation, applied uniformly, is still the best open-division row (graded 0.75 vs 0.64) and explains robustness, not selectivity.
+- With the loop closed through its own eyes, the male brain **jumps before contact — and at a near miss** ([RFC 36](docs/rfcs/36_closed_loop_escape.md)). Nobody passes that task yet.
+
+```
+pip install -e .          # then, in ~2 min on the bundled toy:
+flybench run -c toy
+```
+
 flybench asks the one question that keeps those choices honest:
 
 > **Does the simulated fly still do the things a real fly is known to do?**
