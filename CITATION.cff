@@ -9,11 +9,19 @@ repository-code: "https://github.com/brandoncho369/flybench"
 url: "https://www.fly-bench.com"
 license: MIT
 version: 0.2.0
+doi: 10.5281/zenodo.22886374
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.22886374
+    description: "the concept DOI, every version"
+  - type: doi
+    value: 10.5281/zenodo.22886375
+    description: "this version, 0.2.0"
 date-released: "2026-09-21"
 abstract: >
   flybench scores a connectome-constrained neural model (the reference is a uniform leaky
   integrate-and-fire on the FlyWire v783 and MaleCNS v1.0 connectomes) against published fly
-  behaviour: 31 tasks, each a stimulus, a readout and thresholds with a citation or a stated
+  behaviour: 36 tasks, each a stimulus, a readout and thresholds with a citation or a stated
   convention, every one pre-registered as an RFC with predictions before its first run, scored
   with graded margins, ceiling and floor gates, seeds, and shuffled-wiring controls.
 keywords:

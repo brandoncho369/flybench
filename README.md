@@ -2,6 +2,8 @@
 
 **A reflex benchmark for whole-brain fruit fly connectome simulations.**
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22886374.svg)](https://doi.org/10.5281/zenodo.22886374)
+
 In 2024 the [FlyWire](https://flywire.ai) consortium published the complete wiring diagram of an adult *Drosophila* brain: ~140,000 neurons, ~50 million synapses. Since then people have dropped that graph into a leaky integrate-and-fire model and wired it to Minecraft, Doom and Beat Saber. Every one of those demos had to make the same undocumented choices — synaptic weight, a global gain knob, which transmitters count as inhibitory, how many synapses an edge needs to exist — and then hand-tune them until something looked alive.
 
 [![the FlyWire connectome running live in the browser: sugar receptors fire, the taste pathway lights up, the proboscis motor neuron fires](https://raw.githubusercontent.com/brandoncho369/fly-explorer/master/docs/explorer.gif)](https://www.fly-bench.com)
@@ -230,3 +232,11 @@ print(res.rate_hz(mn9, 250, 800), "Hz")
 * Jaeger, A. H. et al. *A complex peripheral code for salt taste in Drosophila.* eLife 7, e37167 (2018).
 
 MIT © Brandon Cho
+
+## Citing
+
+Archived on Zenodo: concept DOI [10.5281/zenodo.22886374](https://doi.org/10.5281/zenodo.22886374) (every version), v0.2.0 [10.5281/zenodo.22886375](https://doi.org/10.5281/zenodo.22886375). `CITATION.cff` has the metadata; cite the connectomes (FlyWire, MaleCNS) and the behavioural papers each task names as well.
+
+```
+Cho, B. (2026). flybench: a behavioural benchmark for whole-connectome simulations of Drosophila (v0.2.0). Zenodo. https://doi.org/10.5281/zenodo.22886375
+```
