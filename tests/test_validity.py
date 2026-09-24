@@ -115,7 +115,15 @@ def test_tasks_needing_neurons_the_dataset_lacks_are_skipped_not_failed(toy):
     rep = run_suite(toy, LIFParams(gain=1.0, seed=0), tasks)
     assert "looming_to_jump_muscle" in rep["skipped"]
     assert all(t["task"] != "looming_to_jump_muscle" for t in rep["tasks"])
-    assert rep["n_tasks"] == len(tasks) - len(rep["skipped"]) and len(rep["skipped"]) == 3   # 15 and 19 need the nerve cord, 35 needs GFC2
+    assert rep["n_tasks"] == len(tasks) - len(rep["skipped"])
+    # the toy lacks the neurons these need: 15 and 19 the flight motor neurons, 35 GFC2. Anything else
+    # skipped is an optional stack the machine does not have (the closed loop needs flygym + flyvis),
+    # which is a different kind of skip and must say so.
+    dataset_skips = {"looming_to_jump_muscle", "gf_to_muscle_latency", "gf_free_route_to_ttmn"}
+    assert dataset_skips <= set(rep["skipped"])
+    for name, why in rep["skipped"].items():
+        if name not in dataset_skips:
+            assert "installed" in why, f"{name} skipped for an unexpected reason: {why}"
     # a required readout that is not defined is a lint error, not a silent skip
     bad = dict(jump, requires_readouts=["nope"])
     assert task_unavailable(bad, toy).startswith("requires readout")
