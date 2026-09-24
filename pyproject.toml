@@ -31,11 +31,23 @@ embodied = ["flygym>=2.1; python_version >= '3.12'"]
 [project.scripts]
 flybench = "flybench.cli:main"
 
-[tool.setuptools.packages.find]
-include = ["flybench*"]
+# listed explicitly because the two `_bundled` entries live outside the package directory
+[tool.setuptools]
+packages = ["flybench", "flybench.models", "flybench.frontends", "flybench.embodied",
+            "flybench._bundled.tasks", "flybench._bundled.flyvis"]
+
+# The task files and the committed sensory-front-end caches live at the top level of the repo (that is
+# where contributors add them) and are shipped inside the wheel as well, so `pip install flybench` has
+# a working suite. flybench.bench.TASK_DIR / flyvis_frontend.CACHE_DIR prefer the repo copy and fall
+# back to these (flybench/_bundled/).
+[tool.setuptools.package-dir]
+"flybench._bundled.tasks" = "tasks"
+"flybench._bundled.flyvis" = "data/frontends/flyvis"
 
 [tool.setuptools.package-data]
 flybench = ["schema/*.json", "manifests.json"]
+"flybench._bundled.tasks" = ["*.yaml"]
+"flybench._bundled.flyvis" = ["*.npz"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

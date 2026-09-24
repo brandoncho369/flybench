@@ -44,7 +44,9 @@ import numpy as np
 from ..connectome import Connectome
 from ..sim import Stimulus
 
-CACHE_DIR = Path(__file__).resolve().parent.parent.parent / "data" / "frontends" / "flyvis"
+from ..bench import _bundled_or_repo as _dir   # noqa: E402  (a checkout's data/ or the wheel's flybench/_bundled/)
+
+CACHE_DIR = _dir("data/frontends/flyvis", "flyvis")
 OUTPUT_TYPES = ("T4a", "T4b", "T4c", "T4d", "T5a", "T5b", "T5c", "T5d", "T2", "T2a", "T3",
                 "Tm1", "Tm2", "Tm3", "Tm4", "Tm9", "Tm16", "Tm20", "Tm5a", "Tm5b", "Tm5c",
                 "TmY3", "TmY4", "TmY5a", "TmY10", "TmY14", "TmY15")

@@ -54,7 +54,17 @@ OPS = {">": operator.gt, ">=": operator.ge, "<": operator.lt, "<=": operator.le,
 EPS = 1e-3
 CEILING_FRACTION = 0.8   # a readout at ≥ 80 % of its refractory-limited rate is "at ceiling" (docs/rfcs/S1_ceiling_gate.md)
 FLOOR_HZ = 2.0           # a readout under 2 Hz is silent (the task-05 null convention); a comparison between silences is not a pass (docs/rfcs/S2_response_floor.md)
-TASK_DIR = Path(__file__).resolve().parent.parent / "tasks"
+def _bundled_or_repo(repo_relative: str, bundled: str) -> Path:
+    """A data directory that exists both in a git checkout (at the top level of the repo, where
+    contributors edit it) and inside an installed wheel (copied under flybench/_bundled/)."""
+    here = Path(__file__).resolve().parent
+    repo = here.parent / repo_relative
+    if repo.is_dir():
+        return repo
+    return here / "_bundled" / bundled
+
+
+TASK_DIR = _bundled_or_repo("tasks", "tasks")
 
 
 @dataclass
