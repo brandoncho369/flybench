@@ -2,7 +2,7 @@
 
 **A reflex benchmark for whole-brain fruit fly connectome simulations.**
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22886374.svg)](https://doi.org/10.5281/zenodo.22886374)
+[![CI](https://github.com/brandoncho369/flybench/actions/workflows/ci.yml/badge.svg)](https://github.com/brandoncho369/flybench/actions/workflows/ci.yml) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22886374.svg)](https://doi.org/10.5281/zenodo.22886374)
 
 In 2024 the [FlyWire](https://flywire.ai) consortium published the complete wiring diagram of an adult *Drosophila* brain: ~140,000 neurons, ~50 million synapses. Since then people have dropped that graph into a leaky integrate-and-fire model and wired it to Minecraft, Doom and Beat Saber. Every one of those demos had to make the same undocumented choices — synaptic weight, a global gain knob, which transmitters count as inhibitory, how many synapses an edge needs to exist — and then hand-tune them until something looked alive.
 

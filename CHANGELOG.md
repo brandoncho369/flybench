@@ -3,6 +3,15 @@
 Score-affecting changes are listed with the RFC that introduced them; every archived result is rerun
 when one lands, and the RFC records the before and after.
 
+## 0.2.1 — 2026-09-24
+
+- **Packaging fix:** `pip install flybench` shipped no tasks and no sensory-front-end caches, so
+  `flybench run -c toy` — the README's first command — scored zero tasks on a clean install. The
+  wheel now carries both (`flybench/_bundled/`), and the paths prefer a checkout's copy. Verified
+  in a fresh virtualenv: 30 tasks scored on the toy, 6 skipped with stated reasons.
+- CI: the toy's skip test no longer assumed the optional closed-loop stack was installed.
+- Colab notebook: task and neuron counts refreshed.
+
 ## 0.2.0 — 2026-09-21
 
 **36 tasks** (5 core, 31 hard); 15 result rows all on this task set; the embodied track; two
