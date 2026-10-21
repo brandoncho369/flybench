@@ -10,7 +10,7 @@ In 2024 the [FlyWire](https://flywire.ai) consortium published the complete wiri
 
 *Above: the same model running live at [www.fly-bench.com](https://www.fly-bench.com) — press a sense, watch the wiring answer. The benchmark below is what keeps it honest.*
 
-**In one screen.** 36 tasks, each a published fly behaviour with a citation and a pre-registered prediction; two connectomes (FlyWire v783, MaleCNS v1.0 with its nerve cord); shuffled-wiring controls on every row; a real optic-lobe model in front of the brain and a physics body behind it. Six things it has found so far, each with its RFC:
+**In one screen.** 37 tasks, each a published fly behaviour with a citation and a pre-registered prediction; two connectomes (FlyWire v783, MaleCNS v1.0 with its nerve cord); shuffled-wiring controls on every row; a real optic-lobe model in front of the brain and a physics body behind it. Six things it has found so far, each with its RFC:
 
 - The reference model's working gain is **0.45**, not the published 1.0 — at 1.0 a fifth of the brain fires at 29 Hz ([docs/FINDINGS.md](docs/FINDINGS.md)).
 - Given a real eye, the reference giant fiber fires at a **flash and not at a loom** — the opposite of the fly ([RFC 32](docs/rfcs/32_flyvis_loom_escape.md)); given a body too, it jumps at the flash ([RFC 33](docs/rfcs/33_embodied_loom_escape.md)).
@@ -60,7 +60,7 @@ Run against the real connectome (Codex v783, Princeton-filtered connections, ≥
 | 0.70 | yes | yes | yes | 14 % | too much of the brain firing |
 | 1.00 (Shiu 2024) | yes | yes | yes | 19 % | a fifth of the brain at 29 Hz — not a reflex, a seizure |
 
-So on the July-2025 synapse predictions the working window is around **gain 0.45**, less than half of the 1.0 that Shiu et al. calibrated on the earlier Buhmann predictions. That is the kind of thing this benchmark exists to catch: the connectome got re-predicted, the weights shifted, and a parameter that used to be right silently stopped being right.
+So on the Codex build of v783 the working window is around **gain 0.45**, less than half of the 1.0 that Shiu et al. calibrated on their own graph of the same neurons (a different synapse table, no threshold, and ~5,500 more inhibitory neurons: docs/rfcs/D1_shiu_graph.md). That is the kind of thing this benchmark exists to catch: the connectome got re-predicted, the weights shifted, and a parameter that used to be right silently stopped being right.
 
 Re-running with three random seeds (`--seeds 3`) sharpened it further: **0.40 is a knife edge** — sugar reaches the proboscis on only 2 of 3 seeds, and it "passed" the adaptation task purely because one seed's second pulse failed to ignite. **0.45 passes every core task on every seed.** With more than one seed a check only counts as passed if it holds on every seed, so single-seed luck cannot climb the leaderboard.
 
@@ -154,7 +154,7 @@ Result (3 seeds each, [docs/MALECNS.md](docs/MALECNS.md)): on the male CNS there
 
 A full 31-task run with 3 seeds and the rewired control is ~18 min on a laptop with `--jobs 6` (≈5× real time per CPU, 0.4 GB per worker; the cost column in LEADERBOARD.md). Real neuron sets the tasks resolve to on v783: sugar GRNs = `sub_class: sugar/water` (129), bitter GRNs = `sub_class: bitter` (65), MN9 = `cell_type: CB0701` (2, labelled "Motor neuron 9; MN9"), Giant Fiber = `cell_type: DNp01` (2), looming = `LPLC2` + `LC4` (314).
 
-Edges with fewer than 5 synapses are dropped (`--min-synapses`), matching Shiu et al.
+Edges with fewer than 5 synapses are dropped (`--min-synapses`); the Codex download itself carries only pairs of ≥ 5. This is **not** Shiu et al.'s graph: their `Connectivity_783.parquet` keeps every pair (15.1 M edges against our 3.7 M), counts synapses from an earlier table, and signs the neurons Codex leaves without a transmitter, which our build treats as excitatory. `flybench build-shiu` builds their graph as a second pinned connectome, `flywire783_shiu` (docs/rfcs/D1_shiu_graph.md; reported by Daniel Culotta).
 
 ## The model
 

@@ -14,7 +14,7 @@ can be argued with.
 ## What the benchmark claims
 
 flybench measures whether a whole-brain simulation reproduces **these cited manipulations**: the
-tasks in `tasks/` (36 at the time of writing), each a published stimulus → response with a citation, a threshold with a
+tasks in `tasks/` (37 at the time of writing), each a published stimulus → response with a citation, a threshold with a
 `basis`, and a pre-registered RFC. It does not measure "biological realism", "how close to a
 fly" a model is, or anything a task does not test. A model that tops the leaderboard reproduces
 more of the listed behaviours than the others; it is not thereby more fly-like, and the README,
@@ -33,6 +33,27 @@ Every submission config carries `conflict_of_interest:` — who wrote the model,
 wrote tasks it targets, what they stand to gain; `none` is an answer. It is shown on the
 leaderboard. Task authors do not review submissions that target their tasks; the maintainer does
 not review their own model's row (it is evaluated by CI, and the CI log is the review). Item 49.
+
+## Submissions with fitted parameters
+
+A submission that tunes anything against the benchmark (added neurons, per-edge weights, a gain
+picked from a sweep) declares it in its config (`fitted:` what was fitted, on which tasks and
+seeds) and is ranked only with three controls, run by the maintainer, not by the author (policy
+since 2026-10-20; `flybench evaluate` does not automate them yet, and no fitted submission exists):
+
+- **Held-out seeds.** Fitting uses seeds the submitter chooses; the score uses seeds committed in
+  the repo before the submission (a hash in the config, revealed at evaluation). A result on the
+  fitting seeds is shown, labelled as such, and never ranked.
+- **The same fit on shuffled wiring.** The fitting procedure is rerun on the `rewired` connectome
+  with the same budget. A gain that the shuffled brain also gets from the procedure is the
+  procedure's, not the connectome's.
+- **Size-matched random additions.** A submission that adds neurons or edges is compared with the
+  same number placed at random (same counts per cell class, same weight budget), fitted the same way.
+
+These follow Daniel Culotta's protocol for judging circuits added to the Shiu model (email to the
+maintainer, 2026-10-19). The reference LIF's gain was chosen by a sweep before this rule existed;
+it is a baseline (`reference_baseline`), not a fitted entry, and the rule is not applied to it
+retroactively.
 
 ## A task's life
 

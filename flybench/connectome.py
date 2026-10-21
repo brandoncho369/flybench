@@ -320,6 +320,38 @@ def build_from_codex(codex_dir: Path | str, min_synapses: int = 5, name: str = "
     )
 
 
+def build_from_shiu(parquet: Path | str, base: Connectome, name: str = "flywire783_shiu") -> Connectome:
+    """The graph of the published Shiu et al. 2024 model on flybench's FlyWire v783 neurons.
+
+    `parquet` is `Connectivity_783.parquet` from github.com/philshiu/Drosophila_brain_model:
+    Presynaptic_ID, Postsynaptic_ID, Connectivity (synapse count, no threshold), Excitatory (±1, Shiu's
+    per-neuron transmitter call). Edges and signs are Shiu's; neuron index, annotations and positions are
+    `base`'s (the Codex flywire783 build), so every selector resolves to the same neurons. The Codex build
+    differs in three ways (FINDINGS 2026-10-20): pairs < 5 synapses dropped, a later synapse table (counts
+    a median 1.33× Shiu's on shared pairs), and blank Codex nt_type read as excitatory. `terminal` is not
+    carried over: it is aligned to the Codex edges.
+    """
+    import pyarrow.parquet as pq  # parquet is the only format Shiu publishes
+    t = pq.read_table(str(parquet), columns=["Presynaptic_ID", "Postsynaptic_ID", "Connectivity", "Excitatory"]).to_pandas()
+    index = pd.Index(base.root_ids)
+    pre = index.get_indexer(t["Presynaptic_ID"].to_numpy())
+    post = index.get_indexer(t["Postsynaptic_ID"].to_numpy())
+    if (pre < 0).any() or (post < 0).any():
+        missing = int((pre < 0).sum() + (post < 0).sum())
+        raise ValueError(f"{missing} Shiu edge endpoints are not neurons of {base.name!r}; build the base from Codex v783")
+    vals = (t["Connectivity"].to_numpy() * np.sign(t["Excitatory"].to_numpy())).astype(np.float32)
+    W = sp.csr_matrix((vals, (pre, post)), shape=(base.n, base.n), dtype=np.float32)
+    return Connectome(
+        root_ids=base.root_ids,
+        W=W,
+        positions=base.positions,
+        annotations=base.annotations,
+        name=name,
+        meta={"source": "shiu2024 Connectivity_783.parquet", "dataset": base.meta.get("dataset", base.name),
+              "min_synapses": 1, "n": base.n, "n_edges": int(W.nnz)},
+    )
+
+
 def _find(d: Path, stem: str, required: bool = True) -> Path | None:
     for cand in (d / f"{stem}.csv.gz", d / f"{stem}.csv"):
         if cand.exists():

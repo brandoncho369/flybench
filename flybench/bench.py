@@ -367,7 +367,8 @@ def task_unavailable(task: dict, c: Connectome, simulator: Any = None) -> str | 
     `requires_capabilities: [can_silence, ...]` names what the simulator must declare (its
     `.capabilities`); a simulator without them skips the task."""
     only = task.get("dataset_only")
-    if only and c.name not in list(only):
+    dataset = c.meta.get("dataset", c.name)   # another graph of the same animal (flywire783_shiu) is still that dataset
+    if only and dataset not in list(only):
         return f"not applicable: {task['name']} is defined on {'/'.join(only)} only (this is {c.name})"
     for fe in task.get("requires_frontends", []) or []:
         # a front end's cached output must exist (or the front end itself, to render it)

@@ -729,3 +729,27 @@ row. Every row now shows every task it can run (28 on FlyWire, 34 on MaleCNS).
 
 Runs took the wall-clock they took plus a night's sleep (the `cost.wall_seconds` of three rows
 include the machine sleeping; `cpu_seconds`, which the leaderboard's cost column uses, do not).
+
+## 2026-10-20 — the "Shiu 2024" row was not on Shiu's graph; on it, the plain LIF passes every core task at 0.7
+
+Reported by Daniel Culotta (email, 2026-10-19), reproduced here; docs/rfcs/D1_shiu_graph.md.
+
+- **Our FlyWire graph is not the published model's.** The Codex download keeps pairs of ≥ 5
+  synapses (3.73 M edges; Shiu's `Connectivity_783.parquet` has 15.09 M, 37 % of its synapses in
+  pairs < 5), counts a median 1.33× more synapses on shared pairs, and leaves `nt_type` blank for
+  19,658 neurons, which `build_from_codex` read as excitatory: 5,722 of them are inhibitory in
+  Shiu's file. Net: the same excitation and **25 % more inhibition** (E/I 1.48 against 1.87).
+  The README said our threshold "matched Shiu et al."; corrected. The old row is relabelled
+  "Shiu constants, gain 1.0 (Codex ≥5 graph)"; the published graph is a second pinned connectome,
+  `flywire783_shiu` (`flybench build-shiu`).
+- **Shiu's constants on Shiu's graph: graded 0.629 → 0.709**, bitter suppression 0.50 → 1.00,
+  specificity +0.18 → +0.27. Core still 0.87.
+- **LIF gain 0.7 on Shiu's graph: core 1.00, graded 0.764, specificity +0.33** — every core reflex
+  on every seed, the highest specificity on the board, above the adaptive LIF on Codex (0.754).
+  Pre-registered: the graph would add ≤ +0.03 at matched gain. It added +0.07. Wrong.
+- **Task 37 (odour valence steering, new): 3/5 as pre-registered** on that row. Five channels on
+  the left antenna, attractive or aversive, all drive the left DNa02 (17–30 Hz) and none the right:
+  the model turns toward whatever is stimulated. Toy 5/5, rewired 0/5. docs/rfcs/37.
+- Pending: LIF 0.45 on Shiu's graph (killed for low memory, rerunning); task 37 on the Codex,
+  adaptive and MaleCNS rows; a Codex build with blank transmitters signed from the connection rows,
+  to separate the three causes.

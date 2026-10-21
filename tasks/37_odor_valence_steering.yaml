@@ -1,0 +1,36 @@
+name: odor_valence_steering
+title: One antenna's attractive odour channel steers toward it, an aversive one steers away
+tier: hard
+circuit: olfaction
+description: >
+  Single ORN types carry a sign: optogenetic activation of DM1, DM2 or VA2 ORNs alone attracts
+  walking flies (Bell & Wilson 2016; DM1 and VA2 are needed for vinegar attraction, Semmelhack &
+  Wang 2009), while the CO2 channel V (Suh et al. 2004) and the geosmin channel DA2 (Stensmyr et
+  al. 2012) are each sufficient for aversion. ORNs release more transmitter on their own side and
+  flies turn toward the antenna with the stronger attractive input (Gaudry et al. 2013); DNa02
+  activity predicts ipsilateral turns (Rayshubskiy et al. 2025). This task drives the left-antenna
+  ORNs of one glomerulus at the task-8 100 Hz and reads DNa02 on both sides: attractive channels
+  must bias the left DNa02, aversive ones the right (turning away is INFERRED; the aversion papers
+  measured approach and avoidance). A model whose turns follow drive strength rather than channel
+  scores 3/5. RFC S2 applies: a silent DNa02 pair fails every check. Pre-registered predictions
+  and outcome: docs/rfcs/37_odor_valence_steering.md. Prompted by Daniel Culotta (2026-10-19).
+citation: "Bell & Wilson 2016 (Neuron 91:425); Semmelhack & Wang 2009 (Nature 459:218); Suh et al. 2004 (Nature 431:854); Stensmyr et al. 2012 (Cell 151:1345); Gaudry et al. 2013 (Nature 493:424); Rayshubskiy et al. 2025 (eLife 13:RP102230)"
+duration_ms: 900
+window: [200, 700]
+requires_stimuli: [orn_dm1_left, orn_dm2_left, orn_va2_left, orn_v_left, orn_da2_left]
+requires_readouts: [dna02_left, dna02_right]
+readouts:
+  dna02_left:  {select: {all_of: [{cell_type: DNa02}, {side_regex: "^(left|l)$"}]}}
+  dna02_right: {select: {all_of: [{cell_type: DNa02}, {side_regex: "^(right|r)$"}]}}
+conditions:
+  dm1: {stimuli: [{name: orn_dm1_left, select: {all_of: [{cell_type: ORN_DM1}, {side_regex: "^(left|l)$"}]}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}]}
+  dm2: {stimuli: [{name: orn_dm2_left, select: {all_of: [{cell_type: ORN_DM2}, {side_regex: "^(left|l)$"}]}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}]}
+  va2: {stimuli: [{name: orn_va2_left, select: {all_of: [{cell_type: ORN_VA2}, {side_regex: "^(left|l)$"}]}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}]}
+  v:   {stimuli: [{name: orn_v_left,   select: {all_of: [{cell_type: ORN_V},   {side_regex: "^(left|l)$"}]}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}]}
+  da2: {stimuli: [{name: orn_da2_left, select: {all_of: [{cell_type: ORN_DA2}, {side_regex: "^(left|l)$"}]}, rate_hz: 100, t_start_ms: 200, t_end_ms: 700}]}
+checks:
+  - {type: ratio, cond: dm1, over: dm1, readout: dna02_left, over_readout: dna02_right, op: ">", value: 1, basis: "Bell & Wilson 2016: DM1 ORN activation alone attracts (unusually strongly); Gaudry et al. 2013: flies turn toward the antenna with the stronger attractive input; Rayshubskiy et al. 2025: DNa02 predicts ipsilateral turns (inferred to the L/R DNa02 ratio); > 1 is the task-18 direction convention"}
+  - {type: ratio, cond: dm2, over: dm2, readout: dna02_left, over_readout: dna02_right, op: ">", value: 1, basis: "Bell & Wilson 2016: DM2 ORN activation alone attracts; Gaudry et al. 2013 lateralisation; Rayshubskiy et al. 2025 DNa02 ipsilateral turns (inferred to the L/R ratio); > 1 task-18 convention"}
+  - {type: ratio, cond: va2, over: va2, readout: dna02_left, over_readout: dna02_right, op: ">", value: 1, basis: "Bell & Wilson 2016: VA2 ORN activation alone attracts; Semmelhack & Wang 2009: VA2 needed for vinegar attraction; Gaudry et al. 2013; Rayshubskiy et al. 2025 (inferred to the L/R ratio); > 1 task-18 convention"}
+  - {type: ratio, cond: v, over: v, readout: dna02_left, over_readout: dna02_right, op: "<", value: 1, basis: "Suh et al. 2004: activating the CO2 ORNs (V glomerulus) alone causes avoidance; Bell & Wilson 2016: weak repulsion; turning away from the stimulated antenna is inferred (avoidance, not a lateral turn, was measured); < 1 task-18 convention"}
+  - {type: ratio, cond: da2, over: da2, readout: dna02_left, over_readout: dna02_right, op: "<", value: 1, basis: "Stensmyr et al. 2012: activating the Or56a (DA2) channel alone causes aversion; turning away from the stimulated antenna is inferred; < 1 task-18 convention"}

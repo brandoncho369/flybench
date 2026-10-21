@@ -129,6 +129,10 @@ POPS = [
     *[(f"t5{k}", 24, "visual_projection", "", f"T5{k}", f"T5{k}", "ACH", "T5", (-230, 150, 0)) for k in "abcd"],
     *[(f"t4{k}", 24, "visual_projection", "", f"T4{k}", f"T4{k}", "ACH", "T4", (-230, 130, 0)) for k in "abcd"],
     ("lpi",         20, "central", "",          "LPi_toy",   "",           "GABA", "lobula plate intrinsic", (-200, 140, 0)),
+    # task 37 (odour valence steering): the attractive VA2 and the aversive geosmin DA2 channels; x = 150 so the
+    # mirrored half lands cleanly on the left
+    ("orn_va2",     40, "sensory", "olfactory", "ORN_VA2",   "ORN_VA2",    "ACH",  "olfactory VA2",    (150, 420, 10)),
+    ("orn_da2",     40, "sensory", "olfactory", "ORN_DA2",   "ORN_DA2",    "ACH",  "olfactory DA2 (geosmin)", (-150, 420, 10)),
 ]
 
 SUB_CLASS = {"mn_t1": "fl"}   # Codex-style `sub_class` (fl/ml/hl = front/mid/hind leg); "" elsewhere
@@ -138,7 +142,7 @@ SUB_CLASS = {"mn_t1": "fl"}   # Codex-style `sub_class` (fl/ml/hl = front/mid/hi
 RING = {"epg_pen": 40, "pen_epg_self": 30, "pen_epg_side": 20, "epg_d7": 10, "d7_epg": 12}
 
 # Bump when POPS or the wiring change: load_connectome("toy") rebuilds a cache whose version differs.
-TOY_VERSION = "2026-09-18-ttmn5"
+TOY_VERSION = "2026-10-20-valence37"
 
 
 def build_toy_connectome(seed: int = 1) -> Connectome:
@@ -309,16 +313,6 @@ def build_toy_connectome(seed: int = 1) -> Connectome:
     connect("gf", "ttmn", 1.0, 20, 30)
     connect("dnp11", "ttmn", 1.0, 16, 24)
     connect("dnp02", "ttmn", 1.0, 16, 24)
-    pre = np.concatenate(rows); post = np.concatenate(cols); syn = np.concatenate(vals).astype(np.float32)
-    keep = pre != post
-    pre, post, syn = pre[keep], post[keep], syn[keep]
-
-    nt = np.empty(n, dtype=object)
-    for p in POPS:
-        nt[idx[p[0]]] = p[6]
-    sign = np.where(np.isin(nt[pre], ("GABA", "GLUT")), -1.0, 1.0).astype(np.float32)   # the datasets' NT_SIGN: GABA and glutamate inhibit
-    W = sp.csr_matrix((syn * sign, (pre, post)), shape=(n, n), dtype=np.float32)
-    W.sum_duplicates()
 
     # positions: gaussian blob per population, in nm like FlyWire
     positions = np.empty((n, 3), dtype=np.float32)
@@ -331,6 +325,27 @@ def build_toy_connectome(seed: int = 1) -> Connectome:
         ii = idx[p[0]]
         half = ii[: ii.size // 2]
         positions[half, 0] = -positions[half, 0] - 0  # symmetric about x=0
+
+    # --- added 2026-10-20 for task 37 (MODELED: proves the checks can pass, nothing about the fly's route). Wired
+    #     after positions, by each ORN's side, and without rng draws so every older population is bit-identical:
+    #     left-antenna attractive ORNs (DM1, DM2, VA2) excite the left DNa02 (turn toward), left aversive ORNs
+    #     (V, DA2) the right one (turn away). Right-side ORNs touch neither, so the older bilateral olfactory
+    #     tasks see only a left-side DNa02 response.
+    is_left = positions[:, 0] < 0
+    dna02_l, dna02_r = (d for d in idx["dna02"][np.argsort(positions[idx["dna02"], 0])])   # most negative x = left
+    for pop, target in (("orn_dm1", dna02_l), ("orn_dm2", dna02_l), ("orn_va2", dna02_l), ("orn_v", dna02_r), ("orn_da2", dna02_r)):
+        edge(idx[pop][is_left[idx[pop]]], target, 12)
+
+    pre = np.concatenate(rows); post = np.concatenate(cols); syn = np.concatenate(vals).astype(np.float32)
+    keep = pre != post
+    pre, post, syn = pre[keep], post[keep], syn[keep]
+
+    nt = np.empty(n, dtype=object)
+    for p in POPS:
+        nt[idx[p[0]]] = p[6]
+    sign = np.where(np.isin(nt[pre], ("GABA", "GLUT")), -1.0, 1.0).astype(np.float32)   # the datasets' NT_SIGN: GABA and glutamate inhibit
+    W = sp.csr_matrix((syn * sign, (pre, post)), shape=(n, n), dtype=np.float32)
+    W.sum_duplicates()
 
     root_ids = np.arange(720_000_000_000_000_000, 720_000_000_000_000_000 + n, dtype=np.int64)
     ann = pd.DataFrame({"root_id": root_ids})

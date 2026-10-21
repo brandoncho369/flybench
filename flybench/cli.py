@@ -48,6 +48,19 @@ def build(codex_dir, name, min_synapses, cache):
             console.print(f"  [yellow]warning:[/] no {col} annotations — did you include the {note}? Most tasks will match 0 neurons.")
 
 
+@main.command("build-shiu")
+@click.argument("parquet", type=click.Path(exists=True, dir_okay=False))
+@click.option("--base", default="flywire783", show_default=True, help="cached Codex v783 build whose neurons, annotations and positions are reused")
+@click.option("--name", default="flywire783_shiu", show_default=True)
+@click.option("--cache", default=str(DEFAULT_CACHE), show_default=True)
+def build_shiu(parquet, base, name, cache):
+    """Build + cache the published Shiu 2024 graph (Connectivity_783.parquet) on flybench's v783 neurons."""
+    from .connectome import build_from_shiu
+    c = build_from_shiu(parquet, load_connectome(base, cache), name=name)
+    p = c.save(Path(cache) / name)
+    console.print(f"[green]saved[/] {c.n:,} neurons / {c.n_edges:,} edges → {p}")
+
+
 @main.command("fetch-neuprint")
 @click.argument("out_dir", type=click.Path(file_okay=False))
 @click.option("--dataset", default="male-cns:v1.0", show_default=True, help="neuPrint dataset (the Minecraft demo used male-cns:v1.0)")

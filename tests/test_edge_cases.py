@@ -75,6 +75,27 @@ def test_codex_build_min_synapses_override(tmp_path):
     assert c.n_edges == 6
 
 
+def test_shiu_build_reuses_base_neurons(tmp_path):
+    pytest.importorskip("pyarrow")
+    from flybench.bench import task_unavailable
+    from flybench.connectome import build_from_shiu
+    base = build_from_codex(_codex_dir(tmp_path))
+    rows = [(100, 200, 2, 1), (200, 300, 4, -1), (400, 500, 1, -1)]   # no threshold: 1- and 2-synapse pairs kept
+    pd.DataFrame(rows, columns=["Presynaptic_ID", "Postsynaptic_ID", "Connectivity", "Excitatory"]).to_parquet(tmp_path / "s.parquet")
+    c = build_from_shiu(tmp_path / "s.parquet", base)
+    i = {r: k for k, r in enumerate(c.root_ids)}
+    W = c.W.toarray()
+    assert (c.n, c.n_edges) == (base.n, 3)
+    assert W[i[100], i[200]] == 2 and W[i[200], i[300]] == -4 and W[i[400], i[500]] == -1
+    assert list(c.select("CB0701")) == list(base.select("CB0701"))
+    assert c.meta["dataset"] == "flywire783" and c.terminal is None
+    assert task_unavailable({"name": "t", "dataset_only": ["flywire783", "toy"]}, c) is None
+    assert "not applicable" in task_unavailable({"name": "t", "dataset_only": ["malecns", "toy"]}, c)
+    pd.DataFrame([(100, 12345, 1, 1)], columns=["Presynaptic_ID", "Postsynaptic_ID", "Connectivity", "Excitatory"]).to_parquet(tmp_path / "bad.parquet")
+    with pytest.raises(ValueError):
+        build_from_shiu(tmp_path / "bad.parquet", base)
+
+
 def test_codex_missing_required_file(tmp_path):
     (tmp_path / "neurons.csv.gz").write_bytes(b"")
     with pytest.raises(FileNotFoundError):
@@ -220,7 +241,7 @@ def test_task_unknown_check_type_raises(toy):
 
 def test_suite_tiers_and_scores(toy):
     core = load_tasks(tier="core"); hard = load_tasks(tier="hard"); everything = load_tasks(tier="all")
-    assert len(core) == 5 and len(hard) == 31 and len(everything) == 36
+    assert len(core) == 5 and len(hard) == 32 and len(everything) == 37
     assert {t["tier"] for t in hard} == {"hard"} and all(t.get("tier", "core") == "core" for t in core)
     report = run_suite(toy, LIFParams(), core)
     assert report["core_score"] == 1.0 and report["hard_score"] is None
