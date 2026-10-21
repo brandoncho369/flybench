@@ -750,6 +750,12 @@ Reported by Daniel Culotta (email, 2026-10-19), reproduced here; docs/rfcs/D1_sh
 - **Task 37 (odour valence steering, new): 3/5 as pre-registered** on that row. Five channels on
   the left antenna, attractive or aversive, all drive the left DNa02 (17–30 Hz) and none the right:
   the model turns toward whatever is stimulated. Toy 5/5, rewired 0/5. docs/rfcs/37.
-- Pending: LIF 0.45 on Shiu's graph (killed for low memory, rerunning); task 37 on the Codex,
-  adaptive and MaleCNS rows; a Codex build with blank transmitters signed from the connection rows,
-  to separate the three causes.
+- **LIF 0.45 on Shiu's graph is under-driven** (core 0.67, graded 0.585, as pre-registered): the
+  extra inhibition moves the window up, and by the reference rule it sits at 0.7 on this graph.
+- **Task 37 on the other rows (2026-10-21).** Reference 0.45 on Codex 3/5 as predicted, and CO2 on
+  the left antenna drives the left DNa02 ten times harder than the right: the model turns toward
+  CO2 as it does toward vinegar. Adaptive LIF 0/5, not 3/5: its DNa02 pair is winner-take-all and
+  the side that wins depends on the seed. DA2 (geosmin, 16 ORNs) reaches no DNa02 on any row.
+  MaleCNS skips: its ORNs have no soma side in neuPrint. Rewired 0/5 everywhere.
+- Next: a Codex build with blank transmitters signed from the connection rows, to separate the
+  three causes; the full 37-task rerun of every row.

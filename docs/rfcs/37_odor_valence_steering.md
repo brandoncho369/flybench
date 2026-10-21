@@ -70,15 +70,32 @@ the channel, turns toward on all five and scores 3/5. Valence is needed for 5/5.
 - **Rates.** At 100 Hz the antennal lobe is saturated (task 17). A 20 Hz variant would sit at
   Bell & Wilson's threshold; recorded as a follow-up, not run here.
 
-## Outcome (first rows; FlyWire Codex, adaptive and MaleCNS pending)
+## Outcome (2026-10-21)
 
-| row | measured | predicted |
-|---|---|---|
-| toy | 5/5 every seed; rewired toy fails | 5/5 ✓ |
-| LIF 0.7, Shiu graph (3 seeds) | **3/5**: the three attractive pass, V and DA2 fail, every seed; rewired 0/5 | 3/5 ✓ (that row was not predicted separately; the 1.0 row's 3/5 was) |
+3 seeds, rewired control. DNa02 left / right in Hz, mean over seeds.
 
-**Steering follows the stimulated side, not the channel.** Every one of the five channels drives
-the left DNa02 at 17–30 Hz and leaves the right one at 0 Hz; one glomerulus on one antenna lights
-8 % of the brain. A model with valence would split the five; this one turns toward all of them.
-Same conclusion as Daniel's 110-odour analysis (ρ = 0.69 with activation, −0.04 with attraction),
-now as a task any row can be scored on.
+| row | score | DM1 | DM2 | VA2 | V | DA2 | predicted |
+|---|---|---|---|---|---|---|---|
+| toy | **5/5** | | | | | | 5/5 ✓ |
+| reference LIF 0.45 (Codex) | **3/5** | 336 / 36 | 325 / 59 | 328 / 36 | **327 / 33** | 0 / 0 (floored) | 3/5 ✓ |
+| adaptive LIF 0.45 | **0/5** (graded 0.53) | 78 / 41 | 99 / 87 | 94 / 53 | 42 / 91 | 0 / 0 | 3/5 ✗ |
+| LIF 0.7, Shiu graph | **3/5** | 25 / 0 | 30 / 0 | 29 / 0 | fails | fails | (3/5 for the 1.0 row) |
+| LIF 0.45, Shiu graph | **3/5** | 35 / 0 | 30 / 0 | 29 / 0 | 0 / 0 | 0 / 0 | 0–3/5 ✓ |
+| MaleCNS 0.65 | skipped | | | | | | 3/5 ✗ (not run) |
+| rewired, every row | 0/5 | | | | | | ~2.5 or 0 ✓ |
+
+The Shiu 1.0 row ran before the task existed and has no score yet.
+
+- **Steering follows the stimulated side, not the channel.** No row splits attractive from
+  aversive. On the reference row CO2 on the left antenna drives the left DNa02 ten times harder
+  than the right, exactly like vinegar's DM1: the model turns *toward* CO2. Same conclusion as
+  Daniel's 110-odour analysis (ρ = 0.69 with activation, −0.04 with attraction).
+- **The adaptive LIF is not better, it is seed-dependent.** Its DNa02 pair behaves winner-take-all
+  and which side wins depends on the seed, not the stimulus (DM1's L/R ratio is 57, 13 and 0.16 on
+  the three seeds). The checks require every seed, so 0/5; graded 0.53. Predicted 3/5: wrong.
+- **DA2 is silent everywhere.** 16 left-antenna ORNs at 100 Hz reach neither DNa02 on any row,
+  so the geosmin check is floored (RFC S2), not failed by a turn. This is the "ORN count" caveat
+  above made real; a fail on DA2 says nothing about valence.
+- **MaleCNS skips the task.** Its ORNs carry no soma side in neuPrint male-cns v1.0 (DNa02 does),
+  so the left antenna cannot be selected. Splitting ORNs by axon entry or position is a selector
+  change, INFERRED, with its own RFC if it is wanted.

@@ -72,13 +72,13 @@ which neurons carry it. Task 36 (closed-loop escape): Shiu 1.0 stops jumping at 
 - Selection: three gains on a new graph after seeing Daniel's numbers is a small search; the result
   is reported for all three, and no single one is promoted to reference here.
 
-## Outcome (2026-10-20/21; the 0.45 row is pending, its first run was killed for low memory)
+## Outcome (2026-10-20/21; the 0.45 row was rerun with `--jobs 3` after the first was killed for low memory)
 
 | row on flywire783_shiu | core | hard | graded | spec. | predicted |
 |---|---|---|---|---|---|
 | Shiu 1.0 | 0.87 | 0.620 | **0.709** | +0.27 | core 1.00 ✗, graded 0.66–0.71 ✓, spec ≥ +0.18 ✓ |
 | LIF 0.7 | **1.00** | **0.647** | **0.764** | **+0.33** | core ✓, graded 0.68–0.73 ✗ (higher), spec ≈ +0.20 ✗ (higher) |
-| LIF 0.45 | pending | | | | |
+| LIF 0.45 | 0.67 | 0.547 | 0.585 | +0.18 | core 0.67–0.87 ✓, graded 0.58–0.64 ✓, below Codex 0.45 (0.644) ✓ |
 
 Against the Codex graph: Shiu 1.0 0.629 → 0.709; LIF 0.7 0.695 (1 seed) → 0.764 (3 seeds).
 
@@ -93,5 +93,10 @@ Against the Codex graph: Shiu 1.0 0.629 → 0.709; LIF 0.7 0.695 (1 seed) → 0.
   to rise; Daniel 0.26–0.51); task 36 1/4 → 2/4 at 1.0 (predicted).
 - Losses at 0.7: GF azimuth invariance 0.67 → 0.44, dose response 0.80 → 0.60, grooming graded
   0.61 → 0.41.
+- **The window moves up.** At 0.45 the Shiu graph is under-driven, as predicted: sugar 1.00 → 0.33,
+  bitter suppression 1.00 → 0.00 (nothing left to suppress), adaptation 0.50 → 0.00. Applying the
+  reference rule (the widest gain at which all five core reflexes pass on every seed) to the three
+  gains run, the window on this graph is 0.7, the gain Daniel reported. A finer sweep (0.6, 0.8)
+  would say how wide it is.
 - Not yet separated: threshold vs synapse table vs the blank-nt signs. The cheapest next test is
   a Codex build with blank nt_type signed by its connection-row majority (no new data).
