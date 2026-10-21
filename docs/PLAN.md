@@ -286,3 +286,18 @@ Phase 0 this week (it fixes wrong things). Phase 1 next, because it changes what
 looks like. Phases 2 and 3 interleave one task at a time, each as an RFC first. Phase 4 alongside,
 since the adapter ABC is what external submitters need. Phase 5 once there is a second external
 model. Phase 6 continuously, driven by what the analytics show people doing. Phase 7 last.
+
+## v1.0 scope (decided 2026-10-21)
+
+v1.0 freezes the task set (README, "Versions, pins and reproducing the numbers"). Decided before the
+freeze, because each would change scores afterwards:
+
+- **Reference graph:** `flywire783_ntfix` (Codex v783, blank transmitters signed from connection
+  rows; RFC D1), at the gain the core-window rule picks from the 0.45–0.7 sweep.
+- **In:** every cited `basis` carries a Crossref-verified DOI (`lint --strict` passes; item 60).
+- **Out of v1.0, stated rather than silently missing:** 20 seeds per row (item 33; rows keep 3,
+  CIs say so) → v2; per-check ceilings from the fly's own pass rate (item 32) → v2; per-constant
+  provenance tags in every YAML (item 41; no score changes) → v1.1.
+- **After v1.0 as new tasks, not edits:** the GF r/v sweep (item 10), amino-acid taste (item 19),
+  and the open recording-match tasks (items 14–18).
+- The terminal-LIF row stays on the 36-task set (a 12-hour rerun to add task 37); the CHANGELOG says so.

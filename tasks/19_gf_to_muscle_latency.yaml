@@ -12,7 +12,7 @@ description: >
   missing mechanism (gap junctions), not a wrong parameter. First run (RFC outcome): 11.8 ms,
   because one GF spike through a summed chemical synapse cannot bring TTMn to threshold; the
   electrical synapse in the fly makes a single spike sufficient. DLMn also fired before TTMn.
-citation: "Augustin et al. 2019 (eNeuro 6:ENEURO.0423-18.2019; ModelDB 245415); Engel & Wu 1996 (J Neurosci 16:3486); Tanouye & Wyman 1980"
+citation: "Augustin et al. 2019 (eNeuro 6:ENEURO.0423-18.2019; ModelDB 245415; doi:10.1523/eneuro.0423-18.2019); Engel & Wu 1996 (J Neurosci 16:3486; doi:10.1523/jneurosci.16-10-03486.1996); Tanouye & Wyman 1980 (J Neurophysiol 44:405; doi:10.1152/jn.1980.44.2.405); Allen et al. 2006 (Semin Cell Dev Biol 17:31; doi:10.1016/j.semcdb.2005.11.011)"
 duration_ms: 600
 window: [200, 500]
 requires_readouts: [ttmn, dlmn]

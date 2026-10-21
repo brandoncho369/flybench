@@ -14,7 +14,7 @@ description: >
   measured approach and avoidance). A model whose turns follow drive strength rather than channel
   scores 3/5. RFC S2 applies: a silent DNa02 pair fails every check. Pre-registered predictions
   and outcome: docs/rfcs/37_odor_valence_steering.md. Prompted by Daniel Culotta (2026-10-19).
-citation: "Bell & Wilson 2016 (Neuron 91:425); Semmelhack & Wang 2009 (Nature 459:218); Suh et al. 2004 (Nature 431:854); Stensmyr et al. 2012 (Cell 151:1345); Gaudry et al. 2013 (Nature 493:424); Rayshubskiy et al. 2025 (eLife 13:RP102230)"
+citation: "Bell & Wilson 2016 (Neuron 91:425; doi:10.1016/j.neuron.2016.06.011); Semmelhack & Wang 2009 (Nature 459:218; doi:10.1038/nature07983); Suh et al. 2004 (Nature 431:854; doi:10.1038/nature02980); Stensmyr et al. 2012 (Cell 151:1345; doi:10.1016/j.cell.2012.09.046); Gaudry et al. 2013 (Nature 493:424; doi:10.1038/nature11747); Rayshubskiy et al. 2025 (eLife 13:RP102230; doi:10.7554/elife.102230)"
 duration_ms: 900
 window: [200, 700]
 requires_stimuli: [orn_dm1_left, orn_dm2_left, orn_va2_left, orn_v_left, orn_da2_left]

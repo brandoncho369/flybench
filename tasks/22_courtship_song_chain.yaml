@@ -13,7 +13,7 @@ description: >
   nerve cord; on a female or brain-only dataset this task is not applicable (`dataset_only`),
   which is a different statement from "matches no neurons". Nothing here scores song rhythm.
   Pre-registered predictions and outcome: docs/rfcs/22_courtship_song_chain.md.
-citation: "von Philipsborn et al. 2011 (Neuron 69:509); Lillvis et al. 2024 (Curr Biol); O'Sullivan et al. 2018 (Curr Biol 28:2705); Cande et al. 2018 (eLife 7:e34275); Cachero et al. 2010 (Curr Biol 20:1589); Yu et al. 2010 (Curr Biol 20:1602)"
+citation: "von Philipsborn et al. 2011 (Neuron 69:509; doi:10.1016/j.neuron.2011.01.011); Lillvis et al. 2024 (Curr Biol 34:808; doi:10.1016/j.cub.2024.01.015); O'Sullivan et al. 2018 (Curr Biol 28:2705; doi:10.1016/j.cub.2018.06.038); Cande et al. 2018 (eLife 7:e34275; doi:10.7554/elife.34275); Cachero et al. 2010 (Curr Biol 20:1589; doi:10.1016/j.cub.2010.07.045); Yu et al. 2010 (Curr Biol 20:1602; doi:10.1016/j.cub.2010.08.025)"
 dataset_only: [malecns, toy]
 duration_ms: 800
 window: [200, 700]

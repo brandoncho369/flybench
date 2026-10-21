@@ -12,7 +12,7 @@ description: >
   optogenetics or calcium imaging), so the MN9 ceiling here is a convention, not a measurement,
   and is labelled as such. The reference LIF model pins both readouts at ~430 Hz — their 2.2 ms
   refractory ceiling — which is a saturating network, not a reflex.
-citation: "von Reyn et al. 2014 (Nat Neurosci 17:962); Ache et al. 2019 (Curr Biol 29:1073) — single GF spike per loom. MN9 ceiling: convention (no MN9 electrophysiology published)"
+citation: "von Reyn et al. 2014 (Nat Neurosci 17:962; doi:10.1038/nn.3741); Ache et al. 2019 (Curr Biol 29:1073; doi:10.1016/j.cub.2019.01.079) — single GF spike per loom. MN9 ceiling: convention (no MN9 electrophysiology published); Schwarz et al. 2017 (eLife 6:e19892; doi:10.7554/elife.19892); McKellar & Simpson 2020 (eLife 9:e54978; doi:10.7554/elife.54978)"
 duration_ms: 800
 window: [200, 700]
 readouts:

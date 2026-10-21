@@ -20,6 +20,12 @@ when one lands, and the RFC records the before and after.
 - Task 37 (RFC 37): odour valence steering — one antenna's attractive channel must steer toward,
   an aversive one away, read on DNa02. Every real-brain row turns toward every channel.
   Not applicable on MaleCNS (its ORNs carry no soma side). Toy version `2026-10-20-valence37`.
+- Citations: every task passes `lint --strict`; each cited paper carries a Crossref-verified DOI.
+  Four citations were wrong or unmatched and are corrected: Ribeiro et al. 2018 is Cell 174:607
+  (not Curr Biol); Olsen & Wilson 2008 is Nature 452:956; "Chen & Dahanukar 2017 (Cell Rep 18:1140)"
+  (task 20) and "Chen et al. 2018 (Nat Neurosci 21:1290)" (task 28) match no paper and are removed
+  (Cameron et al. 2010 carries task 20's water claim; no task-28 check cited Chen). No threshold changed.
+- CITATION.cff: v0.2.1's own version DOI (10.5281/zenodo.22930641).
 - GOVERNANCE: submissions with fitted parameters are ranked only with held-out seeds, the same fit
   on shuffled wiring, and size-matched random additions.
 

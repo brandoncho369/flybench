@@ -18,7 +18,7 @@ description: >
   after it ends; a second condition cues two opposite wedges. Shipped in the expected-fail tier:
   a uniform LIF with no adaptation and a 20 ms membrane has nothing to hold a bump with, and the
   task exists to say how it fails. Pre-registered predictions and outcome: docs/rfcs/29_epg_ring_attractor.md.
-citation: "Seelig & Jayaraman 2015 (Nature 521:186); Kim et al. 2017 (Science 356:849); Turner-Evans et al. 2017 (eLife 6:e23496); Green et al. 2017 (Nature 546:101); Hulse et al. 2021 (eLife 10:e66039); Wolff, Iyer & Rubin 2015 (J Comp Neurol 523:997)"
+citation: "Seelig & Jayaraman 2015 (Nature 521:186; doi:10.1038/nature14446); Kim et al. 2017 (Science 356:849; doi:10.1126/science.aal4835); Turner-Evans et al. 2017 (eLife 6:e23496; doi:10.7554/elife.23496); Green et al. 2017 (Nature 546:101; doi:10.1038/nature22343); Hulse et al. 2021 (eLife 10:e66039; doi:10.7554/elife.66039); Wolff, Iyer & Rubin 2015 (J Comp Neurol 523:997; doi:10.1002/cne.23705)"
 duration_ms: 1500
 window: [200, 700]
 requires_stimuli: [cue_g4, cue_g8]

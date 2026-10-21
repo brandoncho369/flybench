@@ -10,7 +10,7 @@ description: >
   docs/rfcs/18. Odour panel (CONVENTION, see the RFC): eight single-glomerulus "odours", each the
   ORNs of one glomerulus at 100 Hz — DA1 (cVA, the cognate channel), DM1, DM2, DM4, DL1, DL5,
   VA1v, DC1. A dataset missing any of them skips the task rather than shrinking the panel.
-citation: "Schlief & Wilson 2007 (Nat Neurosci 10:623); Willmore & Tolhurst 2001 (sparseness measure)"
+citation: "Schlief & Wilson 2007 (Nat Neurosci 10:623; doi:10.1038/nn1881); Willmore & Tolhurst 2001 (sparseness measure; Network 12:255; doi:10.1080/net.12.3.255.270); Olsen & Wilson 2008 (Nature 452:956; doi:10.1038/nature06864)"
 duration_ms: 800
 window: [250, 700]
 requires_stimuli: [orn_da1, orn_dm1, orn_dm2, orn_dm4, orn_dl1, orn_dl5, orn_va1v, orn_dc1]

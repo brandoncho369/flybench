@@ -14,7 +14,7 @@ description: >
   also requires the 10 Hz response to be clearly smaller than the 100 Hz one.
   Provenance: rates and fit MEASURED; using DA1 for glomeruli the paper did not fit is a CONVENTION
   (Schlief & Wilson 2007 show the same shape for DA1).
-citation: "Olsen, Bhandawat & Wilson 2010 (Neuron 66:287); Schlief & Wilson 2007 (Nat Neurosci 10:623)"
+citation: "Olsen, Bhandawat & Wilson 2010 (Neuron 66:287; doi:10.1016/j.neuron.2010.04.009); Schlief & Wilson 2007 (Nat Neurosci 10:623; doi:10.1038/nn1881)"
 duration_ms: 800
 window: [250, 700]
 readouts:

@@ -11,7 +11,7 @@ description: >
   brain-only connectomes such as FlyWire FAFB. A looming stimulus should fire GF, then TTMn
   and DLMn; the jump muscle should fire a few times, not continuously; and sugar should not
   make the fly jump.
-citation: "Tanouye & Wyman 1980 (GF -> TTM and DLM); Allen, Godenschwege, Tanouye & Phelan 2006 (the GF circuit); von Reyn et al. 2014 (single GF spike per escape)"
+citation: "Tanouye & Wyman 1980 (GF -> TTM and DLM; J Neurophysiol 44:405; doi:10.1152/jn.1980.44.2.405); Allen, Godenschwege, Tanouye & Phelan 2006 (the GF circuit; Semin Cell Dev Biol 17:31; doi:10.1016/j.semcdb.2005.11.011); von Reyn et al. 2014 (single GF spike per escape; Nat Neurosci 17:962; doi:10.1038/nn.3741)"
 requires_readouts: [ttmn, dlmn]
 duration_ms: 800
 window: [200, 500]
