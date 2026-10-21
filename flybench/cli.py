@@ -29,10 +29,11 @@ def main():
 @click.option("--name", default="flywire783", show_default=True)
 @click.option("--min-synapses", default=5, show_default=True)
 @click.option("--cache", default=str(DEFAULT_CACHE), show_default=True)
-def build(codex_dir, name, min_synapses, cache):
+@click.option("--blank-nt-from-connections", is_flag=True, help="sign neurons with a blank Codex nt_type by the synapse-weighted majority nt_type of their connection rows, not as excitatory (RFC D1)")
+def build(codex_dir, name, min_synapses, cache, blank_nt_from_connections):
     """Build + cache a connectome from FlyWire Codex CSV downloads."""
     console.print(f"reading {codex_dir} …")
-    c = build_from_codex(codex_dir, min_synapses=min_synapses, name=name)
+    c = build_from_codex(codex_dir, min_synapses=min_synapses, name=name, blank_nt_from_connections=blank_nt_from_connections)
     p = c.save(Path(cache) / name)
     console.print(f"[green]saved[/] {c.n:,} neurons / {c.n_edges:,} edges → {p}")
     # sanity report: the things that silently break task selectors when a file is missing

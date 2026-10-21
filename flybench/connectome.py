@@ -232,7 +232,8 @@ def load_connectome(name_or_path: str | Path = "toy", cache: Path | str = DEFAUL
     )
 
 
-def build_from_codex(codex_dir: Path | str, min_synapses: int = 5, name: str = "flywire783") -> Connectome:
+def build_from_codex(codex_dir: Path | str, min_synapses: int = 5, name: str = "flywire783",
+                     blank_nt_from_connections: bool = False) -> Connectome:
     """Build a Connectome from FlyWire Codex CSV downloads.
 
     Expects in `codex_dir`:
@@ -243,10 +244,22 @@ def build_from_codex(codex_dir: Path | str, min_synapses: int = 5, name: str = "
       labels.csv[.gz]          root_id, label, ...   (community labels; optional)
       coordinates.csv[.gz]     root_id, position     (marked neuron coordinates; optional, gives 3D positions)
       cell_types.csv[.gz]      root_id, primary_type (consolidated cell types; optional, fills cell_type gaps)
+
+    `blank_nt_from_connections`: Codex leaves `nt_type` blank for neurons whose prediction is low-confidence
+    (19,658 in v783) and the default reads them as excitatory. With this flag a blank neuron takes the
+    synapse-weighted majority of the per-row `nt_type` in connections.csv instead (RFC D1).
     """
     d = Path(codex_dir)
     conn = pd.read_csv(_find(d, "connections"), dtype={"pre_root_id": np.int64, "post_root_id": np.int64})
     neurons = pd.read_csv(_find(d, "neurons"), dtype={"root_id": np.int64})
+    if blank_nt_from_connections and "nt_type" in conn and "nt_type" in neurons:
+        blank = neurons["nt_type"].isna() | (neurons["nt_type"].astype(str).str.strip() == "")
+        votes = conn[conn["pre_root_id"].isin(neurons.loc[blank, "root_id"])].dropna(subset=["nt_type"])
+        majority = (votes.groupby(["pre_root_id", "nt_type"])["syn_count"].sum().reset_index()
+                    .sort_values(["pre_root_id", "syn_count", "nt_type"]).drop_duplicates("pre_root_id", keep="last")
+                    .set_index("pre_root_id")["nt_type"])
+        neurons = neurons.copy()
+        neurons.loc[blank, "nt_type"] = neurons.loc[blank, "root_id"].map(majority)
     classification = pd.read_csv(_find(d, "classification"), dtype={"root_id": np.int64}, keep_default_na=False)
     labels_path = _find(d, "labels", required=False)
 
@@ -316,7 +329,8 @@ def build_from_codex(codex_dir: Path | str, min_synapses: int = 5, name: str = "
         positions=positions,
         annotations=ann,
         name=name,
-        meta={"source": "flywire-codex", "min_synapses": min_synapses, "n": n, "n_edges": int(W.nnz)},
+        meta={"source": "flywire-codex", "min_synapses": min_synapses, "n": n, "n_edges": int(W.nnz),
+              **({"dataset": "flywire783", "blank_nt": "connection-row majority"} if blank_nt_from_connections else {})},
     )
 
 

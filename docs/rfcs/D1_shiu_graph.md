@@ -100,3 +100,22 @@ Against the Codex graph: Shiu 1.0 0.629 → 0.709; LIF 0.7 0.695 (1 seed) → 0.
   would say how wide it is.
 - Not yet separated: threshold vs synapse table vs the blank-nt signs. The cheapest next test is
   a Codex build with blank nt_type signed by its connection-row majority (no new data).
+
+## Addendum: separating the causes (pre-registered 2026-10-21, before any run on it)
+
+`flywire783_ntfix` = the Codex build with only one change: the 19,658 neurons with a blank Codex
+`nt_type` take the synapse-weighted majority `nt_type` of their own connection rows
+(`flybench build --blank-nt-from-connections`; pinned `27dc0261…`). Same 3,732,460 edges and counts.
+Measured before running: E/I 1.87 (Codex) → **1.59** (ntfix) → 1.48 (Shiu). Signs alone move it
+about 60 % of the way to Shiu's graph.
+
+Runs: LIF 0.45 and 0.7, 3 seeds, rewired.
+
+| row on flywire783_ntfix | core | graded | reasoning |
+|---|---|---|---|
+| LIF 0.45 | 0.83 (one core reflex lost to the extra inhibition) | 0.60–0.65 | partway toward the under-driven Shiu 0.45 (0.67 / 0.585) |
+| LIF 0.7 | 1.00 | 0.71–0.75 | partway from Codex 0.7 (0.87 / 0.695) to Shiu 0.7 (1.00 / 0.764) |
+| task 37, both | 3/5 | | signs fix inhibition, not valence |
+
+If ntfix 0.7 lands within 0.02 of Shiu 0.7, the blank signs are most of the graph effect; within
+0.02 of Codex 0.7, the threshold and synapse table are.

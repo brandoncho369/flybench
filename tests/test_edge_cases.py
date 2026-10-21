@@ -75,6 +75,19 @@ def test_codex_build_min_synapses_override(tmp_path):
     assert c.n_edges == 6
 
 
+def test_codex_blank_nt_from_connections(tmp_path):
+    d = _codex_dir(tmp_path, extra_conn_rows=[(600, 100, "A", 4, "GABA"), (600, 100, "B", 2, "ACH"), (600, 200, "A", 1, "ACH")])
+    n = pd.read_csv(d / "neurons.csv.gz")
+    pd.concat([n, pd.DataFrame({"root_id": [600], "nt_type": [None], "group": ["g"]})]).to_csv(d / "neurons.csv.gz", index=False)
+    i = lambda c: {r: k for k, r in enumerate(c.root_ids)}
+    default = build_from_codex(d)
+    assert default.W.toarray()[i(default)[600], i(default)[100]] == 6          # blank -> excitatory
+    fixed = build_from_codex(d, blank_nt_from_connections=True)
+    assert fixed.W.toarray()[i(fixed)[600], i(fixed)[100]] == -6              # GABA 4 synapses outvote ACH 2 + 1 (votes count dropped edges too)
+    assert fixed.W.toarray()[i(fixed)[400], i(fixed)[500]] == -9              # a neuron with an nt_type keeps it
+    assert fixed.meta["dataset"] == "flywire783" and "dataset" not in default.meta
+
+
 def test_shiu_build_reuses_base_neurons(tmp_path):
     pytest.importorskip("pyarrow")
     from flybench.bench import task_unavailable
