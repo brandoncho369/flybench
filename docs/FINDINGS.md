@@ -759,3 +759,18 @@ Reported by Daniel Culotta (email, 2026-10-19), reproduced here; docs/rfcs/D1_sh
   MaleCNS skips: its ORNs have no soma side in neuPrint. Rewired 0/5 everywhere.
 - Next: a Codex build with blank transmitters signed from the connection rows, to separate the
   three causes; the full 37-task rerun of every row.
+## 2026-10-21 — 19,658 neurons were excitatory by default; signing them recovers most of the Shiu-graph gain and part of the antennal lobe's channel identity
+
+- **Codex leaves `nt_type` blank for 19,658 v783 neurons; `build_from_codex` read every one as
+  excitatory.** Signed instead by the majority transmitter of their own connection rows
+  (`flybench build --blank-nt-from-connections`, pinned `flywire783_ntfix`), E/I goes 1.87 → 1.59
+  with the same edges. LIF 0.7: graded 0.695 → **0.749**, hard 0.581 → **0.681** (best on the
+  board), specificity +0.34. That is ~80 % of the way to Shiu's graph (0.764). RFC D1 addendum,
+  predictions committed before the runs (24fe66a); core and the 0.45 row came in lower than predicted.
+- **Retraction, in part, of 2026-09-14:** "at the window gain the antennal lobe carries no channel
+  identity." With the signs fixed, DA1 PNs fire 413 Hz to cVA and 80 Hz to DM1 at gain 0.45 (was
+  434 and 400): lifetime sparseness 0.001 → 0.50 (measured 0.90, so the check still fails; 8 of
+  its 9 checks now pass), and the PN transfer function task scores 0.86 at 0.7 (was 0.14). Part of
+  that finding was this build's default; the rest stands.
+- Odour valence (task 37) is unchanged, 3/5: signs restore channels in the antennal lobe; they do
+  not give the steering readout a sign.

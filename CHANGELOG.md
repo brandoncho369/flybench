@@ -3,6 +3,26 @@
 Score-affecting changes are listed with the RFC that introduced them; every archived result is rerun
 when one lands, and the RFC records the before and after.
 
+## Unreleased
+
+**37 tasks** (5 core, 32 hard); two more FlyWire graphs. Reported by Daniel Culotta (2026-10-19).
+
+- **Relabel, score-affecting for one row's name only:** "Shiu 2024 (gain 1.0)" ran Shiu's constants
+  on flybench's Codex ≥ 5 graph, not on the published model's graph; it is now "Shiu constants,
+  gain 1.0 (Codex ≥5 graph)". README's claim that the threshold "matched Shiu et al." is corrected.
+- `flybench build-shiu` and the pinned connectome `flywire783_shiu`: Shiu et al. 2024's
+  `Connectivity_783.parquet` (15.09 M edges, no threshold, its own signs) on the flywire783 neurons
+  (RFC D1). On it the plain LIF at gain 0.7 passes every core reflex (graded 0.764).
+- `flybench build --blank-nt-from-connections` and `flywire783_ntfix`: the Codex graph with the
+  19,658 blank-transmitter neurons signed from their connection rows instead of as excitatory.
+- `meta.dataset`: another graph of the same animal keeps `dataset_only` tasks (task 30 runs on both
+  new graphs).
+- Task 37 (RFC 37): odour valence steering — one antenna's attractive channel must steer toward,
+  an aversive one away, read on DNa02. Every real-brain row turns toward every channel.
+  Not applicable on MaleCNS (its ORNs carry no soma side). Toy version `2026-10-20-valence37`.
+- GOVERNANCE: submissions with fitted parameters are ranked only with held-out seeds, the same fit
+  on shuffled wiring, and size-matched random additions.
+
 ## 0.2.1 — 2026-09-24
 
 - **Packaging fix:** `pip install flybench` shipped no tasks and no sensory-front-end caches, so

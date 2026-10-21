@@ -119,3 +119,26 @@ Runs: LIF 0.45 and 0.7, 3 seeds, rewired.
 
 If ntfix 0.7 lands within 0.02 of Shiu 0.7, the blank signs are most of the graph effect; within
 0.02 of Codex 0.7, the threshold and synapse table are.
+### Addendum outcome (2026-10-21)
+
+| row on flywire783_ntfix | core | hard | graded | spec. | predicted |
+|---|---|---|---|---|---|
+| LIF 0.45 | 0.67 | 0.603 | 0.665 | +0.23 | core 0.83 ✗ (lower), graded 0.60–0.65 ✗ (higher) |
+| LIF 0.7 | 0.90 | **0.681** | **0.749** | **+0.34** | core 1.00 ✗, graded 0.71–0.75 ✓ |
+| task 37, both | 3/5 | | | | 3/5 ✓ |
+
+- **The blank signs are most of the graph effect.** At 0.7: Codex 0.695 → signs fixed 0.749 → Shiu
+  0.764. By the criterion written above (within 0.02 of Shiu), the signs carry it: about 80 % of
+  the gap, with the same edges and counts. The threshold and synapse table carry the rest, and
+  the core tier (Shiu's graph passes bitter suppression on every seed at 0.7; this one on 2 of 3).
+- **The antennal lobe gets its channels back, in part.** DA1 PNs: 413 Hz to cVA, 80 Hz to DM1 at
+  0.45 (was 434 / 400); lifetime sparseness 0.001 → 0.50 (measured 0.90; still a fail), task 18 score
+  0.11 → 0.89; PN transfer function task 0.14 → 0.86 at 0.7. FINDINGS 2026-09-14 ("at the window gain the antennal lobe
+  carries no channel identity") was in part this build's default: blank-transmitter neurons,
+  read as excitatory, include inhibitory cells of the olfactory system.
+- **The hard tier is the best on the board** (0.681 at 0.7, above the adaptive LIF's 0.647), with
+  no mechanism added. The window moves up with the inhibition, as on Shiu's graph: at 0.45 the
+  taste reflexes are under-driven (sugar 0.33, bitter suppression 0.00).
+- **What this means for the reference.** The current reference row runs on a graph whose sign
+  default is wrong for 19,658 neurons. Which graph the reference uses is a maintainer decision for
+  v1.0 (it moves tasks between tiers); this RFC records the evidence, not the decision.
