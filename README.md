@@ -12,7 +12,7 @@ In 2024 the [FlyWire](https://flywire.ai) consortium published the complete wiri
 
 **In one screen.** 37 tasks, each a published fly behaviour with a citation and a pre-registered prediction; two connectomes (FlyWire v783, MaleCNS v1.0 with its nerve cord); shuffled-wiring controls on every row; a real optic-lobe model in front of the brain and a physics body behind it. Six things it has found so far, each with its RFC:
 
-- The reference model's working gain is **0.45**, not the published 1.0 — at 1.0 a fifth of the brain fires at 29 Hz ([docs/FINDINGS.md](docs/FINDINGS.md)).
+- **How the connectome is built decides the working gain.** On flybench's Codex build the reference model works at **0.45**, and Shiu et al.'s 1.0 lights a fifth of the brain at 29 Hz; on Shiu's own graph of the same neurons 1.0 lights 13 % at 20 Hz and 0.7 passes every core reflex; with the Codex build's 19,658 blank transmitters signed, no gain does ([RFC D1](docs/rfcs/D1_shiu_graph.md)).
 - Given a real eye, the reference giant fiber fires at a **flash and not at a loom** — the opposite of the fly ([RFC 32](docs/rfcs/32_flyvis_loom_escape.md)); given a body too, it jumps at the flash ([RFC 33](docs/rfcs/33_embodied_loom_escape.md)).
 - On the male CNS a loom reaches the jump muscle **without the giant fiber**, through nine descending types onto the GF-coupled interneurons; the flash's route *is* the GF ([RFCs 34–35](docs/rfcs/)).
 - A whole-CNS point-neuron model lets ascending neurons **fire backwards** from their brain-side terminals. Keeping 0.6–4 % of synapses off the soma (no free parameters) makes the mushroom body sparse on both brains and takes the male core tier from 0.57 to 0.90 ([RFC M1](docs/rfcs/M1_terminal_synapses.md), [M1b](docs/rfcs/M1b_terminal_everywhere.md)).
@@ -58,7 +58,7 @@ Run against the real connectome (Codex v783, Princeton-filtered connections, ≥
 | **0.45** | **yes** | **yes** | **yes** | **9 %** | **passes everything** |
 | 0.50 | yes | partially | yes | 10 % | bitter can't hold it down |
 | 0.70 | yes | yes | yes | 14 % | too much of the brain firing |
-| 1.00 (Shiu 2024) | yes | yes | yes | 19 % | a fifth of the brain at 29 Hz — not a reflex, a seizure |
+| 1.00 (Shiu constants) | yes | yes | yes | 19 % | a fifth of the brain at 29 Hz on this build (13 % at 20 Hz on Shiu's own graph; RFC D1) |
 
 So on the Codex build of v783 the working window is around **gain 0.45**, less than half of the 1.0 that Shiu et al. calibrated on their own graph of the same neurons (a different synapse table, no threshold, and ~5,500 more inhibitory neurons: docs/rfcs/D1_shiu_graph.md). That is the kind of thing this benchmark exists to catch: the connectome got re-predicted, the weights shifted, and a parameter that used to be right silently stopped being right.
 
