@@ -1,27 +1,27 @@
 {
   "schema": 1,
-  "flybench_version": "0.1.0",
+  "flybench_version": "0.2.1",
   "seeds": 3,
   "verified": true,
   "core_score": 1.0,
-  "hard_score": 0.6469030365769496,
+  "hard_score": 0.6199487433862433,
   "core_by_circuit": 1.0,
-  "hard_by_circuit": 0.5710515873015873,
-  "graded": 0.7541420409563055,
+  "hard_by_circuit": 0.56005291005291,
+  "graded": 0.7400734898700873,
   "graded_ci95": [
-    0.7344649852742527,
-    0.7677499583022928
+    0.7223146986921679,
+    0.7566315490524654
   ],
   "core_graded": 0.9843648743484907,
-  "hard_graded": 0.6539474474033379,
+  "hard_graded": 0.6488539156210441,
   "profile": {
-    "-1": 0.8686131386861314,
-    "-0.5": 0.8467153284671532,
-    "-0.25": 0.8029197080291971,
-    "0": 0.7372262773722628,
-    "0.25": 0.635036496350365,
-    "0.5": 0.5401459854014599,
-    "1": 0.45255474452554745
+    "-1": 0.8661971830985915,
+    "-0.5": 0.8380281690140845,
+    "-0.25": 0.795774647887324,
+    "0": 0.7323943661971831,
+    "0.25": 0.6338028169014085,
+    "0.5": 0.5422535211267606,
+    "1": 0.45774647887323944
   },
   "circuits": {
     "stability": "stability",
@@ -51,7 +51,8 @@
     "halt_walk_off": "locomotion",
     "flyvis_loom_escape": "escape",
     "embodied_loom_escape": "escape",
-    "closed_loop_escape": "escape"
+    "closed_loop_escape": "escape",
+    "odor_valence_steering": "olfaction"
   },
   "skipped": {
     "looming_to_jump_muscle": "readout 'ttmn' matches no neurons on flywire783",
@@ -66,7 +67,7 @@
   "controls": [
     "rewired"
   ],
-  "specificity": 0.31064342403628126,
+  "specificity": 0.2999315818281336,
   "non_diagnostic": [],
   "tier": [
     "core",
@@ -104,15 +105,15 @@
   ],
   "reference_baseline": false,
   "model_card": null,
-  "score": 0.7099560657596371,
+  "score": 0.6854748221127531,
   "passed": 10,
-  "n_tasks": 28,
+  "n_tasks": 29,
   "cost": {
-    "wall_seconds": 1782.2695817947388,
-    "cpu_seconds": 4437.174663543701,
+    "wall_seconds": 4062.261538505554,
+    "cpu_seconds": 11200.69063282013,
     "jobs": 3,
-    "peak_rss_mb": 2296.078125,
-    "bio_seconds": 484.2
+    "peak_rss_mb": 2220.2265625,
+    "bio_seconds": 511.2
   },
   "tasks": [
     {
@@ -174,7 +175,7 @@
       },
       "readout_size": 139255,
       "stimulus_sizes": {},
-      "seconds": 4.059299468994141,
+      "seconds": 11.38183856010437,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -286,7 +287,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 24.504578351974487,
+      "seconds": 104.46801042556763,
       "notes": [],
       "graded": 0.9705544250488097,
       "graded_per_seed": [
@@ -378,7 +379,7 @@
         "sugar_grn": 129,
         "bitter_grn": 65
       },
-      "seconds": 33.195937156677246,
+      "seconds": 131.83184671401978,
       "notes": [],
       "graded": 0.9589859670200006,
       "graded_per_seed": [
@@ -488,7 +489,7 @@
       "stimulus_sizes": {
         "looming_detectors": 314
       },
-      "seconds": 12.912534952163696,
+      "seconds": 43.998671770095825,
       "notes": [],
       "graded": 0.9972865947156168,
       "graded_per_seed": [
@@ -571,7 +572,7 @@
       "stimulus_sizes": {
         "bitter_grn": 65
       },
-      "seconds": 16.19142460823059,
+      "seconds": 37.507081508636475,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -731,7 +732,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 46.00837182998657,
+      "seconds": 166.50260639190674,
       "notes": [],
       "graded": 0.7368576744424136,
       "graded_per_seed": [
@@ -817,7 +818,7 @@
         "pulse1": 129,
         "pulse2": 129
       },
-      "seconds": 28.43390703201294,
+      "seconds": 217.52669739723206,
       "notes": [
         "seed-sensitive: check 1: passes on 2/3 seeds"
       ],
@@ -953,7 +954,7 @@
       "stimulus_sizes": {
         "da1_orn": 127
       },
-      "seconds": 20.199562072753906,
+      "seconds": 75.43211054801941,
       "notes": [],
       "graded": 0.6285382669195148,
       "graded_per_seed": [
@@ -1090,7 +1091,7 @@
         "sugar_grn": 129,
         "looming_detectors": 314
       },
-      "seconds": 28.003708362579346,
+      "seconds": 130.28737831115723,
       "notes": [],
       "graded": 0.950899706992946,
       "graded_per_seed": [
@@ -1210,7 +1211,7 @@
       "stimulus_sizes": {
         "looming_detectors": 314
       },
-      "seconds": 13.147127389907837,
+      "seconds": 37.66506338119507,
       "notes": [],
       "graded": 0.8577873699145298,
       "graded_per_seed": [
@@ -1315,7 +1316,7 @@
       "stimulus_sizes": {
         "photoreceptors": 11153
       },
-      "seconds": 12.927477836608887,
+      "seconds": 33.960411071777344,
       "notes": [
         "null task (no check requires a response): shuffled wiring is expected to pass it too"
       ],
@@ -1440,7 +1441,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 41.195003509521484,
+      "seconds": 352.103152513504,
       "notes": [],
       "graded": 0.9827173228973889,
       "graded_per_seed": [
@@ -1597,7 +1598,7 @@
         "looming_detectors": 314,
         "sugar_grn": 129
       },
-      "seconds": 23.590354204177856,
+      "seconds": 62.27202916145325,
       "notes": [],
       "graded": 0.7633640534501831,
       "graded_per_seed": [
@@ -1765,7 +1766,7 @@
         "sugar_grn": 129,
         "looming_detectors": 314
       },
-      "seconds": 36.09597635269165,
+      "seconds": 98.02552390098572,
       "notes": [],
       "graded": 0.9944754458383117,
       "graded_per_seed": [
@@ -2007,7 +2008,7 @@
         "loom_left": 162,
         "loom_right": 152
       },
-      "seconds": 26.271702527999878,
+      "seconds": 67.27109289169312,
       "notes": [],
       "graded": 0.6441406243177956,
       "graded_per_seed": [
@@ -2212,7 +2213,7 @@
       "stimulus_sizes": {
         "da1_orn": 127
       },
-      "seconds": 39.02777981758118,
+      "seconds": 131.45558285713196,
       "notes": [],
       "graded": 0.6555296830149927,
       "graded_per_seed": [
@@ -2502,7 +2503,7 @@
         "orn_va1v": 94,
         "orn_dc1": 39
       },
-      "seconds": 111.48086595535278,
+      "seconds": 387.4446232318878,
       "notes": [],
       "graded": 0.7097288874566345,
       "graded_per_seed": [
@@ -2952,7 +2953,7 @@
         "lc16": 152,
         "lc10a": 237
       },
-      "seconds": 44.078701972961426,
+      "seconds": 154.65148305892944,
       "notes": [
         "seed-sensitive: check 7: passes on 2/3 seeds; check 15: passes on 2/3 seeds"
       ],
@@ -3173,7 +3174,7 @@
         "hs_right": 3,
         "h2_left": 1
       },
-      "seconds": 40.559789180755615,
+      "seconds": 186.33835625648499,
       "notes": [
         "seed-sensitive: check 4: passes on 2/3 seeds"
       ],
@@ -3314,7 +3315,7 @@
         "jo_ce": 433,
         "jo_f": 205
       },
-      "seconds": 30.18043279647827,
+      "seconds": 89.68320536613464,
       "notes": [],
       "graded": 0.326868624429874,
       "graded_per_seed": [
@@ -3685,7 +3686,7 @@
         "orn_dc1": 39,
         "silence[dc1_apl_off]": 2
       },
-      "seconds": 242.08461499214172,
+      "seconds": 1063.7706036567688,
       "notes": [],
       "graded": 0.5140216682973644,
       "graded_per_seed": [
@@ -3909,7 +3910,7 @@
         "orn_da1": 127,
         "orn_dm1": 68
       },
-      "seconds": 52.42522954940796,
+      "seconds": 212.50247192382812,
       "notes": [],
       "graded": 0.5704014301542725,
       "graded_per_seed": [
@@ -4137,7 +4138,7 @@
         "cue_g4": 6,
         "cue_g8": 8
       },
-      "seconds": 58.655017137527466,
+      "seconds": 512.2000007629395,
       "notes": [
         "seed-sensitive: check 0: passes on 1/3 seeds; check 1: passes on 1/3 seeds"
       ],
@@ -4296,7 +4297,7 @@
         "oviin": 2,
         "pc1": 10
       },
-      "seconds": 23.768966913223267,
+      "seconds": 68.98611736297607,
       "notes": [],
       "graded": 0.4930003799497958,
       "graded_per_seed": [
@@ -4511,7 +4512,7 @@
         "fg": 2,
         "bb": 2
       },
-      "seconds": 56.57611346244812,
+      "seconds": 281.75766038894653,
       "notes": [
         "seed-sensitive: check 3: passes on 1/3 seeds"
       ],
@@ -4636,7 +4637,7 @@
         "loom": 31825,
         "flash": 31825
       },
-      "seconds": 138.33575057983398,
+      "seconds": 286.1358573436737,
       "notes": [],
       "graded": 3.5999966560033343e-07,
       "graded_per_seed": [
@@ -4809,7 +4810,7 @@
         "loom": 31825,
         "flash": 31825
       },
-      "seconds": 331.4707272052765,
+      "seconds": 523.6171944141388,
       "notes": [
         "readout 'ttmn' matched 0 neurons",
         "body: command readout 'ttmn' absent, using 'gf' + 0.93 ms"
@@ -4990,7 +4991,7 @@
         "eyes[pass_by]": 31825,
         "eyes[static]": 31825
       },
-      "seconds": 701.8844306468964,
+      "seconds": 987.6174721717834,
       "notes": [
         "readout 'ttmn' matched 0 neurons",
         "body: command readout 'ttmn' absent, using 'gf' + 0.93 ms"
@@ -5015,9 +5016,202 @@
       },
       "specificity": 0.0,
       "non_diagnostic": false
+    },
+    {
+      "task": "odor_valence_steering",
+      "title": "One antenna's attractive odour channel steers toward it, an aversive one steers away",
+      "passed": false,
+      "score": 0.0,
+      "checks": [
+        {
+          "description": "rate[dm1, dna02_left] / rate[dm1, dna02_right] > 1.0  [2/3 seeds, sd 24.4]",
+          "value": 23.29281585007996,
+          "passed": false,
+          "margin": 1.3672219932246943,
+          "basis": "Bell & Wilson 2016: DM1 ORN activation alone attracts (unusually strongly); Gaudry et al. 2013: flies turn toward the antenna with the stronger attractive input; Rayshubskiy et al. 2025: DNa02 predicts ipsilateral turns (inferred to the L/R DNa02 ratio); > 1 is the task-18 direction convention",
+          "graded": 0.9981602606859379,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            56.9720139930035,
+            12.748531433570806,
+            0.15790212366558187
+          ],
+          "op": ">",
+          "target": 1.0,
+          "saturated": false,
+          "floored": false
+        },
+        {
+          "description": "rate[dm2, dna02_left] / rate[dm2, dna02_right] > 1.0  [1/3 seeds, sd 21.3]",
+          "value": 15.85853042472358,
+          "passed": false,
+          "margin": 1.2002629397278655,
+          "basis": "Bell & Wilson 2016: DM2 ORN activation alone attracts; Gaudry et al. 2013 lateralisation; Rayshubskiy et al. 2025 DNa02 ipsilateral turns (inferred to the L/R ratio); > 1 task-18 convention",
+          "graded": 0.996039493963919,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.723079053238052,
+            0.8750009765548706,
+            45.977511244377816
+          ],
+          "op": ">",
+          "target": 1.0,
+          "saturated": false,
+          "floored": false
+        },
+        {
+          "description": "rate[va2, dna02_left] / rate[va2, dna02_right] > 1.0  [2/3 seeds, sd 10.7]",
+          "value": 14.661432360714656,
+          "passed": false,
+          "margin": 1.1661764011350435,
+          "basis": "Bell & Wilson 2016: VA2 ORN activation alone attracts; Semmelhack & Wang 2009: VA2 needed for vinegar attraction; Gaudry et al. 2013; Rayshubskiy et al. 2025 (inferred to the L/R ratio); > 1 task-18 convention",
+          "graded": 0.9953694613885194,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.4933367110885928,
+            16.997333777703716,
+            26.49362659335166
+          ],
+          "op": ">",
+          "target": 1.0,
+          "saturated": false,
+          "floored": false
+        },
+        {
+          "description": "rate[v, dna02_left] / rate[v, dna02_right] < 1.0  [2/3 seeds, sd 12.5]",
+          "value": 8.881064666492696,
+          "passed": false,
+          "margin": -0.9484650323401592,
+          "basis": "Suh et al. 2004: activating the CO2 ORNs (V glomerulus) alone causes avoidance; Bell & Wilson 2016: weak repulsion; turning away from the stimulated antenna is inferred (avoidance, not a lateral turn, was measured); < 1 task-18 convention",
+          "graded": 0.012519826771638879,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.07813220209217114,
+            0.07143520403425689,
+            26.49362659335166
+          ],
+          "op": "<",
+          "target": 1.0,
+          "saturated": false,
+          "floored": false
+        },
+        {
+          "description": "rate[da2, dna02_left] / rate[da2, dna02_right] < 1.0  [0/3 seeds, sd 0]  [floored: every compared condition silent]",
+          "value": 1.0,
+          "passed": false,
+          "margin": -10.0,
+          "basis": "Stensmyr et al. 2012: activating the Or56a (DA2) channel alone causes aversion; turning away from the stimulated antenna is inferred; < 1 task-18 convention",
+          "graded": 0.0,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "op": "<",
+          "target": 1.0,
+          "saturated": false,
+          "floored": true
+        }
+      ],
+      "measurements": {
+        "dm1": {
+          "rate": 78.0,
+          "network_rate": 2.401546323890225,
+          "active_fraction": 0.06109894318576233,
+          "spikes": 216966.0,
+          "rate[dna02_left]": 78.0,
+          "readout_active_fraction[dna02_left]": 1.0,
+          "rate[dna02_right]": 41.333333333333336,
+          "readout_active_fraction[dna02_right]": 1.0
+        },
+        "dm2": {
+          "rate": 99.33333333333333,
+          "network_rate": 2.398281330413031,
+          "active_fraction": 0.06104149462018119,
+          "spikes": 216038.33333333334,
+          "rate[dna02_left]": 99.33333333333333,
+          "readout_active_fraction[dna02_left]": 1.0,
+          "rate[dna02_right]": 86.66666666666667,
+          "readout_active_fraction[dna02_right]": 1.0
+        },
+        "va2": {
+          "rate": 94.0,
+          "network_rate": 2.406831591923689,
+          "active_fraction": 0.06256148791784856,
+          "spikes": 215619.0,
+          "rate[dna02_left]": 94.0,
+          "readout_active_fraction[dna02_left]": 1.0,
+          "rate[dna02_right]": 53.333333333333336,
+          "readout_active_fraction[dna02_right]": 1.0
+        },
+        "v": {
+          "rate": 42.0,
+          "network_rate": 2.370303878975022,
+          "active_fraction": 0.06071595274855481,
+          "spikes": 214188.66666666666,
+          "rate[dna02_left]": 42.0,
+          "readout_active_fraction[dna02_left]": 1.0,
+          "rate[dna02_right]": 90.66666666666667,
+          "readout_active_fraction[dna02_right]": 1.0
+        },
+        "da2": {
+          "rate": 0.0,
+          "network_rate": 0.00936890357018898,
+          "active_fraction": 0.00013404665302263233,
+          "spikes": 652.6666666666666,
+          "rate[dna02_left]": 0.0,
+          "readout_active_fraction[dna02_left]": 0.0,
+          "rate[dna02_right]": 0.0,
+          "readout_active_fraction[dna02_right]": 0.0
+        }
+      },
+      "readout_size": 1,
+      "stimulus_sizes": {
+        "orn_dm1_left": 35,
+        "orn_dm2_left": 29,
+        "orn_va2_left": 34,
+        "orn_v_left": 34,
+        "orn_da2_left": 16
+      },
+      "seconds": 256.59690499305725,
+      "notes": [
+        "seed-sensitive: check 0: passes on 2/3 seeds; check 1: passes on 1/3 seeds; check 2: passes on 2/3 seeds; check 3: passes on 2/3 seeds"
+      ],
+      "graded": 0.5317026846282862,
+      "graded_per_seed": [
+        0.5065398782463154,
+        0.6837974323571225,
+        0.4047707432814204
+      ],
+      "controls": {
+        "rewired": {
+          "score": 0.0,
+          "passed": false,
+          "checks": [
+            false,
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      },
+      "specificity": 0.0,
+      "non_diagnostic": false
     }
   ],
-  "public_score": 0.7099560657596371,
+  "public_score": 0.6854748221127531,
   "label": "Adaptive LIF (b 2 mV, tau 200 ms)",
   "note": "LIF + spike-frequency adaptation (Benda & Herz 2003), gain 0.45. Hypothesis for an off switch; not a claim of biological accuracy.",
   "division": "open",

@@ -156,6 +156,8 @@ A full 31-task run with 3 seeds and the rewired control is ~18 min on a laptop w
 
 Edges with fewer than 5 synapses are dropped (`--min-synapses`); the Codex download itself carries only pairs of ≥ 5. This is **not** Shiu et al.'s graph: their `Connectivity_783.parquet` keeps every pair (15.1 M edges against our 3.7 M), counts synapses from an earlier table, and signs the neurons Codex leaves without a transmitter, which our build treats as excitatory. `flybench build-shiu` builds their graph as a second pinned connectome, `flywire783_shiu` (docs/rfcs/D1_shiu_graph.md; reported by Daniel Culotta).
 
+**The reference model's graph reads 19,658 neurons as excitatory by default** (Codex leaves their transmitter blank). That is deliberate and documented, not hidden: `flybench build --blank-nt-from-connections` signs them from their connection rows (`flywire783_ntfix`), which recovers most of the gap to Shiu's graph but leaves no gain at which all five core reflexes pass on every seed, so it cannot serve as the reference under the window rule. All three builds are pinned and shown side by side; RFC D1 has the numbers.
+
 ## The model
 
 Every neuron is the same leaky integrate-and-fire unit, parameters from [Shiu et al. 2024, *Nature*](https://www.nature.com/articles/s41586-024-07763-9):
@@ -209,12 +211,12 @@ What is still weak: the thresholds are conventions far more often than measureme
 
 ## Versions, pins and reproducing the numbers
 
-The task set is **v0.x**: tasks are added freely (each one first as an RFC in `docs/rfcs/` with
-predictions written before its first run) and every score-affecting change to the scoring rules
-is its own RFC (`S1` the ceiling gate, `S2` the response floor) applied to every archived result
-by rerun, with the before and after recorded in the RFC. At **v1.0** the task set freezes:
-additions come in minor versions, a task can be retired or rotated (its RFC says why) but not
-silently changed, and a result file states the task-set version it ran under. Every result also
+The task set is **v1.0, frozen on 2026-10-22: 37 tasks** (5 core, 32 hard). Additions come in minor
+versions, each first as an RFC in `docs/rfcs/` with predictions written before its first run; a
+task can be retired or rotated (its RFC says why) but not silently changed; a score-affecting change
+to the scoring rules is a major version and its own RFC (`S1` the ceiling gate, `S2` the response
+floor), applied to every archived result by rerun. What v1.0 deliberately leaves out (20 seeds,
+per-check ceilings, per-constant provenance tags) is listed in docs/PLAN.md, "v1.0 scope". Every result also
 records the connectome fingerprint it ran on (`flybench/manifests.json`; `flybench run` refuses a
 connectome that does not match its pin unless `--allow-unpinned`, and such results rank last).
 `reproduce.ps1` / `make reproduce` regenerate `LEADERBOARD.md` and the explorer snapshot from the

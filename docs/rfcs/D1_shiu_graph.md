@@ -142,3 +142,39 @@ If ntfix 0.7 lands within 0.02 of Shiu 0.7, the blank signs are most of the grap
 - **What this means for the reference.** The current reference row runs on a graph whose sign
   default is wrong for 19,658 neurons. Which graph the reference uses is a maintainer decision for
   v1.0 (it moves tasks between tiers); this RFC records the evidence, not the decision.
+### Reference window on flywire783_ntfix (pre-registered 2026-10-21, before the sweep)
+
+Decision (maintainer, 2026-10-21): the v1.0 reference runs on `flywire783_ntfix`. Its gain is set by
+the existing rule — the widest window in which all five core reflexes pass on every seed — from a
+sweep at 0.5, 0.55, 0.6, 0.65 (3 seeds, rewired), alongside the 0.45 and 0.7 rows above (both fail
+core on at least one seed).
+
+Prediction: core passes on every seed at 0.55 and 0.6; 0.5 fails a taste reflex (under-driven, as
+at 0.45) and 0.65 fails bitter suppression on one seed (as at 0.7). The window is then 0.55–0.6
+and the reference gain the lower edge, 0.55, by analogy with 0.45 on the old graph. If no gain
+passes core on every seed, there is no window on this graph and that is the finding; the reference
+does not move until there is one.
+### Sweep outcome (2026-10-21): no window on flywire783_ntfix
+
+| gain | sugar → proboscis | bitter suppression | core on every seed |
+|---|---|---|---|
+| 0.45 / 0.5 / 0.55 / 0.6 | fails: MN9 all-or-none (0.55: 435 Hz on one seed, 0 Hz on two) | fails (nothing to suppress) | ✗ |
+| 0.65 | passes | fails (score 0.5) | ✗ |
+| 0.7 | passes (163–291 Hz) | fails: sugar + bitter is 53–73 % of sugar, needs < 50 % | ✗ |
+
+Pre-registered: window 0.55–0.6, reference 0.55. **Wrong: there is no window.** On the Codex graph
+with its transmitters signed, the proboscis reflex switches from silent to saturated over 0.6–0.65,
+and by the gain at which sugar fires on every seed, bitter no longer halves it. On the old
+(mis-signed) Codex graph the window was 0.4–0.45; on Shiu's graph 0.7 passes every core reflex.
+Per the rule written above, the reference does not move to this graph. The choice for v1.0 goes
+back to the maintainer.
+Decision (maintainer, 2026-10-21): v1.0 keeps the Codex ≥ 5 reference at gain 0.45. Shiu's graph
+passes at 0.7 but narrowly (sugar 11.8 Hz against a 5 Hz bar on two of three seeds); the three
+builds are reported side by side. Why the signed graph has no window (which neurons make MN9
+all-or-none) is the open question this RFC leaves.
+
+Full sweep rows (graded / hard / spec.): 0.5 0.688 / 0.624 / +0.25; 0.55 0.686 / 0.579 / +0.21;
+0.6 0.727 / 0.601 / +0.24; 0.65 **0.761** / 0.668 / +0.33. At 0.65 bitter suppression fails on one
+seed only (sugar+bitter / sugar = 0.03, 0.95, 0.00): the window is missed by one seed in three.
+Task 37 on this graph is 4/5 at 0.5, 0.6 and 0.65 — it turns away from CO2 (RFC 37 addendum),
+contrary to the 3/5 predicted above.

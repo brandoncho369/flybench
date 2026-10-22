@@ -292,8 +292,11 @@ model. Phase 6 continuously, driven by what the analytics show people doing. Pha
 v1.0 freezes the task set (README, "Versions, pins and reproducing the numbers"). Decided before the
 freeze, because each would change scores afterwards:
 
-- **Reference graph:** `flywire783_ntfix` (Codex v783, blank transmitters signed from connection
-  rows; RFC D1), at the gain the core-window rule picks from the 0.45–0.7 sweep.
+- **Reference graph:** unchanged, Codex v783 ≥ 5 at gain 0.45. The sign-fixed build
+  (`flywire783_ntfix`) was chosen first, but its sweep found no gain at which all five core reflexes
+  pass on every seed (RFC D1), so by the pre-registered rule it cannot be the reference. The
+  reference's sign default (19,658 neurons read as excitatory) is documented, and all three builds
+  are pinned and shown side by side on the leaderboard.
 - **In:** every cited `basis` carries a Crossref-verified DOI (`lint --strict` passes; item 60).
 - **Out of v1.0, stated rather than silently missing:** 20 seeds per row (item 33; rows keep 3,
   CIs say so) → v2; per-check ceilings from the fly's own pass rate (item 32) → v2; per-constant

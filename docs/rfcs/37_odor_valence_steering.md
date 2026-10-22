@@ -65,8 +65,11 @@ the channel, turns toward on all five and scores 3/5. Valence is needed for 5/5.
   attractive half with DNa02 symmetric under V and DA2 would be consistent with that.
 - **The odour-level version** (Knaden 2012's 110 odours driven by Hallem & Carlson 2006 rates,
   rank correlation with attraction) is the stronger test. It is not this task because no copy
-  of the per-odour attraction indices is reachable without the paper's supplement; it is the
-  follow-up.
+  of the per-odour attraction indices is reachable without the paper's supplement. Gate for that
+  follow-up (added 2026-10-22, after a check reported by Daniel Culotta): its RFC must first measure
+  how much of the measured attraction any readout of the receptor responses can recover (a
+  leave-one-out ceiling), and the task goes ahead only if that ceiling clears the task's own
+  threshold. A model must not be able to fail it for a reason the data cannot support.
 - **Rates.** At 100 Hz the antennal lobe is saturated (task 17). A 20 Hz variant would sit at
   Bell & Wilson's threshold; recorded as a follow-up, not run here.
 
@@ -99,3 +102,26 @@ The Shiu 1.0 row ran before the task existed and has no score yet.
 - **MaleCNS skips the task.** Its ORNs carry no soma side in neuPrint male-cns v1.0 (DNa02 does),
   so the left antenna cannot be selected. Splitting ORNs by axon entry or position is a selector
   change, INFERRED, with its own RFC if it is wanted.
+
+### Addendum (2026-10-22): the sign-fixed graph turns away from CO2
+
+Task 37 on `flywire783_ntfix` (RFC D1), 3 seeds, DNa02 left / right in Hz:
+
+| gain | score | DM1 | DM2 | VA2 | **V (CO2)** | DA2 |
+|---|---|---|---|---|---|---|
+| 0.45 | 3/5 | 15 / 2 | 11 / 1 | 14 / 2 | 11 / 5 (toward) | 0 / 0 |
+| 0.5 | **4/5** | 8 / 2 | 9 / 2 | 12 / 2 | **2 / 9 (away)** | 0 / 0 |
+| 0.55 | 2/5 | 8 / 5 | 9 / 7 | 9 / 4 | 3 / 11 (away) | 0 / 0 |
+| 0.6 | **4/5** | 11 / 3 | 12 / 6 | 11 / 7 | **3 / 11 (away)** | 0 / 0 |
+| 0.65 | **4/5** | 12 / 5 | 12 / 6 | 12 / 9 | **1 / 14 (away)** | 0 / 0 |
+| 0.7 | 3/5 | 12 / 9 | 12 / 7 | 13 / 11 | 0 / 16 (away) | 0 / 0 |
+
+- **With the 19,658 blank transmitters signed, CO2 on one antenna drives the opposite DNa02**, on
+  every seed from 0.5 up, while the attractive channels still bias the stimulated side. The other
+  rows that ran task 37 turn toward CO2 (Codex reference; Shiu's graph at 0.7 and 1.0), are silent
+  to it (Shiu's graph at 0.45), or go whichever way the seed decides (adaptive LIF). This is the first split between an
+  attractive and an aversive channel in any row. RFC D1's addendum predicted 3/5 ("signs fix
+  inhibition, not valence"): wrong at 0.5, 0.6 and 0.65.
+- Modest: rates are ≤ 16 Hz; at 0.55 an attractive check fails on a seed and at 0.7 attractive
+  asymmetry shrinks with the extra drive; DA2 (16 ORNs) still reaches no DNa02. Which signed
+  neurons carry the crossing is not yet traced.

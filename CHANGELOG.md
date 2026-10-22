@@ -3,9 +3,19 @@
 Score-affecting changes are listed with the RFC that introduced them; every archived result is rerun
 when one lands, and the RFC records the before and after.
 
-## Unreleased
+## 1.0.0 — 2026-10-22
 
-**37 tasks** (5 core, 32 hard); two more FlyWire graphs. Reported by Daniel Culotta (2026-10-19).
+**The task set is frozen: 37 tasks** (5 core, 32 hard), every cited basis with a Crossref-verified
+DOI. Three pinned builds of FlyWire v783 are scored side by side; the reference stays the Codex
+build at gain 0.45 (the sign-fixed build has no gain at which all five core reflexes pass on every
+seed; RFC D1). The graph findings were prompted by Daniel Culotta (2026-10-19).
+
+Rows and the task set: on FlyWire, the reference, the adaptive LIF, both Shiu-constant rows and
+every row on the two new builds run on all 37 tasks, and previously run checks are bit-identical (138/138 on
+each rerun row). Left on the 36-task set, with "–" for task 37 (rerunning them costs 10+ hours each
+for the closed-loop task, and they are exploratory): the terminal LIF 0.45 and the single-seed
+Codex gain sweep (0.3, 0.35, 0.4, 0.4 × 3 seeds, 0.5, 0.7). Task 37 does not apply to MaleCNS
+(its ORNs have no soma side), so the MaleCNS rows were not rerun.
 
 - **Relabel, score-affecting for one row's name only:** "Shiu 2024 (gain 1.0)" ran Shiu's constants
   on flybench's Codex ≥ 5 graph, not on the published model's graph; it is now "Shiu constants,
@@ -15,6 +25,10 @@ when one lands, and the RFC records the before and after.
   (RFC D1). On it the plain LIF at gain 0.7 passes every core reflex (graded 0.764).
 - `flybench build --blank-nt-from-connections` and `flywire783_ntfix`: the Codex graph with the
   19,658 blank-transmitter neurons signed from their connection rows instead of as excitatory.
+- Findings recorded with this release (RFC D1, RFC 37, FINDINGS): signing the blank transmitters
+  recovers ~80 % of the gap to Shiu's graph (LIF 0.7 graded 0.695 → 0.749) and part of the antennal
+  lobe's channel identity (retracting part of a 2026-09-14 finding), but leaves no core window;
+  the sign-fixed build is the only one that turns away from CO2 (task 37, 4/5 at 0.5–0.65).
 - `meta.dataset`: another graph of the same animal keeps `dataset_only` tasks (task 30 runs on both
   new graphs).
 - Task 37 (RFC 37): odour valence steering — one antenna's attractive channel must steer toward,

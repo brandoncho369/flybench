@@ -8,7 +8,7 @@ authors:
 repository-code: "https://github.com/brandoncho369/flybench"
 url: "https://www.fly-bench.com"
 license: MIT
-version: 0.2.1
+version: 1.0.0
 doi: 10.5281/zenodo.22886374
 identifiers:
   - type: doi
@@ -16,17 +16,19 @@ identifiers:
     description: "the concept DOI, every version"
   - type: doi
     value: 10.5281/zenodo.22930641
-    description: "this version, 0.2.1"
+    description: "version 0.2.1"
   - type: doi
     value: 10.5281/zenodo.22886375
     description: "version 0.2.0"
-date-released: "2026-09-24"
+date-released: "2026-10-22"
 abstract: >
   flybench scores a connectome-constrained neural model (the reference is a uniform leaky
   integrate-and-fire on the FlyWire v783 and MaleCNS v1.0 connectomes) against published fly
-  behaviour: 36 tasks, each a stimulus, a readout and thresholds with a citation or a stated
-  convention, every one pre-registered as an RFC with predictions before its first run, scored
-  with graded margins, ceiling and floor gates, seeds, and shuffled-wiring controls.
+  behaviour: 37 tasks (the task set frozen at v1.0), each a stimulus, a readout and thresholds
+  with a DOI-cited source or a stated convention, every one pre-registered as an RFC with
+  predictions before its first run, scored with graded margins, ceiling and floor gates, seeds,
+  and shuffled-wiring controls. Three pinned builds of FlyWire v783 (Codex, Codex with blank
+  transmitters signed, and Shiu et al. 2024's published graph) are scored side by side.
 keywords:
   - Drosophila
   - connectome

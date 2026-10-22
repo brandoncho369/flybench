@@ -773,4 +773,9 @@ Reported by Daniel Culotta (email, 2026-10-19), reproduced here; docs/rfcs/D1_sh
   its 9 checks now pass), and the PN transfer function task scores 0.86 at 0.7 (was 0.14). Part of
   that finding was this build's default; the rest stands.
 - Odour valence (task 37) is unchanged, 3/5: signs restore channels in the antennal lobe; they do
-  not give the steering readout a sign.
+  not give the steering readout a sign.- **No working gain on the sign-fixed graph** (sweep 0.45–0.7, RFC D1): below 0.65 the proboscis
+  reflex is all-or-none across seeds; from 0.65 bitter no longer halves it on every seed (0.65
+  misses on one seed of three). v1.0 keeps the Codex 0.45 reference; all three builds are pinned.
+- **The sign-fixed graph turns away from CO2** (task 37, 4/5 at 0.5, 0.6, 0.65; RFC 37 addendum):
+  CO2 on the left antenna drives the right DNa02 (≤ 16 Hz) while attractive channels bias the left.
+  The only row of any build to split an aversive from an attractive channel. Predicted 3/5.
