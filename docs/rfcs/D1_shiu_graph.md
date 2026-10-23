@@ -178,3 +178,25 @@ Full sweep rows (graded / hard / spec.): 0.5 0.688 / 0.624 / +0.25; 0.55 0.686 /
 seed only (sugar+bitter / sugar = 0.03, 0.95, 0.00): the window is missed by one seed in three.
 Task 37 on this graph is 4/5 at 0.5, 0.6 and 0.65 — it turns away from CO2 (RFC 37 addendum),
 contrary to the 3/5 predicted above.
+## Fine core sweep (pre-registered 2026-10-23, before any run of it)
+
+The "no window" above rests on a 0.05 grid with 3 seeds. Prompted by Daniel Culotta (email,
+2026-10-22; his independent replication with a different re-signing, 8,564 neurons by FlyWire's
+top prediction, also loses bitter suppression with the reference LIF, and finds an adaptive-LIF
+window at 0.45–0.55), the window is measured on a fine grid.
+
+Protocol: `--tier core` (the window rule needs only the five core tasks), **5 seeds**, gains
+0.40–0.70 in steps of 0.01 (31 points), no controls; four sweeps: reference LIF and adaptive LIF
+(`flybench.models.adaptive_lif`), each on `flywire783` and `flywire783_ntfix`. A gain is in the
+window if every core task passes on all 5 seeds; the window is the longest run of consecutive
+such gains; its width is reported, not only its location. Files: `results/sweeps/d1_core_fine/`.
+
+| sweep | prediction |
+|---|---|
+| LIF, flywire783 | window ~0.42–0.47 (the coarse 0.40 was a knife edge on 3 seeds) |
+| LIF, flywire783_ntfix | **no window**; if one exists, ≤ 0.02 wide inside 0.61–0.65 |
+| adaptive, flywire783 | narrow, ≤ 0.03, around 0.44–0.46 |
+| adaptive, flywire783_ntfix | wider than adaptive on flywire783, ≥ 0.05, inside 0.45–0.60 |
+
+If LIF on flywire783_ntfix has a window, the "no working gain" statement (RFC D1, README,
+CHANGELOG 1.0.0) is corrected to name it.
