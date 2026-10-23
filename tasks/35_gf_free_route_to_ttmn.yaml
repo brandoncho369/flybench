@@ -17,7 +17,7 @@ description: >
   the toy has no GFC2, so it is skipped there; GFC2 (the GF-coupled interneuron the route runs
   through) is read out in every condition.
   Pre-registered in two disclosed stages: docs/rfcs/35_gf_free_route_to_ttmn.md.
-citation: "von Reyn et al. 2014 (Nat Neurosci 17:962, doi:10.1038/nn.3741); Card & Dickinson 2008 (Curr Biol 18:1300, doi:10.1016/j.cub.2008.07.094); Allen et al. 2006 (J Neurosci 26:1264, doi:10.1523/JNEUROSCI.4258-05.2006); Dombrovski et al. 2023 (Nature 613:534, doi:10.1038/s41586-022-05586-0)"
+citation: "von Reyn et al. 2014 (Nat Neurosci 17:962, doi:10.1038/nn.3741); Card & Dickinson 2008 (Curr Biol 18:1300, doi:10.1016/j.cub.2008.07.094); Allen, Godenschwege, Tanouye & Phelan 2006 (Semin Cell Dev Biol 17:31, doi:10.1016/j.semcdb.2005.11.011); Dombrovski et al. 2023 (Nature 613:534, doi:10.1038/s41586-022-05562-8)"
 duration_ms: 1300
 window: [200, 1200]
 requires_frontends: [flyvis]

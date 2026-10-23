@@ -18,7 +18,7 @@ description: >
   the one channel the fly keeps private. LHPD5c1 is not a null: it also receives DM1/DM4/DP1m
   PNs directly (the paper: it "integrates CO2 + food cues"). Pre-registered predictions and
   outcome: docs/rfcs/27_co2_pathway_specificity.md.
-citation: "bioRxiv 2026.01.05.697655 (Structural basis of CO2 valence coding in Drosophila); Suh et al. 2004 (Nature 431:854); Lin et al. 2013 (Nature 501:81); Jones et al. 2007 (Nature 445:86)"
+citation: "bioRxiv 2026.01.05.697655 (Structural basis of CO2 valence coding in Drosophila; doi:10.64898/2026.01.05.697655); Suh et al. 2004 (Nature 431:854); Lin et al. 2013 (Science 340:1338; doi:10.1126/science.1236693); Jones et al. 2007 (Nature 445:86)"
 duration_ms: 900
 window: [200, 700]
 requires_stimuli: [orn_v, orn_da1, orn_dm1]

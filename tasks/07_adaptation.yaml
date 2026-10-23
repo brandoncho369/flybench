@@ -10,7 +10,7 @@ description: >
   point: this task measures something the wiring diagram alone does not give
   you.
 circuit: taste
-citation: Duerr & Quinn 1982 (PNAS, PER habituation); Paranjpe et al. 2012 (J. Neurosci.)
+citation: Duerr & Quinn 1982 (PNAS, PER habituation); Paranjpe et al. 2012 (Learn Mem 19:627; doi:10.1101/lm.026641.112)
 duration_ms: 1400
 window: [250, 600]
 readout:

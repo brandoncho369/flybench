@@ -9,10 +9,10 @@ description: >
   GRNs) should give a clearly smaller MN9 response than strong drive (100 Hz),
   and both should be above baseline. The 100 Hz "strong" drive is the Shiu et al. 2024
   convention; the one recorded number for a labellar sugar GRN is ~40 spikes per 500 ms
-  (≈80 Hz) at 100 mM sucrose (Zhang, Guo & Montell 2016, Neuron 91:863), so a third condition
+  (≈80 Hz) at 100 mM sucrose (Zhang, Aikin, Li & Montell 2016, Neuron 91:863), so a third condition
   drives the GRNs at that measured rate and asks only that the pathway still conducts.
 circuit: taste
-citation: Dethier 1976; Dahanukar et al. 2007 (Neuron); Zhang, Guo & Montell 2016 (Neuron 91:863); Shiu et al. 2024
+citation: Dethier 1976; Dahanukar et al. 2007 (Neuron); Zhang, Aikin, Li & Montell 2016 (Neuron 91:863; doi:10.1016/j.neuron.2016.07.013); Shiu et al. 2024
 duration_ms: 1000
 window: [250, 800]
 readout:
@@ -28,7 +28,7 @@ conditions:
     stimuli:
       - {name: sugar_grn, select: {any: [{sub_class: "sugar/water"}, {all_of: [{labels_regex: "sugar"}, {super_class: sensory}, {not: {labels_regex: "bitter"}}]}, {all_of: [{sub_class: "labellar bristle"}, {cell_type_regex: "^LB3[bc]$"}]}]}, rate_hz: 80, t_start_ms: 200, t_end_ms: 800}
 checks:
-  - {type: rate, cond: measured, op: ">", value: 5, basis: "Zhang, Guo & Montell 2016 (Neuron 91:863): labellar sugar GRN fires ~40 spikes/500 ms (≈80 Hz) at 100 mM sucrose, a concentration that reliably evokes PER; the pathway must conduct at the recorded input rate, not only at the 100 Hz convention"}
+  - {type: rate, cond: measured, op: ">", value: 5, basis: "Zhang, Aikin, Li & Montell 2016 (Neuron 91:863; doi:10.1016/j.neuron.2016.07.013): labellar sugar GRN fires ~40 spikes/500 ms (≈80 Hz) at 100 mM sucrose, a concentration that reliably evokes PER; the pathway must conduct at the recorded input rate, not only at the 100 Hz convention"}
   - {type: rate, cond: weak, op: ">", value: 1, basis: "Dethier 1976; Dahanukar et al. 2007 (PER probability rises with sucrose concentration); convention: 1 Hz = a detectable weak response"}
   - {type: rate, cond: strong, op: ">", value: 5, basis: "convention: 5 Hz over the window is ~2.5 spikes per neuron, the smallest response that is unambiguously not noise (baseline is 0 Hz)"}
   - {type: ratio, cond: weak, over: strong, op: "<", value: 0.6, basis: "convention: a 5x weaker stimulus should give a visibly weaker response; 0.6 is lenient on purpose"}

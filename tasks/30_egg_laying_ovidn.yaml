@@ -17,7 +17,7 @@ description: >
   and does not drive oviDN (the virgin null). FlyWire only — MaleCNS has no oviDN and its pC1
   are the male types; recorded as not applicable there. Pre-registered predictions and outcome:
   docs/rfcs/30_egg_laying_ovidn.md.
-citation: "Wang et al. 2020 (Nature 579:101, Neural circuitry linking mating and egg laying in Drosophila females); Wang et al. 2021 (Nature 596:433, oviDN and the egg-laying sequence)"
+citation: "Wang et al. 2020 (Nature 579:101, Neural circuitry linking mating and egg laying in Drosophila females)"
 dataset_only: [flywire783, toy]
 duration_ms: 900
 window: [200, 700]

@@ -3,6 +3,26 @@
 Score-affecting changes are listed with the RFC that introduced them; every archived result is rerun
 when one lands, and the RFC records the before and after.
 
+## Unreleased
+
+**Citation corrections (no score changes).** 1.0.0 said every cited basis had a Crossref-verified
+DOI. That check confirmed each DOI resolved, not that it resolved to the paper named beside it.
+Checking first author and year for every DOI, and finding every DOI-less reference on Crossref,
+found nine wrong citations in eight tasks:
+- 33 and 35: "Allen et al. 2006 (J Neurosci 26:1264)" does not exist, and its DOI was an Aplysia
+  paper. Now Allen, Godenschwege, Tanouye & Phelan 2006 (Semin Cell Dev Biol 17:31).
+- 35: the Dombrovski et al. 2023 DOI pointed to an unrelated Nature paper; corrected.
+- 33: "Augustin et al. 2019 (J Physiol 597:2233)" does not exist. Now the eNeuro paper task 19
+  cites. Trimarchi & Schneiderman 1995 gained its DOI.
+- 34: "Engel & Wu 1996 (J Comp Physiol A 178:105)" does not exist. Now J Neurosci 16:3486.
+- 27: "Lin et al. 2013 (Nature 501:81)" is Science 340:1338; the bioRxiv preprint gained its DOI.
+- 30: "Wang et al. 2021 (Nature 596:433)" does not exist and no check used it; removed.
+- 07: Paranjpe et al. 2012 is in Learn Mem 19:627, not J Neurosci.
+- 06: Zhang et al. 2016 is by Zhang, Aikin, Li & Montell, not "Zhang, Guo & Montell".
+  **Open:** confirm the ~80 Hz sugar-GRN rate the measured-input check attributes to it.
+
+No threshold or score changed.
+
 ## 1.0.0 — 2026-10-22
 
 **The task set is frozen: 37 tasks** (5 core, 32 hard), every cited basis with a Crossref-verified
