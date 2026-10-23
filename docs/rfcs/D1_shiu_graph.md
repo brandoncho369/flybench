@@ -229,3 +229,11 @@ passing point at 0.45 as narrowness; it was the grid.
 
 Daniel Culotta's adaptive window under his signing rule (0.45–0.55, 3 points × 3 seeds) overlaps
 ours on the synapse-majority rule (0.46–0.53, 8 points × 5 seeds).
+### Codex gain-0.7 row rerun at 3 seeds (2026-10-23)
+
+The Codex LIF 0.7 row above was a single seed and predated task 37. Rerun with 3 seeds and the
+rewired control (`results/flywire783_gain0.7.json`, same label): graded **0.670** over 29 tasks
+(was 0.695 over 28), core 0.77, hard 0.555, specificity +0.21. On the 29 tasks every 0.7 row ran:
+Codex 0.625, signed 0.726, Shiu graph 0.711. The conclusions stand. Signing the blanks matches
+Shiu's graph, and the graph effect at 0.7 (+0.10) equals adaptation's at 0.45 (+0.097). The
+pre-registered "≤ +0.03" for the graph is further off than the 1-seed row showed.
