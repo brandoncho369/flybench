@@ -23,6 +23,11 @@ found nine wrong citations in eight tasks:
 
 No threshold or score changed.
 
+**Rows.** The Codex LIF 0.7 row (1 seed, 28 tasks, graded 0.695) is rerun with 3 seeds and the
+rewired control on the 37-task set: graded 0.670. The "~80 % of the gap to Shiu's graph" in 1.0.0
+becomes 84 % (0.670 → 0.749 against 0.764). The fine core sweep (RFC D1, 124 runs) is in
+`results/sweeps/d1_core_fine/`.
+
 ## 1.0.0 — 2026-10-22
 
 **The task set is frozen: 37 tasks** (5 core, 32 hard), every cited basis with a Crossref-verified
