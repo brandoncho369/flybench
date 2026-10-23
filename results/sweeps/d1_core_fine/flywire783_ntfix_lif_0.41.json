@@ -1,0 +1,547 @@
+{
+  "schema": 1,
+  "flybench_version": "1.0.0",
+  "seeds": 5,
+  "verified": false,
+  "core_score": 0.6666666666666666,
+  "hard_score": null,
+  "core_by_circuit": 0.8148148148148149,
+  "hard_by_circuit": null,
+  "graded": 0.7783203519383263,
+  "graded_ci95": [
+    0.7757236503737304,
+    0.7835104150977625
+  ],
+  "core_graded": 0.6693179567862595,
+  "hard_graded": null,
+  "profile": {
+    "-1": 0.6666666666666666,
+    "-0.5": 0.6666666666666666,
+    "-0.25": 0.6666666666666666,
+    "0": 0.6666666666666666,
+    "0.25": 0.6666666666666666,
+    "0.5": 0.6666666666666666,
+    "1": 0.6666666666666666
+  },
+  "circuits": {
+    "stability": "stability",
+    "sugar_to_proboscis": "taste",
+    "bitter_suppression": "taste",
+    "looming_to_giant_fiber": "escape",
+    "taste_specificity": "taste"
+  },
+  "skipped": {},
+  "controls": [],
+  "specificity": null,
+  "non_diagnostic": [],
+  "tier": [
+    "core"
+  ],
+  "connectome": "flywire783_ntfix",
+  "connectome_meta": {
+    "source": "flywire-codex",
+    "min_synapses": 5,
+    "n": 139255,
+    "n_edges": 3732460,
+    "sha256": "27dc0261253e90a01d385eaf2dde117eb7e9fe339522fbf70754e31b8c0dc0de",
+    "pinned_version": "FlyWire Codex v783 (2024) build, min_synapses 5, blank nt_type signed by connection-row majority (RFC D1)"
+  },
+  "n_neurons": 139255,
+  "n_edges": 3732460,
+  "params": {
+    "v_rest_mv": -52.0,
+    "v_reset_mv": -52.0,
+    "v_th_mv": -45.0,
+    "tau_m_ms": 20.0,
+    "tau_syn_ms": 5.0,
+    "t_ref_ms": 2.2,
+    "delay_ms": 1.8,
+    "w_syn_mv": 0.275,
+    "gain": 0.41,
+    "dt_ms": 0.1,
+    "seed": 0,
+    "extra": {}
+  },
+  "simulator": "flybench.sim.LIFSimulator",
+  "simulator_capabilities": [
+    "can_silence"
+  ],
+  "reference_baseline": false,
+  "model_card": null,
+  "score": 0.6666666666666666,
+  "passed": 3,
+  "n_tasks": 5,
+  "cost": {
+    "wall_seconds": 202.13350629806519,
+    "cpu_seconds": 522.6676414012909,
+    "jobs": 3,
+    "peak_rss_mb": 271.35546875,
+    "bio_seconds": 33.5
+  },
+  "tasks": [
+    {
+      "task": "stability",
+      "title": "Silence in, silence out",
+      "passed": true,
+      "score": 1.0,
+      "checks": [
+        {
+          "description": "network rate[baseline] < 0.5 Hz  [5/5 seeds, sd 0]",
+          "value": 0.0,
+          "passed": true,
+          "margin": 2.6989700043360187,
+          "basis": "Shiu et al. 2024 (silent without input); convention: 0.5 Hz mean over all neurons is below any spontaneous rate reported in fly recordings",
+          "graded": 0.9999960000160001,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "op": "<",
+          "target": 0.5,
+          "saturated": false,
+          "floored": false
+        },
+        {
+          "description": "active fraction[baseline] < 0.01  [5/5 seeds, sd 0]",
+          "value": 0.0,
+          "passed": true,
+          "margin": 1.0,
+          "basis": "convention: fewer than 1% of neurons may fire spontaneously in 1 s; the fly brain at rest is not silent (Shiu 2024 Fig. 1), but its spontaneous activity is not reproduced by this model class",
+          "graded": 0.9900990099009901,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "op": "<",
+          "target": 0.01,
+          "saturated": false,
+          "floored": false
+        }
+      ],
+      "measurements": {
+        "baseline": {
+          "rate": 0.0,
+          "network_rate": 0.0,
+          "active_fraction": 0.0,
+          "spikes": 0.0,
+          "rate[default]": 0.0,
+          "readout_active_fraction[default]": 0.0
+        }
+      },
+      "readout_size": 139255,
+      "stimulus_sizes": {},
+      "seconds": 20.19997549057007,
+      "notes": [],
+      "graded": 0.995047504958495,
+      "graded_per_seed": [
+        0.995047504958495,
+        0.995047504958495,
+        0.995047504958495,
+        0.995047504958495,
+        0.995047504958495
+      ],
+      "controls": {},
+      "specificity": null,
+      "non_diagnostic": false
+    },
+    {
+      "task": "sugar_to_proboscis",
+      "title": "Sugar \u2192 proboscis extension",
+      "passed": false,
+      "score": 0.3333333333333333,
+      "checks": [
+        {
+          "description": "rate[sugar] > 5.0 Hz  [0/5 seeds, sd 0.727]",
+          "value": 0.36363636363636365,
+          "passed": false,
+          "margin": -1.1383026981662814,
+          "basis": "convention: 5 Hz over the window is ~2.5 spikes per neuron, the smallest response that is unambiguously not noise (baseline is 0 Hz)",
+          "graded": 0.005261427162117726,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            1.8181818181818181,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "op": ">",
+          "target": 5.0,
+          "saturated": false,
+          "floored": false
+        },
+        {
+          "description": "rate[sugar] / rate[baseline] > 5.0  [0/5 seeds, sd 727]  [floored: every compared condition silent]",
+          "value": 364.6363636363636,
+          "passed": false,
+          "margin": -10.0,
+          "basis": "convention: a 5x rise over baseline; baseline is ~0 Hz so any real response clears this easily \u2014 it exists to fail models whose baseline is already high",
+          "graded": 0.0,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            1819.181818181818,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "op": ">",
+          "target": 5.0,
+          "saturated": false,
+          "floored": true
+        },
+        {
+          "description": "active fraction[sugar] < 0.1  [5/5 seeds, sd 2.98e-05]",
+          "value": 0.0017306380381314854,
+          "passed": true,
+          "margin": 1.7617937550477405,
+          "basis": "convention: Shiu et al. 2024 report sparse activity on stimulation; 10% of all neurons is a generous ceiling chosen so a healthy sparse response passes and mass recruitment fails",
+          "graded": 0.9997005788779575,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.0017737244623173315,
+            0.0016947326846432802,
+            0.0017521812502244085,
+            0.0017306380381314854,
+            0.0017019137553409213
+          ],
+          "op": "<",
+          "target": 0.1,
+          "saturated": false,
+          "floored": false
+        }
+      ],
+      "measurements": {
+        "baseline": {
+          "rate": 0.0,
+          "network_rate": 0.0,
+          "active_fraction": 0.0,
+          "spikes": 0.0,
+          "rate[default]": 0.0,
+          "readout_active_fraction[default]": 0.0
+        },
+        "sugar": {
+          "rate": 0.36363636363636365,
+          "network_rate": 0.11931805941356763,
+          "active_fraction": 0.0017306380381314854,
+          "spikes": 9926.6,
+          "rate[default]": 0.36363636363636365,
+          "readout_active_fraction[default]": 0.1
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "sugar_grn": 129
+      },
+      "seconds": 143.07291054725647,
+      "notes": [],
+      "graded": 0.34101939552484006,
+      "graded_per_seed": [
+        0.3721579367564289,
+        0.33323763685991376,
+        0.3332310401050827,
+        0.3332335396259853,
+        0.33323682427678974
+      ],
+      "controls": {},
+      "specificity": null,
+      "non_diagnostic": false
+    },
+    {
+      "task": "bitter_suppression",
+      "title": "Bitter suppresses the sugar response",
+      "passed": false,
+      "score": 0.0,
+      "checks": [
+        {
+          "description": "rate[sugar] > 5.0 Hz  [0/5 seeds, sd 0.727]",
+          "value": 0.36363636363636365,
+          "passed": false,
+          "margin": -1.1383026981662814,
+          "basis": "convention: 5 Hz over the window is ~2.5 spikes per neuron, the smallest response that is unambiguously not noise (baseline is 0 Hz)",
+          "graded": 0.005261427162117726,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            1.8181818181818181,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "op": ">",
+          "target": 5.0,
+          "saturated": false,
+          "floored": false
+        },
+        {
+          "description": "rate[sugar_plus_bitter] / rate[sugar] < 0.5  [0/5 seeds, sd 0.4]  [floored: every compared condition silent]",
+          "value": 0.8001099395332567,
+          "passed": false,
+          "margin": -10.0,
+          "basis": "Shiu et al. 2024 Fig. 3 (bitter co-activation abolishes MN9 response in the model); Jaeger et al. 2018 (bitter suppresses PER behaviourally). 0.5 is a convention: half is the smallest suppression worth calling suppression",
+          "graded": 0.0,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.0005496976662835441,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "op": "<",
+          "target": 0.5,
+          "saturated": false,
+          "floored": true
+        }
+      ],
+      "measurements": {
+        "sugar": {
+          "rate": 0.36363636363636365,
+          "network_rate": 0.11931805941356763,
+          "active_fraction": 0.0017306380381314854,
+          "spikes": 9926.6,
+          "rate[default]": 0.36363636363636365,
+          "readout_active_fraction[default]": 0.1
+        },
+        "sugar_plus_bitter": {
+          "rate": 0.0,
+          "network_rate": 0.1643551235307366,
+          "active_fraction": 0.0021457039244551362,
+          "spikes": 13685.8,
+          "rate[default]": 0.0,
+          "readout_active_fraction[default]": 0.0
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "sugar_grn": 129,
+        "bitter_grn": 65
+      },
+      "seconds": 198.94193243980408,
+      "notes": [],
+      "graded": 0.011678848116787679,
+      "graded_per_seed": [
+        0.058394160583941604,
+        1.9999999200000037e-08,
+        1.9999999200000037e-08,
+        1.9999999200000037e-08,
+        1.9999999200000037e-08
+      ],
+      "controls": {},
+      "specificity": null,
+      "non_diagnostic": false
+    },
+    {
+      "task": "looming_to_giant_fiber",
+      "title": "Looming \u2192 giant fiber escape",
+      "passed": true,
+      "score": 1.0,
+      "checks": [
+        {
+          "description": "rate[loom] > 5.0 Hz  [5/5 seeds, sd 0.875]",
+          "value": 434.9999999999999,
+          "passed": true,
+          "margin": 1.9395192526186185,
+          "basis": "convention: 5 Hz over the 280 ms window is >1 GF spike per neuron. NOTE the real GF fires a single spike per escape (von Reyn et al. 2014); this check tests that the pathway conducts, task 13 tests the spike count",
+          "graded": 0.9998678996036988,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            435.71428571428567,
+            433.9285714285714,
+            435.71428571428567,
+            433.9285714285714,
+            435.71428571428567
+          ],
+          "op": ">",
+          "target": 5.0,
+          "saturated": false,
+          "floored": false
+        },
+        {
+          "description": "rate[loom] / rate[baseline] > 5.0  [5/5 seeds, sd 875]",
+          "value": 435000.9999999999,
+          "passed": true,
+          "margin": 4.9395202509955904,
+          "basis": "convention: a 5x rise over baseline; baseline is ~0 Hz so any real response clears this easily \u2014 it exists to fail models whose baseline is already high",
+          "graded": 0.9999999998678828,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            435715.2857142856,
+            433929.57142857136,
+            435715.2857142856,
+            433929.57142857136,
+            435715.2857142856
+          ],
+          "op": ">",
+          "target": 5.0,
+          "saturated": false,
+          "floored": false
+        },
+        {
+          "description": "active fraction[loom] < 0.1  [5/5 seeds, sd 2e-05]",
+          "value": 0.005652938853183009,
+          "passed": true,
+          "margin": 1.247725712199324,
+          "basis": "convention: Shiu et al. 2024 report sparse activity on stimulation; 10% of all neurons is a generous ceiling chosen so a healthy sparse response passes and mass recruitment fails",
+          "graded": 0.9968146073829339,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.005629959426950559,
+            0.005629959426950559,
+            0.005665864780438764,
+            0.005658683709741122,
+            0.005680226921834046
+          ],
+          "op": "<",
+          "target": 0.1,
+          "saturated": false,
+          "floored": false
+        }
+      ],
+      "measurements": {
+        "baseline": {
+          "rate": 0.0,
+          "network_rate": 0.0,
+          "active_fraction": 0.0,
+          "spikes": 0.0,
+          "rate[default]": 0.0,
+          "readout_active_fraction[default]": 0.0
+        },
+        "loom": {
+          "rate": 434.9999999999999,
+          "network_rate": 0.5862523530829875,
+          "active_fraction": 0.005652938853183009,
+          "spikes": 24538.4,
+          "rate[default]": 434.9999999999999,
+          "readout_active_fraction[default]": 1.0
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "looming_detectors": 314
+      },
+      "seconds": 79.3814640045166,
+      "notes": [],
+      "graded": 0.9988941553316435,
+      "graded_per_seed": [
+        0.9989029009208569,
+        0.9989025389970433,
+        0.9988894674092532,
+        0.9988917989327456,
+        0.9988840703983178
+      ],
+      "controls": {},
+      "specificity": null,
+      "non_diagnostic": false
+    },
+    {
+      "task": "taste_specificity",
+      "title": "Bitter alone does not extend the proboscis",
+      "passed": true,
+      "score": 1.0,
+      "checks": [
+        {
+          "description": "rate[bitter] < 2.0 Hz  [5/5 seeds, sd 0]",
+          "value": 0.0,
+          "passed": true,
+          "margin": 3.3010299956639813,
+          "basis": "Shiu et al. 2024 (bitter alone does not drive MN9); convention: 2 Hz is <1 spike per neuron per window, i.e. effectively silent",
+          "graded": 0.9999997500000625,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "op": "<",
+          "target": 2.0,
+          "saturated": false,
+          "floored": false
+        },
+        {
+          "description": "active fraction[bitter] < 0.1  [5/5 seeds, sd 3.52e-06]",
+          "value": 0.0006434239345086353,
+          "passed": true,
+          "margin": 2.0,
+          "basis": "convention: Shiu et al. 2024 report sparse activity on stimulation; 10% of all neurons is a generous ceiling chosen so a healthy sparse response passes and mass recruitment fails",
+          "graded": 0.9999000099990001,
+          "z": NaN,
+          "ceiling": null,
+          "capped": false,
+          "per_seed": [
+            0.0006462963627876917,
+            0.0006391152920900506,
+            0.0006462963627876917,
+            0.0006391152920900506,
+            0.0006462963627876917
+          ],
+          "op": "<",
+          "target": 0.1,
+          "saturated": false,
+          "floored": false
+        }
+      ],
+      "measurements": {
+        "bitter": {
+          "rate": 0.0,
+          "network_rate": 0.05239831440685987,
+          "active_fraction": 0.0006434239345086353,
+          "spikes": 4372.6,
+          "rate[default]": 0.0,
+          "readout_active_fraction[default]": 0.0
+        }
+      },
+      "readout_size": 2,
+      "stimulus_sizes": {
+        "bitter_grn": 65
+      },
+      "seconds": 81.07135891914368,
+      "notes": [],
+      "graded": 0.9999498799995312,
+      "graded_per_seed": [
+        0.9999498799995312,
+        0.9999498799995312,
+        0.9999498799995312,
+        0.9999498799995312,
+        0.9999498799995312
+      ],
+      "controls": {},
+      "specificity": null,
+      "non_diagnostic": false
+    }
+  ],
+  "label": "flywire783_ntfix lif 0.41 core5",
+  "unpinned": false
+}

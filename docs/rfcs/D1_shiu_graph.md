@@ -200,3 +200,32 @@ such gains; its width is reported, not only its location. Files: `results/sweeps
 
 If LIF on flywire783_ntfix has a window, the "no working gain" statement (RFC D1, README,
 CHANGELOG 1.0.0) is corrected to name it.
+### Outcome (2026-10-23, 124 runs, 5 seeds each)
+
+| sweep | prediction | measured window | held? |
+|---|---|---|---|
+| LIF, flywire783 | ~0.42–0.47 | **0.42–0.45** (4 points) | yes; the reference gain 0.45 is the window's top edge |
+| LIF, flywire783_ntfix | no window | **none** (0/31) | yes |
+| adaptive, flywire783 | narrow, ≤ 0.03, around 0.44–0.46 | **0.43–0.49** (7 points) | **no**: more than twice as wide |
+| adaptive, flywire783_ntfix | wider than on flywire783, ≥ 0.05, inside 0.45–0.60 | **0.46–0.53** (8 points) | yes, but "wider" by one grid point only |
+
+What fails outside each window (`python scripts/core_window.py results/sweeps/d1_core_fine`):
+
+- **Below every window,** sugar → MN9 and bitter suppression both fail: MN9 does not answer sugar
+  on all five seeds.
+- **Just above the Codex windows,** only bitter suppression fails (LIF 0.46–0.49, adaptive
+  0.50–0.55). Higher up, sugar fails too, and from ~0.54 (LIF) or 0.61 (adaptive) the loom check
+  fails as well: the whole-brain ignition the coarse sweep saw.
+- **On the signed build,** the LIF fails sugar up to 0.62 and bitter at every gain; from 0.63 the
+  sugar reflex works, but bitter no longer suppresses it. The adaptive LIF fails both below 0.46
+  and only bitter above 0.53.
+
+Reading: signing the blank transmitters does not widen the adaptive window (8 points against 7).
+It moves the window up by about 0.03 and takes the LIF's away. Adaptation is what gives a window on
+both builds: it buys more range than the graph choice does. The "no working gain" statement
+for the LIF on flywire783_ntfix stands at 0.01 resolution, so README and CHANGELOG need no
+correction. The wrong prediction is the adaptive Codex width. We had read the coarse grid's single
+passing point at 0.45 as narrowness; it was the grid.
+
+Daniel Culotta's adaptive window under his signing rule (0.45–0.55, 3 points × 3 seeds) overlaps
+ours on the synapse-majority rule (0.46–0.53, 8 points × 5 seeds).

@@ -773,9 +773,23 @@ Reported by Daniel Culotta (email, 2026-10-19), reproduced here; docs/rfcs/D1_sh
   its 9 checks now pass), and the PN transfer function task scores 0.86 at 0.7 (was 0.14). Part of
   that finding was this build's default; the rest stands.
 - Odour valence (task 37) is unchanged, 3/5: signs restore channels in the antennal lobe; they do
-  not give the steering readout a sign.- **No working gain on the sign-fixed graph** (sweep 0.45–0.7, RFC D1): below 0.65 the proboscis
+  not give the steering readout a sign.
+- **No working gain on the sign-fixed graph** (sweep 0.45–0.7, RFC D1): below 0.65 the proboscis
   reflex is all-or-none across seeds; from 0.65 bitter no longer halves it on every seed (0.65
   misses on one seed of three). v1.0 keeps the Codex 0.45 reference; all three builds are pinned.
 - **The sign-fixed graph turns away from CO2** (task 37, 4/5 at 0.5, 0.6, 0.65; RFC 37 addendum):
   CO2 on the left antenna drives the right DNa02 (≤ 16 Hz) while attractive channels bias the left.
   The only row of any build to split an aversive from an attractive channel. Predicted 3/5.
+
+## 2026-10-23 — The working gain belongs to the graph and the neuron model together (fine sweep, RFC D1)
+
+- 124 core-tier runs, gains 0.40–0.70 by 0.01, 5 seeds each. Core windows: reference LIF on
+  Codex **0.42–0.45** (the reference gain 0.45 is its top edge); LIF on the signed build **none**;
+  adaptive LIF **0.43–0.49** on Codex and **0.46–0.53** on the signed build. Three of four
+  predictions held. The adaptive window on Codex is more than twice the predicted width (≤ 0.03);
+  the coarse grid's single passing point at 0.45 had been read as narrowness.
+- Signing the blanks does not widen the adaptive window (8 points against 7); it shifts it up by
+  ~0.03 and removes the LIF's. "No working gain on the sign-fixed graph" stands at 0.01 resolution.
+- The failure order is the same everywhere: below a window, sugar → MN9 is not reliable; just
+  above, bitter no longer suppresses it; higher still, the loom check fails with the ignition.
+- Agrees with Daniel Culotta's independent adaptive window (0.45–0.55, other signing rule).

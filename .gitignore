@@ -5,6 +5,10 @@ dist/
 build/
 results/*
 !results/*.json
+!results/sweeps/
+results/sweeps/*
+!results/sweeps/d1_core_fine/
+results/sweeps/d1_core_fine/_*
 !results/README.md
 *.csv
 *.csv.gz
