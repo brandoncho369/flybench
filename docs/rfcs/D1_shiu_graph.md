@@ -237,3 +237,9 @@ rewired control (`results/flywire783_gain0.7.json`, same label): graded **0.670*
 Codex 0.625, signed 0.726, Shiu graph 0.711. The conclusions stand. Signing the blanks matches
 Shiu's graph, and the graph effect at 0.7 (+0.10) equals adaptation's at 0.45 (+0.097). The
 pre-registered "≤ +0.03" for the graph is further off than the 1-seed row showed.
+After task 06's rate correction (1.0.1, FINDINGS 2026-10-25) the same 29-task means are Codex
+0.625, signed 0.724, Shiu graph 0.710, adaptive 0.703. With paired bootstrap CIs over tasks and
+seeds (preprint, `figures/stats.py`): signed − Codex at 0.7 = +0.098 [+0.042, +0.164]; Shiu − Codex
+= +0.085 [+0.032, +0.149]; signed − Shiu = +0.013 [−0.056, +0.091], so "matches" means
+indistinguishable, and the IQM puts Shiu's graph ahead (−0.019). At gain 0.45 neither build
+differs from Codex detectably. Adaptation at 0.45 = +0.092 [+0.020, +0.171].
