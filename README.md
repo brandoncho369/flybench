@@ -251,8 +251,8 @@ MIT © Brandon Cho
 
 ## Citing
 
-Archived on Zenodo: concept DOI [10.5281/zenodo.22886374](https://doi.org/10.5281/zenodo.22886374) (every version), v1.0.0 [10.5281/zenodo.23574486](https://doi.org/10.5281/zenodo.23574486). `CITATION.cff` has the metadata; cite the connectomes (FlyWire, MaleCNS) and the behavioural papers each task names as well.
+Archived on Zenodo: concept DOI [10.5281/zenodo.22886374](https://doi.org/10.5281/zenodo.22886374) (every version), v1.0.1 [10.5281/zenodo.23655868](https://doi.org/10.5281/zenodo.23655868). `CITATION.cff` has the metadata; cite the connectomes (FlyWire, MaleCNS) and the behavioural papers each task names as well.
 
 ```
-Cho, B. (2026). flybench: a behavioural benchmark for whole-connectome simulations of Drosophila (v1.0.0). Zenodo. https://doi.org/10.5281/zenodo.23574486
+Cho, B. (2026). flybench: a behavioural benchmark for whole-connectome simulations of Drosophila (v1.0.1). Zenodo. https://doi.org/10.5281/zenodo.23655868
 ```
