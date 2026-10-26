@@ -19,9 +19,11 @@ found nine wrong citations in eight tasks:
 - 30: "Wang et al. 2021 (Nature 596:433)" does not exist and no check used it; removed.
 - 07: Paranjpe et al. 2012 is in Learn Mem 19:627, not J Neurosci.
 - 06: Zhang et al. 2016 is by Zhang, Aikin, Li & Montell, not "Zhang, Guo & Montell".
-  **Open:** confirm the ~80 Hz sugar-GRN rate the measured-input check attributes to it.
+  Its Fig. 1C shows ~32–33 spikes / 500 ms (≈ 65 Hz), not the ~40 (≈ 80 Hz) the task stated.
 
-No threshold or score changed.
+No threshold changed. **Score-affecting, task 06 only:** its `measured` condition drives the sugar
+GRNs at 65 Hz instead of 80 Hz, the rate the cited figure shows; every row's task 06 is rerun and
+spliced in with `scripts/rerun_task.py` (FINDINGS 2026-10-25, predictions written first).
 
 **Rows.** The Codex LIF 0.7 row (1 seed, 28 tasks, graded 0.695) is rerun with 3 seeds and the
 rewired control on the 37-task set: graded 0.670. The "~80 % of the gap to Shiu's graph" in 1.0.0

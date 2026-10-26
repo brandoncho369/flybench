@@ -790,6 +790,25 @@ Reported by Daniel Culotta (email, 2026-10-19), reproduced here; docs/rfcs/D1_sh
   the coarse grid's single passing point at 0.45 had been read as narrowness.
 - Signing the blanks does not widen the adaptive window (8 points against 7); it shifts it up by
   ~0.03 and removes the LIF's. "No working gain on the sign-fixed graph" stands at 0.01 resolution.
-- The failure order is the same everywhere: below a window, sugar → MN9 is not reliable; just
-  above, bitter no longer suppresses it; higher still, the loom check fails with the ignition.
+- At every window's edges: below, sugar → MN9 is not reliable; just above, bitter no longer
+  suppresses it. Higher still, on Codex only, sugar and the loom check fail with the ignition; on
+  the signed build only bitter fails up to 0.70. (Corrected 2026-10-25: this line had said the
+  whole order was the same on every row.)
 - Agrees with Daniel Culotta's independent adaptive window (0.45–0.55, other signing rule).
+
+## 2026-10-25 — Task 06's "measured" sugar rate was 80 Hz; the paper shows ~65 Hz
+
+- The measured-input condition of task 06 drove the sugar GRNs at 80 Hz, from "~40 spikes / 500 ms
+  at 100 mM sucrose" attributed to Zhang, Aikin, Li & Montell 2016. Their Fig. 1C (L4 sensilla,
+  100 mM sucrose, 0 % HPC; read by Brandon) shows ~32–33 spikes / 500 ms, error bar ~29–34:
+  **≈ 65 Hz**. The condition now drives 65 Hz; the check (MN9 > 5 Hz) is unchanged.
+- **Predictions, written before the rerun** (task 06 only, every row, `scripts/rerun_task.py`):
+  - Checks on the weak and strong conditions reproduce exactly (the script refuses a row otherwise).
+  - Rows whose MN9 answered 80 Hz with ≥ 100 Hz (MaleCNS ×5, Shiu graph 0.7 and 1.0, Shiu constants
+    1.0, Codex 0.5 and 0.7, terminal LIF 0.45, signed 0.7) still pass the measured check.
+  - The reference LIF 0.45 (1 of 3 seeds at 80 Hz) passes on 0 or 1 seeds; still fails.
+  - Signed 0.65 (137.6 Hz mean but not every seed) still fails the measured check.
+  - The adaptive LIF (26 Hz at 80 Hz) still passes, at roughly half the rate.
+  - Rows silent at 80 Hz (Codex 0.3–0.4, signed 0.45–0.6, Shiu graph 0.45) stay silent.
+  - No row changes task-level pass/fail (task 06 passes only on Shiu's graph at 1.0, which keeps
+    passing); run-level graded moves by < 0.01 on every row.
