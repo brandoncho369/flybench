@@ -8,7 +8,7 @@ authors:
 repository-code: "https://github.com/brandoncho369/flybench"
 url: "https://www.fly-bench.com"
 license: MIT
-version: 1.0.0
+version: 1.0.1
 doi: 10.5281/zenodo.22886374
 identifiers:
   - type: doi
@@ -23,7 +23,7 @@ identifiers:
   - type: doi
     value: 10.5281/zenodo.22886375
     description: "version 0.2.0"
-date-released: "2026-10-22"
+date-released: "2026-10-25"
 abstract: >
   flybench scores a connectome-constrained neural model (the reference is a uniform leaky
   integrate-and-fire on the FlyWire v783 and MaleCNS v1.0 connectomes) against published fly

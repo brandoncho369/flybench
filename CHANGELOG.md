@@ -3,7 +3,13 @@
 Score-affecting changes are listed with the RFC that introduced them; every archived result is rerun
 when one lands, and the RFC records the before and after.
 
-## Unreleased
+## 1.0.1 — 2026-10-25
+
+Corrections; the task set is unchanged (37 tasks, the same checks and thresholds). One stimulus is
+corrected to what its cited figure shows, with predictions written first and every row rerun:
+task 06's scores move slightly and no pass/fail changes. Also nine citations corrected, the Codex
+0.7 row at three seeds, the RFC D1 fine gain sweep, and the Shiu-constants row relabelled
+"Shiu constants, gain 1.0 (Codex graph, 5+ synapses)" (labels must match the schema's ASCII set).
 
 **Citation corrections (no score changes).** 1.0.0 said every cited basis had a Crossref-verified
 DOI. That check confirmed each DOI resolved, not that it resolved to the paper named beside it.
