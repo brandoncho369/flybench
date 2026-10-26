@@ -1,0 +1,26 @@
+{
+  "n_photoreceptors": 11151,
+  "by_type": {
+    "R1-6": 8456,
+    "R8": 1357,
+    "R7": 1338
+  },
+  "codex_nt": {
+    "blank": 6112,
+    "ACH": 3695,
+    "GLUT": 956,
+    "GABA": 299,
+    "SER": 70,
+    "OCT": 16,
+    "DA": 3
+  },
+  "excitatory_reference": 9896,
+  "inhibitory_after_signing": 2032,
+  "class": {
+    "visual": 11151
+  },
+  "excitatory_after_signing": 9119,
+  "shiu_with_outputs": 10319,
+  "shiu_inhibitory": 1928,
+  "shiu_excitatory": 8391
+}

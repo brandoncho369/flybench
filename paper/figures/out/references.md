@@ -1,0 +1,67 @@
+- Ache et al. (2019). Neural Basis for Looming Size and Velocity Encoding in the Drosophila Giant Fiber Escape Pathway. *Current Biology* 29:1073-1081.e4. doi:10.1016/j.cub.2019.01.079
+- Agarwal et al. (2021). Deep reinforcement learning at the edge of the statistical precipice. *Advances in Neural Information Processing Systems* 34. arXiv:2108.13264
+- Allen et al. (2006). Making an escape: Development and function of the Drosophila giant fibre system. *Seminars in Cell & Developmental Biology* 17:31. doi:10.1016/j.semcdb.2005.11.011
+- Augustin et al. (2019). A Computational Model of the Escape Response Latency in the Giant Fiber System of Drosophila melanogaster. *eNeuro* 6:ENEURO.0423-18.2019. doi:10.1523/eneuro.0423-18.2019
+- Bell & Wilson (2016). Behavior Reveals Selective Summation and Max Pooling among Olfactory Processing Channels. *Neuron* 91:425. doi:10.1016/j.neuron.2016.06.011
+- Benda & Herz (2003). A Universal Model for Spike-Frequency Adaptation. *Neural Computation* 15:2523. doi:10.1162/089976603322385063
+- Bidaye et al. (2020). Two Brain Pathways Initiate Distinct Forward Walking Programs in Drosophila. *Neuron* 108:469-485.e8. doi:10.1016/j.neuron.2020.07.032
+- Buhmann et al. (2021). Automatic detection of synaptic partners in a whole-brain Drosophila electron microscopy data set. *Nat Methods* 18:771. doi:10.1038/s41592-021-01183-7
+- Cachero et al. (2010). Sexual Dimorphism in the Fly Brain. *Current Biology* 20:1589. doi:10.1016/j.cub.2010.07.045
+- Cameron et al. (2010). The molecular basis for water taste in Drosophila. *Nature* 465:91. doi:10.1038/nature09011
+- Cande et al. (2018). Optogenetic dissection of descending behavioral control in Drosophila. *eLife* 7:e34275. doi:10.7554/elife.34275
+- Card & Dickinson (2008). Visually Mediated Motor Planning in the Escape Response of Drosophila. *Current Biology* 18:1300. doi:10.1016/j.cub.2008.07.094
+- Cowley et al. (2024). Mapping model units to visual neurons reveals population code for social behaviour. *Nature* 629:1100. doi:10.1038/s41586-024-07451-8
+- Dombrovski et al. (2023). Synaptic gradients transform object location to action. *Nature* 613:534. doi:10.1038/s41586-022-05562-8
+- Dominik et al. (2026). Structural basis of CO 2 valence coding in Drosophila. ** . doi:10.64898/2026.01.05.697655
+- Dorkenwald et al. (2024). Neuronal wiring diagram of an adult brain. *Nature* 634:124. doi:10.1038/s41586-024-07558-y
+- Eckstein et al. (2024). Neurotransmitter classification from electron microscopy images at synaptic sites in Drosophila melanogaster. *Cell* 187:2574-2594.e23. doi:10.1016/j.cell.2024.03.016
+- Engel & Wu (1996). Altered Habituation of an Identified Escape Circuit in Drosophila Memory Mutants. *J. Neurosci* 16:3486. doi:10.1523/jneurosci.16-10-03486.1996
+- Erginkaya et al. (2025). A competitive disinhibitory network for robust optic flow processing in Drosophila. *Nat Neurosci* 28:1241. doi:10.1038/s41593-025-01948-9
+- Gaudry et al. (2012). Asymmetric neurotransmitter release enables rapid odour lateralization in Drosophila. *Nature* 493:424. doi:10.1038/nature11747
+- Green et al. (2017). A neural circuit architecture for angular integration in Drosophila. *Nature* 546:101. doi:10.1038/nature22343
+- Hardie (1989). A histamine-activated chloride channel involved in neurotransmission at a photoreceptor synapse. *Nature* 339:704. doi:10.1038/339704a0
+- Hulse et al. (2021). A connectome of the Drosophila central complex reveals network motifs suitable for flexible navigation and context-dependent action selection. *eLife* 10:e66039. doi:10.7554/elife.66039
+- Jaeger et al. (2018). A complex peripheral code for salt taste in Drosophila. *eLife* 7:e37167. doi:10.7554/elife.37167
+- Janelia FlyEM (2025). MaleCNS v1.0 connectome (male brain and ventral nerve cord). neuPrint dataset `male-cns:v1.0`, neuprint.janelia.org
+- Jang et al. (2023). Azimuthal invariance to looming stimuli in the Drosophila giant fiber escape circuit. *Journal of Experimental Biology* 226:jeb244790. doi:10.1242/jeb.244790
+- Kim et al. (2017). Ring attractor dynamics in the Drosophila central brain. *Science* 356:849. doi:10.1126/science.aal4835
+- Klapoetke et al. (2017). Ultra-selective looming detection from radial motion opponency. *Nature* 551:237. doi:10.1038/nature24626
+- Lappalainen et al. (2024). Connectome-constrained networks predict neural activity across the fly visual system. *Nature* 634:1132. doi:10.1038/s41586-024-07939-3
+- Lillvis et al. (2024). Nested neural circuits generate distinct acoustic signals during Drosophila courtship. *Current Biology* 34:808-824.e6. doi:10.1016/j.cub.2024.01.015
+- Lin et al. (2013). Parallel Neural Pathways Mediate CO 2 Avoidance Responses in Drosophila. *Science* 340:1338. doi:10.1126/science.1236693
+- Lin et al. (2024). Network statistics of the whole-brain connectome of Drosophila. *Nature* 634:153. doi:10.1038/s41586-024-07968-y
+- Lobato-Rios et al. (2022). NeuroMechFly, a neuromechanical model of adult Drosophila melanogaster. *Nat Methods* 19:620. doi:10.1038/s41592-022-01466-7
+- Maslov & Sneppen (2002). Specificity and Stability in Topology of Protein Networks. *Science* 296:910. doi:10.1126/science.1065103
+- McKellar et al. (2020). Controlling motor neurons of every muscle for fly proboscis reaching. *eLife* 9:e54978. doi:10.7554/elife.54978
+- Morimoto et al. (2020). Spatial readout of visual looming in the central brain of Drosophila. *eLife* 9:e57685. doi:10.7554/elife.57685
+- Olsen & Wilson (2008). Lateral presynaptic inhibition mediates gain control in an olfactory circuit. *Nature* 452:956. doi:10.1038/nature06864
+- Olsen et al. (2010). Divisive Normalization in Olfactory Population Codes. *Neuron* 66:287. doi:10.1016/j.neuron.2010.04.009
+- O’Sullivan et al. (2018). Multifunctional Wing Motor Control of Song and Flight. *Current Biology* 28:2705-2717.e4. doi:10.1016/j.cub.2018.06.038
+- Paranjpe et al. (2012). Gustatory habituation in Drosophila relies on rutabaga (adenylate cyclase)-dependent plasticity of GABAergic inhibitory neurons. *Learn. Mem* 19:627. doi:10.1101/lm.026641.112
+- Pospisil et al. (2024). The fly connectome reveals a path to the effectome. *Nature* 634:201. doi:10.1038/s41586-024-07982-0
+- Rayshubskiy et al. (2025). Neural circuit mechanisms for steering control in walking Drosophila. *eLife* 13:RP102230. doi:10.7554/elife.102230
+- Ribeiro et al. (2018). Visual Projection Neurons Mediating Directed Courtship in Drosophila. *Cell* 174:607-621.e18. doi:10.1016/j.cell.2018.06.020
+- Schlegel et al. (2024). Whole-brain annotation and multi-connectome cell typing of Drosophila. *Nature* 634:139. doi:10.1038/s41586-024-07686-5
+- Schlief & Wilson (2007). Olfactory processing and behavior downstream from highly selective receptor neurons. *Nat Neurosci* 10:623. doi:10.1038/nn1881
+- Schrimpf et al. (2020). Integrative Benchmarking to Advance Neurally Mechanistic Models of Human Intelligence. *Neuron* 108:413. doi:10.1016/j.neuron.2020.07.040
+- Schwarz et al. (2017). Motor control of Drosophila feeding behavior. *eLife* 6:e19892. doi:10.7554/elife.19892
+- Seelig & Jayaraman (2015). Neural dynamics for landmark orientation and angular path integration. *Nature* 521:186. doi:10.1038/nature14446
+- Semmelhack & Wang (2009). Select Drosophila glomeruli mediate innate olfactory attraction and aversion. *Nature* 459:218. doi:10.1038/nature07983
+- Sen et al. (2017). Moonwalker Descending Neurons Mediate Visually Evoked Retreat in Drosophila. *Current Biology* 27:766. doi:10.1016/j.cub.2017.02.008
+- Shiu et al. (2024). A Drosophila computational brain model reveals sensorimotor processing. *Nature* 634:210. doi:10.1038/s41586-024-07763-9
+- Stensmyr et al. (2012). A Conserved Dedicated Olfactory Circuit for Detecting Harmful Microbes in Drosophila. *Cell* 151:1345. doi:10.1016/j.cell.2012.09.046
+- Suh et al. (2004). A single population of olfactory sensory neurons mediates an innate avoidance behaviour in Drosophila. *Nature* 431:854. doi:10.1038/nature02980
+- Tanouye & Wyman (1980). Motor outputs of giant nerve fiber in Drosophila. *Journal of Neurophysiology* 44:405. doi:10.1152/jn.1980.44.2.405
+- Trimarchi & Schneiderman (1995). Different Neural Pathways Coordinate Drosophila Flight Initiations Evoked By Visual and Olfactory Stimuli. *Journal of Experimental Biology* 198:1099. doi:10.1242/jeb.198.5.1099
+- Turner-Evans et al. (2017). Angular velocity integration in a fly heading circuit. *eLife* 6:e23496. doi:10.7554/elife.23496
+- Vaxenburg et al. (2025). Whole-body physics simulation of fruit fly locomotion. *Nature* 643:1312. doi:10.1038/s41586-025-09029-4
+- von Philipsborn et al. (2011). Neuronal Control of Drosophila Courtship Song. *Neuron* 69:509. doi:10.1016/j.neuron.2011.01.011
+- von Reyn et al. (2014). A spike-timing mechanism for action selection. *Nat Neurosci* 17:962. doi:10.1038/nn.3741
+- von Reyn et al. (2017). Feature Integration Drives Probabilistic Behavior in the Drosophila Escape Response. *Neuron* 94:1190-1204.e6. doi:10.1016/j.neuron.2017.05.036
+- Wang-Chen et al. (2024). NeuroMechFly v2: simulating embodied sensorimotor control in adult Drosophila. *Nat Methods* 21:2353. doi:10.1038/s41592-024-02497-y
+- Willmore & Tolhurst (2001). Characterizing the sparseness of neural codes. *Network: Computation in Neural Systems* 12:255. doi:10.1080/net.12.3.255.270
+- Wolff et al. (2014). Neuroarchitecture and neuroanatomy of the Drosophila central complex: A GAL4‐based dissection of protocerebral bridge neurons and circuits. *J of Comparative Neurology* 523:997. doi:10.1002/cne.23705
+- Wu et al. (2016). Visual projection neurons in the Drosophila lobula link feature detection to distinct behavioral programs. *eLife* 5:e21022. doi:10.7554/elife.21022
+- Yu et al. (2010). Cellular Organization of the Neural Circuit that Drives Drosophila Courtship Behavior. *Current Biology* 20:1602. doi:10.1016/j.cub.2010.08.025
+- Zhang et al. (2013). The Molecular Basis for Attractive Salt-Taste Coding in Drosophila. *Science* 340:1334. doi:10.1126/science.1234133
+- Zhang et al. (2016). The Basis of Food Texture Sensation in Drosophila. *Neuron* 91:863. doi:10.1016/j.neuron.2016.07.013

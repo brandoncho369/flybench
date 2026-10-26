@@ -1,0 +1,8 @@
+{
+  "example_task": "sugar_to_proboscis",
+  "builds": [
+    "Codex ≥5 (reference)",
+    "Codex, blank transmitters signed",
+    "Shiu et al. 2024 graph"
+  ]
+}

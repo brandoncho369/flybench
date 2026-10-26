@@ -1,0 +1,20 @@
+{
+  "shiu_edges": 15091983,
+  "codex_pairs": 3732460,
+  "shared_pairs": 3667935,
+  "codex_only_pairs": 64525,
+  "shiu_only_pairs": 11424048,
+  "shiu_synapse_share_lt5": 0.37324766691718236,
+  "count_ratio_median": 1.3333333333333333,
+  "blank_nt_neurons": 19658,
+  "blank_signed_inhibitory": 5493,
+  "blank_by_super_class": {
+    "optic": 8352,
+    "sensory": 8123,
+    "central": 1607,
+    "visual_projection": 456
+  },
+  "blank_visual_sensory": 6262,
+  "blank_synapse_share": 0.07352511261451518,
+  "same_sign_share_shared": 0.9622910438707338
+}

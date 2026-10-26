@@ -1,0 +1,123 @@
+{
+  "tasks_compared": [
+    "adaptation",
+    "antennal_grooming_vs_backward",
+    "bitter_suppression",
+    "closed_loop_escape",
+    "co2_pathway_specificity",
+    "crosstalk",
+    "da1_sparseness",
+    "dose_response",
+    "egg_laying_ovidn",
+    "embodied_loom_escape",
+    "epg_ring_attractor",
+    "flash_is_not_loom",
+    "flyvis_loom_escape",
+    "gf_azimuth_invariance",
+    "halt_walk_off",
+    "lc_dn_matrix",
+    "looming_dn_ensemble",
+    "looming_to_giant_fiber",
+    "mb_sparseness_apl",
+    "odor_valence_steering",
+    "olfactory_sparse_coding",
+    "optic_flow_rotation",
+    "physiological_rates",
+    "pn_transfer_function",
+    "return_to_rest",
+    "stability",
+    "sugar_to_proboscis",
+    "taste_specificity",
+    "wiring_robustness"
+  ],
+  "graph_stats": {
+    "flywire783": {
+      "edges": 3732460,
+      "exc_synapses": 33007198.0,
+      "inh_synapses": 17659450.0,
+      "e_over_i": 1.8690954701307232
+    },
+    "flywire783_ntfix": {
+      "edges": 3732460,
+      "exc_synapses": 31136548.0,
+      "inh_synapses": 19530100.0,
+      "e_over_i": 1.594285129108402
+    },
+    "flywire783_shiu": {
+      "edges": 15091983,
+      "exc_synapses": 32494716.0,
+      "inh_synapses": 21998204.0,
+      "e_over_i": 1.47715313486501
+    }
+  },
+  "mean_graded": {
+    "flywire783@0.45": 0.6108976915025606,
+    "flywire783@0.7": 0.6253034057226876,
+    "flywire783_ntfix@0.45": 0.6260240955683765,
+    "flywire783_ntfix@0.7": 0.723594048378376,
+    "flywire783_shiu@0.45": 0.5656187276334352,
+    "flywire783_shiu@0.7": 0.7104826525136649
+  },
+  "adaptive_reference_0.45": 0.7025523753853237,
+  "ci95": {
+    "flywire783@0.45": [
+      0.5066799789306501,
+      0.7144241438026085
+    ],
+    "flywire783@0.7": [
+      0.5275827182051878,
+      0.7170866993698332
+    ],
+    "flywire783_ntfix@0.45": [
+      0.5106342239661568,
+      0.7274199029329337
+    ],
+    "flywire783_ntfix@0.7": [
+      0.6399621032955037,
+      0.8005036814126042
+    ],
+    "flywire783_shiu@0.45": [
+      0.4548257235537324,
+      0.6745044964331938
+    ],
+    "flywire783_shiu@0.7": [
+      0.6057834213197435,
+      0.8020860666102538
+    ],
+    "adaptive_reference_0.45": [
+      0.6052288500996026,
+      0.7908126911473717
+    ]
+  },
+  "delta_ntfix_minus_codex_0.7": {
+    "da1_sparseness": 0.7152719183253856,
+    "pn_transfer_function": 0.5031266513392741,
+    "antennal_grooming_vs_backward": 0.27633108954416175,
+    "return_to_rest": 0.2518005302897178,
+    "optic_flow_rotation": 0.1952814998811937,
+    "lc_dn_matrix": 0.185043861213935,
+    "crosstalk": 0.1471029923087641,
+    "closed_loop_escape": 0.13333266666933352,
+    "wiring_robustness": 0.10580324115790041,
+    "flash_is_not_loom": 0.10004401370509208,
+    "epg_ring_attractor": 0.09452494198421682,
+    "mb_sparseness_apl": 0.07785633615771431,
+    "looming_to_giant_fiber": 0.07619922125927991,
+    "sugar_to_proboscis": 0.058849942679940925,
+    "olfactory_sparse_coding": 0.057246269233600655,
+    "odor_valence_steering": 0.02801922322777206,
+    "looming_dn_ensemble": 0.02619656879378429,
+    "physiological_rates": 0.005158600020769399,
+    "gf_azimuth_invariance": 0.0002892672987248046,
+    "adaptation": 4.663728275133838e-05,
+    "taste_specificity": 6.220424167979743e-07,
+    "stability": 0.0,
+    "flyvis_loom_escape": 0.0,
+    "embodied_loom_escape": 0.0,
+    "egg_laying_ovidn": -5.4645437635003624e-05,
+    "co2_pathway_specificity": -0.000142730106102662,
+    "bitter_suppression": -0.053180695517419885,
+    "halt_walk_off": -0.06065155863463634,
+    "dose_response": -0.07306782770497211
+  }
+}

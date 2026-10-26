@@ -1,0 +1,26 @@
+{
+  "flywire783_gain0.45": {
+    "loom_hz": 0.0,
+    "flash_hz": 37.333333333333336
+  },
+  "adaptive-lif-b-2-mv-tau-200-ms": {
+    "loom_hz": 0.0,
+    "flash_hz": 44.833333333333336
+  },
+  "shiu2024": {
+    "loom_hz": 4.333333333333333,
+    "flash_hz": 12.0
+  },
+  "flywire783_shiu_gain0.7": {
+    "loom_hz": 0.0,
+    "flash_hz": 45.0
+  },
+  "flywire783_ntfix_gain0.65": {
+    "loom_hz": 0.0,
+    "flash_hz": 21.666666666666668
+  },
+  "malecns-gain-0.65": {
+    "loom_hz": 0.0,
+    "flash_hz": 5.833333333333333
+  }
+}
