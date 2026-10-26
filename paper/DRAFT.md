@@ -1,6 +1,6 @@
 # Which build of the connectome a whole-brain fly model runs on changes what it can do
 
-Brandon Cho, Rice University, Houston, TX, USA
+Brandon Cho, independent researcher
 
 ## Abstract
 
