@@ -490,7 +490,7 @@
           "value": 0.0,
           "passed": false,
           "margin": -3.6989700043360187,
-          "basis": "Zhang, Guo & Montell 2016 (Neuron 91:863): labellar sugar GRN fires ~40 spikes/500 ms (\u224880 Hz) at 100 mM sucrose, a concentration that reliably evokes PER; the pathway must conduct at the recorded input rate, not only at the 100 Hz convention",
+          "basis": "Zhang, Aikin, Li & Montell 2016 (Neuron 91:863; doi:10.1016/j.neuron.2016.07.013): labellar sugar GRN fires ~32-33 spikes/500 ms (\u224865 Hz; Fig. 1C, L4 sensilla, 0 % HPC) at 100 mM sucrose, a concentration that reliably evokes PER; the pathway must conduct at the recorded input rate, not only at the 100 Hz convention",
           "graded": 3.999999840000007e-08,
           "z": NaN,
           "ceiling": null,
@@ -585,9 +585,9 @@
         },
         "measured": {
           "rate": 0.0,
-          "network_rate": 0.09172185754714209,
-          "active_fraction": 0.0014218519981329216,
-          "spikes": 7629.0,
+          "network_rate": 0.07453951384151376,
+          "active_fraction": 0.0013500412911565114,
+          "spikes": 6183.0,
           "rate[default]": 0.0,
           "readout_active_fraction[default]": 0.0
         }
@@ -596,7 +596,7 @@
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 11.550027847290039,
+      "seconds": 38.367953300476074,
       "notes": [],
       "graded": 0.20000021599757717,
       "graded_per_seed": [

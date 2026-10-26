@@ -7,13 +7,13 @@
   "hard_score": 0.566023535851122,
   "core_by_circuit": 0.9444444444444445,
   "hard_by_circuit": 0.5723023088023088,
-  "graded": 0.6357678496166361,
+  "graded": 0.6357782933444052,
   "graded_ci95": [
-    0.6214147477173816,
-    0.6468210191532903
+    0.6214150461708774,
+    0.6468312027462705
   ],
   "core_graded": 0.7728340643393422,
-  "hard_graded": 0.5812225505309156,
+  "hard_graded": 0.5812283125876158,
   "profile": {
     "-1": 0.7758620689655172,
     "-0.5": 0.7241379310344828,
@@ -547,19 +547,19 @@
       "score": 0.8,
       "checks": [
         {
-          "description": "rate[measured] > 5.0 Hz  [3/3 seeds, sd 73.5]",
-          "value": 193.9393939393939,
+          "description": "rate[measured] > 5.0 Hz  [3/3 seeds, sd 18.3]",
+          "value": 233.9393939393939,
           "passed": true,
-          "margin": 1.5886960297699808,
-          "basis": "Zhang, Guo & Montell 2016 (Neuron 91:863): labellar sugar GRN fires ~40 spikes/500 ms (\u224880 Hz) at 100 mM sucrose, a concentration that reliably evokes PER; the pathway must conduct at the recorded input rate, not only at the 100 Hz convention",
-          "graded": 0.9993357686449864,
+          "margin": 1.67013335612183,
+          "basis": "Zhang, Aikin, Li & Montell 2016 (Neuron 91:863; doi:10.1016/j.neuron.2016.07.013): labellar sugar GRN fires ~32-33 spikes/500 ms (\u224865 Hz; Fig. 1C, L4 sensilla, 0 % HPC) at 100 mM sucrose, a concentration that reliably evokes PER; the pathway must conduct at the recorded input rate, not only at the 100 Hz convention",
+          "graded": 0.999543401012568,
           "z": NaN,
           "ceiling": null,
           "capped": false,
           "per_seed": [
-            243.63636363636363,
-            89.99999999999999,
-            248.18181818181816
+            244.54545454545453,
+            208.18181818181816,
+            249.09090909090907
           ],
           "op": ">",
           "target": 5.0,
@@ -665,11 +665,11 @@
           "readout_active_fraction[default]": 1.0
         },
         "measured": {
-          "rate": 193.9393939393939,
-          "network_rate": 3.979634918066633,
-          "active_fraction": 0.07740342285353678,
-          "spikes": 696239.3333333334,
-          "rate[default]": 193.9393939393939,
+          "rate": 233.9393939393939,
+          "network_rate": 4.585980653137811,
+          "active_fraction": 0.090468686822883,
+          "spikes": 821029.3333333334,
+          "rate[default]": 233.9393939393939,
           "readout_active_fraction[default]": 1.0
         }
       },
@@ -677,13 +677,13 @@
       "stimulus_sizes": {
         "sugar_grn": 34
       },
-      "seconds": 196.96227622032166,
+      "seconds": 170.0808470249176,
       "notes": [],
-      "graded": 0.7215657907020071,
+      "graded": 0.7217328903463116,
       "graded_per_seed": [
-        0.7196344704480454,
-        0.7285899662275236,
-        0.7164729354304523
+        0.7196350950324326,
+        0.7290900496065168,
+        0.7164735263999853
       ],
       "controls": {},
       "specificity": null,

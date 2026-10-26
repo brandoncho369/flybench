@@ -4,16 +4,16 @@
   "seeds": 3,
   "verified": false,
   "core_score": 1.0,
-  "hard_score": 0.5695738440303657,
+  "hard_score": 0.5608781918564527,
   "core_by_circuit": 1.0,
-  "hard_by_circuit": 0.5807142857142857,
-  "graded": 0.6960099478199889,
+  "hard_by_circuit": 0.5757142857142857,
+  "graded": 0.6891956012019926,
   "graded_ci95": [
-    0.6877330001968439,
-    0.7038505957324787
+    0.6785185420014817,
+    0.6995175207962194
   ],
   "core_graded": 0.9825767241988462,
-  "hard_graded": 0.5859201770933107,
+  "hard_graded": 0.5817723139345301,
   "profile": {
     "-1": 0.7571428571428571,
     "-0.5": 0.7214285714285714,
@@ -66,7 +66,7 @@
   "controls": [
     "rewired"
   ],
-  "specificity": 0.24712301587301586,
+  "specificity": 0.23998015873015874,
   "non_diagnostic": [],
   "tier": [
     "core",
@@ -126,7 +126,7 @@
     "fit_data": "none \u2014 constants from the literature or declared conventions; nothing fitted",
     "conflict_of_interest": "written by the flybench maintainer in response to task 35's failed check; graded by the same CI as any other row"
   },
-  "score": 0.6464356575963718,
+  "score": 0.6392928004535147,
   "passed": 8,
   "n_tasks": 28,
   "cost": {
@@ -620,22 +620,22 @@
       "task": "dose_response",
       "title": "Proboscis response scales with sugar intensity",
       "passed": false,
-      "score": 0.6,
+      "score": 0.4,
       "checks": [
         {
-          "description": "rate[measured] > 5.0 Hz  [3/3 seeds, sd 154]",
-          "value": 215.75757575757572,
-          "passed": true,
-          "margin": 1.63499604942295,
-          "basis": "Zhang, Guo & Montell 2016 (Neuron 91:863): labellar sugar GRN fires ~40 spikes/500 ms (\u224880 Hz) at 100 mM sucrose, a concentration that reliably evokes PER; the pathway must conduct at the recorded input rate, not only at the 100 Hz convention",
-          "graded": 0.999463246692116,
+          "description": "rate[measured] > 5.0 Hz  [2/3 seeds, sd 92.2]",
+          "value": 67.87878787878788,
+          "passed": false,
+          "margin": 1.1327640741202565,
+          "basis": "Zhang, Aikin, Li & Montell 2016 (Neuron 91:863; doi:10.1016/j.neuron.2016.07.013): labellar sugar GRN fires ~32-33 spikes/500 ms (\u224865 Hz; Fig. 1C, L4 sensilla, 0 % HPC) at 100 mM sucrose, a concentration that reliably evokes PER; the pathway must conduct at the recorded input rate, not only at the 100 Hz convention",
+          "graded": 0.9946033806920954,
           "z": NaN,
           "ceiling": null,
           "capped": false,
           "per_seed": [
-            30.909090909090907,
-            408.18181818181813,
-            208.18181818181816
+            5.454545454545454,
+            0.0,
+            198.18181818181816
           ],
           "op": ">",
           "target": 5.0,
@@ -741,25 +741,27 @@
           "readout_active_fraction[default]": 1.0
         },
         "measured": {
-          "rate": 215.75757575757572,
-          "network_rate": 1.4198978764703512,
-          "active_fraction": 0.019625866216652903,
-          "spikes": 195787.66666666666,
-          "rate[default]": 215.75757575757572,
-          "readout_active_fraction[default]": 1.0
+          "rate": 67.87878787878788,
+          "network_rate": 0.5474935343162696,
+          "active_fraction": 0.016188527042715402,
+          "spikes": 93042.0,
+          "rate[default]": 67.87878787878788,
+          "readout_active_fraction[default]": 0.6666666666666666
         }
       },
       "readout_size": 2,
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 219.15344166755676,
-      "notes": [],
-      "graded": 0.6685534876054925,
+      "seconds": 287.22156405448914,
+      "notes": [
+        "seed-sensitive: check 0: passes on 2/3 seeds"
+      ],
+      "graded": 0.5731526349535422,
       "graded_per_seed": [
-        0.660165082115954,
-        0.6690796363830478,
-        0.6764157443174755
+        0.573944432773051,
+        0.4691096496525679,
+        0.6764038224350079
       ],
       "controls": {
         "rewired": {
@@ -774,7 +776,7 @@
           ]
         }
       },
-      "specificity": 0.39999999999999997,
+      "specificity": 0.2,
       "non_diagnostic": false
     },
     {

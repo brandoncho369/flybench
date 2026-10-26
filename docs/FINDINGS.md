@@ -812,3 +812,16 @@ Reported by Daniel Culotta (email, 2026-10-19), reproduced here; docs/rfcs/D1_sh
   - Rows silent at 80 Hz (Codex 0.3–0.4, signed 0.45–0.6, Shiu graph 0.45) stay silent.
   - No row changes task-level pass/fail (task 06 passes only on Shiu's graph at 1.0, which keeps
     passing); run-level graded moves by < 0.01 on every row.
+- **Outcome** (24 rows; seeds passing the measured check, 80 → 65 Hz):
+  - Held: unchanged checks reproduced exactly on every row; no row changed task-level pass/fail;
+    run-level graded moved by ≤ 0.008 (adaptive 0.740 → 0.732; signed 0.7 0.749 → 0.744; Shiu graph
+    0.7 0.764 → 0.763; the rest ≤ 0.002). MaleCNS ×5, Shiu graph 0.7 and 1.0, Shiu constants and
+    Codex 0.5 / 0.7 still pass (Shiu graph 0.7 only just: 378 → 17 Hz). Signed 0.65 still fails (2/3).
+  - **Wrong:** the adaptive LIF loses the reflex at the measured rate (3/3 → 0/3, 26 → 2 Hz);
+    predicted to keep it. The terminal LIF 0.45 (3/3 → 2/3) and signed 0.7 (3/3 → 2/3) now miss a
+    seed. The reference 0.45 went 1/3 → 2/3, not down. Signed 0.5 and 0.6 went 0/3 → 1/3, not silent.
+  - Reading: near threshold the measured check is decided per seed, and a different input spike
+    train flips seeds in either direction, so a 20 % lower rate is not "a bit less MN9". The
+    adaptive LIF's dose-response failure is now the plain one: at the rate a real sugar GRN fires,
+    its proboscis reflex does not conduct. Signing the blanks now recovers ~80 % of the gap to Shiu's
+    graph at 0.7 (0.670 → 0.744 against 0.763), not 84 %.

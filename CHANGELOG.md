@@ -23,11 +23,13 @@ found nine wrong citations in eight tasks:
 
 No threshold changed. **Score-affecting, task 06 only:** its `measured` condition drives the sugar
 GRNs at 65 Hz instead of 80 Hz, the rate the cited figure shows; every row's task 06 is rerun and
-spliced in with `scripts/rerun_task.py` (FINDINGS 2026-10-25, predictions written first).
+spliced in with `scripts/rerun_task.py` (FINDINGS 2026-10-25, predictions written first). No row
+changes pass/fail; graded moves by ≤ 0.008. The adaptive LIF now fails the measured check (26 → 2 Hz).
 
 **Rows.** The Codex LIF 0.7 row (1 seed, 28 tasks, graded 0.695) is rerun with 3 seeds and the
 rewired control on the 37-task set: graded 0.670. The "~80 % of the gap to Shiu's graph" in 1.0.0
-becomes 84 % (0.670 → 0.749 against 0.764). The fine core sweep (RFC D1, 124 runs) is in
+becomes 84 % (0.670 → 0.749 against 0.764), and ~80 % (0.670 → 0.744 against 0.763) after task 06's
+rate correction below. The fine core sweep (RFC D1, 124 runs) is in
 `results/sweeps/d1_core_fine/`.
 
 ## 1.0.0 — 2026-10-22

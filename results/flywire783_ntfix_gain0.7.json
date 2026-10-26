@@ -4,16 +4,16 @@
   "seeds": 3,
   "verified": false,
   "core_score": 0.9,
-  "hard_score": 0.6805142195767195,
+  "hard_score": 0.6721808862433862,
   "core_by_circuit": 0.9444444444444445,
-  "hard_by_circuit": 0.6827910052910052,
-  "graded": 0.7485537587796817,
+  "hard_by_circuit": 0.6777910052910052,
+  "graded": 0.7441119509049868,
   "graded_ci95": [
-    0.7352344181224431,
-    0.7589381518290607
+    0.7296776177339641,
+    0.7558360515019903
   ],
   "core_graded": 0.8802421949248863,
-  "hard_graded": 0.6937351477695373,
+  "hard_graded": 0.690959017847853,
   "profile": {
     "-1": 0.9020979020979021,
     "-0.5": 0.8811188811188811,
@@ -67,7 +67,7 @@
   "controls": [
     "rewired"
   ],
-  "specificity": 0.34143404488232076,
+  "specificity": 0.3345374931581829,
   "non_diagnostic": [],
   "tier": [
     "core",
@@ -104,7 +104,7 @@
   ],
   "reference_baseline": false,
   "model_card": null,
-  "score": 0.7183565955117679,
+  "score": 0.7114600437876301,
   "passed": 9,
   "n_tasks": 29,
   "cost": {
@@ -598,22 +598,22 @@
       "task": "dose_response",
       "title": "Proboscis response scales with sugar intensity",
       "passed": false,
-      "score": 0.8,
+      "score": 0.6,
       "checks": [
         {
-          "description": "rate[measured] > 5.0 Hz  [3/3 seeds, sd 18.9]",
-          "value": 162.1212121212121,
-          "passed": true,
-          "margin": 1.5108698378073222,
-          "basis": "Zhang, Guo & Montell 2016 (Neuron 91:863): labellar sugar GRN fires ~40 spikes/500 ms (\u224880 Hz) at 100 mM sucrose, a concentration that reliably evokes PER; the pathway must conduct at the recorded input rate, not only at the 100 Hz convention",
-          "graded": 0.9990497290986214,
+          "description": "rate[measured] > 5.0 Hz  [2/3 seeds, sd 70.3]",
+          "value": 97.87878787878788,
+          "passed": false,
+          "margin": 1.2917185781171965,
+          "basis": "Zhang, Aikin, Li & Montell 2016 (Neuron 91:863; doi:10.1016/j.neuron.2016.07.013): labellar sugar GRN fires ~32-33 spikes/500 ms (\u224865 Hz; Fig. 1C, L4 sensilla, 0 % HPC) at 100 mM sucrose, a concentration that reliably evokes PER; the pathway must conduct at the recorded input rate, not only at the 100 Hz convention",
+          "graded": 0.9973972586369667,
           "z": NaN,
           "ceiling": null,
           "capped": false,
           "per_seed": [
-            176.36363636363635,
-            135.45454545454544,
-            174.54545454545453
+            131.8181818181818,
+            0.0,
+            161.8181818181818
           ],
           "op": ">",
           "target": 5.0,
@@ -719,27 +719,27 @@
           "readout_active_fraction[default]": 1.0
         },
         "measured": {
-          "rate": 162.1212121212121,
-          "network_rate": 6.95283886221375,
-          "active_fraction": 0.09529998922839396,
-          "spikes": 771506.0,
-          "rate[default]": 162.1212121212121,
-          "readout_active_fraction[default]": 1.0
+          "rate": 97.87878787878788,
+          "network_rate": 6.7376939841124255,
+          "active_fraction": 0.09473029095304776,
+          "spikes": 753937.3333333334,
+          "rate[default]": 97.87878787878788,
+          "readout_active_fraction[default]": 0.6666666666666666
         }
       },
       "readout_size": 2,
       "stimulus_sizes": {
         "sugar_grn": 129
       },
-      "seconds": 50.969239234924316,
+      "seconds": 156.23843359947205,
       "notes": [
-        "seed-sensitive: check 1: passes on 2/3 seeds"
+        "seed-sensitive: check 0: passes on 2/3 seeds; check 1: passes on 2/3 seeds"
       ],
-      "graded": 0.8575966606449396,
+      "graded": 0.7909695425245182,
       "graded_per_seed": [
-        0.9396163278155063,
-        0.8789938865960986,
-        0.7541797675232136
+        0.9394896097991372,
+        0.6792660340394494,
+        0.7541529837349682
       ],
       "controls": {
         "rewired": {
@@ -754,7 +754,7 @@
           ]
         }
       },
-      "specificity": 0.6000000000000001,
+      "specificity": 0.39999999999999997,
       "non_diagnostic": false
     },
     {
