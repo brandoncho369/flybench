@@ -44,6 +44,16 @@ keywords:
   - leaky integrate-and-fire
 references:
   - type: article
+    title: "Which build of the connectome a whole-brain fly model runs on changes what it can do"
+    authors:
+      - family-names: Cho
+        given-names: Brandon
+    year: 2026
+    publisher:
+      name: Zenodo
+    notes: "Preprint describing flybench and the graph-build findings"
+    doi: 10.5281/zenodo.23678526
+  - type: article
     title: "A Drosophila computational brain model reveals sensorimotor processing"
     authors:
       - family-names: Shiu

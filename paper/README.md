@@ -1,7 +1,7 @@
 # The preprint's source
 
 "Which build of the connectome a whole-brain fly model runs on changes what it can do" (Cho 2026,
-bioRxiv). Every number in the text is a placeholder in `DRAFT.md` filled from a script's output, so
+Zenodo, [doi:10.5281/zenodo.23678526](https://doi.org/10.5281/zenodo.23678526)). Every number in the text is a placeholder in `DRAFT.md` filled from a script's output, so
 none is typed by hand.
 
 ```

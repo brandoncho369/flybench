@@ -251,6 +251,10 @@ MIT © Brandon Cho
 
 ## Citing
 
+**Preprint:** Cho, B. (2026). Which build of the connectome a whole-brain fly model runs on changes
+what it can do. Zenodo. [doi:10.5281/zenodo.23678526](https://doi.org/10.5281/zenodo.23678526). Its
+source, figure scripts and statistics are in [`paper/`](paper/).
+
 Archived on Zenodo: concept DOI [10.5281/zenodo.22886374](https://doi.org/10.5281/zenodo.22886374) (every version), v1.0.1 [10.5281/zenodo.23655868](https://doi.org/10.5281/zenodo.23655868). `CITATION.cff` has the metadata; cite the connectomes (FlyWire, MaleCNS) and the behavioural papers each task names as well.
 
 ```
